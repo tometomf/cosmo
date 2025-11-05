@@ -1,6 +1,6 @@
 
 body {
-    font-family: "ＭＳ Ｐゴシック", sans-serif;
+    font-family: "�ｼｭ�ｼｳ �ｼｰ繧ｴ繧ｷ繝�繧ｯ", sans-serif;
     background-color: #fff;
     margin: 0;
     padding: 0;
@@ -71,7 +71,7 @@ body {
     padding: 0 20px;
 }
 
-/* 푸터 */
+/* �尊�┣ */
 .footer {
     text-align: center;
     padding: 20px 0;
@@ -113,10 +113,10 @@ body {
 .subtitle span {
   	position: absolute;
   	top: 50%;       
-  	left: 8%;       
+  	left: 10%;       
   	transform: translate(-50%, -50%);
   	font-size: 20px;
   	font-weight: bold;
-  	color: #003366; 
+  	color: #126339; 
   	
 }

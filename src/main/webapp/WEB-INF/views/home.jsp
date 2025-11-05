@@ -21,7 +21,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-		width: 700px; /* 중앙정렬 기준 폭, 필요에 따라 조정 */
+		width: 750px; /* 중앙정렬 기준 폭, 필요에 따라 조정 */
 	}
 
 	#main_Content > div > div:first-child {
