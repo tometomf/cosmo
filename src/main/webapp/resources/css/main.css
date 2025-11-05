@@ -1,0 +1,122 @@
+
+body {
+    font-family: "ＭＳ Ｐゴシック", sans-serif;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 55vw;
+    margin: auto;
+}
+
+.header {
+    padding: 10px 20px;
+    align-items: center;
+}
+
+.header img[alt="logo"] {
+    height: 100%;
+}
+
+.userName {
+    display: flex;
+  	justify-content: flex-end;
+	gap: 5px;
+	align-items: center;
+	margin-bottom: 5px;
+}
+
+.userName_Title {
+	font-size: 16px;
+}
+
+.userName_Text {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.main_Btn {
+    display: flex;
+  	justify-content: flex-end;
+	gap: 5px;
+	align-items: center;
+	margin-bottom: 25px;
+}
+
+.main_Btn img {
+	cursor: pointer;
+	display: block;
+}
+
+.userInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 13px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.userInfo > div {
+    display: flex;
+}
+
+.main {
+    flex: 1;
+    padding: 0 20px;
+}
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.main_Logo {
+	height: 100px;
+}
+
+.userInfo_Title {
+	font-size: 15px;
+    padding: 6px;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    border: solid 1px black;
+}
+
+.userInfo_Text {
+	font-size: 15px;
+    padding: 6px;
+    font-weight: bold;
+    border: solid 1px black;
+}
+
+.subtitle {
+ 	position: relative;
+  	width: 100%;
+  	text-align: center;
+}
+
+.subtitle img {
+  	width: 100%;
+  	display: block;
+}
+
+.subtitle span {
+  	position: absolute;
+  	top: 50%;       
+  	left: 8%;       
+  	transform: translate(-50%, -50%);
+  	font-size: 20px;
+  	font-weight: bold;
+  	color: #003366; 
+  	
+}
