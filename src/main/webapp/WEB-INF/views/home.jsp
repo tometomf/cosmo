@@ -76,7 +76,6 @@
 					</div>
 				</div>
 				<div class = "subtitle">
-					<img src="/resources/img/tn/bg_subtitle.gif" alt="bg_subtitle" style = "width: 100%">
 					<span>申請内容選択</span>
 				</div>
 			</div>
