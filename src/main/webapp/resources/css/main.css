@@ -71,6 +71,10 @@ body {
     padding: 0 20px;
 }
 
+.main_Content {
+	margin-bottom: 15px;
+}
+
 /* �尊�┣ */
 .footer {
     text-align: center;
@@ -110,13 +114,57 @@ body {
   	display: block;
 }
 
-.subtitle span {
+.subtitle div {
   	position: absolute;
   	top: 50%;       
-  	left: 10%;       
+  	left: 27%;       
   	transform: translate(-50%, -50%);
   	font-size: 20px;
   	font-weight: bold;
-  	color: #126339; 
-  	
+  	color: #126339;
+  	min-width: 500px;
+  	text-align: left;
+}
+
+.content_Form {
+	
+}
+
+.form_Title1 > div {
+	min-width: 25px;
+	text-align: center;
+	background-color: #595860;
+	color: white;
+	padding: 5px;
+	border: solid 1px white;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.form_Text1 {
+	border :solid 1px #f5f5f5;
+}
+
+.form_Text1 > div {
+	min-width: 25px;
+	text-align: left;
+	padding: 5px;
+	font-size: 13px;
+}
+
+.form_Column {
+	background-color: #dddddd;
+}
+
+.form_Title2 {
+    background-color: #333333;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 8px 8px 0 0;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
 }
