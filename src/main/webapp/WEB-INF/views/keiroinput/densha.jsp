@@ -61,37 +61,57 @@
 	font-weight: 700;
 	text-align: center;
 }
+
+.station-background {
+	position : relative;
+	width : 40%;
+	height : 200px;
+	background-color: #cecece;
+	background-size : auto;
+	backgorund-position : left;
+	background-repeat: no-repeat;
+}
 </style>
 </head>
 <body>
 	<div class="layout">
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div class="main">
-			<div class="flow-wrapper">
-				<div class="flow-other">
-					<span class="flow-othertext">勤務地入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">住所入力</span>
-				</div>
-				<div class="flow-current">
-					<span class="flow-currenttext">経路入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">付随書類入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">確認</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">完了</span>
-				</div>
+			<!-- <div class="subtitle"> -->
+				<div class="flow-wrapper">
+					<div class="flow-other">
+						<span class="flow-othertext">勤務地入力</span>
+					</div>
+					<div class="flow-other">
+						<span class="flow-othertext">住所入力</span>
+					</div>
+					<div class="flow-current">
+						<span class="flow-currenttext">経路入力</span>
+					</div>
+					<div class="flow-other">
+						<span class="flow-othertext">付随書類入力</span>
+					</div>
+					<div class="flow-other">
+						<span class="flow-othertext">確認</span>
+					</div>
+					<div class="flow-other">
+						<span class="flow-othertext">完了</span>
+					</div>
+				<!-- </div> -->
 			</div>
 			<div class="subtitle">
 				<img src="/resources/img/tn/bg_subtitle.gif" alt="bg_subtitle"
 					style="width: 100%"> <span>申請内容選択</span>
 			</div>
-
+			
+			<!-- ここまで上位タイトル -->
+			
+			<div class = "station-background">
+				<table>
+					<tr>出発駅</tr>
+				</table>
+			</div>
+			
 		</div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
