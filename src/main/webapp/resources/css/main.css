@@ -15,7 +15,7 @@ body {
 }
 
 .header {
-	padding: 10px 20px 0px 20px;
+	padding: 10px 20px 10px 20px;
 	align-items: center;
 }
 
@@ -112,12 +112,42 @@ body {
 	background-size : contain; 
 	background-position: center center;
 	padding: 1rem;
-
 	font-weight: bold;
 	color: #126339;
 	min-width: 500px;
 	text-align: left;
-	 padding-left: 30px; 
+	padding-left: 30px; 
+}
+
+.flow {
+	display: flex;
+	gap: 10px;
+}
+
+.flow_current {
+	position: relative;
+	background-image: url('/resources/img/bg_flow_01.gif');
+	background-repeat: no-repeat;
+	background-size : contain; 
+	background-position: center center;
+	padding: 1rem;
+	color: white;
+	text-align: center;
+	width: 100%;
+	font-size: 13px;
+}
+
+.flow_others {
+	position: relative;
+	background-image: url('/resources/img/bg_flow_02.gif');
+	background-repeat: no-repeat;
+	background-size : contain; 
+	background-position: center center;
+	padding: 1rem;
+	color: #808080;
+	text-align: center;
+	width: 100%;
+	font-size: 13px;
 }
 
 .subtitle img {
