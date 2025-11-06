@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/keiroinput")
 public class KeiroInputController {
 	
-	@GetMapping("/Densha")
+	@GetMapping("/densha")
 	public String densha(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -23,7 +23,7 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/Densha";
+		return "keiroinput/densha";
 	}
 	
 }
