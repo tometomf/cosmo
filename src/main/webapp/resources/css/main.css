@@ -15,7 +15,7 @@ body {
 }
 
 .header {
-    padding: 10px 20px;
+    padding: 10px 20px 0px 20px;
     align-items: center;
 }
 
@@ -45,7 +45,7 @@ body {
   	justify-content: flex-end;
 	gap: 5px;
 	align-items: center;
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 }
 
 .main_Btn img {
@@ -85,7 +85,7 @@ body {
 
 .userInfo_Title {
 	font-size: 15px;
-    padding: 6px;
+    padding: 5px;
     background-color: black;
     color: white;
     font-weight: bold;
@@ -94,7 +94,7 @@ body {
 
 .userInfo_Text {
 	font-size: 15px;
-    padding: 6px;
+    padding: 5px;
     font-weight: bold;
     border: solid 1px black;
 }
