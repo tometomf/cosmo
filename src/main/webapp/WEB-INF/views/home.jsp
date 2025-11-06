@@ -21,12 +21,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-		width: 750px; /* 중앙정렬 기준 폭, 필요에 따라 조정 */
+		width: 750px;
 	}
 
 	#main_Content > div > div:first-child {
-		width: 225px; /* 버튼 영역 고정 */
-		text-align: right; /* 버튼 오른쪽 정렬 (선택사항) */
+		width: 225px;
+		text-align: right;
 	}
 
 	#main_Content img {
@@ -40,48 +40,12 @@
 </style>
 <body>
 	<div class = "layout">
-		<div class = "header">
-			<div>
-				<div class = "main_Logo">
-					<img src="/resources/img/logo.gif" alt="logo">
-				</div>
-				<div class = "userName">
-					<div>ログイン名:</div>
-					<div style = "font-weight: bold;">net001</div>
-				</div>
-				<div class = "main_Btn">
-					<img src="/resources/img/top_btn.gif" alt="top_btn">
-					<img src="/resources/img/logout_btn.gif" alt="logout_btn">
-				</div>
-				<div class = "userInfo">
-					<div>
-						<div class = "userInfo_Title">法人名</div>
-						<div class = "userInfo_Text">(株)○○○○○○○○</div>
-					</div>
-					<div>
-						<div class = "userInfo_Title">所属名</div>
-						<div class = "userInfo_Text">○○○○○○○○店</div>
-					</div>
-					<div>
-						<div class = "userInfo_Title">現役職</div>
-						<div class = "userInfo_Text">店舗スタッフ</div>
-					</div>
-					<div>
-						<div class = "userInfo_Title">社員番号</div>
-						<div class = "userInfo_Text">123456</div>
-					</div>
-					<div>
-						<div class = "userInfo_Title">社員名</div>
-						<div class = "userInfo_Text">田中　太郎様</div>
-					</div>
-				</div>
-				<div class = "subtitle">
-					<img src="/resources/img/tn/bg_subtitle.gif" alt="bg_subtitle" style = "width: 100%">
-					<span>申請内容選択</span>
-				</div>
-			</div>
-		</div>
+		<%@ include file="/WEB-INF/views/common/header.jsp" %>
 		<div class = "main">
+			<div class = "subtitle">
+				<img src="/resources/img/tn/bg_subtitle.gif" alt="bg_subtitle" style = "width: 100%">
+				<span>申請内容選択</span>
+			</div>
 			<div id = "main_Content">
 				<div>
 					<div><img src="/resources/img/tn/shinsei_btn07.gif" alt="shinsei_btn07"></div>
@@ -97,11 +61,7 @@
 				</div>
 			</div>
 		</div>
-		<div class = "footer">
-			<div>
-				Copyright (c) 2010-2012 Leopalace leasing Corporation. All Right Reserved.
-			</div>
-		</div>
+		<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 	</div>
 </body>
 </html>
