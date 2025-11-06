@@ -1,4 +1,4 @@
-package org.cosmo.keiroInput.controller;
+package org.cosmo.controller;
 
 public class KeiroInputController {
 
