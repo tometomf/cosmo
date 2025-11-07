@@ -19,4 +19,16 @@ public class ShinseiController {
 		
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
+	
+	@GetMapping("/shinseiDetail")
+	public String viewShinseiDetail() {
+
+	    return "shinsei/11_shinseiDetail";
+	}
+	
+	 @GetMapping("/kakunin")
+	    public String viewShinseiDetail03() {
+	        return "shinsei/11_shinseiDetail_03";
+	    }
+
 }
