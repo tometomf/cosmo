@@ -9,77 +9,10 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
-.flow-wrapper {
-	display: flex;
-	gap: 16px;
-	justify-content: center;
-	align-items: center;
-}
-
-.flow-current {
-	position: relative;
-	flex: 1 1 0;
-	min-width: 0;
-	width: 100%;
-	height: 100px;
-	background-image: url('<c:url value="/resources/img/bg_flow_01.gif"/>');
-	background-size: auto;
-	background-position: center;
-	background-repeat: no-repeat;
-}
-
-.flow-other {
-	position: relative;
-	flex: 1 1 0;
-	min-width: 0;
-	width: 100%;
-	height: 100px;
-	background-image: url('<c:url value="/resources/img/bg_flow_02.gif"/>');
-	background-size: auto;
-	background-position: center;
-	background-repeat: no-repeat;
-}
-
-.flow-currenttext {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	color: #fff;
-	font-size: clamp(12px, 2vw, 7px);
-	font-weight: 700;
-	text-align: center;
-}
-
-.flow-othertext {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	color: #808080;
-	font-size: clamp(12px, 2vw, 7px);
-	font-weight: 700;
-	text-align: center;
-}
-
-.station-background {
-	position: relative;
-	width: 40%;
-	height: 200px;
-	background-color: #cecece;
-	background-size: auto;
-	backgorund-position: left;
-	background-repeat: no-repeat;
-	width: 40%;
-	height: 200px;
-	background-color: #cecece;
-	background-size: auto;
-	backgorund-position: left;
-}
-
 .transport-wrapper {
 	display: flex;
-	justify-content: center; align-items : center;
+	justify-content: center;
+	align-items: center;
 	width: 100%;
 	min-width: 500px;
 	align-items: center;
@@ -87,7 +20,7 @@
 
 .transport {
 	padding: 0.3rem;
-	padding-left: 10px; 
+	padding-left: 10px;
 	margin: 1rem;
 	text-align: left;
 	font-weight: bold;
@@ -97,6 +30,49 @@
 	color: #333;
 	width: 90%;
 }
+
+.route-box {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr;
+}
+
+.route-row {
+	display: contents;
+}
+
+.route-swap {
+	grid-column: 3;
+	grid-row: 1/span 2;
+	justify-self: center;
+	align-self: center;
+}
+
+.route-box>.station_form_Text1 {
+	display: contents;
+}
+
+#form_Ttile1 {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr;
+}
+
+#form_Text1 {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr;
+}
+
+.station_form_Text1 {
+	border: solid 1px #f5f5f5;
+	
+}
+
+.station_form_Text1>div {
+	min-width: 15px;
+	text-align: left;
+	padding: 5px;
+	font-size: 13px;
+	border: solid 1px white;
+}
 </style>
 </head>
 <body>
@@ -104,42 +80,41 @@
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div class="main">
 			<!-- <div class="subtitle"> -->
-			<div class="flow-wrapper">
-				<div class="flow-other">
-					<span class="flow-othertext">勤務地入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">住所入力</span>
-				</div>
-				<div class="flow-current">
-					<span class="flow-currenttext">経路入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">付随書類入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">確認</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">完了</span>
-				</div>
-				<!-- </div> -->
+			<div class="flow">
+				<div class="flow_current">勤務地入力</div>
+				<div class="flow_others">住所入力</div>
+				<div class="flow_others">経路入力</div>
+				<div class="flow_others">付随書類入力</div>
+				<div class="flow_others">確認</div>
+				<div class="flow_others">完了</div>
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-			<div class="transport">手段：電車</div>
-		</div>
-		<!-- ここまで上位タイトル -->
+				<div class="transport">手段：電車</div>
+			</div>
+			<!-- ここまで上位タイトル -->
 
-		<div class="station-background">
-			<table>
-				<tr>出発駅
-				</tr>
-			</table>
-		</div>
 
-	</div>
-	<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+			<!-- 제목예제1 -->
+			<div class="route-box">
+				<div class="station_form_Text1">
+					<div class="form_Column">出発駅</div>
+					<div>
+						<input type="text" name="from_station">
+					</div>
+				</div>
+				<div class="station_form_Text1">
+					<div class="form_Column">到着駅</div>
+					<div>
+						<input type="text" name="from_station">
+					</div>
+				</div>
+				<div class="route-swap">
+					<img src="/resources/img/tn/change_btn.gif" alt="swap">
+				</div>
+			</div>
+		</div>
+		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 </body>
 </html>
