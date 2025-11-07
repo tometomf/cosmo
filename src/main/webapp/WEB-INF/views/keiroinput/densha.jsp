@@ -84,6 +84,8 @@
 .left_space {
 	background-color: #f8f8f8; /* ← 표 아래로 깔릴 배경 */
 	padding: 16px; /* 표 주변 여백 */
+	width : 90%;
+	margin-left : 10px;
 }
 
 .right_space {
@@ -97,7 +99,7 @@
 
 .add_btn {
   display: block;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 </style>
