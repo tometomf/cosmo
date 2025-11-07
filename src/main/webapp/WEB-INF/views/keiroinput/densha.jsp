@@ -34,7 +34,7 @@
 .grid {
 	display: grid;
 	grid-template-columns: 140px 1fr auto;
-	width: 90%;
+	width: 100%;
 	justify-self: center;
 }
 
@@ -52,7 +52,7 @@
 .grid2 {
 	display: grid;
 	grid-template-columns: 140px 1fr auto;
-	width: 90%;
+	width: 100%;
 	justify-self: center;
 	margin-top: 10px;
 }
@@ -89,6 +89,17 @@
 .right_space {
 	
 }
+
+.form_array {
+	width: 90%;
+	margin: 0 auto;
+}
+
+.add_btn {
+  display: block;
+  margin-top: 30px;
+}
+
 </style>
 </head>
 <body>
@@ -115,25 +126,28 @@
 
 			<div class="station_layout">
 				<div class="left_space">
-					<div class="grid">
-						<div class="background">出発地</div>
-						<div>
-							<input type="text" name="From_station">
+					<div class="form_array">
+						<div class="grid">
+							<div class="background">出発地</div>
+							<div>
+								<input type="text" name="From_station">
+							</div>
+							<div class="swapbotton">
+								<img src="/resources/img/tn/change_btn.gif">
+							</div>
+							<div class="background">到着地</div>
+							<div>
+								<input type="text" name="To_station">
+							</div>
 						</div>
-						<div class="swapbotton">
-							<img src="/resources/img/tn/change_btn.gif">
+						<div></div>
+						<div class="grid2">
+							<div class="background">経由地</div>
+							<div>
+								<input type="text" name="middle_station">
+							</div>
 						</div>
-						<div class="background">到着地</div>
-						<div>
-							<input type="text" name="To_station">
-						</div>
-					</div>
-					<div></div>
-					<div class="grid2">
-						<div class="background">経由地</div>
-						<div>
-							<input type="text" name="middle_station">
-						</div>
+						<img src="/resources/img/keiyu_mini_btn01.gif" class="add_btn">
 					</div>
 				</div>
 				<div class="right_space">
@@ -141,6 +155,8 @@
 						<img src="/resources/img/tn/image_map.jpg">
 					</div>
 				</div>
+
+
 			</div>
 		</div>
 
