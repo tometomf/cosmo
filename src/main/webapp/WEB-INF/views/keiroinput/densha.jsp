@@ -31,47 +31,63 @@
 	width: 90%;
 }
 
-.route-box {
+.grid {
 	display: grid;
-	grid-template-columns: 1fr 2fr 2fr;
+	grid-template-columns: 140px 1fr auto;
+	width: 90%;
+	justify-self: center;
 }
 
-.route-row {
-	display: contents;
+.grid>div {
+	border: 1px solid #ccc;
+	padding: 8px;
+	text-align: center;
+	background-color: white;
 }
 
-.route-swap {
+.grid>div.background {
+	background-color: #8f8f8f;
+}
+
+.grid2 {
+	display: grid;
+	grid-template-columns: 140px 1fr auto;
+	width: 90%;
+	justify-self: center;
+	margin-top: 10px;
+}
+
+.grid2>div {
+	border: 1px solid #ccc;
+	padding: 8px;
+	text-align: center;
+	background-color: white;
+}
+
+.grid2>div.background {
+	background-color: #8f8f8f;
+}
+
+.swapbotton {
 	grid-column: 3;
 	grid-row: 1/span 2;
-	justify-self: center;
-	align-self: center;
+	display: flex;
 }
 
-.route-box>.station_form_Text1 {
-	display: contents;
-}
-
-#form_Ttile1 {
+.station_layout {
 	display: grid;
-	grid-template-columns: 1fr 2fr 2fr;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	align-items: center;
 }
 
-#form_Text1 {
-	display: grid;
-	grid-template-columns: 1fr 2fr 2fr;
+.left_space {
+	background-color: #f8f8f8; /* ← 표 아래로 깔릴 배경 */
+	padding: 16px; /* 표 주변 여백 */
 }
 
-.station_form_Text1 {
-	border: solid 1px #f5f5f5;
+.right_space {
 	
-}
-
-.station_form_Text1>div {
-	min-width: 15px;
-	text-align: left;
-	padding: 5px;
-	font-size: 13px;
-	border: solid 1px white;
 }
 </style>
 </head>
@@ -96,24 +112,38 @@
 
 
 			<!-- 제목예제1 -->
-			<div class="route-box">
-				<div class="station_form_Text1">
-					<div class="form_Column">出発駅</div>
-					<div>
-						<input type="text" name="from_station">
+
+			<div class="station_layout">
+				<div class="left_space">
+					<div class="grid">
+						<div class="background">出発地</div>
+						<div>
+							<input type="text" name="From_station">
+						</div>
+						<div class="swapbotton">
+							<img src="/resources/img/tn/change_btn.gif">
+						</div>
+						<div class="background">到着地</div>
+						<div>
+							<input type="text" name="To_station">
+						</div>
+					</div>
+					<div></div>
+					<div class="grid2">
+						<div class="background">経由地</div>
+						<div>
+							<input type="text" name="middle_station">
+						</div>
 					</div>
 				</div>
-				<div class="station_form_Text1">
-					<div class="form_Column">到着駅</div>
+				<div class="right_space">
 					<div>
-						<input type="text" name="from_station">
+						<img src="/resources/img/tn/image_map.jpg">
 					</div>
-				</div>
-				<div class="route-swap">
-					<img src="/resources/img/tn/change_btn.gif" alt="swap">
 				</div>
 			</div>
 		</div>
+
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 </body>
