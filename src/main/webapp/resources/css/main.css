@@ -82,6 +82,8 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     padding-bottom: 60px;
+    display: grid;
+    gap: 20px;
 }
 
 .main_Content {
@@ -254,5 +256,54 @@ body {
 	justify-content: space-between;
 }
 
+.button_Center {
+	width: 1010px;
+    margin: auto;
+}
 
+.button_Center_Group {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	justify-content: center;
+}
 
+.button_Center_Group > img {
+	display: block;
+    cursor: pointer;
+    margin: auto;
+}
+
+.button_Left {
+	width: 1010px;
+    margin: auto;
+}
+
+.button_Left_Group {
+	display: flex;
+	gap: 5px;
+}
+
+.button_Left_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
+
+.button_Side {
+	width: 1010px;
+    margin: auto;
+	display: flex;
+	justify-Content: space-between;
+}
+
+.button_Side_Group {
+	display: flex;
+	gap: 5px;
+}
+
+.button_Side_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}

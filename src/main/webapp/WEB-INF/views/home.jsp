@@ -140,6 +140,43 @@
 					<div class = "form_Normal">東京都江戸川区船堀2-1-5</div>
 				</div>
 			</div>
+			
+			<!-- 가운데 버튼 예제 -->
+			<div class = "button_Center">
+				<div class = "button_Center_Group">
+					<!-- 텍스트가 필요한 경우 텍스트 입력 -->
+					<div>필요한경우 글자 넣기 아니면 빼기</div>
+					<div><img src="/resources/img/back_btn01.gif" alt="back_btn01"></div>
+				</div>
+			</div>
+			
+			<!-- 왼쪽 정렬 버튼 예제 -->
+			<div class = "button_Left">
+				<div class = "button_Left_Group">   
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
+				</div>
+			</div>
+			
+			<!-- 왼쪽 정렬 버튼 예제 -->
+			<div class = "button_Left">
+				<div class = "button_Left_Group">   
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
+				</div>
+			</div>
+			
+			<!-- 양쪽 정렬 버튼 예제 -->
+			<div class = "button_Side">
+				<!-- 텍스트가 필요한 경우 이미지 지우고 텍스트 입력 -->
+				<div class = "button_Side_Group">   
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01">
+					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
+				</div>
+				<div class = "button_Side_Group">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+				</div>
+			</div>
 		</div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
