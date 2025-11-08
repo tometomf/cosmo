@@ -7,7 +7,7 @@ body {
   	display: flex;
   	flex-direction: column; 
   	min-height: 100vh;      
-  	font-family: "�ｿｽ�ｽｼ�ｽｭ�ｿｽ�ｽｼ�ｽｳ �ｿｽ�ｽｼ�ｽｰ郢ｧ�ｽｴ郢ｧ�ｽｷ郢晢ｿｽ郢ｧ�ｽｯ", sans-serif;
+  	font-family: "�ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｭ�ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｳ �ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｰ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｴ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｷ驛｢譎｢�ｽｿ�ｽｽ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｯ", sans-serif;
 	background-color: #fff;
 	margin: 0;
 	padding: 0;
@@ -82,6 +82,8 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     padding-bottom: 60px;
+    display: grid;
+    gap: 20px;
 }
 
 .main_Content {
@@ -254,5 +256,54 @@ body {
 	justify-content: space-between;
 }
 
+.button_Center {
+	width: 1010px;
+    margin: auto;
+}
 
+.button_Center_Group {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	justify-content: center;
+}
 
+.button_Center_Group > div > img {
+	display: block;
+    cursor: pointer;
+    margin: auto;
+}
+
+.button_Left {
+	width: 1010px;
+    margin: auto;
+}
+
+.button_Left_Group {
+	display: flex;
+	gap: 5px;
+}
+
+.button_Left_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
+
+.button_Side {
+	width: 1010px;
+    margin: auto;
+	display: flex;
+	justify-Content: space-between;
+}
+
+.button_Side_Group {
+	display: flex;
+	gap: 5px;
+}
+
+.button_Side_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
