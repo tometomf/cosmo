@@ -7,7 +7,7 @@ body {
   	display: flex;
   	flex-direction: column; 
   	min-height: 100vh;      
-  	font-family: "�ｿｽ�ｽｼ�ｽｭ�ｿｽ�ｽｼ�ｽｳ �ｿｽ�ｽｼ�ｽｰ郢ｧ�ｽｴ郢ｧ�ｽｷ郢晢ｿｽ郢ｧ�ｽｯ", sans-serif;
+  	font-family: "�ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｭ�ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｳ �ｿｽ�ｽｿ�ｽｽ�ｿｽ�ｽｽ�ｽｼ�ｿｽ�ｽｽ�ｽｰ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｴ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｷ驛｢譎｢�ｽｿ�ｽｽ驛｢�ｽｧ�ｿｽ�ｽｽ�ｽｯ", sans-serif;
 	background-color: #fff;
 	margin: 0;
 	padding: 0;
@@ -268,7 +268,7 @@ body {
 	justify-content: center;
 }
 
-.button_Center_Group > img {
+.button_Center_Group > div > img {
 	display: block;
     cursor: pointer;
     margin: auto;
