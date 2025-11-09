@@ -49,6 +49,12 @@
 	background-color: #8f8f8f;
 }
 
+.grid>div:nth-child(2),
+.grid>div:nth-child(5){
+	text-align: left;
+	padding-left : 25px;
+}
+
 .grid2 {
 	display: grid;
 	grid-template-columns: 140px 1fr auto;
@@ -68,6 +74,11 @@
 	background-color: #8f8f8f;
 }
 
+.grid2>div:nth-child(2){
+	text-align: left;
+	padding-left : 25px;
+}
+
 .swapbotton {
 	grid-column: 3;
 	grid-row: 1/span 2;
@@ -84,6 +95,7 @@
 .button_layout {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	width: 100%;
 	gap: 8px;
 	align-items: center;
 }
@@ -119,27 +131,115 @@
 }
 
 .station_flow {
-	display : flex;
-	flex-direction : column;
+	display: flex;
+	flex-direction: column;
 	background-color: #e9f7d3;
 	border: 2px solid #a8cf71;
 	width: 100%;
 	height: 80px;
-	margin : 40px;
+	/* margin : 40px;  */
 	justify-content: center;
 	align-items: flex-start;
-
 }
 
-.station_flow>div{
-	white-space : normal;
+.station_flow>div {
+	white-space: normal;
 }
 
-.station_flow_name{
+.station_flow_name {
 	font-size: 24px;
 	font-weight: bold;
 }
 
+.charge_info {
+	
+}
+
+.charge_info>img {
+	display: block;
+	margin-bottom: 0;
+}
+
+.charge_flow {
+	border: 2px solid #a8cf71;
+	margin-top: 0;
+}
+
+.charge_flow_row {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+	width: 100%;
+}
+
+.charge_flow>div:nth-child(odd) {
+	background-color: #e9f7d3;
+}
+
+.charge_flow>div:nth-child(even) {
+	background-color: #f5fce9;
+}
+
+.final_charge {
+	border: 1px solid black;
+}
+
+.final_charge_title {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+	background-color: #515151;
+	border: 1px solid white;
+}
+
+.final_charge_title>div {
+	border-left: 1px solid white;
+}
+
+.final_charge_detail {
+	
+}
+
+.final_charge_detail_row {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+	/* background-color: #515151; */
+	border: 1px solid white;
+}
+
+.final_charge_detail_row>div {
+	border-left: 1px solid white;
+}
+
+.final_charge_detail>div:nth-child(odd) {
+	background-color: #999999;
+}
+
+.final_charge_detail>div:nth-child(even) {
+	background-color: #dbdbdb;
+}
+
+.final_charge_result {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+	background-color: #dbdbdb;
+	border: 1px solid white;
+}
+
+.final_charge_result>div {
+	border-left: 1px solid white;
+}
+
+.final_charge_result>div:first-child {
+	grid-column: 1/span 2;
+}
+
+.final_charge_result>div:nth-child(2) {
+	display: none;
+}
+
+.menu_button {
+	display: flex;
+	gap: 5px;
+}
 </style>
 </head>
 <body>
@@ -177,7 +277,7 @@
 							</div>
 							<div class="background">到着地</div>
 							<div>
-								<input type="text" name="To_station">
+								<input type="text" name="To_station" value="新宿">
 							</div>
 						</div>
 						<div></div>
@@ -200,10 +300,128 @@
 				</div>
 			</div>
 			<div class="station_flow">
-				<div class = "station_flow_name">동두천 -> 서울 ->경주</div>
+				<div class="station_flow_name">동두천 -> 서울 ->경주</div>
 				<div>시간</div>
 			</div>
 
+			<div class="charge_info">
+				<img src="/resources/img/tn/tab_keiro_02.gif">
+				<div class="charge_flow">
+					<div class="charge_flow_row">
+						<div>
+							<input type="radio" name="seletRoute">経路1
+						</div>
+						<div>17:31発 -> 18:07着</div>
+						<div>36分</div>
+						<div>乗換1回</div>
+						<div>370円</div>
+						<div>
+							<img src="/resources/img/tn/icon_subway.gif">
+						</div>
+					</div>
+					<div class="charge_flow_row">
+						<div>
+							<input type="radio" name="seletRoute">経路2
+						</div>
+						<div>17:31発 -> 18:07着</div>
+						<div>36分</div>
+						<div>乗換1回</div>
+						<div>370円</div>
+						<div>
+							<img src="/resources/img/tn/icon_jr.gif"> <img
+								src="/resources/img/tn/icon_shitetu.gif"> <img
+								src="/resources/img/tn/icon_subway.gif">
+						</div>
+					</div>
+					<div class="charge_flow_row">
+						<div>
+							<input type="radio" name="seletRoute">経路3
+						</div>
+						<div>17:31発 -> 18:07着</div>
+						<div>36分</div>
+						<div>乗換1回</div>
+						<div>370円</div>
+						<div>
+							<img src="/resources/img/tn/icon_shitetu.gif"> <img
+								src="/resources/img/tn/icon_subway.gif">
+						</div>
+					</div>
+					<div class="charge_flow_row">
+						<div>
+							<input type="radio" name="seletRoute">経路4
+						</div>
+						<div>17:31発 -> 18:07着</div>
+						<div>36分</div>
+						<div>乗換1回</div>
+						<div>370円</div>
+						<div>
+							<img src="/resources/img/tn/icon_shitetu.gif"> <img
+								src="/resources/img/tn/icon_subway.gif">
+						</div>
+					</div>
+					<div class="charge_flow_row">
+						<div>
+							<input type="radio" name="seletRoute">経路5
+						</div>
+						<div>17:31発 -> 18:07着</div>
+						<div>36分</div>
+						<div>乗換1回</div>
+						<div>370円</div>
+						<div>
+							<img src="/resources/img/tn/icon_jr.gif"> <img
+								src="/resources/img/tn/icon_shitetu.gif"> <img
+								src="/resources/img/tn/icon_subway.gif">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="final_charge">
+				<div class="final_charge_title">
+					<div>1</div>
+					<div>1</div>
+					<div>1</div>
+					<div>1</div>
+					<div>1</div>
+				</div>
+
+				<div class="final_charge_detail">
+					<div class="final_charge_detail_row">
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+					</div>
+					<div class="final_charge_detail_row">
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+					</div>
+					<div class="final_charge_detail_row">
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+					</div>
+					<div class="final_charge_result">
+						<div>합계</div>
+						<div></div>
+						<div>1</div>
+						<div>1</div>
+						<div>1</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="menu_button">
+				<img src="/resources/img/back_btn01.gif"> <img
+					src="/resources/img/keiro_btn02.gif"> <img
+					src="/resources/img/hozon_btn01.gif">
+			</div>
 		</div>
 
 
