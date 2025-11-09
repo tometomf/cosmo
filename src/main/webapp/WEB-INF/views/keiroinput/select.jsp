@@ -74,7 +74,7 @@
 	gap: 1rem;
 }
 
-.info-text-box {
+.content-box {
 	width: 95%;
 	display: flex;
 	justify-content: left;
@@ -157,6 +157,7 @@
 	accent-color: #333;
 	transform: scale(1.05);
 }
+
 ｝
 </style>
 </head>
@@ -188,7 +189,7 @@
 			</div>
 			<div class="subtitle">【経路①】 通勤手段 入力</div>
 			<div class="commute-container">
-				<div class="info-text-box">
+				<div class="content-box">
 					<div class="info-text">通勤手段を選択してください.</div>
 				</div>
 
@@ -201,14 +202,20 @@
 						<div class="commute-label light">新 通勤手段</div>
 						<div class="commute-body">
 							<label><input type="radio" name="way" checked> 電車</label>
-							<label><input type="radio" name="way"> バス</label> 
-							<label><input type="radio" name="way"> 自動車</label>  
-							<label><input type="radio" name="way"> 徒歩</label>
-							<label><input type="radio" name="way"> その他</label>
+							<label><input type="radio" name="way"> バス</label> <label><input
+								type="radio" name="way"> 自動車</label> <label><input
+								type="radio" name="way"> 徒歩</label> <label><input
+								type="radio" name="way"> その他</label>
 						</div>
 					</div>
 				</div>
-
+				<div class="content-box">
+					<div class = "button_Left_Group">   
+						<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+						<img src="/resources/img/keiro_btn01.gif" alt="nyuryoku_btn01">
+						<img src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
+					</div>
+				</div>
 			</div>
 			<!-- ここまで上位タイトル -->
 
