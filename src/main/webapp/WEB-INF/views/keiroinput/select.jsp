@@ -68,14 +68,15 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-top: 2rem;
+	margin-top: 0.5rem;
 	flex-direction: column;
 	display: flex;
 	gap: 1rem;
 }
 
 .content-box {
-	width: 95%;
+	width: 1010px;
+	margin: auto;
 	display: flex;
 	justify-content: left;
 }
@@ -86,7 +87,8 @@
 }
 
 .commute-box {
-	width: 95%;
+	width: 1010px;
+	margin: auto;
 	display: flex;
 	flex-direction: column;
 	color: #333;
@@ -157,7 +159,6 @@
 	accent-color: #333;
 	transform: scale(1.05);
 }
-
 ｝
 </style>
 </head>
@@ -201,18 +202,19 @@
 					<div class="commute-panel">
 						<div class="commute-label light">新 通勤手段</div>
 						<div class="commute-body">
-							<label><input type="radio" name="way" checked> 電車</label>
-							<label><input type="radio" name="way"> バス</label> <label><input
-								type="radio" name="way"> 自動車</label> <label><input
-								type="radio" name="way"> 徒歩</label> <label><input
-								type="radio" name="way"> その他</label>
+							<label><input type="radio" name="way" value="densha"
+								checked> 電車</label> <label><input type="radio"
+								name="way" value="bus"> バス</label> <label><input
+								type="radio" name="way" value="car"> 自動車</label> <label><input
+								type="radio" name="way" value="toho"> 徒歩</label> <label><input
+								type="radio" name="way" value="other"> その他</label>
 						</div>
 					</div>
 				</div>
 				<div class="content-box">
-					<div class = "button_Left_Group">   
-						<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
-						<img src="/resources/img/keiro_btn01.gif" alt="nyuryoku_btn01">
+					<div class="button_Left_Group">
+						<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
+							src="/resources/img/keiro_btn01.gif" alt="nyuryoku_btn01">
 						<img src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
 					</div>
 				</div>
@@ -223,5 +225,43 @@
 		</div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			const keiroBtn = document
+					.querySelector('img[alt="nyuryoku_btn01"]');
+			const radios = document.querySelectorAll('input[name="way"]');
+
+			keiroBtn.addEventListener('click', function() {
+				const selected = document
+						.querySelector('input[name="way"]:checked');
+				if (!selected) {
+					alert("通勤手段を選択してください。");
+					return;
+				}
+
+				let url = "";
+				switch (selected.value) {
+				case "densha":
+					url = "/keiroinput/densha";
+					break;
+				case "bus":
+					url = "/keiroinput/bus";
+					break;
+				case "toho":
+					url = "/keiroinput/toho";
+					break;
+				case "car":
+					alert("自動車ページは未設定です。");
+					return;
+				case "other":
+					alert("その他ページは未設定です。");
+					return;
+				}
+
+				window.location.href = url;
+			});
+		});
+	</script>
 </body>
 </html>
