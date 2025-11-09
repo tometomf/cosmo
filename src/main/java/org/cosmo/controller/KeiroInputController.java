@@ -26,6 +26,32 @@ public class KeiroInputController {
 		return "keiroinput/densha";
 	}
 	
+	@GetMapping("/bus")
+	public String bus(Locale locale, Model model) {
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "keiroinput/bus";
+	}
+	
+	@GetMapping("/toho")
+	public String toho(Locale locale, Model model) {
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "keiroinput/toho";
+	}
+	
 	@GetMapping("/select")
 	public String select(Locale locale, Model model) {
 		
@@ -38,6 +64,5 @@ public class KeiroInputController {
 		
 		return "keiroinput/select";
 	}
-	
 	
 }
