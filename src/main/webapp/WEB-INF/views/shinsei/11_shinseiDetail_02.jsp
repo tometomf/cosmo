@@ -94,7 +94,7 @@
 			</div>
 
 
-			<div class="content_Form1" style="margin-top: 30px;">
+			<div class="content_Form1">
 				<div class="form_Title1" id="form_Title1">
 					<div></div>
 					<div>申請前</div>
@@ -117,7 +117,7 @@
 				</div>
 			</div>
 
-			<div class="content_Form2" style="margin-top: 40px">
+			<div class="content_Form2">
 				<div class="form_Title2">
 					<div>経路①</div>
 				</div>
@@ -126,25 +126,30 @@
 				</div>
 			</div>
 
-			<div class="content_Form1" style="margin-top: 40px;">
+			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移動日</div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
+					<div class="form_Normal"></div>
 				</div>
 			</div>
 

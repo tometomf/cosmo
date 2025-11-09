@@ -70,7 +70,7 @@
 				</div>
 			</div>
 
-			<div class="content_Form1" style="margin-top: 25px;">
+			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">状況</div>
 					<div>差し戻し</div>
@@ -97,7 +97,7 @@
 				</div>
 			</div>
 
-			<div class="content_Form1" style="margin-top: 30px;">
+			<div class="content_Form1">
 				<div class="form_Title1" id="form_Title1">
 					<div></div>
 					<div>申請前</div>
@@ -120,7 +120,7 @@
 				</div>
 			</div>
 
-			<div class="content_Form2" style="margin-top: 40px">
+			<div class="content_Form2">
 				<div class="form_Title2">
 					<div>経路①</div>
 				</div>
@@ -174,36 +174,35 @@
 				</div>
 			</div>
 
-			<div class="content_Form1" style="margin-top: 40px;">
+			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移動日</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div></div>
-				</div>
+					<div class="form_Normal"></div>
+					</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column"
-						style="display: flex; align-items: center;">取消理由</div>
-					<div style="grid-column: 2/-1;">
+					<div class="form_Column" style="display: flex; align-items: center;">取消理由</div>
+					<div class="form_Normal">
 						<textarea readonly
 							style="width: 90%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
 					</div>
