@@ -81,11 +81,27 @@
 	align-items: center;
 }
 
+.button_layout {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	align-items: center;
+}
+
+.button_layout>img:first-child {
+	justify-self: start;
+}
+
+.button_layout>img:last-child {
+	justify-self: end;
+}
+
 .left_space {
 	background-color: #f8f8f8; /* ← 표 아래로 깔릴 배경 */
 	padding: 16px; /* 표 주변 여백 */
-	width : 90%;
-	margin-left : 10px;
+	width: 90%;
+	margin-left: 10px;
+	align-self: start;
 }
 
 .right_space {
@@ -98,8 +114,30 @@
 }
 
 .add_btn {
-  display: block;
-  margin-top: 20px;
+	display: block;
+	margin-top: 20px;
+}
+
+.station_flow {
+	display : flex;
+	flex-direction : column;
+	background-color: #e9f7d3;
+	border: 2px solid #a8cf71;
+	width: 100%;
+	height: 80px;
+	margin : 40px;
+	justify-content: center;
+	align-items: flex-start;
+
+}
+
+.station_flow>div{
+	white-space : normal;
+}
+
+.station_flow_name{
+	font-size: 24px;
+	font-weight: bold;
 }
 
 </style>
@@ -149,7 +187,10 @@
 								<input type="text" name="middle_station">
 							</div>
 						</div>
-						<img src="/resources/img/keiyu_mini_btn01.gif" class="add_btn">
+						<div class="button_layout">
+							<img src="/resources/img/keiyu_mini_btn01.gif" class="add_btn">
+							<img src="/resources/img/tn/search_btn01.gif" class="add_btn">
+						</div>
 					</div>
 				</div>
 				<div class="right_space">
@@ -157,10 +198,14 @@
 						<img src="/resources/img/tn/image_map.jpg">
 					</div>
 				</div>
-
-
 			</div>
+			<div class="station_flow">
+				<div class = "station_flow_name">동두천 -> 서울 ->경주</div>
+				<div>시간</div>
+			</div>
+
 		</div>
+
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
