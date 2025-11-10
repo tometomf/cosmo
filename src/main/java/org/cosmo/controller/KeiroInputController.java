@@ -52,7 +52,7 @@ public class KeiroInputController {
 		return "keiroinput/07_keirodtInput_04";
 	}
 	
-	@GetMapping("/06_keirodtInput")
+	@GetMapping("/06_keiroInput")
 	public String select(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -62,7 +62,7 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/06_keirodtInput";
+		return "keiroinput/06_keiroInput";
 	}
 	
 }
