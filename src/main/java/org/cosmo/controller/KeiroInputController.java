@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/keiroinput")
 public class KeiroInputController {
 	
-	@GetMapping("/densha")
+	@GetMapping("/07_keirodtInput")
 	public String densha(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -23,10 +23,10 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/densha";
+		return "keiroinput/07_keirodtInput";
 	}
 	
-	@GetMapping("/bus")
+	@GetMapping("/07_keirodtInput_02")
 	public String bus(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -36,10 +36,10 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/bus";
+		return "keiroinput/07_keirodtInput_02";
 	}
 	
-	@GetMapping("/toho")
+	@GetMapping("/07_keirodtInput_04")
 	public String toho(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -49,10 +49,10 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/toho";
+		return "keiroinput/07_keirodtInput_04";
 	}
 	
-	@GetMapping("/select")
+	@GetMapping("/06_keirodtInput")
 	public String select(Locale locale, Model model) {
 		
 		Date date = new Date();
@@ -62,7 +62,7 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		return "keiroinput/select";
+		return "keiroinput/06_keirodtInput";
 	}
 	
 }
