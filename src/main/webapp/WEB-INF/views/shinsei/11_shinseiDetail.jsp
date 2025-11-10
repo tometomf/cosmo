@@ -9,34 +9,7 @@
 <title>申請中案件 詳細</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 <style>
-#main_Content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 15px;
-	margin-top: 30px;
-}
 
-#main_Content>div {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	width: 750px;
-}
-
-#main_Content>div>div:first-child {
-	width: 225px;
-	text-align: right;
-}
-
-#main_Content img {
-	cursor: pointer;
-	display: block;
-}
-
-#main_Content>div>div:last-child {
-	flex: 1;
-}
 
 #form_Ttile1 {
 	display: grid;
@@ -58,13 +31,7 @@
 	grid-template-columns: 1fr 4fr;
 }
 
-/* 돌아가기 버튼 가운데 정렬 */
-.back-btn-area {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 20px;
-}
+
 </style>
 </head>
 
