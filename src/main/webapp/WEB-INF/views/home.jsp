@@ -157,15 +157,7 @@
 					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
 				</div>
 			</div>
-			
-			<!-- 왼쪽 정렬 버튼 예제 -->
-			<div class = "button_Left">
-				<div class = "button_Left_Group">   
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
-					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
-				</div>
-			</div>
-			
+	
 			<!-- 양쪽 정렬 버튼 예제 -->
 			<div class = "button_Side">
 				<!-- 텍스트가 필요한 경우 이미지 지우고 텍스트 입력 -->
