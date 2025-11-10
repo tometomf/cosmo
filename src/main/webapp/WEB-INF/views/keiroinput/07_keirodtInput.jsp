@@ -49,10 +49,9 @@
 	background-color: #8f8f8f;
 }
 
-.grid>div:nth-child(2),
-.grid>div:nth-child(5){
+.grid>div:nth-child(2), .grid>div:nth-child(5) {
 	text-align: left;
-	padding-left : 25px;
+	padding-left: 25px;
 }
 
 .grid2 {
@@ -74,9 +73,9 @@
 	background-color: #8f8f8f;
 }
 
-.grid2>div:nth-child(2){
+.grid2>div:nth-child(2) {
 	text-align: left;
-	padding-left : 25px;
+	padding-left: 25px;
 }
 
 .swapbotton {
@@ -140,6 +139,7 @@
 	/* margin : 40px;  */
 	justify-content: center;
 	align-items: flex-start;
+	margin-top: 40px;
 }
 
 .station_flow>div {
@@ -152,7 +152,7 @@
 }
 
 .charge_info {
-	
+	margin-top: 40px;
 }
 
 .charge_info>img {
@@ -161,7 +161,8 @@
 }
 
 .charge_flow {
-	border: 2px solid #a8cf71;
+	border-top: 2px solid #a8cf71;
+	border-bottom: 2px solid #a8cf71;
 	margin-top: 0;
 }
 
@@ -169,8 +170,8 @@
 	display: grid;
 	grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
 	width: 100%;
-	height : 35px;
-	align-items : center;
+	height: 35px;
+	align-items: center;
 }
 
 .charge_flow>div:nth-child(odd) {
@@ -183,6 +184,7 @@
 
 .final_charge {
 	border: 1px solid black;
+	margin-top: 40px;
 }
 
 .final_charge_title {
@@ -190,6 +192,10 @@
 	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
 	background-color: #515151;
 	border: 1px solid white;
+	height: 25px;
+	text-align : center;
+	color : white;
+	font-weight : bold;
 }
 
 .final_charge_title>div {
@@ -205,7 +211,7 @@
 	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
 	/* background-color: #515151; */
 	border: 1px solid white;
-	
+	height: 25px;
 }
 
 .final_charge_detail_row>div {
@@ -220,15 +226,31 @@
 	background-color: #dbdbdb;
 }
 
+
+.final_charge_detail>div:nth-child(1)>div:nth-child(n+3),
+.final_charge_detail>div:nth-child(2)>div:nth-child(n+3){
+	text-align : right;
+}
+
+
+.final_charge_detail>div:nth-child(3)>div:nth-child(n+3){
+	text-align : center;
+}
+
+
 .final_charge_result {
 	display: grid;
 	grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
 	background-color: #dbdbdb;
 	border: 1px solid white;
+	height: 25px;
+	font-weight: bold;
+	
 }
 
 .final_charge_result>div {
 	border-left: 1px solid white;
+	text-align : right;
 }
 
 .final_charge_result>div:first-child {
@@ -238,6 +260,7 @@
 .final_charge_result>div:nth-child(2) {
 	display: none;
 }
+
 
 .menu_button {
 	display: flex;
@@ -381,41 +404,41 @@
 
 			<div class="final_charge">
 				<div class="final_charge_title">
-					<div>1</div>
-					<div>1</div>
-					<div>1</div>
-					<div>1</div>
-					<div>1</div>
+					<div>路線</div>
+					<div>区間</div>
+					<div>１ヶ月</div>
+					<div>3ヶ月</div>
+					<div>6ヶ月</div>
 				</div>
 
 				<div class="final_charge_detail">
 					<div class="final_charge_detail_row">
 						<div>1</div>
 						<div>1</div>
-						<div>1</div>
-						<div>1</div>
-						<div>1</div>
+						<div>4,620円</div>
+						<div>13,170円</div>
+						<div>24,950円</div>
 					</div>
 					<div class="final_charge_detail_row">
 						<div>1</div>
 						<div>1</div>
-						<div>1</div>
-						<div>1</div>
-						<div>1</div>
+						<div>8,500円</div>
+						<div>24,230円</div>
+						<div>45,900円</div>
 					</div>
 					<div class="final_charge_detail_row">
 						<div>1</div>
 						<div>1</div>
-						<div>1</div>
-						<div>1</div>
-						<div>1</div>
+						<div>↓</div>
+						<div>↓</div>
+						<div>↓</div>
 					</div>
 					<div class="final_charge_result">
 						<div>합계</div>
 						<div></div>
-						<div>1</div>
-						<div>1</div>
-						<div>1</div>
+						<div>13,120円</div>
+						<div>37,400円</div>
+						<div>70,850円</div>
 					</div>
 				</div>
 			</div>
