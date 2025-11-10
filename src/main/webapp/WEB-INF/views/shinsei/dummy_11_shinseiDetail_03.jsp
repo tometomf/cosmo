@@ -6,38 +6,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>title</title>
+<title>申請中案件 詳細</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 <style>
-#main_Content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 15px;
-	margin-top: 30px;
-}
-
-#main_Content>div {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	width: 750px;
-}
-
-#main_Content>div>div:first-child {
-	width: 225px;
-	text-align: right;
-}
-
-#main_Content img {
-	cursor: pointer;
-	display: block;
-}
-
-#main_Content>div>div:last-child {
-	flex: 1;
-}
-
 #form_Title1 {
 	display: grid;
 	grid-template-columns: 1fr 2fr 2fr;
@@ -201,7 +172,7 @@
 					</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column" style="display: flex; align-items: center;">取消理由</div>
+					<div class="form_Column">取消理由</div>
 					<div class="form_Normal">
 						<textarea readonly
 							style="width: 90%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>

@@ -6,39 +6,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>title</title>
+<title>一時保存中案件 詳細</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 </head>
 <style>
-#main_Content {
-	display: flex;
-	flex-direction: column;
-	align-items: center; /* 전체를 가운데 정렬 */
-	gap: 15px;
-	margin-top: 30px;
-}
-
-#main_Content>div {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	width: 750px; /* 중앙정렬 기준 폭, 필요에 따라 조정 */
-}
-
-#main_Content>div>div:first-child {
-	width: 225px; /* 버튼 영역 고정 */
-	text-align: right; /* 버튼 오른쪽 정렬 (선택사항) */
-}
-
-#main_Content img {
-	cursor: pointer;
-	display: block;
-}
-
-#main_Content>div>div:last-child {
-	flex: 1;
-}
-
 #form_Title1 {
 	display: grid;
 	grid-template-columns: 1fr 2fr 2fr;
@@ -70,7 +41,7 @@
 				</div>
 			</div>
 
-			<div class="content_Form1" style="margin-top: 25px;">
+			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">状況</div>
 					<div>一時保存中</div>
