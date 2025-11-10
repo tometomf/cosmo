@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/hiwariKakunin") // URL: /hiwariKakunin
-public class HiwariKakuninController {
+@RequestMapping("/hiwariKeiro")  // URL: /hiwariKanryou
+public class HiwariKeiroController {
 
     @GetMapping("")
-    public String showKakuninPage() {
-        // /WEB-INF/views/hiwariKakunin.jsp 로 이동
-        return "hiwariKinmuchi/hiwariKakunin";
+    public String showKeiroPage() {
+        // JSP 경로: /WEB-INF/views/hiwariKinmuchi/hiwariKeiro.jsp
+        return "hiwariKinmuchi/hiwariKeiro";
     }
 }
