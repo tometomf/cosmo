@@ -65,4 +65,16 @@ public class KeiroInputController {
 		return "keiroinput/06_keiroInput";
 	}
 	
+	@GetMapping("/07_keirodtInput_03")
+	public String jidousha(Locale locale, Model model) {
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "keiroinput/07_keirodtInput_03";
+	}
 }

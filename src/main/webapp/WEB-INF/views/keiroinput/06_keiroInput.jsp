@@ -243,17 +243,17 @@
 				let url = "";
 				switch (selected.value) {
 				case "densha":
-					url = "keiroinput/07_keirodtInput";
+					url = "07_keirodtInput";
 					break;
 				case "bus":
-					url = "keiroinput/07_keirodtInput_02";
+					url = "07_keirodtInput_02";
 					break;
 				case "toho":
-					url = "keiroinput/07_keirodtInput_04";
+					url = "07_keirodtInput_04";
 					break;
 				case "car":
-					alert("自動車ページは未設定です。");
-					return;
+					url = "07_keirodtInput_03";
+					break;
 				case "other":
 					alert("その他ページは未設定です。");
 					return;
