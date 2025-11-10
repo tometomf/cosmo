@@ -9,8 +9,6 @@
 <title>申請中案件 詳細</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 <style>
-
-
 #form_Ttile1 {
 	display: grid;
 	grid-template-columns: 1fr 2fr 2fr;
@@ -30,8 +28,6 @@
 	display: grid;
 	grid-template-columns: 1fr 4fr;
 }
-
-
 </style>
 </head>
 
@@ -49,39 +45,40 @@
 
 			<!-- ===== 상태 정보 ===== -->
 			<div class="content_Form1" style="margin-top: 25px;">
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div>承認待ち</div>
+					<div class="form_Normal">承認待ち</div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div>12300064</div>
+					<div class="form_Normal">12300064</div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div>2013/01/03</div>
+					<div class="form_Normal">2013/01/03</div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div>2013/01/04</div>
+					<div class="form_Normal">2013/01/04</div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">再申請日</div>
-					<div>2013/01/08</div>
+					<div class="form_Normal">2013/01/08</div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">承認日</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">支給開始日</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">本人申し送りコメント</div>
-					<div></div>
+					<div class="form_Normal"></div>
 				</div>
 			</div>
+
 
 			<!-- ===== 이 신청을 되돌리는 버튼 (왼쪽정렬) ===== -->
 			<div class="button_Left">
@@ -142,7 +139,9 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
-					<div class="form_Normal"><a href="#">登録証書コピー</a></div>
+					<div class="form_Normal">
+						<a href="#">登録証書コピー</a>
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">保険満了日</div>
@@ -197,8 +196,8 @@
 			<!-- ===== 돌아가기 버튼 (왼쪽 정렬) ===== -->
 			<div class="button_Left">
 				<div class="button_Left_Group">
-					<a href="/shinsei/list">
-						<img src="/resources/img/back_btn01.gif" alt="back_btn01">
+					<a href="/shinsei/list"> <img
+						src="/resources/img/back_btn01.gif" alt="back_btn01">
 					</a>
 				</div>
 			</div>
