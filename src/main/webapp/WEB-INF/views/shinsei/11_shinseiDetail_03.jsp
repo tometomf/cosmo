@@ -89,13 +89,12 @@
 			<!-- ===== 제목 ===== -->
 			<div class="main_title">
 				<div class="subtitle">
-					<div>差戻し案件 詳細</div>
+					<div>申請内容 確認</div>
 				</div>
 			</div>
 
 			<!-- ===== 경고 영역 ===== -->
-			<div class="content_Form1" style="margin-top: 20px;">
-				<div style="display: flex; align-items: flex-start; gap: 10px;">
+			<div class="content_Form1" >
 					<!-- 경고 아이콘 -->
 					<img src="/resources/img/icon_attention.gif" alt="warning"
 						style="width: 35px; height: 35px; flex-shrink: 0; margin-top: 2px;">
@@ -509,45 +508,62 @@
 				</div>
 			</div>
 
-			<!-- ===== その他 섹션 (5개 행) ===== -->
-			<div class="content_Form2">
-				<div style="font-size: 13px;">
-					<div class="form_Text1" id="form_Text2">
-						<div class="form_Column">その他</div>
-						<div class="form_Normal" style="border-right: 1px solid #d9d9d9;">
-							<a href="#" style="color: blue; text-decoration: underline;">その他</a>
-						</div>
-						<div class="form_Normal" style="width: 200px;">コメント</div>
-					</div>
-					<div class="form_Text1" id="form_Text2">
-						<div class="form_Column">その他</div>
-						<div class="form_Normal" style="border-right: 1px solid #d9d9d9;">
-							<a href="#" style="color: blue; text-decoration: underline;">その他</a>
-						</div>
-						<div class="form_Normal" style="width: 200px;">コメント</div>
-					</div>
-					<div class="form_Text1" id="form_Text2">
-						<div class="form_Column">その他</div>
-						<div class="form_Normal" style="border-right: 1px solid #d9d9d9;">
-							<a href="#" style="color: blue; text-decoration: underline;">その他</a>
-						</div>
-						<div class="form_Normal" style="width: 200px;">コメント</div>
-					</div>
-					<div class="form_Text1" id="form_Text2">
-						<div class="form_Column">その他</div>
-						<div class="form_Normal" style="border-right: 1px solid #d9d9d9;">
-							<a href="#" style="color: blue; text-decoration: underline;">その他</a>
-						</div>
-						<div class="form_Normal" style="width: 200px;">コメント</div>
-					</div>
-					<div class="form_Text1" id="form_Text2">
-						<div class="form_Column">その他</div>
-						<div class="form_Normal" style="border-right: 1px solid #d9d9d9;">
-							<a href="#" style="color: blue; text-decoration: underline;">その他</a>
-						</div>
-						<div class="form_Normal" style="width: 200px;">コメント</div>
-					</div>
-				</div>
+	<div class="main">
+    <div class="main_Content">
+        <!-- 1번째 테이블 -->
+        <div class="content_Form1">
+            <div class="form_Text1" style="display: flex;">
+                <div class="form_Column" style="width: 100px;">その他</div>
+                <div class="form_Normal" style="width: 450px;">
+                    <a href="#" style="color: blue; text-decoration: underline;">その他</a>
+                </div>
+                <div class="form_Normal" style="width: 460px;">コメント</div>
+            </div>
+        </div>
+        
+        <!-- 2번째 테이블 -->
+        <div class="content_Form1">
+            <div class="form_Text1" style="display: flex;">
+                <div class="form_Column" style="width: 100px;">その他</div>
+                <div class="form_Normal" style="width: 450px;">
+                    <a href="#" style="color: blue; text-decoration: underline;">その他</a>
+                </div>
+                <div class="form_Normal" style="width: 460px;">コメント</div>
+            </div>
+        </div>
+        
+        <!-- 3번째 테이블 -->
+        <div class="content_Form1">
+            <div class="form_Text1" style="display: flex;">
+                <div class="form_Column" style="width: 100px;">その他</div>
+                <div class="form_Normal" style="width: 450px;">
+                    <a href="#" style="color: blue; text-decoration: underline;">その他</a>
+                </div>
+                <div class="form_Normal" style="width: 460px;">コメント</div>
+            </div>
+        </div>
+        
+        <!-- 4번째 테이블 -->
+        <div class="content_Form1">
+            <div class="form_Text1" style="display: flex;">
+                <div class="form_Column" style="width: 100px;">その他</div>
+                <div class="form_Normal" style="width: 450px;">
+                    <a href="#" style="color: blue; text-decoration: underline;">その他</a>
+                </div>
+                <div class="form_Normal" style="width: 460px;">コメント</div>
+            </div>
+        </div>
+        
+        <!-- 5번째 테이블 -->
+        <div class="content_Form1">
+            <div class="form_Text1" style="display: flex;">
+                <div class="form_Column" style="width: 100px;">その他</div>
+                <div class="form_Normal" style="width: 450px;">
+                    <a href="#" style="color: blue; text-decoration: underline;">その他</a>
+                </div>
+                <div class="form_Normal" style="width: 460px;">コメント</div>
+            </div>
+        </div>
 				<!-- 修正 버튼 (표 밖, 오른쪽 정렬) -->
 				<div
 					style="display: flex; justify-content: flex-end; padding: 10px 15px;">
