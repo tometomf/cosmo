@@ -10,28 +10,6 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 </head>
 <style>
-.warning_box {
-	background-color: #fff8e5;
-	border: 1px solid #f5c84c;
-	color: #cc0000;
-	font-size: 13px;
-	line-height: 1.5;
-	margin-top: 20px;
-	padding: 10px 15px;
-	display: flex;
-	align-items: flex-start;
-	gap: 10px;
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.warning_box img {
-	width: 30px;
-	height: 30px;
-	flex-shrink: 0;
-}
-
 /* ====== 테이블 구조 ====== */
 #form_Title1 {
 	display: grid;
@@ -51,6 +29,12 @@
 #form_Text2 {
 	display: grid;
 	grid-template-columns: 1fr 4fr;
+}
+
+.main > div {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>
 <body>
@@ -255,15 +239,12 @@
 		</div>
 
 
-		<!-- ===== 修正 버튼 (표 밖, 오른쪽 하단 정렬) ===== -->
-		<div
-			style="display: flex; justify-content: flex-end; padding: 10px 15px;">
-			<button type="button"
-				style="border: none; background: none; cursor: pointer;">
-				<img src="/resources/img/tn/shusei_btn01.gif" alt="修正">
-			</button>
+		<!-- 오른쪾 정렬 버튼 예제 -->
+		<div class="button_Right">
+			<div class="button_Right_Group">
+				<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
+			</div>
 		</div>
-
 
 
 
@@ -355,13 +336,11 @@
 
 		</div>
 
-		<!-- 修正 버튼 (전체 박스들 밖, 오른쪽 정렬) -->
-		<div
-			style="display: flex; justify-content: flex-end; padding: 10px 0;">
-			<button type="button"
-				style="border: none; background: none; cursor: pointer;">
-				<img src="/resources/img/tn/shusei_btn01.gif" alt="修正">
-			</button>
+		<!-- 오른쪾 정렬 버튼 예제 -->
+		<div class="button_Right">
+			<div class="button_Right_Group">
+				<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
+			</div>
 		</div>
 
 		<!-- ===== 経路② ===== -->
@@ -396,19 +375,18 @@
 		<!-- ===== 付随書類 (経路② 하단 작은 표, 왼쪽 정렬) ===== -->
 		<div class="multi_Form"
 			style="justify-content: flex-start; margin-top: 15px;">
-			<div class="content_Form1"
-				style="width: 330px; font-size: 13px; margin: 0;">
-				<div class="form_Text1">
+			<div class="content_Form1" style="width: 330px; margin: 0;">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
-						<a href="#" style="color: blue; text-decoration: underline;">定期メモ</a>
+						<a href="">定期コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1">
-					<div class="form_Column">初回定期購入期間</div>
-					<div class="form_Normal">1ヶ月</div>
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">初回定期期間</div>
+					<div class="form_Normal">1カ月</div>
 				</div>
-				<div class="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">次回以降定期期間</div>
 					<div class="form_Normal"></div>
 				</div>
@@ -417,13 +395,11 @@
 
 
 
-		<!-- 修正 버튼 (표 밖, 오른쪽 정렬) -->
-		<div
-			style="display: flex; justify-content: flex-end; padding: 10px 15px;">
-			<button type="button"
-				style="border: none; background: none; cursor: pointer;">
-				<img src="/resources/img/tn/shusei_btn01.gif" alt="修正">
-			</button>
+		<!-- 오른쪾 정렬 버튼 예제 -->
+		<div class="button_Right">
+			<div class="button_Right_Group">
+				<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
+			</div>
 		</div>
 
 
@@ -458,36 +434,31 @@
 		</div>
 
 
-		<!-- ===== 付随書類 (経路② 하단 작은 표, 왼쪽 정렬) ===== -->
 		<div class="multi_Form"
 			style="justify-content: flex-start; margin-top: 15px;">
-			<div class="content_Form1"
-				style="width: 330px; font-size: 13px; margin: 0;">
-				<div class="form_Text1">
+			<div class="content_Form1" style="width: 330px; margin: 0;">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
-						<a href="#" style="color: blue; text-decoration: underline;">定期メモ</a>
+						<a href="">定期コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1">
-					<div class="form_Column">初回定期購入期間</div>
-					<div class="form_Normal">1ヶ月</div>
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">初回定期期間</div>
+					<div class="form_Normal">1カ月</div>
 				</div>
-				<div class="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">次回以降定期期間</div>
 					<div class="form_Normal"></div>
 				</div>
 			</div>
 		</div>
 
-
-		<!-- 修正 버튼 (표 밖, 오른쪽 정렬) -->
-		<div
-			style="display: flex; justify-content: flex-end; padding: 10px 15px;">
-			<button type="button"
-				style="border: none; background: none; cursor: pointer;">
-				<img src="/resources/img/tn/shusei_btn01.gif" alt="修正">
-			</button>
+		<!-- 오른쪾 정렬 버튼 예제 -->
+		<div class="button_Right">
+			<div class="button_Right_Group">
+				<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
+			</div>
 		</div>
 
 
@@ -546,57 +517,55 @@
 				<div class="form_Normal" style="width: 460px;">コメント</div>
 			</div>
 		</div>
-		<!-- 修正 버튼 (표 밖, 오른쪽 정렬) -->
-		<div
-			style="display: flex; justify-content: flex-end; padding: 10px 15px;">
-			<button type="button"
-				style="border: none; background: none; cursor: pointer;">
-				<img src="/resources/img/tn/shusei_btn01.gif" alt="修正">
-			</button>
-		</div>
-	</div>
 
-	<!-- ===== 申請区分 섹션 ===== -->
-	<div class="content_Form1">
-		<div class="form_Text1" id="form_Text2">
-			<div class="form_Column">申請区分</div>
-			<div class="form_Normal">農納</div>
-		</div>
-		<div class="form_Text1" id="form_Text2">
-			<div class="form_Column">申請理由</div>
-			<div class="form_Normal">
-				<textarea
-					style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;"></textarea>
+		<!-- 오른쪾 정렬 버튼 예제 -->
+		<div class="button_Right">
+			<div class="button_Right_Group">
+				<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
 			</div>
 		</div>
-		<div class="form_Text1" id="form_Text2">
-			<div class="form_Column">離納日／移転日</div>
-			<div class="form_Normal">2013/04/10</div>
-		</div>
-		<div class="form_Text1" id="form_Text2">
-			<div class="form_Column">転入日</div>
-			<div class="form_Normal">2013/04/09</div>
-		</div>
-		<div class="form_Text1" id="form_Text2">
-			<div class="form_Column">開始日</div>
-			<div class="form_Normal"></div>
-		</div>
-	</div>
 
-	<!-- ===== 하단 버튼 (한 줄 정렬) ===== -->
-	<div class="button_Side" style="margin-top: 40px;">
-		<div class="button_Side_Group">
-			<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
-				src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
-			<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02">
+		<!-- ===== 申請区分 섹션 ===== -->
+		<div class="content_Form1">
+			<div class="form_Text1" id="form_Text2">
+				<div class="form_Column">申請区分</div>
+				<div class="form_Normal">農納</div>
+			</div>
+			<div class="form_Text1" id="form_Text2">
+				<div class="form_Column">申請理由</div>
+				<div class="form_Normal">
+					<textarea
+						style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;"></textarea>
+				</div>
+			</div>
+			<div class="form_Text1" id="form_Text2">
+				<div class="form_Column">離納日／移転日</div>
+				<div class="form_Normal">2013/04/10</div>
+			</div>
+			<div class="form_Text1" id="form_Text2">
+				<div class="form_Column">転入日</div>
+				<div class="form_Normal">2013/04/09</div>
+			</div>
+			<div class="form_Text1" id="form_Text2">
+				<div class="form_Column">開始日</div>
+				<div class="form_Normal"></div>
+			</div>
 		</div>
+
+		<!-- ===== 하단 버튼 (한 줄 정렬) ===== -->
+		<div class="button_Side" style="margin-top: 40px;">
+			<div class="button_Side_Group">
+				<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
+					src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
+				<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02">
+			</div>
+		</div>
+
 	</div>
 
 
 
 
 	<%@ include file="/WEB-INF/views/common/footer.jsp"%>
-
-
 </body>
 </html>
