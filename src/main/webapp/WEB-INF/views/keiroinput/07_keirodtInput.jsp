@@ -56,7 +56,7 @@
 
 .grid2 {
 	display: grid;
-	grid-template-columns: 140px 1fr auto;
+	grid-template-columns: 140px 1fr;
 	width: 100%;
 	justify-self: center;
 	margin-top: 10px;
@@ -73,7 +73,7 @@
 	background-color: #8f8f8f;
 }
 
-.grid2>div:nth-child(2) {
+.grid2>div:nth-child(even) {
 	text-align: left;
 	padding-left: 25px;
 }
@@ -193,9 +193,9 @@
 	background-color: #515151;
 	border: 1px solid white;
 	height: 25px;
-	text-align : center;
-	color : white;
-	font-weight : bold;
+	text-align: center;
+	color: white;
+	font-weight: bold;
 }
 
 .final_charge_title>div {
@@ -226,17 +226,14 @@
 	background-color: #dbdbdb;
 }
 
-
 .final_charge_detail>div:nth-child(1)>div:nth-child(n+3),
-.final_charge_detail>div:nth-child(2)>div:nth-child(n+3){
-	text-align : right;
+	.final_charge_detail>div:nth-child(2)>div:nth-child(n+3) {
+	text-align: right;
 }
 
-
-.final_charge_detail>div:nth-child(3)>div:nth-child(n+3){
-	text-align : center;
+.final_charge_detail>div:nth-child(3)>div:nth-child(n+3) {
+	text-align: center;
 }
-
 
 .final_charge_result {
 	display: grid;
@@ -245,12 +242,11 @@
 	border: 1px solid white;
 	height: 25px;
 	font-weight: bold;
-	
 }
 
 .final_charge_result>div {
 	border-left: 1px solid white;
-	text-align : right;
+	text-align: right;
 }
 
 .final_charge_result>div:first-child {
@@ -261,10 +257,15 @@
 	display: none;
 }
 
-
 .menu_button {
 	display: flex;
 	gap: 5px;
+}
+
+#map {
+	width: 520px; /* 원하는 값 */
+	height: 360px; /* 원하는 값 */
+	/* 또는 width:100%; height:400px; */
 }
 </style>
 </head>
@@ -309,23 +310,24 @@
 						</div>
 						<div></div>
 						<!-- 경유역 그리드 -->
-						<div class="grid2">
-							<div class="background">経由地</div>
+						<div class="grid2" id="stationContainer">
+							<div class="background">経由地1</div>
 							<div>
-								<input type="text" name="middle_station">
+								<input type="text" name="middle_station_01">
 							</div>
 						</div>
+
 						<div class="button_layout">
-							<img src="/resources/img/keiyu_mini_btn01.gif" class="add_btn">
+							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
+								class="add_btn">
+							<!-- 경유지 추가버튼 -->
 							<img src="/resources/img/tn/search_btn01.gif" class="add_btn">
 						</div>
 					</div>
 				</div>
 				<!-- 지도 그리드 -->
 				<div class="right_space">
-					<div>
-						<img src="/resources/img/tn/image_map.jpg">
-					</div>
+					<div id="map"></div>
 				</div>
 			</div>
 			<div class="station_flow">
@@ -456,5 +458,44 @@
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			const container = document.getElementById("stationContainer");
+			const addBtn = document.getElementById("addStationBtn");
+
+			addBtn.addEventListener("click", function() {
+				const count = container.querySelectorAll(".background").length;
+				const newIndex = count + 1;
+
+				const newLabel = document.createElement("div");
+				newLabel.className = "background";
+				newLabel.textContent = "経由地" + newIndex;
+
+				const newInputDiv = document.createElement("div");
+				const newInput = document.createElement("input");
+				newInput.type = "text";
+				newInput.name = "middle_station_"
+						+ String(newIndex).padStart(2, "0");
+				newInputDiv.appendChild(newInput);
+
+				container.appendChild(newLabel);
+				container.appendChild(newInputDiv);
+			});
+		});
+	</script>
+<script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl" defer></script>
+<script>
+  window.addEventListener('load', function () {
+    var mapOptions = {
+      center : new naver.maps.LatLng(37.3595704, 127.105399),
+      zoom : 10
+    };
+    new naver.maps.Map('map', mapOptions);
+  });
+</script>
+
+
+
 </body>
 </html>
