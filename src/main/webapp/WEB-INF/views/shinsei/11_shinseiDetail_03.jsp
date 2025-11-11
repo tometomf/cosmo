@@ -31,10 +31,10 @@
 	grid-template-columns: 1fr 4fr;
 }
 
-.main > div {
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
+.main>div {
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
 }
 </style>
 <body>
@@ -115,7 +115,7 @@
 				<div class="form_Column">住所</div>
 				<div class="form_Normal">川崎市高津区上作延1-2-3 レオパレス溝の口103</div>
 				<div class="form_Normal"
-					style="display: flex; flex-direction: column; gap: 5px;">
+					style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
 					<!-- 우편번호 -->
 					<div style="display: flex; align-items: center; gap: 5px;">
 						<input type="text" name="zip1" maxlength="3"
