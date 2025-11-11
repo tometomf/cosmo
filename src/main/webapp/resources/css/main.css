@@ -214,6 +214,12 @@ body {
 .form_Normal {
 	border-right: solid 1px #a0a0a0;
 	border-bottom: solid 1px #a0a0a0;
+	display: flex;
+	gap: 5px;
+}
+
+.form_Normal > div {
+	display: block;
 }
 
 .form_Required {
@@ -223,7 +229,8 @@ body {
 }
 
 .content_Form2 {
-	padding: 0 35px;
+	width: 1010px;
+    margin: auto;
 }
 
 .content_Form2 > div:not(:first-child) {
@@ -306,4 +313,13 @@ body {
 	display: block;
 	align-items: center;
 	cursor: pointer;
+}
+
+.multi_Form {
+	display: flex; 
+	gap: 5px; 
+	width: 1010px; 
+	align-items: flex-start; 
+	justify-content: space-between; 
+	margin: auto;
 }
