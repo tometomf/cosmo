@@ -10,15 +10,16 @@
 <body>
 
 	<div class = "layout">
-		<%@ include file="/WEB-INF/views/common/header.jsp" %>
+		<%-- <%@ include file="/WEB-INF/views/common/header.jsp" %> --%>
 		<div class = "main">
 			<div class = "main_title">
 				<!-- 진척도 예제 -->
 				<div class="subtitle">
-					<div class="">完了</div>
+					完了
 				</div>	
 				<div>
-					<div style="margin: 5%; text-align: center;">書類の更新申請が完了しました。<br>「申請番号：１２３０００６４」
+					<div style="margin: 5%; text-align: center;">
+					書類の更新申請が完了しました。<br>「申請番号：１２３０００６４」
 					<br><br>お問い合わせの際は、上記の申請番号をお伝えください。<br>
 					申請番号はメールでもお送りしております。		
 					</div>

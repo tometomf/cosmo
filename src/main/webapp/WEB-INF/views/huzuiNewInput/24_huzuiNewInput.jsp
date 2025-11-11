@@ -26,12 +26,19 @@
 	}
 	
 	.input_form{
- 		display : flex;
+ 		display : grid;
 		border : solid 1px #ededed;
-		padding:2px;
-		margin-left:3%;		
-		margin-right:3%;		
+		margin:auto;	
+		width:1040px;
+		height:40px;
+		grid-template-columns: 1fr 4fr 4fr;	
 	}
+	.input_form > div{
+		align-items: center;
+		padding: 5px;
+	}
+	
+	
 	.input_form  input{
 		margin-left:5px;
 	}
@@ -39,33 +46,53 @@
 		width:500px;
 
 	}
+	.input_container{
+		display:grid;
+		gap:5px;
+		margin:auto;
+		width:1040px;
+	}
 	.item_head{
-		width:100px;
 		text-align:center;
 		background-color: #dddddd;
-		padding:3px;
 		font-size:13px;
+		padding:5px;
+	}
+	.content_Form2{
+		background:#ededed;
 	}
 	
-	
+	.content_container{
+		margin:auto;
+		width:1040px;
+		padding-top:15px;
+		padding-bottom:15px;
+		display:grid;
+		background:#ededed;
+		gap:20px;
+	}
+
 
  </style>
 <body>
 	<div class = "layout">
-		<%@ include file="/WEB-INF/views/common/header.jsp" %>
+		<%-- <%@ include file="/WEB-INF/views/common/header.jsp" %> --%>
 		<div class = "main">
 			<div class = "main_title">
 				<!-- 진척도 예제 -->
 				<div class="subtitle">
-					<div class="">付図書類更新 入力</div>
-				</div>	
-				<div>
-					<div style="margin: 3%">付随書類の更新内容を入力してください</div>
+					付図書類更新 入力
 				</div>			
 			</div>
 
-		<div class="main_container" style="background:#ededed; padding-bottom:25px; box-sizing: border-box; margin:3%;">
-			<div class="content_Form2" style = "margin-top: 25px; padding-top: 25px; ">
+		<div class = "main_Content">
+			<div>付随書類の更新内容を入力してください</div>
+		</div>	
+
+
+		
+		<div class="content_container">
+			<div class="content_Form2">
 				<div class="form_Title2">
 					<div>免許証</div>
 					<div style="display: flex; gap: 5px; cursor: pointer;">
@@ -92,7 +119,7 @@
 			
 			
 				
-			<div class="content_Form2" style = "margin-top: 25px; padding-top: 25px; ">
+			<div class="content_Form2">
 				<div class="form_Title2">
 					<div>車検証</div>
 					<div style="display: flex; gap: 5px; cursor: pointer;">
@@ -113,11 +140,11 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">ナンバー</div>
 					<div class = "form_Normal">品川　５００　あ　7777</div>
-					<div class = "form_Normal" >
+					<div class = "form_Normal" style="display:grid">
 						<div class="member_input">
 							<input type="text"><input type="text"><input type="text"><input type="text">
 						</div>
-						<div>
+						<div >
 							（記入例）　　 品川 　　　300　　　 い　　　１１１１
 						</div>
 					</div>
@@ -136,7 +163,7 @@
 			
 			
 			
-			<div class="content_Form2" style = "margin-top: 25px; padding-top: 25px;">
+			<div class="content_Form2">
 					<div class="form_Title2">
 						<div>保険証券</div>
 						<div style="display: flex; gap: 5px; cursor: pointer;">
@@ -158,8 +185,8 @@
 						<div class = "form_Normal"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
-						<div class = "form_Column">保険満了日</div>
-						<div class = "form_Normal">
+						<div class = "form_Column" style="">保険満了日</div>
+						<div class = "form_Normal" style="display:grid">
 							<div>
 							2013/03/31
 							</div>
@@ -198,10 +225,11 @@
 		</div>
 		
 		
+	<div class="input_container">	
+		
 		<div style="margin-left:700px">コメント入力欄</div>
 		
-		
-		<div class="input_form" style="">
+		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
 				<input type="text"> <input type="button" value="参照"> <input type="button" value="アップロード">
@@ -212,7 +240,7 @@
 		</div>
 		
 				
-		<div class="input_form" style="">
+		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
 				<input type="text"> <input type="button" value="参照"> <input type="button" value="アップロード">
@@ -223,7 +251,7 @@
 		</div>		
 		
 		
-		<div class="input_form" style="">
+		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
 				<input type="text"> <input type="button" value="参照"> <input type="button" value="アップロード">
@@ -233,7 +261,7 @@
 			</div>
 		</div>	
 		
-		<div class="input_form" style="">
+		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
 				<input type="text"> <input type="button" value="参照"> <input type="button" value="アップロード">
@@ -243,7 +271,7 @@
 			</div>
 		</div>	
 		
-		<div class="input_form" style="">
+		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
 				<input type="text"> <input type="button" value="参照"> <input type="button" value="アップロード">
@@ -251,7 +279,8 @@
 			<div>
 				<input type="text">
 			</div>
-		</div>	
+		</div>
+	</div>		
 		
 		<div class = "button_Left_Group" style="margin-top:30px; margin:3%;">   
 			<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
@@ -259,7 +288,8 @@
 			<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
 		</div>
 	</div>
+	
 		<%@ include file="/WEB-INF/views/common/footer.jsp" %>
-	</div>
+	</div>	
 </body>
 </html>
