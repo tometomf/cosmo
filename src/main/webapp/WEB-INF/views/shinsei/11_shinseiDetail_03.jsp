@@ -31,6 +31,11 @@
 	grid-template-columns: 1fr 4fr;
 }
 
+#form_Text3 {
+	display: grid;
+	grid-template-columns: 2fr 3fr;
+}
+
 .main>div {
 	width: 95%;
 	margin-left: auto;
@@ -137,12 +142,12 @@
 					<!-- 주소1 -->
 					<div>
 						<input type="text" name="address1" value="川崎市中原区新丸子1-2-3"
-							style="width: 100%;">
+							style="width: 390px;">
 					</div>
 					<!-- 주소2 -->
 					<div>
 						<input type="text" name="address2" value="レオパレス新丸子201"
-							style="width: 100%;">
+							style="width: 390px;">
 					</div>
 				</div>
 			</div>
@@ -252,83 +257,83 @@
 		<!-- Multi Form 예제 -->
 		<div class="multi_Form">
 			<div class="content_Form1" style="width: 330px; margin: 0;">
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">免許証コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">免許証有効期限</div>
 					<div class="form_Normal">2015/10/21</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">免許証番号</div>
 					<div class="form_Normal">1234-5678-90</div>
 				</div>
 			</div>
 			<div class="content_Form1" style="width: 330px; margin: 0;">
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">車検証コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">車種</div>
 					<div class="form_Normal">ベンツ</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">ナンバー</div>
 					<div class="form_Normal">品川 300 い 1111</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">排気量</div>
 					<div class="form_Normal">3000CC</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">車検有効期限</div>
 					<div class="form_Normal">2014/12/24</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">燃費</div>
 					<div class="form_Normal">15km/L</div>
 				</div>
 			</div>
 			<div class="content_Form1" style="width: 330px; margin: 0;">
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">保険証券コピー（場所）</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">保険証券コピー（郵便内容）</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">保険満了日</div>
 					<div class="form_Normal">2015/10/21</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">対人賠償</div>
 					<div class="form_Normal">無制限万円</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">対物賠償</div>
 					<div class="form_Normal">無制限万円</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">人身障害</div>
 					<div class="form_Normal">無制限万円</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">搭乗者障害</div>
 					<div class="form_Normal">無制限万円</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">等級</div>
 					<div class="form_Normal">3級等級</div>
 				</div>
@@ -376,17 +381,17 @@
 		<div class="multi_Form"
 			style="justify-content: flex-start; margin-top: 15px;">
 			<div class="content_Form1" style="width: 330px; margin: 0;">
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">定期コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">初回定期期間</div>
 					<div class="form_Normal">1カ月</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">次回以降定期期間</div>
 					<div class="form_Normal"></div>
 				</div>
@@ -437,17 +442,17 @@
 		<div class="multi_Form"
 			style="justify-content: flex-start; margin-top: 15px;">
 			<div class="content_Form1" style="width: 330px; margin: 0;">
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
 						<a href="">定期コピー</a>
 					</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">初回定期期間</div>
 					<div class="form_Normal">1カ月</div>
 				</div>
-				<div class="form_Text1" id="form_Text2">
+				<div class="form_Text1" id="form_Text3">
 					<div class="form_Column">次回以降定期期間</div>
 					<div class="form_Normal"></div>
 				</div>
