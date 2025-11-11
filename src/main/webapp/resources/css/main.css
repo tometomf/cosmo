@@ -297,6 +297,23 @@ body {
 	cursor: pointer;
 }
 
+.button_Right {
+	width: 1010px;
+    margin: auto;
+}
+
+.button_Right_Group {
+	display: flex;
+	gap: 5px;
+	justify-content: end;
+}
+
+.button_Right_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
+
 .button_Side {
 	width: 1010px;
     margin: auto;
