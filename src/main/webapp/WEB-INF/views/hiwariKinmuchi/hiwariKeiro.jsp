@@ -24,8 +24,8 @@
     position: relative;
     background: #f7f7f7;
     border: 1px solid #ccc;
-    border-top: 3px solid #1b6d1b; /* 초록 라인 */
-    border-radius: 0;              /* 라운드 제거 */
+    border-top: 3px solid #46b946; /* 🔹 스크린샷의 밝은 초록색으로 변경 */
+    border-radius: 0;
     padding: 20px 10px 18px;
     margin-top: 8px;
   }
@@ -36,18 +36,28 @@
     align-items: center;
   }
 
+  /* ✅ 탭: 이미지 유지 + 초록색 계열 맞춤 */
   .route-label {
+    position: relative;
+    top: -23px;
+    margin-left: -1px;
     display: inline-block;
-    width: 75px;
-    height: 25px;
-    line-height: 25px;
-    color: #1b6d1b;
-    font-weight: 700;
-    font-size: 13px;
+    width: 90px;
+    height: 33px;
+    line-height: 33px;
     text-align: center;
-    background: url("<c:url value='/resources/img/ll/bg_keirotitle.gif'/>") no-repeat center center;
-    background-size: contain;
-    margin-top: -14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f6b1f; /* 탭 글자색도 조화롭게 맞춤 */
+
+    /* 이미지 그대로 활용 */
+    background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
+    background-size: cover;
+
+    /* 테두리: 동일한 밝은 초록톤 */
+    border: 1px solid #64c764;
+    border-top-color: #46b946;
+    border-radius: 0;
   }
 
   .route-add {
@@ -63,26 +73,29 @@
   .route-add img { width: 14px; height: 14px; }
   .route-add:hover { text-decoration: underline; }
 
-  /* ===== 하단 버튼: 부모의 가운데 정렬 스타일을 완전히 무시하고 왼쪽 정렬 고정 ===== */
-  .btn-row-left {                 /* 래퍼: text-align 강제 해제 */
+  /* ===== 하단 버튼: 왼쪽 정렬 고정 ===== */
+  .btn-row-left {
     display: block;
     width: 100% !important;
     text-align: left !important;
     margin: 24px 0 0 0 !important;
   }
-  .button_Center_Group {          /* 실제 버튼 컨테이너 */
+
+  .button_Center_Group {
     display: flex !important;
-    justify-content: flex-start !important; /* 왼쪽 정렬 고정 */
+    justify-content: flex-start !important;
     align-items: center !important;
     gap: 14px;
     width: 100% !important;
     margin: 0 !important;
   }
+
   .button_Center_Group a {
     display: inline-flex;
     align-items: center;
     text-decoration: none;
   }
+
   .button_Center_Group img { display: block; }
 </style>
 </head>
@@ -124,7 +137,7 @@
       <div class="route-head">
         <span class="route-label">経路①</span>
         <a class="route-add" href="<c:url value='/hiwariKinmuchi/route/add'/>">
-          <img src="/resources/img/tuika_icon.gif" alt="追加アイコン">
+          <img src="/resources/img/tuika_icon.gif" alt="追加アイ콘">
           追加する
         </a>
       </div>
