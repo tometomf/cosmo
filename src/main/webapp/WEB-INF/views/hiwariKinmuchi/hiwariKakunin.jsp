@@ -131,24 +131,32 @@
     </div>
 
     <!-- 하단 버튼 -->
-    <div class="button_Left mt24">
-      <div class="button_Left_Group">
-        <a href="<c:url value='/hiwariKinmuchi'/>">
-          <img src="/resources/img/back_btn01.gif" alt="戻る">
-        </a>
-        <form action="<c:url value='/hiwariKakunin/save'/>" method="post" style="display:inline;">
-          <button type="submit" style="border:0;background:transparent;">
-            <img src="/resources/img/shinsei_btn01.gif" alt="申請">
-          </button>
-        </form>
-        <form action="<c:url value='/hiwariKakunin/submit'/>" method="post" style="display:inline;">
-          <button type="submit" style="border:0;background:transparent;">
-            <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
+<!--     <div class="button_Left mt24"> -->
+<!--       <div class="button_Left_Group"> -->
+<%--         <a href="<c:url value='/hiwariKinmuchi'/>"> --%>
+<!--           <img src="/resources/img/back_btn01.gif" alt="戻る"> -->
+<!--         </a> -->
+<%--         <form action="<c:url value='/hiwariKakunin/save'/>" method="post" style="display:inline;"> --%>
+<!--           <button type="submit" style="border:0;background:transparent;"> -->
+<!--             <img src="/resources/img/shinsei_btn01.gif" alt="申請"> -->
+<!--           </button> -->
+<!--         </form> -->
+<%--         <form action="<c:url value='/hiwariKakunin/submit'/>" method="post" style="display:inline;"> --%>
+<!--           <button type="submit" style="border:0;background:transparent;"> -->
+<!--             <img src="/resources/img/hozon_btn01.gif" alt="一時保存"> -->
+<!--           </button> -->
+<!--         </form> -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </div> -->
+  
+  <div class = "button_Left">
+	<div class = "button_Left_Group">   
+		<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+		<img src="/resources/img/shinsei_btn01.gif" alt="nyuryoku_btn01">
+		<img src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
+	</div>
+</div>
 
   <%@ include file="/WEB-INF/views/common/footer.jsp"%>
 </div>
