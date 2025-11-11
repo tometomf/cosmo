@@ -314,3 +314,12 @@ body {
 	align-items: center;
 	cursor: pointer;
 }
+
+.multi_Form {
+	display: flex; 
+	gap: 5px; 
+	width: 1010px; 
+	align-items: flex-start; 
+	justify-content: space-between; 
+	margin: auto;
+}

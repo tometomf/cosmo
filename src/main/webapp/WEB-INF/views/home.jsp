@@ -136,7 +136,7 @@
 			</div>
 			
 			<!-- Multi Form 예제 -->
-			<div style = "display: flex; gap: 5px; width: 1010px; align-items: flex-start; justify-content: space-between; margin: auto;">
+			<div class = "multi_Form">
 	            <div class="content_Form1" style = "width: 330px; margin: 0;">
 	               <div class="form_Text1" id="form_Text2">
 	                  <div class="form_Column">付随書類</div>
