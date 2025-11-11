@@ -223,7 +223,8 @@ body {
 }
 
 .content_Form2 {
-	padding: 0 35px;
+	width: 1010px;
+    margin: auto;
 }
 
 .content_Form2 > div:not(:first-child) {
