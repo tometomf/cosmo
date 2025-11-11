@@ -274,9 +274,9 @@
 		<div class="main">
 			<!-- <div class="subtitle"> -->
 			<div class="flow">
-				<div class="flow_current">勤務地入力</div>
+				<div class="flow_others">勤務地入力</div>
 				<div class="flow_others">住所入力</div>
-				<div class="flow_others">経路入力</div>
+				<div class="flow_current">経路入力</div>
 				<div class="flow_others">付随書類入力</div>
 				<div class="flow_others">確認</div>
 				<div class="flow_others">完了</div>
@@ -293,6 +293,7 @@
 			<div class="station_layout">
 				<div class="left_space">
 					<div class="form_array">
+						<!-- 출발 도착역 그리드 -->
 						<div class="grid">
 							<div class="background">出発地</div>
 							<div>
@@ -307,6 +308,7 @@
 							</div>
 						</div>
 						<div></div>
+						<!-- 경유역 그리드 -->
 						<div class="grid2">
 							<div class="background">経由地</div>
 							<div>
@@ -319,6 +321,7 @@
 						</div>
 					</div>
 				</div>
+				<!-- 지도 그리드 -->
 				<div class="right_space">
 					<div>
 						<img src="/resources/img/tn/image_map.jpg">
