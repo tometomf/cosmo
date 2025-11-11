@@ -50,7 +50,7 @@
 
 			<!-- ===== 경고 영역 ===== -->
 			<div
-				style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 95%; margin-left: auto; margin-right: auto;">
+				style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
 
 				<!-- 경고 아이콘 -->
 				<img src="/resources/img/icon_attention.gif" alt="warning"
