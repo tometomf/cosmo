@@ -21,14 +21,16 @@
 	}
 
 	.member_input > input{
-		width:60px;
+		width:50px;
 		margin-right:8px;
 	}
 	
 	.input_form{
  		display : flex;
 		border : solid 1px #ededed;
-		padding:2px;		
+		padding:2px;
+		margin-left:3%;		
+		margin-right:3%;		
 	}
 	.input_form  input{
 		margin-left:5px;
@@ -44,6 +46,7 @@
 		padding:3px;
 		font-size:13px;
 	}
+	
 	
 
  </style>
@@ -61,7 +64,7 @@
 				</div>			
 			</div>
 
-		<div class="main_container" style="background:#ededed; padding-bottom:25px;">
+		<div class="main_container" style="background:#ededed; padding-bottom:25px; box-sizing: border-box; margin:3%;">
 			<div class="content_Form2" style = "margin-top: 25px; padding-top: 25px; ">
 				<div class="form_Title2">
 					<div>免許証</div>
@@ -115,7 +118,7 @@
 							<input type="text"><input type="text"><input type="text"><input type="text">
 						</div>
 						<div>
-							（記入例）　　 品川 　　　　300　　　　 い　　　　１１１１
+							（記入例）　　 品川 　　　300　　　 い　　　１１１１
 						</div>
 					</div>
 				</div>
@@ -250,7 +253,7 @@
 			</div>
 		</div>	
 		
-		<div class = "button_Left_Group" style="margin-top:30px">   
+		<div class = "button_Left_Group" style="margin-top:30px; margin:3%;">   
 			<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
 			<img src="/resources/img/next_btn01.gif" alt="nyuryoku_btn01">
 			<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">

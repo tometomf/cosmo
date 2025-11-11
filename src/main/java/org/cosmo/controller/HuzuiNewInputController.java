@@ -20,4 +20,13 @@ public class HuzuiNewInputController {
 		return "/huzuiNewInput/25_huzuiUpdate";
 	}
 	
+	
+	@RequestMapping(value = "/finalForm", method = RequestMethod.GET)
+	public String kanryo() {
+		
+		return "/huzuiNewInput/26_huzuiKanryo";
+	}
+	
+	
+	
 }
