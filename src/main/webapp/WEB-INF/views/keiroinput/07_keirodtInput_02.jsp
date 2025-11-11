@@ -217,9 +217,9 @@
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div class="main">
 			<div class="flow">
-				<div class="flow_current">勤務地入力</div>
+				<div class="flow_others">勤務地入力</div>
 				<div class="flow_others">住所入力</div>
-				<div class="flow_others">経路入力</div>
+				<div class="flow_current">経路入力</div>
 				<div class="flow_others">付随書類入力</div>
 				<div class="flow_others">確認</div>
 				<div class="flow_others">完了</div>
@@ -287,13 +287,14 @@
 			</div>
 			<div class="button_box">
 				<div class="button_Left_Group">
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01" id="btnBack"> <img
-						src="/resources/img/keiro_btn02.gif" alt="nyuryoku_btn01"> <img
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+						id="btnBack"> <img src="/resources/img/keiro_btn02.gif"
+						alt="nyuryoku_btn01"> <img
 						src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
 				</div>
 			</div>
 		</div>
-	<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
 	<script>
