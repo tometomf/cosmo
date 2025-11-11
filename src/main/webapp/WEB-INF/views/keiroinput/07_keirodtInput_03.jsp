@@ -82,6 +82,12 @@ p　{
 .form_Text1 {
 	display: grid;
 	grid-template-columns: 1fr 5fr;
+	
+}
+
+.form_Normal {
+	border-right: solid 1px #a0a0a0;
+	border-bottom: solid 1px #a0a0a0;
 }
 
 
@@ -274,11 +280,11 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column1"><p>住所</p></div>
-						<div><p>神奈川県川崎市中原区新丸子1-2-3　レオパレス新丸子201</p></div>
+						<div class="form_Normal"><p>神奈川県川崎市中原区新丸子1-2-3　レオパレス新丸子201</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>勤務地</p></div>
-						<div><p>東京都中野区本町3-30-4 KDX中野坂上ビル8F</p></div>
+						<div class="form_Normal"><p>東京都中野区本町3-30-4 KDX中野坂上ビル8F</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>経由地</p></div>
@@ -330,11 +336,11 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column1"><p>距離</p></div>
-						<div><p>30km</p></div>
+						<div class="form_Normal"><p>30km</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路</p></div>
-						<div><p>利用する</p></div>
+						<div class="form_Normal"><p>利用する</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路無料</p><p>片道／往復</p></div>
@@ -347,11 +353,11 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路IC 乗り口</p></div>
-						<div><p>下作延IC</p></div>
+						<div class="form_Normal"><p>下作延IC</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路IC  降り口</p></div>
-						<div><p>用賀IC</p></div>
+						<div class="form_Normal"><p>用賀IC</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路    片道料金</p></div>
@@ -363,7 +369,7 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column1"><p>有料道路利用理由</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:100%;" type>
 						</div>
 					</div>
@@ -394,37 +400,37 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column2"><p>検索結果画面</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:25%;" type> &nbsp;<button>参照</button>&nbsp;<button>アップロード</button>
 						</div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column2"><p>距離</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:20%;" type> km
 						</div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column2"><p>有料道路IC　乗り口</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:50%;" type>
 						</div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column2"><p>有料道路IC　降り口</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:50%;" type>
 						</div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column2"><p>有料道路片道料金</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:20%;" type> 円
 						</div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column2"><p>別ルート　理由</p></div>
-						<div style="padding:1rem;">
+						<div class="form_Normal" style="padding:1rem;">
 							<input style="width:100%;" type>
 						</div>
 					</div>

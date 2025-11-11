@@ -167,63 +167,51 @@
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div class="main">
 			<!-- <div class="subtitle"> -->
-			<div class="flow-wrapper">
-				<div class="flow-other">
-					<span class="flow-othertext">勤務地入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">住所入力</span>
-				</div>
-				<div class="flow-current">
-					<span class="flow-currenttext">経路入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">付随書類入力</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">確認</span>
-				</div>
-				<div class="flow-other">
-					<span class="flow-othertext">完了</span>
-				</div>
-				<!-- </div> -->
+			<div class="flow">
+				<div class="flow_others">勤務地入力</div>
+				<div class="flow_others">住所入力</div>
+				<div class="flow_current">経路入力</div>
+				<div class="flow_others">付随書類入力</div>
+				<div class="flow_others">確認</div>
+				<div class="flow_others">完了</div>
 			</div>
-			<div class="subtitle">【経路①】 通勤手段 入力</div>
-			<div class="commute-container">
-				<div class="content-box">
-					<div class="info-text">通勤手段を選択してください.</div>
-				</div>
+			<!-- </div> -->
+		<div class="subtitle">【経路①】 通勤手段 入力</div>
+		<div class="commute-container">
+			<div class="content-box">
+				<div class="info-text">通勤手段を選択してください.</div>
+			</div>
 
-				<div class="commute-box">
-					<div class="commute-row">
-						<div class="commute-label dark">現 通勤手段</div>
-						<div class="commute-value">バス</div>
-					</div>
-					<div class="commute-panel">
-						<div class="commute-label light">新 通勤手段</div>
-						<div class="commute-body">
-							<label><input type="radio" name="way" value="densha"
-								checked> 電車</label> <label><input type="radio"
-								name="way" value="bus"> バス</label> <label><input
-								type="radio" name="way" value="car"> 自動車</label> <label><input
-								type="radio" name="way" value="toho"> 徒歩</label> <label><input
-								type="radio" name="way" value="other"> その他</label>
-						</div>
-					</div>
+			<div class="commute-box">
+				<div class="commute-row">
+					<div class="commute-label dark">現 通勤手段</div>
+					<div class="commute-value">バス</div>
 				</div>
-				<div class="content-box">
-					<div class="button_Left_Group">
-						<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
-							src="/resources/img/keiro_btn01.gif" alt="nyuryoku_btn01">
-						<img src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
+				<div class="commute-panel">
+					<div class="commute-label light">新 通勤手段</div>
+					<div class="commute-body">
+						<label><input type="radio" name="way" value="densha"
+							checked> 電車</label> <label><input type="radio" name="way"
+							value="bus"> バス</label> <label><input type="radio"
+							name="way" value="car"> 自動車</label> <label><input
+							type="radio" name="way" value="toho"> 徒歩</label> <label><input
+							type="radio" name="way" value="other"> その他</label>
 					</div>
 				</div>
 			</div>
-			<!-- ここまで上位タイトル -->
-
-
+			<div class="content-box">
+				<div class="button_Left_Group">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
+						src="/resources/img/keiro_btn01.gif" alt="nyuryoku_btn01"> <img
+						src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
+				</div>
+			</div>
 		</div>
-		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+		<!-- ここまで上位タイトル -->
+
+
+	</div>
+	<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
 	<script>

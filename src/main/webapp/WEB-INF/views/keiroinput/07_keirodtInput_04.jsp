@@ -167,9 +167,15 @@
 }
 
 .result-box>div:first-child {
-	width: 100%; background-color : #595860; color : #fff; font-weight :
-	bold; display : flex; align-items : center; padding : 8px 12px;
-	font-size : 14px; height : 31px;
+	width: 100%;
+	background-color: #595860;
+	color: #fff;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	padding: 8px 12px;
+	font-size: 14px;
+	height: 31px;
 	box-sizing: border-box;
 	height: 31px;
 	font-size: 14px;
@@ -186,7 +192,8 @@
 }
 
 .result-box>div:last-child {
-	width: 100%; height : 275px;
+	width: 100%;
+	height: 275px;
 	overflow: hidden;
 	height: 275px;
 }
@@ -210,9 +217,9 @@
 		<div class="main">
 			<!-- <div class="subtitle"> -->
 			<div class="flow">
-				<div class="flow_current">勤務地入力</div>
+				<div class="flow_others">勤務地入力</div>
 				<div class="flow_others">住所入力</div>
-				<div class="flow_others">経路入力</div>
+				<div class="flow_current">経路入力</div>
 				<div class="flow_others">付随書類入力</div>
 				<div class="flow_others">確認</div>
 				<div class="flow_others">完了</div>
