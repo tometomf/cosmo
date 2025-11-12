@@ -43,5 +43,11 @@ public class IdoConfirmController {
 		
 		return "idoconfirm/04_addressinput";
 	}
+	
+	@GetMapping("/kakuninpage")
+	public String kakuninpage() {
+		
+		return "idoconfirm/09_kakuninPage";
+	}
 
 } 
