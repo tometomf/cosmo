@@ -78,7 +78,7 @@
         <div class="edit-btn" onclick="location.href='<c:url value="/hiwariKinmuchi/edit"/>'"></div>
       </div>
       <div class="form_Text1 twoCol"><div class="form_Column">通勤手段</div><div class="form_Normal"><c:out value="${route1.transport}" default="バス"/></div></div>
-      <div class="form_Text1 twoCol"><div class="form_Column">経路</div><div class="form_Normal"><c:out value="${route1.route}" default="新九千交差点 → 新九千駅"/></div></div>
+      <div class="form_Text1 twoCol"><div class="form_Column">経路</div><div class="form_Normal"><c:out value="${route1.route}" default="新丸子交差点 → 新丸子駅"/></div></div>
       <div class="form_Text1 twoCol"><div class="form_Column">出勤日数</div><div class="form_Normal"><c:out value="${route1.workDays}" default="5日間"/></div></div>
       <div class="form_Text1 twoCol"><div class="form_Column">片道料金</div><div class="form_Normal"><c:out value="${route1.oneWayFee}" default="—"/></div></div>
       <div class="form_Text1 twoCol"><div class="form_Column">金額</div><div class="form_Normal"><c:out value="${route1.amount}" default="1,000円"/></div></div>
@@ -92,11 +92,11 @@
         <div class="edit-btn" onclick="location.href='<c:url value="/hiwariKinmuchi/route2/edit"/>'"></div>
       </div>
       <div class="form_Text1 twoCol"><div class="form_Column">通勤手段</div><div class="form_Normal"><c:out value="${route2.transport}" default="電車"/></div></div>
-      <div class="form_Text1 twoCol"><div class="form_Column">経路</div><div class="form_Normal"><c:out value="${route2.route}" default="新九千交差点 → 新九千駅"/></div></div>
+      <div class="form_Text1 twoCol"><div class="form_Column">経路</div><div class="form_Normal"><c:out value="${route2.route}" default="新丸子駅→ 中野坂上駅"/></div></div>
       <div class="form_Text1 twoCol"><div class="form_Column">出勤日数</div><div class="form_Normal"><c:out value="${route2.workDays}" default="5日間"/></div></div>
       <div class="form_Text1 twoCol"><div class="form_Column">片道料金</div><div class="form_Normal"><c:out value="${route2.oneWayFee}" default="—"/></div></div>
-      <div class="form_Text1 twoCol"><div class="form_Column">金額</div><div class="form_Normal"><c:out value="${route2.amount}" default="1,000円"/></div></div>
-      <div class="form_Text1 twoCol"><div class="form_Column">金額（1ヶ月参考値）</div><div class="form_Normal"><c:out value="${route2.amountMonthly}" default="85,000円"/></div></div>
+      <div class="form_Text1 twoCol"><div class="form_Column">金額</div><div class="form_Normal"><c:out value="${route2.amount}" default="2,500円"/></div></div>
+      <div class="form_Text1 twoCol"><div class="form_Column">金額（1ヶ月参考値）</div><div class="form_Normal"><c:out value="${route2.amountMonthly}" default="13,000円"/></div></div>
     </div>
 
   
@@ -148,6 +148,8 @@
       </div>
     </div>
 
+
+  <br><br><br>
     <%@ include file="/WEB-INF/views/common/footer.jsp"%>
   </div>
 </div>

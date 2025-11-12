@@ -11,6 +11,8 @@
 <style>
     html { overflow-y: scroll; }  
     
+    
+    
   .page-width {
     width: 950px;      
     margin: 0 auto;    
@@ -53,8 +55,8 @@
     height: 33px;
     line-height: 33px;
     text-align: center;
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 400;
     color: #1f6b1f;
     background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
     background-size: cover;
@@ -91,6 +93,21 @@
     display: block;
   }
 
+/* ① '追加する'를 살짝 위로 */
+.route-add{
+  top: -10px;           /* 기존 -6px → 조금 더 위로 */
+}
+
+/* ② 라벨(経路①) 왼쪽 정렬 + 좌하단만 라운드 */
+.route-label{
+  margin-left: -10px;    /* 배경 박스(회색 박스) 왼쪽 테두리와 정확히 맞춤 */
+  margin-top: 0px;    /* 상단 초록 라인에 더 가깝게 */
+  width: 106px;         /* 스샷 느낌이면 100~110px 사이에서 조정 */
+  height: 30px;         /* 높이·라인하이트 조금 낮춰 타이트하게 */
+  line-height: 30px;
+  background-size: 100% 100%;
+  border-radius: 0 0 6px 0;   /* 좌하단만 라운드( top-left, top-right, bottom-right, bottom-left ) */
+}
 
 </style>
 </head>
@@ -122,7 +139,7 @@
           電車・バスは、複数手段の利用（乗り継ぎ）が可能です。<br>
           複数手段を利用する場合、手段ごとに線路を分割して登録してください。
         </div>
-        <div class="map-btn"><br><br>
+        <div class="map-btn">
           <a href="<c:url value='/hiwariKinmuchi/map'/>">
             <img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
           </a>
