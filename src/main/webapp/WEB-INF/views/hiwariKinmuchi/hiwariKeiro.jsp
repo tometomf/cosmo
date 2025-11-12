@@ -140,6 +140,7 @@
           複数手段を利用する場合、手段ごとに線路を分割して登録してください。
         </div>
         <div class="map-btn">
+        <br>
           <a href="<c:url value='/hiwariKinmuchi/map'/>">
             <img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
           </a>
