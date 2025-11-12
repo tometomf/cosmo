@@ -33,7 +33,7 @@
     position: relative;
     background: #f7f7f7;
     border: 1px solid #ccc;
-    border-top: 3px solid #46b946;
+    border-top: 3px solid #228B22;
     border-radius: 0;
     padding: 20px 10px 18px;
     margin-top: 8px;
@@ -93,20 +93,24 @@
     display: block;
   }
 
-/* ① '追加する'를 살짝 위로 */
+/*追加する */
 .route-add{
-  top: -10px;           /* 기존 -6px → 조금 더 위로 */
+  top: -15px;           /* 기존 -6px → 조금 더 위로 */
 }
 
-/* ② 라벨(経路①) 왼쪽 정렬 + 좌하단만 라운드 */
+/*経路①*/
 .route-label{
   margin-left: -10px;    /* 배경 박스(회색 박스) 왼쪽 테두리와 정확히 맞춤 */
-  margin-top: 0px;    /* 상단 초록 라인에 더 가깝게 */
+  margin-top: 3px;    /* 상단 초록 라인에 더 가깝게 */
   width: 106px;         /* 스샷 느낌이면 100~110px 사이에서 조정 */
   height: 30px;         /* 높이·라인하이트 조금 낮춰 타이트하게 */
   line-height: 30px;
   background-size: 100% 100%;
+  border-left: none;     /* 왼쪽 보더 제거 */
   border-radius: 0 0 6px 0;   /* 좌하단만 라운드( top-left, top-right, bottom-right, bottom-left ) */
+  .route-label {
+  border-left: none;   
+ 
 }
 
 </style>
