@@ -7,7 +7,10 @@
 <meta charset="UTF-8">
 <title>通勤マネージャー｜完了</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+
 <style>
+  html { overflow-y: scroll; }  
+
   /* ====== 完了 화면 전용 스타일 (중복 제거본) ====== */
   .finish-wrap { display:flex; justify-content:center; }
   .finish-box {
