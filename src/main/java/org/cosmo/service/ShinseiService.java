@@ -1,11 +1,9 @@
 package org.cosmo.service;
 
-import org.springframework.stereotype.Service;
+import org.cosmo.domain.ShinseiDetailVO;
 
-@Service
-public class ShinseiService {
-	
-	
-}
+public interface ShinseiService {
 
     
+    ShinseiDetailVO getShinseiDetail(int kigyoCd, int shinseiNo);
+}
