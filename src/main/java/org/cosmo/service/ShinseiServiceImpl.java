@@ -1,5 +1,5 @@
 package org.cosmo.service;
 
-public class ShinseiSerivceImpl {
+public class ShinseiServiceImpl {
 
 }
