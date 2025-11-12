@@ -75,26 +75,22 @@
   .route-add img { width: 14px; height: 14px; }
   .route-add:hover { text-decoration: underline; }
 
-  /* 하단 버튼 왼쪽 정렬 */
-  .btn-row-left {
-    margin-top: 24px;
+  /* --- 하단 버튼: main.css 폭(1010px) 오버라이드 & 좌측 정렬/간격 보강 --- */
+  .button_Left {
+    width: 100%;           /* 부모(.page-width 950px)에 맞춤 */
+    margin: 12px 0 0;      /* 위 여백 약간 */
   }
-
-  .button_Center_Group {
+  .button_Left_Group {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 14px;
+    justify-content: flex-start;  /* 왼쪽 정렬 명시 */
+    align-items: center;          /* 수직 중앙 정렬 */
+    gap: 14px;                    /* 버튼 간 간격(원하면 조정) */
+  }
+  .button_Left_Group img {
+    display: block;
   }
 
-  .button_Center_Group a {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-  }
-
-  .button_Center_Group img { display: block; }
-  
+  /* 사용하지 않으므로 제거: .button_Center_Group, .btn-row-left 등 */
 </style>
 </head>
 
@@ -106,14 +102,14 @@
     <!-- 상단 플로우 -->
     <div class="main_title">
       <div class="flow">
-        <div class="flow_others">申請内容</div>
-        <div class="flow_others">勤務地</div>
-        <div class="flow_others">住所</div>
+        <div class="flow_others">勤務地入力</div>
+        <div class="flow_others">住所入力</div>
+        <div class="flow_others">申請理由入力</div>
         <div class="flow_current">経路入力</div>
         <div class="flow_others">確認</div>
         <div class="flow_others">完了</div>
       </div>
-      <div class="subtitle">経路入力</div>
+      <div class="subtitle">通勤経路情報</div>
     </div>
 
     <!-- 중앙 컨테이너 시작 -->
@@ -121,8 +117,8 @@
       <!-- 안내문 + 지도확인 버튼 -->
       <div class="hint-row">
         <div class="hint-text">
-          自転車・徒歩・中型二輪は、住所から勤務先まで、その手段のみを申請する場合に限ります。<br>
-          電車・バスは、扶養手段の併用(乗継)運用が可能です。<br>
+          自転車・徒歩・中型二輪は、住所から勤務先まで、その手段のみを申請する場合に限ります。<br><br>
+          電車・バスは、複数手段の利用（乗り継ぎ）での運用が可能です。<br>
           複数手段を利用する場合、手段ごとに経路を分割して登録してください。
         </div>
         <div class="map-btn">
@@ -131,6 +127,7 @@
           </a>
         </div>
       </div>
+      <br>
 
       <!-- 경로① 섹션 -->
       <div class="route-section">
@@ -143,25 +140,28 @@
         </div>
       </div>
 
-      <!-- 하단 버튼 -->
-      <div class="btn-row-left">
-        <div class="button_Center_Group">
+	<br><br>
+	
+      <!-- 하단 버튼: 실제 동작(링크) 연결 -->
+      <div class="button_Left">
+        <div class="button_Left_Group">
           <a href="<c:url value='/hiwariKinmuchi/back'/>">
             <img src="/resources/img/back_btn01.gif" alt="戻る">
           </a>
           <a href="<c:url value='/hiwariKakunin'/>">
-            <img src="/resources/img/next_btn01.gif" alt="次へ">
+            <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
           </a>
           <a href="<c:url value='/hiwariKinmuchi/saveTemp'/>">
             <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
           </a>
         </div>
       </div>
-    </div>
-    <!-- 중앙 컨테이너 끝 -->
-  </div>
 
-  <%@ include file="/WEB-INF/views/common/footer.jsp"%>
+      <br><br>
+    </div>
+
+    <%@ include file="/WEB-INF/views/common/footer.jsp"%>
+  </div>
 </div>
 </body>
 </html>
