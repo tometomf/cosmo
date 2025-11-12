@@ -110,7 +110,7 @@
         <div class="flow_others">確認</div>
         <div class="flow_others">完了</div>
       </div>
-      <div class="subtitle">通勤経路情報</div>
+      <div class="subtitle">日割　通勤経路情報</div>
     </div>
 
     
