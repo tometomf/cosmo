@@ -118,11 +118,11 @@
     
       <div class="hint-row">
         <div class="hint-text">
-          自転車・徒歩・自転車は、住所から勤務先まで、その手段のみを利用する場合に限ります。<br><br>
+          自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
           電車・バスは、複数手段の利用（乗り継ぎ）が可能です。<br>
           複数手段を利用する場合、手段ごとに線路を分割して登録してください。
         </div>
-        <div class="map-btn">
+        <div class="map-btn"><br><br>
           <a href="<c:url value='/hiwariKinmuchi/map'/>">
             <img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
           </a>
