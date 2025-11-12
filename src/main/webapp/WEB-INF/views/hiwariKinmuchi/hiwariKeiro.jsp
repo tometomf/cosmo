@@ -9,13 +9,14 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
-  /* 전체 폭 통일 컨테이너 */
+    html { overflow-y: scroll; }  
+    
   .page-width {
-    width: 950px;      /* 스크린샷 기준 정확한 폭 */
-    margin: 0 auto;    /* 중앙 정렬 */
+    width: 950px;      
+    margin: 0 auto;    
   }
 
-  /* 안내문 + 지도 버튼 */
+
   .hint-row {
     display: flex;
     justify-content: space-between;
@@ -25,7 +26,7 @@
   .hint-text { color: #333; line-height: 1.9; flex: 1; }
   .map-btn img { display: block; }
 
-  /* 경로 영역 */
+ 
   .route-section {
     position: relative;
     background: #f7f7f7;
@@ -42,7 +43,7 @@
     align-items: center;
   }
 
-  /* 탭(배경 이미지 유지) */
+ 
   .route-label {
     position: relative;
     top: -23px;
@@ -75,22 +76,22 @@
   .route-add img { width: 14px; height: 14px; }
   .route-add:hover { text-decoration: underline; }
 
-  /* --- 하단 버튼: main.css 폭(1010px) 오버라이드 & 좌측 정렬/간격 보강 --- */
+ 
   .button_Left {
-    width: 100%;           /* 부모(.page-width 950px)에 맞춤 */
-    margin: 12px 0 0;      /* 위 여백 약간 */
+    width: 100%;          
+    margin: 12px 0 0;      
   }
   .button_Left_Group {
     display: flex;
-    justify-content: flex-start;  /* 왼쪽 정렬 명시 */
-    align-items: center;          /* 수직 중앙 정렬 */
-    gap: 14px;                    /* 버튼 간 간격(원하면 조정) */
+    justify-content: flex-start;  
+    align-items: center;         
+    gap: 14px;                   
   }
   .button_Left_Group img {
     display: block;
   }
 
-  /* 사용하지 않으므로 제거: .button_Center_Group, .btn-row-left 등 */
+
 </style>
 </head>
 
@@ -99,7 +100,7 @@
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
 
   <div class="main">
-    <!-- 상단 플로우 -->
+ 
     <div class="main_title">
       <div class="flow">
         <div class="flow_others">勤務地入力</div>
@@ -112,9 +113,9 @@
       <div class="subtitle">通勤経路情報</div>
     </div>
 
-    <!-- 중앙 컨테이너 시작 -->
+    
     <div class="page-width">
-      <!-- 안내문 + 지도확인 버튼 -->
+    
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務先まで、その手段のみを利用する場合に限ります。<br><br>
@@ -129,7 +130,7 @@
       </div>
       <br>
 
-      <!-- 경로① 섹션 -->
+    
       <div class="route-section">
         <div class="route-head">
           <span class="route-label">経路①</span>
@@ -142,7 +143,7 @@
 
 	<br><br>
 	
-      <!-- 하단 버튼: 실제 동작(링크) 연결 -->
+    
       <div class="button_Left">
         <div class="button_Left_Group">
           <a href="<c:url value='/hiwariKinmuchi/back'/>">

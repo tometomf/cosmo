@@ -11,15 +11,15 @@
 <style>
   html { overflow-y: scroll; }  
 
-  /* ====== 完了 화면 전용 스타일 (중복 제거본) ====== */
+  
   .finish-wrap { display:flex; justify-content:center; }
   .finish-box {
-    width:520px;            /* 스샷처럼 좁게 */
+    width:520px;            
     background:#fff;
-    border:0;               /* 테두리/라운드 제거 */
-    padding:0;              /* 내부 여백 제거 */
+    border:0;               
+    padding:0;              
     margin-top:10px;
-    text-align:left;        /* 본문은 좌측 정렬 */
+    text-align:left;       
   }
   .finish-msg { line-height:1.8; margin:8px 0; }
   .center-area { text-align:center; margin-top:18px; }
@@ -30,7 +30,7 @@
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
 
   <div class="main">
-    <!-- 상단 플로우 -->
+    
     <div class="main_title">
       <div class="flow">
         <div class="flow_others">勤務地入力</div>
