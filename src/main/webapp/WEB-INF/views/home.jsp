@@ -243,6 +243,13 @@
 					<img src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
 				</div>
 			</div>
+			
+			<!-- 오른쪾 정렬 버튼 예제 -->
+			<div class = "button_Right">
+				<div class = "button_Right_Group">   
+					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"> 
+				</div>
+			</div>
 	
 			<!-- 양쪽 정렬 버튼 예제 -->
 			<div class = "button_Side">
