@@ -1,9 +1,9 @@
 package org.cosmo.service;
 
-import org.cosmo.domain.ShinseiDetailVO;
+import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroVO;
 
 public interface ShinseiService {
-
-    
-    ShinseiDetailVO getShinseiDetail(int kigyoCd, int shinseiNo);
+    ShinseiJyohouVO getShinseiJyohou(Long shinseiNo);
+    ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 }

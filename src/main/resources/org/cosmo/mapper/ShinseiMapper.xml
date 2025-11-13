@@ -1,1 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cosmo.mapper.ShinseiMapper">
+
+	<select id="getShinseiJyohou" parameterType="Long"
+		resultType="org.cosmo.domain.ShinseiJyohouVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		SHINSEI_KBN AS shinseiKbn,
+		SHINCHOKU_KBN AS shinchokuKbn
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getShinseiKeiro" parameterType="Long"
+		resultType="org.cosmo.domain.ShinseiKeiroVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS shinsesiSeq,
+		TSUKIN_SHUDAN_KBN AS tsukinShudan
+		FROM SHINSEI_START_KEIRO
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+</mapper>

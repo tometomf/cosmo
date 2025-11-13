@@ -94,6 +94,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
+					<div class="form_Noraml">${keiro.tsukinShudan}</div>
 				</div>
 			</div>
 

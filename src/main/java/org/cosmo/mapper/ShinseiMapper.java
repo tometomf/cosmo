@@ -1,9 +1,13 @@
 package org.cosmo.mapper;
 
-import java.util.Map;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroVO;
 
-import org.cosmo.domain.ShinseiDetailVO;
-
+@Mapper
 public interface ShinseiMapper {
-    ShinseiDetailVO selectShinseiDetail(Map<String, Object> param);
+
+	ShinseiJyohouVO getShinseiJyohou(@Param("shinseiNo") Long shinseiNo);
+	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinsesiNo);
 }
