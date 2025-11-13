@@ -51,7 +51,7 @@
 		display: grid;
 		grid-template-columns: 2fr 3fr;
 		background-color: white;
-		height: 40px;
+		/* height: 40px; */
 	}
 	
 	#form_Text3 {
@@ -77,8 +77,8 @@
 	
 	.form_Column2 {
 		background-color: #dddddd;
-		border-right: solid 1px white;
-		border-bottom: solid 1px white;
+		/* border-right: solid 1px white; */
+		/* border-bottom: solid 1px white; */
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -91,46 +91,60 @@
 	}
 	
 	.form_Normal2 {
-		/* border-bottom: solid 1px #a0a0a0; */
 		display: flex;
-		background-color: #DAEAF5;
-		/* gap: 5px; */
+		background-color: #ECFBEA;
+		width: 99.5%;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 5px;
 	}
 	
 	.form_Normal3 {
-		/* border-bottom: solid 1px #a0a0a0; */
 		display: flex;
-		/* gap: 5px; */
+		width: 99.5%;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 5px;
 	}
 	
 	.form_Text2 > div {
 		min-width: 25px;
 		text-align: left;
+		/* padding: 5px; */
 		font-size: 13px;
 		align-items: center;
 	}
 	
+	.form_Keiro {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+	}
+
 </style>
 <body>
 	<div class="layout">
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div class="main">
-			<div class="main_Content">
+			<div class = "main_title">
 				<!-- 진척도 예제 -->
 				<div class = "flow">
-					<div class = "flow_others">勤務地入力</div>
+					<div class = "flow_current">勤務地入力</div>
 					<div class = "flow_others">住所入力</div>
 					<div class = "flow_others">経路入力</div>
-					<div class = "flow_current">付随書類入力</div>
+					<div class = "flow_others">付随書類入力</div>
 					<div class = "flow_others">確認</div>
 					<div class = "flow_others">完了</div>
 				</div>
-				<div class="subtitle">付随書類入力</div>
+				<div class="subtitle">申請内容選択</div>
+			</div>
+			<div class="main_Content">
 				<!--
 				<div class="keiro">
 					<div class="keiro-header">
 					    <div class="keiro-box">経路①</div>
-					    <div style="display: flex; gap: 10px; margin-right: 30px"> 
+					    <div style="display: flex; gap: 10px; margin-top: 10px; margin-right: 10px;"> 
 					        
 					        <div style="display: flex; gap: 5px; cursor: pointer;">
 					            <img src="/resources/img/pencil_icon.gif" alt="bg_subtitle">
@@ -149,16 +163,21 @@
 						</div>
 					</div>
 					<div class="content_Form1">
-						<div class="form_Text2" id="form_Text3">
+						<div class="form_Text2" id="form_Text3" style="height: 60px;">
 							<div class="form_Column2">経路</div>
-							<div style="display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;">
-								<div class="form_Normal2" style="width: 100%; ">test1</div>
-								<div class="form_Normal3" style="width: 100%;">test2</div>
+							<div class="form_Keiro">
+								<div class="form_Normal2">
+									<img src="/resources/img/tn/icon_keiro_01.gif" alt="icon_keiro_01">　test1
+								</div>
+								<div class="form_Normal3">
+									<img src="/resources/img/tn/icon_keiro_02.gif" alt="icon_keiro_02">　test2
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				-->
+				
 				<div class="keiro">
 					<div class="keiro-box">経路①</div>
 					<div class="content_Form3">
@@ -177,7 +196,9 @@
 						</div>
 						<div class="form_Text1" id="form_Text1">
 							<div class="form_Column">免許証コピー</div>
-							<div class="form_Normal">表示</div>
+							<div class="form_Normal">
+								<a href="">表示</a>
+							</div>
 							<div class="form_Normal">
 								<input type="text">
 								<input type="button" value="参照">
@@ -194,7 +215,7 @@
 						</div>
 						<div class="form_Text1" id="form_Text1">
 							<div class="form_Column">免許証コピー</div>
-							<div class="form_Normal">表示</div>
+							<div class="form_Normal"><a href="">表示</a></div>
 							<div class="form_Normal">
 								<input type="text">
 								<input type="button" value="参照">
@@ -212,7 +233,7 @@
 						</div>
 						<div class="form_Text1" id="form_Text1">
 							<div class="form_Column">車検証コピー</div>
-							<div class="form_Normal">表示</div>
+							<div class="form_Normal"><a href="">表示</a></div>
 							<div class="form_Normal">
 								<input type="text">
 								<input type="button" value="参照">
@@ -270,11 +291,15 @@
 								<div>変更する</div>
 							</div>
 						</div>
-						<div>※保険証券コピーは、満了日の記載部分が両方確認できるようにアップロードしてください。</div>
+						<div style="border-left: solid 1px #EDEDED; border-right: solid 1px #EDEDED; padding-top: 10px; padding-bottom: 10px;">
+							※保険証券コピーは、満了日の記載部分が両方確認できるようにアップロードしてください。
+						</div>
 						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">保険証券コピー①</div>
-							<div class="form_Normal">表示</div>
-							<div class="form_Normal">
+							<div class="form_Column" style="border-top: 1px solid #a0a0a0;">保険証券コピー①</div>
+							<div class="form_Normal" style="border-top: 1px solid #a0a0a0;">
+								<a href="">表示</a>
+							</div>
+							<div class="form_Normal" style="border-top: 1px solid #a0a0a0;">
 								<input type="text">
 								<input type="button" value="参照">
 								<input type="button" value="アップロード">
@@ -282,7 +307,9 @@
 						</div>
 						<div class="form_Text1" id="form_Text1">
 							<div class="form_Column">保険証券コピー②</div>
-							<div class="form_Normal">表示</div>
+							<div class="form_Normal">
+								<a href="">表示</a>
+							</div>
 							<div class="form_Normal">
 								<input type="text">
 								<input type="button" value="参照">
@@ -291,9 +318,9 @@
 						</div>
 						<div class="form_Text1" id="form_Text1">
 							<div class="form_Column">保険満了日</div>
-							<div class="form_Normal">
-								2013/03/31<br>
-								※まもなく期限が切れます。
+							<div class="form_Normal" style="display: flex; flex-direction: column; align-items: flex-start;">
+								<div>2013/03/31</div>
+								<div style="color: red;">※まもなく期限が切れます。</div>
 							</div>
 							<div class="form_Normal">
 								<input type="text" style="width: 250px;">
@@ -358,7 +385,7 @@
 								<div>定期券を追加する</div>
 							</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">定期コピー</div>
 							<div class="form_Normal">
 								<input type="text">
@@ -366,13 +393,13 @@
 								<input type="button" value="アップロード">
 							</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">初回購入　定期期間</div>
-							<div>1ヶ月</div>
+							<div class="form_Normal">1ヶ月</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">次回購入　定期期間</div>
-							<div>1ヶ月</div>
+							<div class="form_Normal">1ヶ月</div>
 						</div>
 					</div>
 				</div>
@@ -392,7 +419,7 @@
 								<div>定期券を追加する</div>
 							</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">定期コピー</div>
 							<div class="form_Normal">
 								<input type="text">
@@ -400,96 +427,101 @@
 								<input type="button" value="アップロード">
 							</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">初回購入　定期期間</div>
-							<select>
-								<option value="">-------------</option>
-								<option value="">test</option>
-							</select>
+							<div class="form_Normal">
+								<select>
+									<option value="">-------------</option>
+									<option value="">test</option>
+								</select>
+							</div>
 						</div>
-						<div class="form_Text1" id="form_Text1">
+						<div class="form_Text1" id="form_Text3">
 							<div class="form_Column">次回購入　定期期間</div>
 							<div>6ヶ月</div>
 						</div>
 					</div>
 				</div>
-				<div style="flex; flex-direction: column; gap: 5px;">
-					<div>急な異動の場合なので今までの通勤路での定期券を既に購入済の場合、ここにアップロードしてください。</div>
-					<div>コメント入力欄</div>
-					<div class="content_Form1" style="margin-bottom: 10px;">
-						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">その他</div>
-							<div class="form_Normal">
-								<input type="text">
-								<input type="button" value="参照">
-								<input type="button" value="アップロード">
-							</div>
-							<div class="form_Normal">
-								<input type="text" style="width: 250px;">
-							</div>
+			</div>
+			<div style="flex; flex-direction: column; gap: 5px;">
+				<div style="width: 1040px; margin: auto; color: mediumblue;">
+					※急な異動の場合なので今までの通勤路での定期券を既に購入済の場合、ここにアップロードしてください。
+				</div>
+				<div style="width: 1040px; margin-left: 70%;">
+					コメント入力欄
+				</div>
+				<div class="content_Form1" style="width: 1040px; margin-bottom: 10px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">その他</div>
+						<div class="form_Normal">
+							<input type="text">
+							<input type="button" value="参照">
+							<input type="button" value="アップロード">
 						</div>
-					</div>
-					<div class="content_Form1" style="margin-bottom: 10px;">
-						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">その他</div>
-							<div class="form_Normal">
-								<input type="text">
-								<input type="button" value="参照">
-								<input type="button" value="アップロード">
-							</div>
-							<div class="form_Normal">
-								<input type="text" style="width: 250px;">
-							</div>
-						</div>
-					</div>
-					<div class="content_Form1" style="margin-bottom: 10px;">
-						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">その他</div>
-							<div class="form_Normal">
-								<input type="text">
-								<input type="button" value="参照">
-								<input type="button" value="アップロード">
-							</div>
-							<div class="form_Normal">
-								<input type="text" style="width: 250px;">
-							</div>
-						</div>
-					</div>
-					<div class="content_Form1" style="margin-bottom: 10px;">
-						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">その他</div>
-							<div class="form_Normal">
-								<input type="text">
-								<input type="button" value="参照">
-								<input type="button" value="アップロード">
-							</div>
-							<div class="form_Normal">
-								<input type="text" style="width: 250px;">
-							</div>
-						</div>
-					</div>
-					<div class="content_Form1" style="margin-bottom: 10px;">
-						<div class="form_Text1" id="form_Text1">
-							<div class="form_Column">その他</div>
-							<div class="form_Normal">
-								<input type="text">
-								<input type="button" value="参照">
-								<input type="button" value="アップロード">
-							</div>
-							<div class="form_Normal">
-								<input type="text" style="width: 250px;">
-							</div>
+						<div class="form_Normal">
+							<input type="text" style="width: 300px;">
 						</div>
 					</div>
 				</div>
-				<div class="button_Left">
-					<div class="button_Left_Group">
-						<img src="/resources/img/back_btn01.gif" alt="back_btn01">
-						<img src="/resources/img/next_btn01.gif" alt="next_btn01">
-						<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
+				<div class="content_Form1" style="width: 1040px; margin-bottom: 10px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">その他</div>
+						<div class="form_Normal">
+							<input type="text">
+							<input type="button" value="参照">
+							<input type="button" value="アップロード">
+						</div>
+						<div class="form_Normal">
+							<input type="text" style="width: 300px;">
+						</div>
 					</div>
 				</div>
-				
+				<div class="content_Form1" style="width: 1040px; margin-bottom: 10px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">その他</div>
+						<div class="form_Normal">
+							<input type="text">
+							<input type="button" value="参照">
+							<input type="button" value="アップロード">
+						</div>
+						<div class="form_Normal">
+							<input type="text" style="width: 300px;">
+						</div>
+					</div>
+				</div>
+				<div class="content_Form1" style="width: 1040px; margin-bottom: 10px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">その他</div>
+						<div class="form_Normal">
+							<input type="text">
+							<input type="button" value="参照">
+							<input type="button" value="アップロード">
+						</div>
+						<div class="form_Normal">
+							<input type="text" style="width: 300px;">
+						</div>
+					</div>
+				</div>
+				<div class="content_Form1" style="width: 1040px; margin-bottom: 10px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">その他</div>
+						<div class="form_Normal">
+							<input type="text">
+							<input type="button" value="参照">
+							<input type="button" value="アップロード">
+						</div>
+						<div class="form_Normal">
+							<input type="text" style="width: 300px;">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="button_Left">
+				<div class="button_Left_Group">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01">
+					<img src="/resources/img/next_btn01.gif" alt="next_btn01">
+					<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
+				</div>
 			</div>
 		</div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
