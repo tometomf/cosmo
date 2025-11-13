@@ -214,6 +214,12 @@ body {
 .form_Normal {
 	border-right: solid 1px #a0a0a0;
 	border-bottom: solid 1px #a0a0a0;
+	display: flex;
+	gap: 5px;
+}
+
+.form_Normal > div {
+	display: block;
 }
 
 .form_Required {
@@ -291,6 +297,23 @@ body {
 	cursor: pointer;
 }
 
+.button_Right {
+	width: 1010px;
+    margin: auto;
+}
+
+.button_Right_Group {
+	display: flex;
+	gap: 5px;
+	justify-content: end;
+}
+
+.button_Right_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
+
 .button_Side {
 	width: 1010px;
     margin: auto;
@@ -307,4 +330,13 @@ body {
 	display: block;
 	align-items: center;
 	cursor: pointer;
+}
+
+.multi_Form {
+	display: flex; 
+	gap: 5px; 
+	width: 1010px; 
+	align-items: flex-start; 
+	justify-content: space-between; 
+	margin: auto;
 }
