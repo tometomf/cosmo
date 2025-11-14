@@ -251,7 +251,7 @@
 									東京メトロ丸の内線
 								</div>
 								<div class="form_Normal2">
-									<img src="/resources/img/tn/icon_keiro_01.gif" alt="icon_keiro_01">　東京駅
+									<img src="/resources/img/tn/icon_keiro_02.gif" alt="icon_keiro_02">　東京駅
 								</div>
 							</div>
 						</div>
