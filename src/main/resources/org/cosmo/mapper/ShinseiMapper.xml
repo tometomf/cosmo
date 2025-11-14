@@ -5,26 +5,114 @@
 
 <mapper namespace="org.cosmo.mapper.ShinseiMapper">
 
-	<select id="getShinseiJyohou" parameterType="Long"
+	<select id="getShinseiJyohou" parameterType="String"
 		resultType="org.cosmo.domain.ShinseiJyohouVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
 		SHINSEI_NO AS shinseiNo,
 		SHINSEI_KBN AS shinseiKbn,
-		SHINCHOKU_KBN AS shinchokuKbn
-		FROM SHINSEI
+		SHINCHOKU_KBN AS shinchokuKbn,
+		GEN_ADDRESS_3
+		AS genAddress,
+		NEW_ADDRESS_3 AS newAddress,
+		GEN_SHOZOKU_CD AS
+		genShozoku,
+		NEW_SHOZOKU_CD AS newShozoku,
+		GEN_KINMU_ADDRESS_3 AS
+		genKinmuchi,
+		NEW_KINMU_ADDRESS_3 AS newKinmuchi,
+		SHINSEI_RIYU AS riyu,
+		IDO_YMD AS idoYmd,
+		ITEN_YMD AS itenYmd,
+		TENNYU_YMD AS tennyuYmd,
+		RIYO_START_YMD AS riyoStartYmd,
+		SHINSEI_YMD AS shinseiYmd,
+		SASHIMODOSHI_YMD AS ssmdsYmd,
+		MOSHIOKURI_COMMENT AS moComment
+		FROM
+		SHINSEI
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiKeiro" parameterType="Long"
+	<select id="getShinseiKeiro" parameterType="String"
 		resultType="org.cosmo.domain.ShinseiKeiroVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
 		SHINSEI_NO AS shinseiNo,
-		KEIRO_SEQ AS shinsesiSeq,
-		TSUKIN_SHUDAN_KBN AS tsukinShudan
+		KEIRO_SEQ AS keiroSeq,
+		TSUKIN_SHUDAN_KBN AS tsukinShudan,
+		KATAMICHI_KIN AS katamichi,
+		JITSU_KINMU_NISSU AS jitsu,
+		TSUKI_SHIKYU_KIN AS tsuki,
+		SHINSEI_KM AS shinseiKm
 		FROM SHINSEI_START_KEIRO
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<select id="getShinseiShorui" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiShoruiVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		HOKEN_MANRYO_YMD AS manryoYmd,
+		TAIJIN_BAISHO AS
+		taijin,
+		TAIBUTSU_BAISHO AS taibutsu,
+		JINSHIN_SHOGAI AS jinshin,
+		TOJOSHA_SHOGAI AS tojosha,
+		TOKYU AS tokyu
+		FROM SHINSEI_FUZUI_SHORUI
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
+
+	<select id="getShinseiIcHozon" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiIcHozonVO">
+		SELECT
+		HOZON_UID AS hozonUid,
+		USER_UID AS userUid,
+		ADD_DATE AS
+		addDate
+		FROM ICHIJI_HOZON
+		WHERE HOZON_UID = #{hozonUid}
+	</select>
+
+	<select id="getCodeNm" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '102'
+		AND CODE =
+		#{code}
+	</select>
+
+	<select id="getShudanName" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '103'
+		AND CODE =
+		#{code}
+	</select>
+
+	<select id="getShinseiName" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '101'
+		AND CODE =
+		#{code}
+	</select>
+	
+	<update id="updateTorikesu">
+	UPDATE SHINSEI
+	SET TORIKESHI_RIYU = #{tkComment},
+	SHINCHOKU_KBN = '5',
+	TORIKESHI_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+	UPD_DATE = SYSTIMESTAMP,
+	UPD_USER_ID = #{shainUid}
+	WHERE SHINSEI_NO = #{shinseiNo}
+	</update>
 
 </mapper>

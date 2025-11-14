@@ -42,29 +42,33 @@
 			</div>
 
 			<div class="content_Form1">
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div>差し戻し</div>
+					<div class="form_Normal">${jyohou.codeNm }</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div>20180730</div>
+					<div class="form_Normal">
+						<c:if test="${jyohou.shinchokuKbn == '3'}">
+            ${jyohou.shinseiNo}
+        </c:if>
+					</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div>2018/07/30</div>
+					<div class="form_Normal">${jyohou.shinseiYmd }</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div>2018/07/31</div>
+					<div class="form_Normal">${jyohou.ssmdsYmd }</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text1">
+				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">不備内容</div>
-					<div>省略</div>
+					<div class="form_Normal">${jyohou.moComment }</div>
 				</div>
 			</div>
 
@@ -83,7 +87,7 @@
 					<div class="form_Column">勤務先</div>
 					<div class="form_Normal">${jyohou.genShozoku}</div>
 					<div class="form_Normal">${jyohou.newShozoku}</div>
-					
+
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
@@ -98,7 +102,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${keiro.shudanName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
@@ -106,15 +110,15 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${keiro.shinseiKm }km</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">金額 1ヶ月</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${keiro.tsuki + keiro.yuryo}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 1ヶ月</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${keiro.yuryo}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
@@ -122,34 +126,34 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">保険満了日</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${shorui.manryoYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">対人賠償</div>
-					<div class="form_Required">無制限</div>
+					<div class="form_Required">${shorui.taijin}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">対物賠償</div>
-					<div class="form_Required">無制限</div>
+					<div class="form_Required">${shorui.taibutsu}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">人身障害</div>
-					<div class="form_Required">無制限</div>
+					<div class="form_Required">${shorui.jinshin}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">搭乗者障害</div>
-					<div class="form_Required">無制限</div>
+					<div class="form_Required">${shorui.tojosha}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">等級</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${shorui.tokyu}級</div>
 				</div>
 			</div>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${jyohou.shinseiKbn}</div>
+					<div class="form_Normal">${jyohou.shinseiName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -159,7 +163,15 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移転日</div>
-					<div class="form_Normal">${jyohou.idoYmd} / ${jyohou.itenYmd}</div>
+					<div class="form_Normal">
+						<c:if test="${not empty jyohou.idoYmd}">
+            ${jyohou.idoYmd}
+        </c:if>
+
+						<c:if test="${not empty jyohou.itenYmd}">
+            ${jyohou.itenYmd}
+        </c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -168,29 +180,55 @@
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">開始日</div>
-					<div class="form_Normal">${jyohou.riyoStartYmd}</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">取消理由</div>
 					<div class="form_Normal">
-						<textarea 
-							style="width: 90%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
+						<textarea name="tkCommentInput"
+    style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
 					</div>
 				</div>
 			</div>
 
+			<form action="/shinsei/updateTorikesu" method="post" id="tkForm">
+				<input type="hidden" name="tkComment" id="tkCommentForm"> <input
+					type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+			</form>
 
 			<div class="button_Side">
 				<div class="button_Side_Group">
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
-						onClick="location.href='/shinsei/ichijihozon?no=${jyohou.shinseiNo}'"> <img
-						src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02">
+						onclick="location.href='/shinsei/ichijihozon?no=${jyohou.shinseiNo}'">
+
+					<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
+						onclick="submitCancelForm()">
 				</div>
 			</div>
+
 			<%@ include file="/WEB-INF/views/common/footer.jsp"%>
-		</div>
-	</div>
+
+		<script>
+function submitCancelForm() {
+
+    const textarea = document.querySelector("textarea[name='tkCommentInput']");
+    const value = textarea.value.trim();
+
+    // 1) 공백/빈값 제출 금지
+    if (value.length === 0) {
+        alert("取消理由を入力してください。");
+        return;
+    }
+
+    // 2) 1000자 제한 (HTML maxlength 있어도 JS도 넣는게 안전)
+    if (value.length > 1000) {
+        alert("取消理由は1000文字以内で入力してください。");
+        return;
+    }
+
+    // hidden 에 값 넣기
+    document.getElementById("tkCommentForm").value = value;
+
+    // 폼 제출
+    document.getElementById("tkForm").submit();
+}
+</script>
 </body>
 </html>
