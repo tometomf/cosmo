@@ -98,7 +98,7 @@
 
 			<div class="content_Form2">
 				<div class="form_Title2">
-					<div>経路①</div>
+					<div>経路&#${9311 + keiro.keiroSeq};</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
@@ -106,7 +106,8 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${keiro.startPlace}⟶
+						${keiro.endPlace}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
@@ -122,7 +123,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
-					<div class="form_Required"></div>
+					<div class="form_Required">${fileName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">保険満了日</div>
@@ -183,7 +184,7 @@
 					<div class="form_Column">取消理由</div>
 					<div class="form_Normal">
 						<textarea name="tkCommentInput"
-    style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
+							style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
 					</div>
 				</div>
 			</div>
@@ -191,6 +192,8 @@
 			<form action="/shinsei/updateTorikesu" method="post" id="tkForm">
 				<input type="hidden" name="tkComment" id="tkCommentForm"> <input
 					type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+				<input type="hidden" name="beforeKbn" value="${jyohou.shinchokuKbn}">
+				  <input type="hidden" name="hozonUid" value="${hozon.hozonUid}">
 			</form>
 
 			<div class="button_Side">
@@ -203,32 +206,36 @@
 				</div>
 			</div>
 
+			<c:if test="${not empty errorMessage}">
+				<script>
+					alert("${errorMessage}");
+					location.href = "/"; // 🔥 메인 화면 주소로 이동시키기
+				</script>
+			</c:if>
+
 			<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 
-		<script>
-function submitCancelForm() {
+			<script>
+				function submitCancelForm() {
 
-    const textarea = document.querySelector("textarea[name='tkCommentInput']");
-    const value = textarea.value.trim();
+					const textarea = document
+							.querySelector("textarea[name='tkCommentInput']");
+					const value = textarea.value.trim();
 
-    // 1) 공백/빈값 제출 금지
-    if (value.length === 0) {
-        alert("取消理由を入力してください。");
-        return;
-    }
+					if (value.length === 0) {
+						alert("取消理由を入力してください。");
+						return;
+					}
 
-    // 2) 1000자 제한 (HTML maxlength 있어도 JS도 넣는게 안전)
-    if (value.length > 1000) {
-        alert("取消理由は1000文字以内で入力してください。");
-        return;
-    }
+					if (value.length > 1000) {
+						alert("取消理由は1000文字以内で入力してください。");
+						return;
+					}
 
-    // hidden 에 값 넣기
-    document.getElementById("tkCommentForm").value = value;
+					document.getElementById("tkCommentForm").value = value;
 
-    // 폼 제출
-    document.getElementById("tkForm").submit();
-}
-</script>
+					document.getElementById("tkForm").submit();
+				}
+			</script>
 </body>
 </html>

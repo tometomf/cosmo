@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
+import org.cosmo.domain.ShinseiFileVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
@@ -46,6 +47,8 @@ public class ShinseiController {
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 		
+		String fileName = shinseiService.getFileName(shinseiNo);
+		
 		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
 	        String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 	        jyohouVo.setCodeNm(codeNm);
@@ -64,6 +67,7 @@ public class ShinseiController {
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);
+		model.addAttribute("fileName", fileName);
 		
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
@@ -102,8 +106,6 @@ public class ShinseiController {
 	public String hikimodosu(@RequestParam("shinseiNo") Long shinseiNo, HttpSession session, HttpServletRequest request,
 			RedirectAttributes rttr) {
 
-		// 세션에서 기업코드 / 로그인 사용자ID 는
-		// 너희 프로젝트에서 실제로 쓰는 속성명으로 맞춰줘.
 		Long kigyoCd = (Long) session.getAttribute("kigyoCd");
 		String loginUserId = (String) session.getAttribute("loginUserId");
 		String userIp = request.getRemoteAddr();
@@ -119,14 +121,31 @@ public class ShinseiController {
 	public String update(
 			@RequestParam("tkComment") String tkComment,
 			@RequestParam("shinseiNo") String shinseiNo,
-			HttpSession session) {
+			@RequestParam("beforeKbn") String beforeKbn,
+			@RequestParam("hozonUid") String hozonUid,
+			HttpSession session, Model model) {
 		
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		String shainUid = shain.getShain_Uid();
 		
+		String nowKbn = shinseiService.getShinchokuKbn(shinseiNo);
+		
+		 if ("1".equals(nowKbn) && (shinseiNo == null || shinseiNo.isEmpty())) {
+
+		        shinseiService.deleteIchijiHozonByHozonUid(hozonUid);  // hozonUid 기준 삭제
+
+		        model.addAttribute("errorMessage", "保存データのみ削除しました。");
+		        return "shinsei/dummy_11_shinseiDetail_03";
+		    }
+		
+		  if (!beforeKbn.equals(nowKbn)) {
+		        model.addAttribute("errorMessage", "他のユーザーにより更新されています。再度画面を開いてください。");
+		        return "shinsei/dummy_11_shinseiDetail_03"; 
+		    }
+		
 		shinseiService.updateTorikesu(shinseiNo, tkComment,shainUid);
 		
-		return "/shinsei/jyohouDetail"; //나중에 링크 수정
+		return "home"; //나중에 링크 수정할게요
 
 	}
 

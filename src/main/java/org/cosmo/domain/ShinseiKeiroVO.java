@@ -15,6 +15,9 @@ public class ShinseiKeiroVO {
 	private Long tsuki;
 	private BigDecimal shinseiKm;
 	
+	private String startPlace;
+	private String endPlace;
+	
 	private String shudanName;
 	
 	

@@ -3,6 +3,7 @@ package org.cosmo.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.ShinseiDetailVO;
+import org.cosmo.domain.ShinseiFileVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
@@ -36,8 +37,15 @@ public interface ShinseiMapper {
 	String getShudanName(@Param("code") String code);
 
 	String getShinseiName(@Param("code") String code);
+	
+	String getFileName(@Param("shinseiNo") String shinseiNo);
+	
+	String getShinchokuKbn(@Param("shinseiNo") String shinseiNo);
 
 	void updateTorikesu(@Param("shinseiNo") String shinseiNo, @Param("tkComment") String tkComment,
 			@Param("shainUid") String shainUid);
+	
+	void deleteIchijiHozonByHozonUid(String hozonUid);
+
 
 }
