@@ -9,15 +9,12 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
-    html { overflow-y: scroll; }  
-    
-    
-    
-  .page-width {
-    width: 950px;      
-    margin: 0 auto;    
-  }
+  html { overflow-y: scroll; }
 
+  .page-width {
+    width: 950px;
+    margin: 0 auto;
+  }
 
   .hint-row {
     display: flex;
@@ -28,7 +25,6 @@
   .hint-text { color: #333; line-height: 1.9; flex: 1; }
   .map-btn img { display: block; }
 
- 
   .route-section {
     position: relative;
     background: #f7f7f7;
@@ -45,29 +41,30 @@
     align-items: center;
   }
 
- 
   .route-label {
     position: relative;
     top: -23px;
-    margin-left: -1px;
+    margin-left: -10px;
+    margin-top: 3px;
     display: inline-block;
-    width: 90px;
-    height: 33px;
-    line-height: 33px;
+    width: 106px;
+    height: 30px;
+    line-height: 30px;
     text-align: center;
     font-size: 15px;
     font-weight: 400;
     color: #1f6b1f;
     background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
-    background-size: cover;
+    background-size: 100% 100%;
     border: 1px solid #64c764;
     border-top-color: #46b946;
-    border-radius: 0;
+    border-left: none;
+    border-radius: 0 0 6px 0;
   }
 
   .route-add {
     position: relative;
-    top: -6px;
+    top: -15px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -78,41 +75,53 @@
   .route-add img { width: 14px; height: 14px; }
   .route-add:hover { text-decoration: underline; }
 
- 
   .button_Left {
-    width: 100%;          
-    margin: 12px 0 0;      
+    width: 100%;
+    margin: 12px 0 0;
   }
   .button_Left_Group {
     display: flex;
-    justify-content: flex-start;  
-    align-items: center;         
-    gap: 14px;                   
+    justify-content: flex-start; 
+    align-items: center;
+    gap: 14px;
   }
   .button_Left_Group img {
     display: block;
   }
 
-/*追加する */
-.route-add{
-  top: -15px;           /* 기존 -6px → 조금 더 위로 */
-}
+  .keiro-box {
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    padding: 10px 14px;
+    margin-top: 4px;
+  }
 
-/*経路①*/
-.route-label{
-  margin-left: -10px;    /* 배경 박스(회색 박스) 왼쪽 테두리와 정확히 맞춤 */
-  margin-top: 3px;    /* 상단 초록 라인에 더 가깝게 */
-  width: 106px;         /* 스샷 느낌이면 100~110px 사이에서 조정 */
-  height: 30px;         /* 높이·라인하이트 조금 낮춰 타이트하게 */
-  line-height: 30px;
-  background-size: 100% 100%;
-  border-left: none;     /* 왼쪽 보더 제거 */
-  border-radius: 0 0 6px 0;   /* 좌하단만 라운드( top-left, top-right, bottom-right, bottom-left ) */
-  .route-label {
-  border-left: none;   
- 
-}
+  .keiro-row {
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 28px;
+    row-gap: 8px;
+  }
 
+  .keiro-row label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .keiro-row .field-label {
+    display: inline-block;
+    width: 70px;
+    text-align: right;
+    margin-right: 4px;
+  }
+
+  .keiro-row select,
+  .keiro-row input[type="text"] {
+    font-size: 13px;
+    padding: 2px 4px;
+  }
 </style>
 </head>
 
@@ -121,7 +130,6 @@
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
 
   <div class="main">
- 
     <div class="main_title">
       <div class="flow">
         <div class="flow_others">勤務地入力</div>
@@ -134,9 +142,8 @@
       <div class="subtitle">日割　通勤経路情報</div>
     </div>
 
-    
     <div class="page-width">
-    
+      
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
@@ -144,7 +151,7 @@
           複数手段を利用する場合、手段ごとに線路を分割して登録してください。
         </div>
         <div class="map-btn">
-        <br>
+          <br>
           <a href="<c:url value='/hiwariKinmuchi/map'/>">
             <img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
           </a>
@@ -152,33 +159,96 @@
       </div>
       <br>
 
-    
-      <div class="route-section">
-        <div class="route-head">
-          <span class="route-label">経路①</span>
-          <a class="route-add" href="<c:url value='/hiwariKinmuchi/route/add'/>">
-            <img src="/resources/img/tuika_icon.gif" alt="追加アイコン">
-            追加する
-          </a>
-        </div>
-      </div>
+      
+      <form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
 
-	<br><br>
-	
-    
-      <div class="button_Left">
-        <div class="button_Left_Group">
-          <a href="<c:url value='/hiwariKinmuchi/back'/>">
-            <img src="/resources/img/back_btn01.gif" alt="戻る">
-          </a>
-          <a href="<c:url value='/hiwariKakunin'/>">
-            <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
-          </a>
-          <a href="<c:url value='/hiwariKinmuchi/saveTemp'/>">
-            <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
-          </a>
+        <div class="route-section">
+          <div class="route-head">
+            <span class="route-label">経路①</span>
+
+            <button type="submit" name="action" value="addRow"
+                    class="route-add" style="border:none;background:none;padding:0;cursor:pointer;">
+              <img src="/resources/img/tuika_icon.gif" alt="追加アイコン">
+              追加する
+            </button>
+          </div>
+
+       
+          <c:forEach var="row" items="${keiroList}" varStatus="st">
+            <div class="keiro-box">
+              <div class="keiro-row">
+
+            
+                <label>
+                  <span class="field-label">通勤手段：</span>
+          
+                  <select name="tsukinShudanKbn">
+                    <option value="">選択してください</option>
+                    <option value="01" <c:if test="${row.tsukinShudanKbn == '01'}">selected</c:if>>電車</option>
+                    <option value="02" <c:if test="${row.tsukinShudanKbn == '02'}">selected</c:if>>バス</option>
+                    <option value="03" <c:if test="${row.tsukinShudanKbn == '03'}">selected</c:if>>徒歩</option>
+                    <option value="04" <c:if test="${row.tsukinShudanKbn == '04'}">selected</c:if>>自転車</option>
+                    <option value="05" <c:if test="${row.tsukinShudanKbn == '05'}">selected</c:if>>自動車</option>
+                  </select>
+                </label>
+
+       
+                <label>
+                  <span class="field-label">出発地：</span>
+           
+                  <input type="text"
+                         name="startPlace"
+                         value="${row.startPlace}"
+                         style="width:160px;">
+                </label>
+
+                <label>
+                  <span class="field-label">到着地：</span>
+               
+                  <input type="text"
+                         name="endPlace"
+                         value="${row.endPlace}"
+                         style="width:160px;">
+                </label>
+
+                <label>
+                  <span class="field-label">代表経路：</span>
+                  <input type="radio"
+                         name="kekkaSelectIndex"
+                         value="${st.index}"
+                         <c:if test="${row.kekkaSelect == '1'}">checked</c:if> >
+                </label>
+
+                <input type="hidden" name="kigyoCd"   value="${row.kigyoCd}"/>
+                <input type="hidden" name="shinseiNo" value="${row.shinseiNo}"/>
+                <input type="hidden" name="keiroSeq"  value="${row.keiroSeq}"/>
+
+              </div>
+            </div>
+          </c:forEach>
+
         </div>
-      </div>
+
+        <br><br>
+        <div class="button_Left">
+          <div class="button_Left_Group">
+            <a href="<c:url value='/hiwariKinmuchi/back'/>">
+              <img src="/resources/img/back_btn01.gif" alt="戻る">
+            </a>
+
+            <button type="submit" name="action" value="apply"
+                    style="border:none;background:none;padding:0;cursor:pointer;">
+              <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
+            </button>
+
+            <button type="submit" name="action" value="temp"
+                    style="border:none;background:none;padding:0;cursor:pointer;">
+              <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
+            </button>
+          </div>
+        </div>
+
+      </form>
 
       <br><br>
     </div>
