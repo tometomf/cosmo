@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <!DOCTYPE html>
 <html>
@@ -47,45 +48,62 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">承認待ち</div>
+					<div class="form_Normal">${detail.joutaiName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">12300064</div>
+					<div class="form_Normal">${detail.shinseiNo}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">2013/01/03</div>
+					<div class="form_Normal">${detail.shinseiYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">2013/01/04</div>
+					<div class="form_Normal">${detail.sashimodoshiYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">再申請日</div>
-					<div class="form_Normal">2013/01/08</div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.saishinseiDate}"
+							pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">承認日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.shoninDate}" pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">支給開始日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.shikyuuKaishiDate}"
+							pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">本人申し送りコメント</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${detail.honninComment}</div>
 				</div>
 			</div>
-
 
 			<!-- ===== 이 신청을 되돌리는 버튼 (왼쪽정렬) ===== -->
-			<div class="button_Left">
-				<div class="button_Left_Group">
-					<img src="/resources/img/shinsei_btn04.gif" alt="この申請を引戻す">
+			<c:if test="${detail.shinchokuKbn ne '4'}">
+				<%-- 承認済(4)이면 버튼 숨김 --%>
+				<div class="button_Left">
+					<form action="<c:url value='/shinsei/hikimodosu' />" method="post">
+						<input type="hidden" name="shinseiNo" value="${detail.shinseiNo}" />
+						<div class="button_Left_Group">
+							<button type="submit"
+								style="border: 0; padding: 0; margin: 0; background: none; cursor: pointer;">
+								<img src="/resources/img/shinsei_btn04.gif" alt="この申請を引戻す">
+							</button>
+						</div>
+					</form>
 				</div>
-			</div>
+			</c:if>
+
 
 			<!-- ===== 신청 전 / 후 ===== -->
 			<div class="content_Form1">
@@ -96,18 +114,18 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">川崎市高津区上作延1-2-3 レオパレス溝の口103</div>
-					<div class="form_Normal">神奈川県川崎市中原区新丸子1-2-3 レオパレス新丸子201</div>
+					<div class="form_Normal">${detail.genAddress}</div>
+					<div class="form_Normal">${detail.newAddress}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">中野店</div>
-					<div class="form_Normal">江戸川店</div>
+					<div class="form_Normal">${detail.shozokuBeforeNm}</div>
+					<div class="form_Normal">${detail.shozokuAfterNm}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">東京都中野区中野3-30-4 KDX中野坂上ビル8F</div>
-					<div class="form_Normal">東京都江戸川区船堀2-1-5</div>
+					<div class="form_Normal">${detail.kinmuchiBefore}</div>
+					<div class="form_Normal">${detail.kinmuchiAfter}</div>
 				</div>
 			</div>
 
@@ -119,53 +137,63 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">自動車(一般)</div>
+					<div class="form_Normal">${detail.tsukinShudanName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Normal">新丸子駅 → 自由が丘駅</div>
+					<div class="form_Normal">${detail.keiro}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
-					<div class="form_Normal">8.2km</div>
+					<div class="form_Normal">${detail.kyori}km</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">金額 1ヶ月</div>
-					<div class="form_Normal">12,456円</div>
+					<div class="form_Normal">
+						<fmt:formatNumber value="${detail.kingakuMonth}" pattern="#,##0" />
+						円
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 1ヶ月</div>
-					<div class="form_Normal">30,000円</div>
+					<div class="form_Normal">
+						<fmt:formatNumber value="${detail.yuryodouroMonth}"
+							pattern="#,##0" />
+						円
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">付随書類</div>
 					<div class="form_Normal">
-						<a href="#">登録証書コピー</a>
+						<a href="#">${detail.fuzuiFileTitle}</a>
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">保険満了日</div>
-					<div class="form_Normal">2015/01/31</div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.hokenManryoDate}"
+							pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">対人賠償</div>
-					<div class="form_Normal">無制限</div>
+					<div class="form_Normal">${detail.taijinBaisho}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">対物賠償</div>
-					<div class="form_Normal">無制限</div>
+					<div class="form_Normal">${detail.taibutsuBaisho}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">人身障害</div>
-					<div class="form_Normal">無制限</div>
+					<div class="form_Normal">${detail.jinshinShogai}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">搭乗者障害</div>
-					<div class="form_Normal">無制限</div>
+					<div class="form_Normal">${detail.tojoshaShogai}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">等級</div>
-					<div class="form_Normal">3級</div>
+					<div class="form_Normal">${detail.tokyu}級</div>
 				</div>
 			</div>
 
@@ -173,23 +201,29 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">異動</div>
+					<div class="form_Normal">${detail.shinseiKbnName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${detail.shinseiRiyu}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移動日</div>
-					<div class="form_Normal">2013/04/10</div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.idouDate}" pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">2013/04/09</div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.tennyuDate}" pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal">2013/04/10</div>
+					<div class="form_Normal">
+						<fmt:formatDate value="${detail.kaishiDate}" pattern="yyyy/MM/dd" />
+					</div>
 				</div>
 			</div>
 
