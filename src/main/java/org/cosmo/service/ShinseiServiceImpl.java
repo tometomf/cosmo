@@ -1,12 +1,13 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.ShinseiDetailVO;
+import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
+import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.mapper.ShinseiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class ShinseiServiceImpl implements ShinseiService {
@@ -15,6 +16,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	private ShinseiMapper shinseiMapper;
 
 	@Override
+
 	public ShinseiJyohouVO getShinseiJyohou(Long shinseiNo) {
 		return shinseiMapper.getShinseiJyohou(shinseiNo);
 	}
@@ -29,18 +31,52 @@ public class ShinseiServiceImpl implements ShinseiService {
 		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
 	}
 
-
 	@Override
 	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
 
-		// 1. SHINSEI 테이블을 一時保存 상태로 되돌리기
 		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
 
-		// 2. ALERT 테이블의 신청일을 NULL 로
 		shinseiMapper.updateAlertForHikimodoshi(kigyoCd, shinseiNo, loginUserId);
 
-		// 나중에 여기 사이에 SHINSEI_LOG / OSHIRASE / PROCESS_LOG INSERT 를
-		// 차례로 추가하면 됨.
+	}
+
+	public ShinseiJyohouVO getShinseiJyohou(String shinseiNo) {
+		return shinseiMapper.getShinseiJyohou(shinseiNo);
+	}
+
+	@Override
+	public ShinseiKeiroVO getShinseiKeiro(String shinseiNo) {
+		return shinseiMapper.getShinseiKeiro(shinseiNo);
+	}
+
+	@Override
+	public ShinseiShoruiVO getShinseiShorui(String shinseiNo) {
+		return shinseiMapper.getShinseiShorui(shinseiNo);
+	}
+
+	@Override
+	public ShinseiIcHozonVO getShinseiIcHozon(String hozonUid) {
+		return shinseiMapper.getShinseiIcHozon(hozonUid);
+	}
+
+	@Override
+	public String getCodeNm(String code) {
+		return shinseiMapper.getCodeNm(code);
+	}
+
+	@Override
+	public String getShudanName(String code) {
+		return shinseiMapper.getShudanName(code);
+	}
+
+	@Override
+	public String getShinseiName(String code) {
+		return shinseiMapper.getShinseiName(code);
+	}
+
+	@Override
+	public void updateTorikesu(String shinseiNo, String tkComment, String shainUid) {
+		shinseiMapper.updateTorikesu(shinseiNo, tkComment, shainUid);
 	}
 
 }
