@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://ajaxzip3.github.io/ajaxzip3.js"></script>
 <meta charset="UTF-8">
 <title>申請内容 確認</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
@@ -74,22 +75,22 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">差戻し</div>
+					<div class="form_Normal">${jyohou.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">12300054</div>
+					<div class="form_Normal">${jyohou.shinseiNo}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">2013/01/03</div>
+					<div class="form_Normal">${jyohou.shinseiYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">2013/01/04</div>
+					<div class="form_Normal">${jyohou.ssmdsYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -99,9 +100,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">不備内容</div>
-					<div class="form_Normal">
-						新勤務先(法人の他の)の最寄駅が間違っています。<br> 到着駅を「なおず駅」に変更して、登録解除しなおしてください。
-					</div>
+					<div class="form_Normal">${jyohou.moComment}</div>
 				</div>
 			</div>
 
@@ -116,39 +115,89 @@
 				<!-- 住所 -->
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">川崎市高津区上作延1-2-3 レオパレス溝の口103</div>
+					<!-- 申請前 -->
+					<div class="form_Normal">${jyohou.genAddress}</div>
+
+					<!-- 申請後 -->
 					<div class="form_Normal"
 						style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
 						<!-- 우편번호 -->
 						<div style="display: flex; align-items: center; gap: 5px;">
-							<input type="text" name="zip1" maxlength="3"
+							<input type="text" id="zip1New" name="zip1" maxlength="3"
 								style="width: 40px; text-align: center;"> - <input
-								type="text" name="zip2" maxlength="4"
+								type="text" id="zip2New" name="zip2" maxlength="4"
 								style="width: 60px; text-align: center;">
-							<button type="button" style="padding: 2px 8px;">検索</button>
+							<!-- ★ 버튼에서 JS 함수 호출 -->
+							<button type="button" style="padding: 2px 8px;"
+								onclick="searchZipNew()">検索</button>
 						</div>
 						<!-- 도도부현 -->
 						<div>
-							<select name="prefecture" style="width: 120px;">
+							<select id="prefNew" name="prefecture" style="width: 120px;">
 								<option value="">選択</option>
-								<option value="神奈川県" selected>神奈川県</option>
-								<option value="東京都">東京都</option>
-								<option value="千葉県">千葉県</option>
+								<option value="北海道">北海道</option>
+								<option value="青森県">青森県</option>
+								<option value="岩手県">岩手県</option>
+								<option value="宮城県">宮城県</option>
+								<option value="秋田県">秋田県</option>
+								<option value="山形県">山形県</option>
+								<option value="福島県">福島県</option>
+								<option value="茨城県">茨城県</option>
+								<option value="栃木県">栃木県</option>
+								<option value="群馬県">群馬県</option>
 								<option value="埼玉県">埼玉県</option>
+								<option value="千葉県">千葉県</option>
+								<option value="東京都">東京都</option>
+								<option value="神奈川県">神奈川県</option>
+								<option value="新潟県">新潟県</option>
+								<option value="富山県">富山県</option>
+								<option value="石川県">石川県</option>
+								<option value="福井県">福井県</option>
+								<option value="山梨県">山梨県</option>
+								<option value="長野県">長野県</option>
+								<option value="岐阜県">岐阜県</option>
+								<option value="静岡県">静岡県</option>
+								<option value="愛知県">愛知県</option>
+								<option value="三重県">三重県</option>
+								<option value="滋賀県">滋賀県</option>
+								<option value="京都府">京都府</option>
+								<option value="大阪府">大阪府</option>
+								<option value="兵庫県">兵庫県</option>
+								<option value="奈良県">奈良県</option>
+								<option value="和歌山県">和歌山県</option>
+								<option value="鳥取県">鳥取県</option>
+								<option value="島根県">島根県</option>
+								<option value="岡山県">岡山県</option>
+								<option value="広島県">広島県</option>
+								<option value="山口県">山口県</option>
+								<option value="徳島県">徳島県</option>
+								<option value="香川県">香川県</option>
+								<option value="愛媛県">愛媛県</option>
+								<option value="高知県">高知県</option>
+								<option value="福岡県">福岡県</option>
+								<option value="佐賀県">佐賀県</option>
+								<option value="長崎県">長崎県</option>
+								<option value="熊本県">熊本県</option>
+								<option value="大分県">大分県</option>
+								<option value="宮崎県">宮崎県</option>
+								<option value="鹿児島県">鹿児島県</option>
+								<option value="沖縄県">沖縄県</option>
 							</select>
+
 						</div>
 						<!-- 주소1 -->
 						<div>
-							<input type="text" name="address1" value="川崎市中原区新丸子1-2-3"
-								style="width: 385px;">
+							<input type="text" id="address1New" name="address1"
+								value="${jyohou.newAddress}" style="width: 385px;">
 						</div>
 						<!-- 주소2 -->
 						<div>
-							<input type="text" name="address2" value="レオパレス新丸子201"
+							<input type="text" id="address2New" name="address2" value=""
 								style="width: 385px;">
 						</div>
 					</div>
 				</div>
+
 
 				<!-- 勤務先 -->
 				<div class="form_Text1" id="form_Text1">
@@ -156,7 +205,7 @@
 					<div class="form_Normal">中野店</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 5px;">
-						<span>江戸川店</span>
+						<span>${jyohou.newShozoku}</span>
 						<button type="button"
 							style="border: none; background: none; cursor: pointer;">
 							<img src="/resources/img/tn/search_btn02.gif" alt="search"
@@ -168,8 +217,8 @@
 				<!-- 勤務地 -->
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">東京都中野区中野3-30-4 KDX中野坂上ビル8F</div>
-					<div class="form_Normal">東京都江戸川区船堀2-1-5</div>
+					<div class="form_Normal">${jyohou.genKinmuchi}</div>
+					<div class="form_Normal">${jyohou.newKinmuchi}</div>
 				</div>
 			</div>
 
@@ -185,7 +234,7 @@
 				<!-- 본문 내용 -->
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">自動車（一般）</div>
+					<div class="form_Normal">${keiro.shudanName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -200,7 +249,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
-					<div class="form_Normal">8.3km</div>
+					<div class="form_Normal">${keiro.shinseiKm}km</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -210,7 +259,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 片道</div>
-					<div class="form_Normal">850円</div>
+					<div class="form_Normal">${keiro.katamichi}円</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -233,7 +282,7 @@
 					<div class="form_Column">月当月金額</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 10px;">
-						<span>46,076円</span>
+						<span>${keiro.tsuki}円</span>
 						<button type="button"
 							style="border: 1px solid #ccc; background: #f3f3f3; font-size: 12px; cursor: pointer; padding: 2px 10px;">
 							計算</button>
@@ -571,5 +620,12 @@
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+	<script>
+		function searchZipNew() {
+			AjaxZip3.zip2addr('zip1', 'zip2', 'prefecture', 'address1',
+					'address2');
+		}
+	</script>
 </body>
 </html>

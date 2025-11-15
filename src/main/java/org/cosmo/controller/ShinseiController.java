@@ -1,6 +1,5 @@
 package org.cosmo.controller;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,11 +31,11 @@ public class ShinseiController {
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 		ShinseiIcHozonVO hozonVo = shinseiService.getShinseiIcHozon(hozonUid);
-		
+
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("hozon", hozonVo);
-		
+
 		return "shinsei/11_shinseiDetail_02";
 	}
 
@@ -45,31 +44,58 @@ public class ShinseiController {
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
-		
+
 		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
-	        String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
-	        jyohouVo.setCodeNm(codeNm);
-	    }
-		
+			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
+			jyohouVo.setCodeNm(codeNm);
+		}
+
 		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
-	        String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
-	        jyohouVo.setShinseiName(shinseiName);
-	    }
-		
+			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
+			jyohouVo.setShinseiName(shinseiName);
+		}
+
 		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-	        String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
-	        keiroVo.setShudanName(shudanName);
-	    }
+			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
+			keiroVo.setShudanName(shudanName);
+		}
 
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);
-		
+
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
 	@GetMapping("/kakunin")
-	public String viewShinseiDetail03() {
+	public String viewKakunin(@RequestParam("no") String shinseiNo, Model model) {
+
+		
+		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
+		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
+
+		
+		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
+			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
+			jyohouVo.setCodeNm(codeNm); 
+		}
+
+		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
+			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
+			jyohouVo.setShinseiName(shinseiName); 
+		}
+
+		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
+			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
+			keiroVo.setShudanName(shudanName); 
+		}
+
+		
+		model.addAttribute("keiro", keiroVo);
+		model.addAttribute("jyohou", jyohouVo);
+		model.addAttribute("shorui", shoruiVo);
+
 		return "shinsei/11_shinseiDetail_03";
 	}
 
@@ -79,7 +105,6 @@ public class ShinseiController {
 		model.addAttribute("jyohou", vo);
 		return "shinsei/jyohouDetail";
 	}
-
 
 	@GetMapping("/shinseiDetail")
 	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model) {
@@ -114,19 +139,16 @@ public class ShinseiController {
 		return "redirect:/shinsei/shinseiDetail?no=" + shinseiNo;
 	}
 
-	
 	@PostMapping("/updateTorikesu")
-	public String update(
-			@RequestParam("tkComment") String tkComment,
-			@RequestParam("shinseiNo") String shinseiNo,
+	public String update(@RequestParam("tkComment") String tkComment, @RequestParam("shinseiNo") String shinseiNo,
 			HttpSession session) {
-		
+
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		String shainUid = shain.getShain_Uid();
-		
-		shinseiService.updateTorikesu(shinseiNo, tkComment,shainUid);
-		
-		return "/shinsei/jyohouDetail"; //나중에 링크 수정
+
+		shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
+
+		return "/shinsei/jyohouDetail"; // 나중에 링크 수정
 
 	}
 
