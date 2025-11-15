@@ -32,8 +32,12 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
+
     @GetMapping("/kanryo")
-    public String showKanryoPage() {
+    public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
+
+        model.addAttribute("shinseiNo", shinseiNo);
+
         return "hiwariKinmuchi/hiwariKanryo";
     }
 

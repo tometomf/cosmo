@@ -47,7 +47,7 @@
       <div class="finish-box">
         <div class="finish-msg">
           日割申請が完了しました。<br>
-          「申請番号：<c:out value='${apply.requestNo}' default='123000644'/>」
+	申請番号：<c:out value='${shinseiNo}'/>
         </div>
 
         <div class="finish-msg">
