@@ -2,6 +2,7 @@ package org.cosmo.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
@@ -36,8 +37,79 @@ public interface ShinseiMapper {
 	String getShudanName(@Param("code") String code);
 
 	String getShinseiName(@Param("code") String code);
+	
+	String getFileName(@Param("shinseiNo") String shinseiNo);
+	
+	String getShinchokuKbn(@Param("shinseiNo") String shinseiNo);
 
 	void updateTorikesu(@Param("shinseiNo") String shinseiNo, @Param("tkComment") String tkComment,
 			@Param("shainUid") String shainUid);
+	
+	void deleteIchijiHozonByHozonUid(String hozonUid);
+	
+	void insertOshirase(@Param("shain")ShainVO shain);
+	
+	//로그 관련
+    Long getNextLogSeq(@Param("kigyoCd") String kigyoCd,
+                       @Param("shinseiNo") String shinseiNo);
 
+    void insertShinseiLog(@Param("kigyoCd") String kigyoCd,
+                          @Param("shinseiNo") String shinseiNo,
+                          @Param("logSeq") Long logSeq,
+                          @Param("syoriKbn") int syoriKbn,
+                          @Param("shinseiKbn") String shinseiKbn,
+                          @Param("shinseiYmd") String shinseiYmd,
+                          @Param("shainUid") String shainUid);
+
+    int countStartKeiro(@Param("kigyoCd") String kigyoCd,
+                        @Param("shinseiNo") String shinseiNo);
+
+    void insertStartKeiroLog(@Param("kigyoCd") String kigyoCd,
+                             @Param("shinseiNo") String shinseiNo,
+                             @Param("logSeq") Long logSeq,
+                             @Param("syoriKbn") int syoriKbn,
+                             @Param("shainUid") String shainUid);
+
+    void insertEmptyStartKeiroLog(@Param("kigyoCd") String kigyoCd,
+                                  @Param("shinseiNo") String shinseiNo,
+                                  @Param("logSeq") Long logSeq,
+                                  @Param("syoriKbn") int syoriKbn,
+                                  @Param("shainUid") String shainUid);
+
+    int countEndKeiro(@Param("kigyoCd") String kigyoCd,
+                      @Param("shinseiNo") String shinseiNo);
+
+    void insertEndKeiroLog(@Param("kigyoCd") String kigyoCd,
+                           @Param("shinseiNo") String shinseiNo,
+                           @Param("logSeq") Long logSeq,
+                           @Param("syoriKbn") int syoriKbn,
+                           @Param("shainUid") String shainUid);
+
+    void insertEmptyEndKeiroLog(@Param("kigyoCd") String kigyoCd,
+                                @Param("shinseiNo") String shinseiNo,
+                                @Param("logSeq") Long logSeq,
+                                @Param("syoriKbn") int syoriKbn,
+                                @Param("shainUid") String shainUid);
+
+    int countFuzuiShorui(@Param("kigyoCd") String kigyoCd,
+                         @Param("shinseiNo") String shinseiNo);
+
+    void insertFuzuiShoruiLog(@Param("kigyoCd") String kigyoCd,
+                              @Param("shinseiNo") String shinseiNo,
+                              @Param("logSeq") Long logSeq,
+                              @Param("syoriKbn") int syoriKbn,
+                              @Param("shainUid") String shainUid);
+
+    void insertEmptyFuzuiShoruiLog(@Param("kigyoCd") String kigyoCd,
+                                   @Param("shinseiNo") String shinseiNo,
+                                   @Param("logSeq") Long logSeq,
+                                   @Param("syoriKbn") int syoriKbn,
+                                   @Param("shainUid") String shainUid);
+
+
+    void insertProcessLog(@Param("shinseiNo") String shinseiNo,
+                          @Param("userUid") String userUid,
+                          @Param("type") String type);
 }
+	
+
