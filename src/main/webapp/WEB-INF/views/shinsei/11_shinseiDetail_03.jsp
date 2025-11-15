@@ -74,7 +74,7 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">差戻し</div>
+					<div class="form_Normal">${jyohou.codeNm }</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">

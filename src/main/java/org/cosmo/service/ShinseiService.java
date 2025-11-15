@@ -1,6 +1,8 @@
 package org.cosmo.service;
 
 
+import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiFileVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
@@ -32,6 +34,12 @@ public interface ShinseiService {
     void updateTorikesu(String shinseiNo, String tkComment, String shainUid);
     
     void deleteIchijiHozonByHozonUid(String hozonUid);
+    
+	void insertOshirase(ShainVO shain);
+	
+	void insertCancelLogs(String shinseiNo, String shinseiKbn, String shinseiYmd, ShainVO shain);
+
+	void insertProcessLog(String shinseiNo, String userUid, String type);
 
 
 }

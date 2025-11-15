@@ -180,21 +180,25 @@
 					<div class="form_Normal">${jyohou.tennyuYmd}</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">取消理由</div>
-					<div class="form_Normal">
-						<textarea name="tkCommentInput"
-							style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
-					</div>
-				</div>
-			</div>
+				<form action="/shinsei/updateTorikesu" method="post" id="tkForm">
 
-			<form action="/shinsei/updateTorikesu" method="post" id="tkForm">
-				<input type="hidden" name="tkComment" id="tkCommentForm"> <input
-					type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
-				<input type="hidden" name="beforeKbn" value="${jyohou.shinchokuKbn}">
-				  <input type="hidden" name="hozonUid" value="${hozon.hozonUid}">
-			</form>
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">取消理由</div>
+						<div class="form_Normal">
+							<textarea name="tkCommentInput"
+								style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
+						</div>
+					</div>
+
+					<input type="hidden" name="tkComment" id="tkCommentForm"> <input
+						type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+					<input type="hidden" name="beforeKbn"
+						value="${jyohou.shinchokuKbn}"> <input type="hidden"
+						name="hozonUid" value="${hozon.hozonUid}"> <input
+						type="hidden" name="shinseiKbn" value="${jyohou.shinseiKbn}">
+					<input type="hidden" name="shinseiYmd" value="${jyohou.shinseiYmd}">
+				</form>
+			</div>
 
 			<div class="button_Side">
 				<div class="button_Side_Group">
@@ -209,7 +213,7 @@
 			<c:if test="${not empty errorMessage}">
 				<script>
 					alert("${errorMessage}");
-					location.href = "/"; // 🔥 메인 화면 주소로 이동시키기
+					location.href = "/"; // 나중에 링크 수정할게요
 				</script>
 			</c:if>
 

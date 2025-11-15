@@ -1,6 +1,5 @@
 package org.cosmo.controller;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -33,11 +32,11 @@ public class ShinseiController {
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 		ShinseiIcHozonVO hozonVo = shinseiService.getShinseiIcHozon(hozonUid);
-		
+
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("hozon", hozonVo);
-		
+
 		return "shinsei/11_shinseiDetail_02";
 	}
 
@@ -46,29 +45,29 @@ public class ShinseiController {
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
-		
+
 		String fileName = shinseiService.getFileName(shinseiNo);
-		
+
 		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
-	        String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
-	        jyohouVo.setCodeNm(codeNm);
-	    }
-		
+			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
+			jyohouVo.setCodeNm(codeNm);
+		}
+
 		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
-	        String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
-	        jyohouVo.setShinseiName(shinseiName);
-	    }
-		
+			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
+			jyohouVo.setShinseiName(shinseiName);
+		}
+
 		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-	        String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
-	        keiroVo.setShudanName(shudanName);
-	    }
+			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
+			keiroVo.setShudanName(shudanName);
+		}
 
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);
 		model.addAttribute("fileName", fileName);
-		
+
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
@@ -83,7 +82,6 @@ public class ShinseiController {
 		model.addAttribute("jyohou", vo);
 		return "shinsei/jyohouDetail";
 	}
-
 
 	@GetMapping("/shinseiDetail")
 	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model) {
@@ -116,37 +114,36 @@ public class ShinseiController {
 		return "redirect:/shinsei/shinseiDetail?no=" + shinseiNo;
 	}
 
-	
 	@PostMapping("/updateTorikesu")
-	public String update(
-			@RequestParam("tkComment") String tkComment,
-			@RequestParam("shinseiNo") String shinseiNo,
-			@RequestParam("beforeKbn") String beforeKbn,
-			@RequestParam("hozonUid") String hozonUid,
+	public String update(@RequestParam("tkComment") String tkComment, @RequestParam("shinseiNo") String shinseiNo,
+			@RequestParam("beforeKbn") String beforeKbn, @RequestParam("hozonUid") String hozonUid,
+			@RequestParam("shinseiKbn") String shinseiKbn, // ★ 추가
+			@RequestParam("shinseiYmd") String shinseiYmd, // ★ 추가
 			HttpSession session, Model model) {
-		
+
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		String shainUid = shain.getShain_Uid();
-		
+
 		String nowKbn = shinseiService.getShinchokuKbn(shinseiNo);
-		
-		 if ("1".equals(nowKbn) && (shinseiNo == null || shinseiNo.isEmpty())) {
 
-		        shinseiService.deleteIchijiHozonByHozonUid(hozonUid);  // hozonUid 기준 삭제
+		if ("1".equals(nowKbn) && (shinseiNo == null || shinseiNo.isEmpty())) {
 
-		        model.addAttribute("errorMessage", "保存データのみ削除しました。");
-		        return "shinsei/dummy_11_shinseiDetail_03";
-		    }
-		
-		  if (!beforeKbn.equals(nowKbn)) {
-		        model.addAttribute("errorMessage", "他のユーザーにより更新されています。再度画面を開いてください。");
-		        return "shinsei/dummy_11_shinseiDetail_03"; 
-		    }
-		
-		shinseiService.updateTorikesu(shinseiNo, tkComment,shainUid);
-		
-		return "home"; //나중에 링크 수정할게요
+			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
 
+			model.addAttribute("errorMessage", "保存データのみ削除しました。");
+			return "shinsei/dummy_11_shinseiDetail_03";
+		}
+
+		if (!beforeKbn.equals(nowKbn)) {
+			model.addAttribute("errorMessage", "他のユーザーにより更新されています。再度画面を開いてください。");
+			return "shinsei/dummy_11_shinseiDetail_03";
+		}
+
+		shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
+		shinseiService.insertOshirase(shain);
+		shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
+
+		return "home";
 	}
 
 }

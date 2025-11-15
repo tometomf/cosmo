@@ -138,9 +138,250 @@
 	</update>
 
 	<delete id="deleteIchijiHozonByHozonUid" parameterType="String">
-		DELETE FROM ICHIJI_HOZON
+		DELETE
+		FROM ICHIJI_HOZON
 		WHERE HOZON_UID = #{hozonUid}
 	</delete>
+
+	<insert id="insertOshirase">
+		INSERT INTO OSHIRASE (
+		KIGYO_CD,
+		SHAIN_UID,
+		TSUCHI_YMD,
+		TSUCHI_HM,
+		OSHIRASE_NAIYO,
+		UPD_DATE
+		) VALUES (
+		#{shain.kigyo_Cd},
+		#{shain.shain_Uid},
+		TO_CHAR(SYSDATE,'YYYYMMDD'),
+		TO_CHAR(SYSDATE,'HH24MI'),
+		'申請を取り消しました',
+		SYSTIMESTAMP
+		)
+	</insert>
+
+	<select id="getNextLogSeq" resultType="long">
+		SELECT NVL(MAX(LOG_SEQ),
+		0) + 1
+		FROM SHINSEI_LOG
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertShinseiLog">
+		INSERT INTO SHINSEI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		#{logSeq},
+		#{syoriKbn},
+		#{shinseiKbn},
+		#{shinseiYmd},
+		#{shainUid}
+		)
+	</insert>
+
+
+	<select id="countStartKeiro" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_START_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertStartKeiroLog">
+		INSERT INTO SHINSEI_START_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		START_PLACE,
+		END_PLACE
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		START_PLACE,
+		END_PLACE
+		FROM SHINSEI_START_KEIRO
+		WHERE
+		KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyStartKeiroLog">
+		INSERT INTO SHINSEI_START_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<select id="countEndKeiro" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_END_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertEndKeiroLog">
+		INSERT INTO SHINSEI_END_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		RIYO_END_YMD
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		RIYO_END_YMD
+		FROM SHINSEI_END_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND
+		SHINSEI_NO = #{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyEndKeiroLog">
+		INSERT INTO SHINSEI_END_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<select id="countFuzuiShorui" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_FUZUI_SHORUI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertFuzuiShoruiLog">
+		INSERT INTO SHINSEI_FUZUI_SHORUI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		FILE_UID_1,
+		FILE_UID_2,
+		FILE_UID_3
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		1,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		FILE_UID_1,
+		FILE_UID_2,
+		FILE_UID_3
+		FROM
+		SHINSEI_FUZUI_SHORUI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyFuzuiShoruiLog">
+		INSERT INTO SHINSEI_FUZUI_SHORUI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<insert id="insertProcessLog">
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		USER_UID
+		)
+		VALUES (
+		SYSTIMESTAMP,
+		'SHN',
+		#{type},
+		#{shinseiNo}, 
+		(SELECT SHINSEI_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		(SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		CASE
+		WHEN #{type} = 'CANCEL' THEN '5'
+		ELSE (SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo})
+		END,
+		#{userUid}
+		)
+	</insert>
 
 
 
