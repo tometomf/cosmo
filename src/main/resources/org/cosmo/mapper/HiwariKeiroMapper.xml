@@ -5,9 +5,19 @@
 
 <mapper namespace="org.cosmo.mapper.HiwariKeiroMapper">
 
+    <resultMap id="HiwariKeiroMap" type="org.cosmo.domain.HiwariKeiroVO">
+        <result column="KIGYO_CD"          property="kigyoCd"/>
+        <result column="SHAIN_UID"         property="shainUid"/>
+        <result column="KEIRO_SEQ"         property="keiroSeq"/>
+        <result column="TSUKIN_SHUDAN_KBN" property="tsukinShudanKbn"/>
+        <result column="START_PLACE"       property="startPlace"/>
+        <result column="END_PLACE"         property="endPlace"/>
+        <result column="KEKKA_SELECT"      property="kekkaSelect"/>
+    </resultMap>
+
     <select id="findByUser"
             parameterType="int"
-            resultType="org.cosmo.domain.HiwariKeiroVO">
+            resultMap="HiwariKeiroMap">
         SELECT
             KIGYO_CD,
             SHAIN_UID,
@@ -19,19 +29,17 @@
         FROM
             SHAIN_KEIRO
         WHERE
-            KIGYO_CD  = 1 
+            KIGYO_CD  = 1
         AND SHAIN_UID = #{shainUid}
         ORDER BY
             KEIRO_SEQ
     </select>
 
-
     <delete id="deleteByUser" parameterType="int">
         DELETE FROM SHAIN_KEIRO
-        WHERE KIGYO_CD = 1      
-        AND SHAIN_UID = #{shainUid}
+        WHERE KIGYO_CD = 1
+          AND SHAIN_UID = #{shainUid}
     </delete>
-
 
     <insert id="insertKeiro" parameterType="org.cosmo.domain.HiwariKeiroVO">
         INSERT INTO SHAIN_KEIRO (

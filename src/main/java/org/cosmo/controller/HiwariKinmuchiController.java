@@ -32,18 +32,14 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
-
     @GetMapping("/kanryo")
     public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
-
         model.addAttribute("shinseiNo", shinseiNo);
-
         return "hiwariKinmuchi/hiwariKanryo";
     }
 
     @Autowired
     private HiwariKeiroService hiwariKeiroService;
-
 
     @GetMapping("/keiro")
     public String showKeiroPage(Model model) {
@@ -52,17 +48,18 @@ public class HiwariKinmuchiController {
 
         List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(dummyShainUid);
 
-  
         if (keiroList == null || keiroList.isEmpty()) {
             keiroList = new ArrayList<HiwariKeiroVO>();
-            keiroList.add(new HiwariKeiroVO());  
+            keiroList.add(new HiwariKeiroVO());
         }
 
+        int repRouteNo = calcRepRouteNo(keiroList);
+
         model.addAttribute("keiroList", keiroList);
+        model.addAttribute("repRouteNo", repRouteNo);
         return "hiwariKinmuchi/hiwariKeiro";
     }
 
-  
     @PostMapping("/keiro")
     public String handleKeiro(
             @RequestParam("action") String action,
@@ -73,23 +70,36 @@ public class HiwariKinmuchiController {
             @RequestParam(name = "shinseiNo",        required = false) Long[] shinseiNo,
             @RequestParam(name = "keiroSeq",         required = false) Integer[] keiroSeq,
             @RequestParam(name = "kekkaSelectIndex", required = false) Integer kekkaSelectIndex,
+            @RequestParam(name = "deleteIndex",      required = false) Integer deleteIndex,
             Model model) {
 
-        List<HiwariKeiroVO> keiroList = new ArrayList<HiwariKeiroVO>();
+        System.out.println("=== DEBUG /keiro POST START ===");
+        System.out.println("action = " + action);
 
-        int rowCount = (tsukinShudanKbn != null ? tsukinShudanKbn.length : 0);
+        if (tsukinShudanKbn == null) tsukinShudanKbn = new String[0];
+        if (startPlace      == null) startPlace      = new String[0];
+        if (endPlace        == null) endPlace        = new String[0];
+        if (kigyoCd         == null) kigyoCd         = new Integer[0];
+        if (shinseiNo       == null) shinseiNo       = new Long[0];
+        if (keiroSeq        == null) keiroSeq        = new Integer[0];
+
+        int rowCount = tsukinShudanKbn.length;
+        if (rowCount == 0) {
+            rowCount = Math.max(startPlace.length, endPlace.length);
+        }
+
+        List<HiwariKeiroVO> keiroList = new ArrayList<HiwariKeiroVO>();
 
         for (int i = 0; i < rowCount; i++) {
             HiwariKeiroVO vo = new HiwariKeiroVO();
 
-            vo.setTsukinShudanKbn(tsukinShudanKbn[i]);
+            vo.setTsukinShudanKbn(i < tsukinShudanKbn.length ? tsukinShudanKbn[i] : null);
+            vo.setStartPlace     (i < startPlace.length      ? startPlace[i]      : null);
+            vo.setEndPlace       (i < endPlace.length        ? endPlace[i]        : null);
 
-            vo.setStartPlace(startPlace != null && startPlace.length > i ? startPlace[i] : null);
-            vo.setEndPlace(endPlace != null && endPlace.length > i ? endPlace[i] : null);
-
-            if (kigyoCd   != null && kigyoCd.length   > i) vo.setKigyoCd(kigyoCd[i]);
-            if (shinseiNo != null && shinseiNo.length > i) vo.setShinseiNo(shinseiNo[i]);
-            if (keiroSeq  != null && keiroSeq.length  > i) vo.setKeiroSeq(keiroSeq[i]);
+            if (i < kigyoCd.length)   vo.setKigyoCd(kigyoCd[i]);
+            if (i < shinseiNo.length) vo.setShinseiNo(shinseiNo[i]);
+            if (i < keiroSeq.length)  vo.setKeiroSeq(keiroSeq[i]);
 
             if (kekkaSelectIndex != null && kekkaSelectIndex.intValue() == i) {
                 vo.setKekkaSelect("1");
@@ -100,36 +110,81 @@ public class HiwariKinmuchiController {
             keiroList.add(vo);
         }
 
-        System.out.println("=== DEBUG /keiro POST ===");
-        System.out.println("action = " + action);
-        System.out.println("before addRow, keiroList size = " + keiroList.size());
+        System.out.println("rowCount = " + rowCount);
+        System.out.println("keiroList size = " + keiroList.size());
+
+        int repRouteNo = calcRepRouteNo(keiroList);
 
         if ("addRow".equals(action)) {
-            keiroList.add(new HiwariKeiroVO()); 
+            keiroList.add(new HiwariKeiroVO());
             System.out.println("after addRow, keiroList size = " + keiroList.size());
 
+            repRouteNo = calcRepRouteNo(keiroList);
+
             model.addAttribute("keiroList", keiroList);
+            model.addAttribute("repRouteNo", repRouteNo);
             return "hiwariKinmuchi/hiwariKeiro";
         }
 
-        Integer dummyShainUid = 1; 
+        if ("deleteRow".equals(action)) {
+            System.out.println("deleteIndex = " + deleteIndex);
 
-      
-        if ("apply".equals(action)) {
-            return "redirect:/hiwariKinmuchi/kakunin";
+            if (deleteIndex != null &&
+                deleteIndex.intValue() >= 0 &&
+                deleteIndex.intValue() < keiroList.size()) {
+
+                keiroList.remove(deleteIndex.intValue());
+            }
+
+            if (keiroList.isEmpty()) {
+                keiroList.add(new HiwariKeiroVO());
+            }
+
+            repRouteNo = calcRepRouteNo(keiroList);
+
+            model.addAttribute("keiroList", keiroList);
+            model.addAttribute("repRouteNo", repRouteNo);
+            return "hiwariKinmuchi/hiwariKeiro";
         }
 
-     
+        Integer dummyShainUid = 1;
+
+        if ("apply".equals(action)) {
+            hiwariKeiroService.saveApply(dummyShainUid, keiroList);
+
+            Long redirectShinseiNo = null;
+            if (!keiroList.isEmpty() && keiroList.get(0).getShinseiNo() != null) {
+                redirectShinseiNo = keiroList.get(0).getShinseiNo();
+            } else {
+                redirectShinseiNo = 1L;
+            }
+
+            return "redirect:/hiwariKinmuchi/kanryo?shinseiNo=" + redirectShinseiNo;
+        }
+
         if ("temp".equals(action)) {
+            hiwariKeiroService.saveTemp(dummyShainUid, keiroList);
             return "redirect:/hiwariKinmuchi/keiro";
         }
 
         model.addAttribute("keiroList", keiroList);
+        model.addAttribute("repRouteNo", repRouteNo);
         return "hiwariKinmuchi/hiwariKeiro";
     }
 
+    private int calcRepRouteNo(List<HiwariKeiroVO> keiroList) {
+        int repRouteNo = 1;
+        for (int i = 0; i < keiroList.size(); i++) {
+            HiwariKeiroVO vo = keiroList.get(i);
+            if ("1".equals(vo.getKekkaSelect())) {
+                return i + 1;   // 0 → 1, 1 → 2 ...
+            }
+        }
+        return repRouteNo;
+    }
     @GetMapping("/riyu")
     public String showRiyuPage() {
         return "hiwariKinmuchi/hiwariRiyu";
     }
+
 }

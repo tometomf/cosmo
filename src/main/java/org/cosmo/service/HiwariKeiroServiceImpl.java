@@ -25,6 +25,7 @@ public class HiwariKeiroServiceImpl implements HiwariKeiroService {
     }
 
   
+ 
     @Override
     public void saveApply(Integer shainUid, List<HiwariKeiroVO> keiroList) {
 
@@ -32,36 +33,35 @@ public class HiwariKeiroServiceImpl implements HiwariKeiroService {
             shainUid = 1;   
         }
 
-       
         hiwariKeiroMapper.deleteByUser(shainUid);
 
-       
         int seq = 1;    
         for (HiwariKeiroVO vo : keiroList) {
-            vo.setShinseiNo(1L);      
-            vo.setKigyoCd(100);      
+            vo.setShinseiNo(1L);     
+            vo.setKigyoCd(1);       
             vo.setShainUid(shainUid);
-            vo.setKeiroSeq(seq++);    
+            vo.setKeiroSeq(seq++);
 
             hiwariKeiroMapper.insertKeiro(vo);
         }
     }
 
+   
     @Override
     public void saveTemp(Integer shainUid, List<HiwariKeiroVO> keiroList) {
 
         if (shainUid == null) {
-            shainUid = 1;  
+            shainUid = 1;   
         }
 
         hiwariKeiroMapper.deleteByUser(shainUid);
-     
+
         int seq = 1;
         for (HiwariKeiroVO vo : keiroList) {
-            vo.setShinseiNo(1L);      
-            vo.setKigyoCd(100);
-            vo.setShainUid(shainUid); 
-            vo.setKeiroSeq(seq++);    
+            vo.setShinseiNo(1L);     
+            vo.setKigyoCd(1);        
+            vo.setShainUid(shainUid);
+            vo.setKeiroSeq(seq++);
 
             hiwariKeiroMapper.insertKeiro(vo);
         }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!DOCTYPE html>
 <html>
@@ -96,13 +97,14 @@
     margin-top: 4px;
   }
 
+  /* ==== 한 줄 정렬 + 줄바꿈 방지 ==== */
   .keiro-row {
     font-size: 13px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    white-space: nowrap;
     align-items: center;
-    column-gap: 28px;
-    row-gap: 8px;
+    column-gap: 20px;
   }
 
   .keiro-row label {
@@ -117,10 +119,27 @@
     margin-right: 4px;
   }
 
-  .keiro-row select,
+  .keiro-row select {
+    font-size: 13px;
+    padding: 2px 4px;
+    width: 110px;  /* 폭 살짝 줄임 */
+  }
+
   .keiro-row input[type="text"] {
     font-size: 13px;
     padding: 2px 4px;
+    width: 130px;  /* 폭 줄여서 한 줄 유지 */
+  }
+
+  .delete-btn {
+    padding: 0 10px;
+    height: 24px;
+    font-size: 12px;
+    border: 1px solid #b0b0b0;
+    background: #f7f7f7;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-left: 8px;
   }
 </style>
 </head>
@@ -143,7 +162,8 @@
     </div>
 
     <div class="page-width">
-      
+
+      <!-- 안내문 + 지도 버튼 (원래 디자인) -->
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
@@ -159,12 +179,15 @@
       </div>
       <br>
 
-      
       <form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
+
+        <input type="hidden" id="deleteIndex" name="deleteIndex" value="">
 
         <div class="route-section">
           <div class="route-head">
-            <span class="route-label">経路①</span>
+           <span class="route-label">
+			  経路${repRouteNo}
+			</span>
 
             <button type="submit" name="action" value="addRow"
                     class="route-add" style="border:none;background:none;padding:0;cursor:pointer;">
@@ -173,15 +196,12 @@
             </button>
           </div>
 
-       
           <c:forEach var="row" items="${keiroList}" varStatus="st">
             <div class="keiro-box">
               <div class="keiro-row">
 
-            
                 <label>
                   <span class="field-label">通勤手段：</span>
-          
                   <select name="tsukinShudanKbn">
                     <option value="">選択してください</option>
                     <option value="01" <c:if test="${row.tsukinShudanKbn == '01'}">selected</c:if>>電車</option>
@@ -192,23 +212,18 @@
                   </select>
                 </label>
 
-       
                 <label>
                   <span class="field-label">出発地：</span>
-           
                   <input type="text"
                          name="startPlace"
-                         value="${row.startPlace}"
-                         style="width:160px;">
+                         value="${row.startPlace}">
                 </label>
 
                 <label>
                   <span class="field-label">到着地：</span>
-               
                   <input type="text"
                          name="endPlace"
-                         value="${row.endPlace}"
-                         style="width:160px;">
+                         value="${row.endPlace}">
                 </label>
 
                 <label>
@@ -222,6 +237,14 @@
                 <input type="hidden" name="kigyoCd"   value="${row.kigyoCd}"/>
                 <input type="hidden" name="shinseiNo" value="${row.shinseiNo}"/>
                 <input type="hidden" name="keiroSeq"  value="${row.keiroSeq}"/>
+
+                <button type="submit"
+                        name="action"
+                        value="deleteRow"
+                        class="delete-btn"
+                        onclick="document.getElementById('deleteIndex').value='${st.index}'">
+                  削除
+                </button>
 
               </div>
             </div>
