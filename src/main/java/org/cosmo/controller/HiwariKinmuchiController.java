@@ -28,7 +28,20 @@ public class HiwariKinmuchiController {
     }
 
     @GetMapping("/kakunin")
-    public String showKakuninPage() {
+    public String showKakuninPage(Model model) {
+
+        Integer dummyShainUid = 1;
+
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(dummyShainUid);
+        if (keiroList == null) {
+            keiroList = new ArrayList<HiwariKeiroVO>();
+        }
+
+        int repRouteNo = calcRepRouteNo(keiroList);
+
+        model.addAttribute("keiroList", keiroList);
+        model.addAttribute("repRouteNo", repRouteNo);
+
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
@@ -151,15 +164,7 @@ public class HiwariKinmuchiController {
 
         if ("apply".equals(action)) {
             hiwariKeiroService.saveApply(dummyShainUid, keiroList);
-
-            Long redirectShinseiNo = null;
-            if (!keiroList.isEmpty() && keiroList.get(0).getShinseiNo() != null) {
-                redirectShinseiNo = keiroList.get(0).getShinseiNo();
-            } else {
-                redirectShinseiNo = 1L;
-            }
-
-            return "redirect:/hiwariKinmuchi/kanryo?shinseiNo=" + redirectShinseiNo;
+            return "redirect:/hiwariKinmuchi/kakunin";
         }
 
         if ("temp".equals(action)) {
@@ -182,9 +187,9 @@ public class HiwariKinmuchiController {
         }
         return repRouteNo;
     }
+
     @GetMapping("/riyu")
     public String showRiyuPage() {
         return "hiwariKinmuchi/hiwariRiyu";
     }
-
 }

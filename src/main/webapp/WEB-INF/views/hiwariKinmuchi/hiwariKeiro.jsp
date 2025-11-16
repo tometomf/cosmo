@@ -261,7 +261,7 @@
 
             <button type="submit" name="action" value="apply"
                     style="border:none;background:none;padding:0;cursor:pointer;">
-              <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
+              <img src="/resources/img/next_btn01.gif" alt="次へ">
             </button>
 
             <button type="submit" name="action" value="temp"
