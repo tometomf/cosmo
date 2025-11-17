@@ -75,11 +75,7 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-<<<<<<< HEAD
 					<div class="form_Normal">${jyohou.codeNm}</div>
-=======
-					<div class="form_Normal">${jyohou.codeNm }</div>
->>>>>>> branch 'shinseiDetail' of https://github.com/tometomf/cosmo.git
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
