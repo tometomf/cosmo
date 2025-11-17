@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cosmo.mapper.ShinseiMapper">
+
+
+
+	<select id="getShinseiJyohou" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiJyohouVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		SHINSEI_KBN AS shinseiKbn,
+		SHINCHOKU_KBN AS shinchokuKbn,
+		GEN_ADDRESS_3
+		AS genAddress,
+		NEW_ADDRESS_3 AS newAddress,
+		GEN_SHOZOKU_CD AS
+		genShozoku,
+		NEW_SHOZOKU_CD AS newShozoku,
+		GEN_KINMU_ADDRESS_3 AS
+		genKinmuchi,
+		NEW_KINMU_ADDRESS_3 AS newKinmuchi,
+		SHINSEI_RIYU AS riyu,
+		IDO_YMD AS idoYmd,
+		ITEN_YMD AS itenYmd,
+		TENNYU_YMD AS tennyuYmd,
+		RIYO_START_YMD AS riyoStartYmd,
+		SHINSEI_YMD AS shinseiYmd,
+		SASHIMODOSHI_YMD AS ssmdsYmd,
+		MOSHIOKURI_COMMENT AS moComment
+		FROM
+		SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getShinseiKeiro" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiKeiroVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		TSUKIN_SHUDAN_KBN AS tsukinShudan,
+		KATAMICHI_KIN
+		AS katamichi,
+		JITSU_KINMU_NISSU AS jitsu,
+		TSUKI_SHIKYU_KIN AS tsuki,
+		SHINSEI_KM AS shinseiKm,
+		START_PLACE AS startPlace,
+		END_PLACE AS
+		endPlace
+		FROM SHINSEI_START_KEIRO
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getShinseiShorui" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiShoruiVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		HOKEN_MANRYO_YMD AS manryoYmd,
+		TAIJIN_BAISHO AS
+		taijin,
+		TAIBUTSU_BAISHO AS taibutsu,
+		JINSHIN_SHOGAI AS jinshin,
+		TOJOSHA_SHOGAI AS tojosha,
+		TOKYU AS tokyu
+		FROM SHINSEI_FUZUI_SHORUI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getShinseiIcHozon" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiIcHozonVO">
+		SELECT
+		HOZON_UID AS hozonUid,
+		USER_UID AS userUid,
+		ADD_DATE AS
+		addDate
+		FROM ICHIJI_HOZON
+		WHERE HOZON_UID = #{hozonUid}
+	</select>
+
+	<select id="getFileName" parameterType="String"
+		resultType="String">
+		SELECT f.name
+		FROM SHINSEI_FUZUI_SHORUI s
+		JOIN UPLOAD_FILE f
+		ON s.FILE_UID_1 = f.FILE_UID
+		WHERE s. SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getCodeNm" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '102'
+		AND CODE =
+		#{code}
+	</select>
+
+	<select id="getShudanName" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '103'
+		AND CODE =
+		#{code}
+	</select>
+
+	<select id="getShinseiName" parameterType="String"
+		resultType="String">
+		SELECT CODE_NM
+		FROM CODE
+		WHERE CODE_SYBTSU = '101'
+		AND CODE =
+		#{code}
+	</select>
+
+	<select id="getShinchokuKbn" resultType="String">
+		SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+
+	<update id="updateTorikesu">
+		UPDATE SHINSEI
+		SET TORIKESHI_RIYU = #{tkComment},
+		SHINCHOKU_KBN = '5',
+		TORIKESHI_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		UPD_DATE = SYSTIMESTAMP,
+		UPD_USER_ID = #{shainUid}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
+	</update>
+
+	<delete id="deleteIchijiHozonByHozonUid" parameterType="String">
+		DELETE
+		FROM ICHIJI_HOZON
+		WHERE HOZON_UID = #{hozonUid}
+	</delete>
+
+	<insert id="insertOshirase">
+		INSERT INTO OSHIRASE (
+		KIGYO_CD,
+		SHAIN_UID,
+		TSUCHI_YMD,
+		TSUCHI_HM,
+		OSHIRASE_NAIYO,
+		UPD_DATE
+		) VALUES (
+		#{shain.kigyo_Cd},
+		#{shain.shain_Uid},
+		TO_CHAR(SYSDATE,'YYYYMMDD'),
+		TO_CHAR(SYSDATE,'HH24MI'),
+		'申請を取り消しました',
+		SYSTIMESTAMP
+		)
+	</insert>
+
+	<select id="getNextLogSeq" resultType="long">
+		SELECT NVL(MAX(LOG_SEQ),
+		0) + 1
+		FROM SHINSEI_LOG
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertShinseiLog">
+		INSERT INTO SHINSEI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		#{logSeq},
+		#{syoriKbn},
+		#{shinseiKbn},
+		#{shinseiYmd},
+		#{shainUid}
+		)
+	</insert>
+
+
+	<select id="countStartKeiro" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_START_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertStartKeiroLog">
+		INSERT INTO SHINSEI_START_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		START_PLACE,
+		END_PLACE
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		START_PLACE,
+		END_PLACE
+		FROM SHINSEI_START_KEIRO
+		WHERE
+		KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyStartKeiroLog">
+		INSERT INTO SHINSEI_START_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<select id="countEndKeiro" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_END_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertEndKeiroLog">
+		INSERT INTO SHINSEI_END_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		RIYO_END_YMD
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		RIYO_END_YMD
+		FROM SHINSEI_END_KEIRO
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND
+		SHINSEI_NO = #{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyEndKeiroLog">
+		INSERT INTO SHINSEI_END_KEIRO_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<select id="countFuzuiShorui" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		SHINSEI_FUZUI_SHORUI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</select>
+
+	<insert id="insertFuzuiShoruiLog">
+		INSERT INTO SHINSEI_FUZUI_SHORUI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID,
+		FILE_UID_1,
+		FILE_UID_2,
+		FILE_UID_3
+		)
+		SELECT
+		KIGYO_CD,
+		SHINSEI_NO,
+		1,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid},
+		FILE_UID_1,
+		FILE_UID_2,
+		FILE_UID_3
+		FROM
+		SHINSEI_FUZUI_SHORUI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</insert>
+
+	<insert id="insertEmptyFuzuiShoruiLog">
+		INSERT INTO SHINSEI_FUZUI_SHORUI_LOG (
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHAIN_UID
+		) VALUES (
+		#{kigyoCd},
+		#{shinseiNo},
+		0,
+		#{logSeq},
+		#{syoriKbn},
+		#{shainUid}
+		)
+	</insert>
+
+	<insert id="insertProcessLog">
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		USER_UID
+		)
+		VALUES (
+		SYSTIMESTAMP,
+		'SHN',
+		#{type},
+		#{shinseiNo}, 
+		(SELECT SHINSEI_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		(SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		CASE
+		WHEN #{type} = 'CANCEL' THEN '5'
+		ELSE (SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo})
+		END,
+		#{userUid}
+		)
+	</insert>
+
+
+
+	<!-- ===== 여기부터 네가 추가한 쿼리들 (내용 그대로) ===== -->
+
+	<update id="updateShinseiToIchijihozon">
+		UPDATE SHINSEI
+		SET SHINCHOKU_KBN = '1', -- 一時保存中
+		UPD_USER_ID = #{updUserId},
+		UPD_DATE = SYSDATE
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</update>
+
+	<update id="updateAlertForHikimodoshi">
+		UPDATE ALERT
+		SET SHINSEI_YMD = NULL,
+		UPD_USER_ID =
+		#{updUserId},
+		UPD_DATE = SYSDATE
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND
+		SHINSEI_NO = #{shinseiNo}
+	</update>
+
+	<select id="selectShinseiDetail"
+		resultType="org.cosmo.domain.ShinseiDetailVO">
+		SELECT
+		s.SHINSEI_NO AS shinseiNo,
+		c_status.CODE_NM AS
+		joutaiName,
+		s.SHINSEI_YMD AS shinseiYmd,
+		s.SASHIMODOSHI_YMD AS
+		sashimodoshiYmd,
+		TO_DATE(s.FIRST_SHINSEI_YMD, 'YYYYMMDD') AS
+		saishinseiDate,
+		TO_DATE(s.KIGYO_SHONIN_YMD, 'YYYYMMDD') AS shoninDate,
+		TO_DATE(s.RIYO_START_YMD, 'YYYYMMDD') AS shikyuuKaishiDate,
+		s.MOSHIOKURI_COMMENT AS honninComment,
+		(s.GEN_ADDRESS_1 ||
+		s.GEN_ADDRESS_2 || s.GEN_ADDRESS_3) AS genAddress,
+		(s.NEW_ADDRESS_1 ||
+		s.NEW_ADDRESS_2 || s.NEW_ADDRESS_3) AS newAddress,
+		shozoku_before.SHOZOKU_NM AS shozokuBeforeNm,
+		shozoku_after.SHOZOKU_NM
+		AS shozokuAfterNm,
+		(s.GEN_KINMU_ADDRESS_1 || s.GEN_KINMU_ADDRESS_2 ||
+		s.GEN_KINMU_ADDRESS_3) AS kinmuchiBefore,
+		(s.NEW_KINMU_ADDRESS_1 ||
+		s.NEW_KINMU_ADDRESS_2 ||
+		s.NEW_KINMU_ADDRESS_3) AS kinmuchiAfter,
+		c_tsukin.CODE_NM AS tsukinShudanName,
+		(keiro.START_PLACE || ' -> ' ||
+		keiro.END_PLACE) AS keiro,
+		keiro.SHINSEI_KM AS kyori,
+		keiro.TSUKI_SHIKYU_KIN AS kingakuMonth,
+		keiro.YURYO_DAI_MAE AS
+		yuryodouroMonth,
+		uf.TITLE AS fuzuiFileTitle,
+		TO_DATE(fuzui.HOKEN_MANRYO_YMD, 'YYYYMMDD') AS hokenManryoDate,
+		fuzui.TAIJIN_BAISHO AS taijinBaisho,
+		fuzui.TAIBUTSU_BAISHO AS
+		taibutsuBaisho,
+		fuzui.JINSHIN_SHOGAI AS jinshinShogai,
+		fuzui.TOJOSHA_SHOGAI AS tojoshaShogai,
+		fuzui.TOKYU AS tokyu,
+		c_shinseiKbn.CODE_NM AS shinseiKbnName,
+		s.SHINSEI_RIYU AS shinseiRiyu,
+		TO_DATE(s.IDO_YMD, 'YYYYMMDD') AS idouDate,
+		TO_DATE(s.TENNYU_YMD,
+		'YYYYMMDD') AS tennyuDate,
+		TO_DATE(s.RIYO_START_YMD, 'YYYYMMDD') AS
+		kaishiDate
+		FROM SHINSEI s
+		LEFT JOIN CODE c_status
+		ON c_status.CODE_SYBTSU
+		= '102'
+		AND c_status.CODE = s.SHINCHOKU_KBN
+		LEFT JOIN CODE c_shinseiKbn
+		ON c_shinseiKbn.CODE_SYBTSU = '101'
+		AND c_shinseiKbn.CODE =
+		s.SHINSEI_KBN
+		LEFT JOIN SHOZOKU shozoku_before
+		ON
+		shozoku_before.KIGYO_CD = s.KIGYO_CD
+		AND shozoku_before.SHOZOKU_CD =
+		s.GEN_SHOZOKU_CD
+		LEFT JOIN SHOZOKU shozoku_after
+		ON
+		shozoku_after.KIGYO_CD = s.KIGYO_CD
+		AND shozoku_after.SHOZOKU_CD =
+		s.NEW_SHOZOKU_CD
+		LEFT JOIN SHINSEI_START_KEIRO keiro
+		ON keiro.KIGYO_CD =
+		s.KIGYO_CD
+		AND keiro.SHINSEI_NO = s.SHINSEI_NO
+		AND keiro.KEIRO_SEQ = 1
+		LEFT JOIN CODE c_tsukin
+		ON c_tsukin.CODE_SYBTSU = '103'
+		AND
+		c_tsukin.CODE = keiro.TSUKIN_SHUDAN_KBN
+		LEFT JOIN SHINSEI_FUZUI_SHORUI
+		fuzui
+		ON fuzui.KIGYO_CD = s.KIGYO_CD
+		AND fuzui.SHINSEI_NO = s.SHINSEI_NO
+		AND fuzui.KEIRO_SEQ = keiro.KEIRO_SEQ
+		LEFT JOIN UPLOAD_FILE uf
+		ON
+		uf.FILE_UID = fuzui.FILE_UID_1
+		WHERE s.KIGYO_CD = #{kigyoCd}
+		AND
+		s.SHINSEI_NO = #{shinseiNo}
+	</select>
+
+</mapper>

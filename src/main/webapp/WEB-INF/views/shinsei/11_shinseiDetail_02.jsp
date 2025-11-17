@@ -60,7 +60,7 @@
 				</div>
 				<div class="button_Side_Group">
 					<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-					onclick="location.href='/shinsei/torikesu'">
+					onclick="location.href='/shinsei/torikesu?no=${jyohou.shinseiNo}'">
 				</div>
 			</div>
 
@@ -73,18 +73,19 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">川崎市高津区上作延1-2-3 レオパレス溝の口103</div>
-					<div class="form_Normal">神奈川県川崎市中原区新丸子1-2-3 レオパレス新丸子201</div>
+					<div class="form_Normal">${jyohou.genAddress}</div>
+					<div class="form_Normal">${jyohou.newAddress}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">中野店</div>
-					<div class="form_Normal">江戸川店</div>
+					<div class="form_Normal">${jyohou.genShozoku}</div>
+					<div class="form_Normal">${jyohou.newShozoku}</div>
+					
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">東京都中野区大町3-30-4KDX中野坂上ビル8F</div>
-					<div class="form_Normal">東京都江戸川区船堀2-1-5</div>
+					<div class="form_Normal">${jyohou.genKinmuchi}</div>
+					<div class="form_Normal">${jyohou.newKinmuchi}</div>
 				</div>
 			</div>
 
@@ -94,33 +95,34 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
+					<div class="form_Normal">${keiro.tsukinShudan}</div>
 				</div>
 			</div>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${jyohou.shinseiKbn}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${jyohou.riyu}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">異動日/移動日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Column">異動日/移転日</div>
+					<div class="form_Normal">${jyohou.idoYmd} / ${jyohou.itenYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${jyohou.tennyuYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${jyohou.riyoStartYmd}</div>
 				</div>
 			</div>
 
