@@ -53,14 +53,17 @@
 				</div>
 			</div>
 
+			<!-- 링크 나중에 수정해야됨 -->
 			<div class="button_Side">
 				<div class="button_Side_Group">
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
-						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+						onclick="location.href='/'"> <img
+						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
+						onclick="location.href='/'">
 				</div>
 				<div class="button_Side_Group">
 					<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-					onclick="location.href='/shinsei/torikesu?no=${jyohou.shinseiNo}'">
+						onclick="location.href='/shinsei/torikesu?hozonUid=${hozonUid}'">
 				</div>
 			</div>
 
@@ -73,19 +76,19 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">${jyohou.genAddress}</div>
-					<div class="form_Normal">${jyohou.newAddress}</div>
+					<div class="form_Normal">${ichiji.genAddress}</div>
+					<div class="form_Normal">${ichiji.newAddress}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${jyohou.genShozoku}</div>
-					<div class="form_Normal">${jyohou.newShozoku}</div>
-					
+					<div class="form_Normal">${ichiji.genShozoku}</div>
+					<div class="form_Normal">${ichiji.newShozoku}</div>
+
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${ichiji.genKinmuchi}</div>
+					<div class="form_Normal">${ichiji.newKinmuchi}</div>
 				</div>
 			</div>
 
@@ -95,40 +98,42 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${keiro.tsukinShudan}</div>
+					<div class="form_Normal">${ichiji.keiro.shudanName}</div>
 				</div>
 			</div>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${jyohou.shinseiKbn}</div>
+					<div class="form_Normal">${ichiji.shinseiName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal">${jyohou.riyu}</div>
+					<div class="form_Normal">${ichiji.riyu}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移転日</div>
-					<div class="form_Normal">${jyohou.idoYmd} / ${jyohou.itenYmd}</div>
+					<div class="form_Normal">${ichiji.idoYmd}/ ${ichiji.itenYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${jyohou.tennyuYmd}</div>
+					<div class="form_Normal">${ichiji.tennyuYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal">${jyohou.riyoStartYmd}</div>
+					<div class="form_Normal">${ichiji.riyoStartYmd}</div>
 				</div>
 			</div>
 
+			<!-- 링크 나중에 사원톱메뉴로 수정 -->
 			<div class="button_Left">
 				<div class="button_Left_Group">
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+						onclick="location.href='/'">
 				</div>
 			</div>
 			<%@ include file="/WEB-INF/views/common/footer.jsp"%>

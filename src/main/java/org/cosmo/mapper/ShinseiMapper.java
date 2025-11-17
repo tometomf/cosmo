@@ -28,10 +28,10 @@ public interface ShinseiMapper {
 
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") String shinsesiNo);
 
-	ShinseiIcHozonVO getShinseiIcHozon(@Param("hozonUid") String hozonUid);
-
 	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") String shinseiNo);
-
+	
+	ShinseiIcHozonVO getIchijiHozon(String hozonUid);
+	
 	String getCodeNm(@Param("code") String code);
 
 	String getShudanName(@Param("code") String code);
@@ -47,9 +47,8 @@ public interface ShinseiMapper {
 	
 	void deleteIchijiHozonByHozonUid(String hozonUid);
 	
-	void insertOshirase(@Param("shain")ShainVO shain);
+	void insertOshirase(@Param("shain")ShainVO shain, @Param("shinseiNo") String shinseiNo);
 	
-	//로그 관련
     Long getNextLogSeq(@Param("kigyoCd") String kigyoCd,
                        @Param("shinseiNo") String shinseiNo);
 
