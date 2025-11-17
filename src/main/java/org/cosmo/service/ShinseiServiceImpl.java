@@ -1,7 +1,10 @@
 package org.cosmo.service;
 
+import java.nio.charset.StandardCharsets;
+
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
+import org.cosmo.domain.ShinseiIcDataVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
@@ -10,6 +13,9 @@ import org.cosmo.mapper.ShinseiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ShinseiServiceImpl implements ShinseiService {
@@ -53,9 +59,45 @@ public class ShinseiServiceImpl implements ShinseiService {
     }
 
     @Override
-    public ShinseiIcHozonVO getShinseiIcHozon(String hozonUid) {
-        return shinseiMapper.getShinseiIcHozon(hozonUid);
+    public ShinseiIcDataVO getIcData(String hozonUid) {
+
+        ShinseiIcHozonVO row = shinseiMapper.getIchijiHozon(hozonUid);
+
+        if (row == null) {
+            return null;
+        }
+
+        //BLOB → JSON 문자열 변환
+        String json = new String(row.getData(), StandardCharsets.UTF_8);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ShinseiIcDataVO vo;
+
+        try {
+            vo = mapper.readValue(json, ShinseiIcDataVO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("임시저장 데이터 변환 오류", e);
+        }
+
+        if (vo.getShinseiKbn() != null && !vo.getShinseiKbn().isEmpty()) {
+            String shinseiName = shinseiMapper.getShinseiName(vo.getShinseiKbn());
+            vo.setShinseiName(shinseiName);
+        }
+
+        if (vo.getKeiro() != null && vo.getKeiro().getTsukinShudan() != null
+                && !vo.getKeiro().getTsukinShudan().isEmpty()) {
+
+            String shudanName = shinseiMapper.getShudanName(vo.getKeiro().getTsukinShudan());
+            vo.getKeiro().setShudanName(shudanName);
+        }
+
+        if (vo.getShinchokuKbn() != null && !vo.getShinchokuKbn().isEmpty()) {
+            String name = shinseiMapper.getCodeNm(vo.getShinchokuKbn());
+            vo.setCodeNm(name);
+        }
+        return vo;
     }
+
 
     @Override
     public String getCodeNm(String code) {
@@ -84,10 +126,8 @@ public class ShinseiServiceImpl implements ShinseiService {
 
     @Override
     public void updateTorikesu(String shinseiNo, String tkComment, String shainUid) {
-        // 1) 신청 데이터 UPDATE
         shinseiMapper.updateTorikesu(shinseiNo, tkComment, shainUid);
 
-        // 2) 프로세스 로그 INSERT (USER_UID 전달됨)
         shinseiMapper.insertProcessLog(shinseiNo, shainUid, "CANCEL");
     }
 
@@ -97,8 +137,8 @@ public class ShinseiServiceImpl implements ShinseiService {
     }
 
     @Override
-    public void insertOshirase(ShainVO shain) {
-        shinseiMapper.insertOshirase(shain);
+    public void insertOshirase(ShainVO shain,String shinseiNo) {
+        shinseiMapper.insertOshirase(shain,shinseiNo);
     }
 
     @Override
@@ -112,7 +152,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 
         Long logSeq = shinseiMapper.getNextLogSeq(kigyoCd, shinseiNo);
 
-        // 각종 로그 Insert
         shinseiMapper.insertShinseiLog(kigyoCd, shinseiNo, logSeq, syoriKbn, shinseiKbn, shinseiYmd, shainUid);
 
         if (shinseiMapper.countStartKeiro(kigyoCd, shinseiNo) > 0) {
@@ -138,4 +177,40 @@ public class ShinseiServiceImpl implements ShinseiService {
     public void insertProcessLog(String shinseiNo, String userUid, String type) {
         shinseiMapper.insertProcessLog(shinseiNo, userUid, type);
     }
+    
+    @Override
+    public void loadShinseiDetail(String shinseiNo, String hozonUid, Model model) {
+        ShinseiJyohouVO jyohouVo = getShinseiJyohou(shinseiNo);
+
+        if (jyohouVo != null) {
+            ShinseiKeiroVO keiroVo = getShinseiKeiro(shinseiNo);
+            ShinseiShoruiVO shoruiVo = getShinseiShorui(shinseiNo);
+
+            if (jyohouVo.getShinchokuKbn() != null) {
+                jyohouVo.setCodeNm(getCodeNm(jyohouVo.getShinchokuKbn()));
+            }
+            if (jyohouVo.getShinseiKbn() != null) {
+                jyohouVo.setShinseiName(getShinseiName(jyohouVo.getShinseiKbn()));
+            }
+            if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
+                keiroVo.setShudanName(getShudanName(keiroVo.getTsukinShudan()));
+            }
+
+            model.addAttribute("jyohou", jyohouVo);
+            model.addAttribute("keiro", keiroVo);
+            model.addAttribute("shorui", shoruiVo);
+            model.addAttribute("isIchiji", false);
+            return;
+        }
+
+        if (hozonUid == null) {
+            throw new RuntimeException("hozonUidがありません。");
+        }
+
+        ShinseiIcDataVO ichijiVo = getIcData(hozonUid);
+
+        model.addAttribute("ichiji", ichijiVo);
+        model.addAttribute("isIchiji", true);
+    }
+
 }
