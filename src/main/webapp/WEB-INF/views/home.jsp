@@ -1,6 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!DOCTYPE html>
 <html>
@@ -48,15 +49,15 @@
 			</div>
 			<div class = "main_Content">
 				<div class = "btn_List">
-					<div><img src="/resources/img/tn/shinsei_btn07.gif" alt="shinsei_btn07" style = "display: block;"></div>
+					<div><img src="/resources/img/tn/shinsei_btn07.gif" alt="shinsei_btn07" style = "display: block; cursor: pointer;" onclick = "buttonClick('1')"></div>
 					<div>自己都合による通勤交通費の変更申請を行います。</div>
 				</div>
 				<div class = "btn_List">
-					<div><img src="/resources/img/tn/shinsei_btn08.gif" alt="shinsei_btn08" style = "display: block;"></div>
+					<div><img src="/resources/img/tn/shinsei_btn08.gif" alt="shinsei_btn08" style = "display: block; cursor: pointer;" onclick = "buttonClick('2')"></div>
 					<div>通勤私有車の変更、および、免許証更新や保険更新の申請を行います</div>
 				</div>
 				<div class = "btn_List">
-					<div><img src="/resources/img/tn/shinsei_btn09.gif" alt="shinsei_btn09" style = "display: block;"></div>
+					<div><img src="/resources/img/tn/shinsei_btn09.gif" alt="shinsei_btn09" style = "display: block; cursor: pointer;" onclick = "buttonClick('3')"></div>
 					<div>臨時の通勤費発生時の申請はこちらから。</div>
 				</div>
 			</div>
@@ -96,3 +97,18 @@
 	</div>
 </body>
 </html>
+
+<script>
+	function buttonClick(gubun) { 
+		
+		const target = window.location.origin; 
+		
+		if (gubun == "1") { 
+			window.location.href = target + '/idoconfirm/idoconfirm'; 
+		} else if (gubun == "2") { 
+			window.location.href = target + '/huzuiNewInput/main'; 
+		} else if (gubun == "3"){ 
+			window.location.href = target + '/hiwariKinmuchi/hiwariKinmuchi'; 
+		} 
+	}
+</script>
