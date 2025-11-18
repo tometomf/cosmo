@@ -8,6 +8,8 @@
 <meta charset="UTF-8">
 <title>title</title>
 	<link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+	
+
 </head>
 <style>
 	/* 	무시  */
@@ -96,24 +98,24 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">郵便番号</div>
 					<div class = "form_Normal">164-0012</div>
-					<div class = "form_Normal"><input type="text" value="134" class="zipcode"> - 
-												<input type="text" value="4567" class="zipcode">
-												<button class="search_btn">検索</button></div>
+					<div class = "form_Normal"><input type="text" name="newZip1" value="" class="zipcode"> - 
+												<input type="text" name="newZip2" value="" class="zipcode">
+												<button type="button" class="search_btn" onclick="fillNewAddressFromZip();">検索</button></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">都道府県</div>
 					<div class = "form_Normal">東京都</div>
-					<div class = "form_Normal"><input type="text" value="東京都"></div>
+					<div class = "form_Normal"><input type="text" name="newPref" value=""></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">所在地１</div>
 					<div class = "form_Normal">中野区本町3-30-4</div>
-					<div class = "form_Normal"><input type="text" value="江戸川区船堀2-1-5" class="zipcode2"></div>
+					<div class = "form_Normal"><input type="text" name="newAddress1" value="" class="zipcode2"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">所在地２（建物名等)</div>
 					<div class = "form_Normal">KDX中野坂上ビル8F</div>
-					<div class = "form_Normal"><input type="text" value="江戸川区" class="zipcode2"></div>
+					<div class = "form_Normal"><input type="text" name="newAddress2" value="" class="zipcode2"></div>
 				</div>
 			</div>
 			
@@ -154,7 +156,13 @@
 		
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
-			
+
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>			
+<script>
+function fillNewAddressFromZip() {
+    AjaxZip3.zip2addr('newZip1', 'newZip2', 'newPref', 'newAddress1', 'newAddress2');
+}
+</script>
 		
 </body>
 </html>
