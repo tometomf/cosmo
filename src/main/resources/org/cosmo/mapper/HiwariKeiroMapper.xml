@@ -7,8 +7,9 @@
 
     <resultMap id="HiwariKeiroMap" type="org.cosmo.domain.HiwariKeiroVO">
         <result column="KIGYO_CD"          property="kigyoCd"/>
-        <result column="SHAIN_UID"         property="shainUid"/>
+        <result column="SHINSEI_NO"        property="shinseiNo"/>
         <result column="KEIRO_SEQ"         property="keiroSeq"/>
+        <result column="SHAIN_UID"         property="shainUid"/>
         <result column="TSUKIN_SHUDAN_KBN" property="tsukinShudanKbn"/>
         <result column="START_PLACE"       property="startPlace"/>
         <result column="END_PLACE"         property="endPlace"/>
@@ -20,41 +21,57 @@
             resultMap="HiwariKeiroMap">
         SELECT
             KIGYO_CD,
-            SHAIN_UID,
+            SHINSEI_NO,
             KEIRO_SEQ,
+            SHAIN_UID,
             TSUKIN_SHUDAN_KBN,
             START_PLACE,
             END_PLACE,
             KEKKA_SELECT
         FROM
-            SHAIN_KEIRO
+            SHINSEI_START_KEIRO
         WHERE
-            KIGYO_CD  = 1
-        AND SHAIN_UID = #{shainUid}
+            KIGYO_CD = 100
+          AND SHINSEI_NO = (
+                SELECT MAX(SHINSEI_NO)
+                FROM SHINSEI
+                WHERE KIGYO_CD = 100
+                  AND SHAIN_UID = #{shainUid}
+          )
         ORDER BY
             KEIRO_SEQ
     </select>
 
     <delete id="deleteByUser" parameterType="int">
-        DELETE FROM SHAIN_KEIRO
-        WHERE KIGYO_CD = 1
-          AND SHAIN_UID = #{shainUid}
+        DELETE FROM SHINSEI_START_KEIRO
+        WHERE KIGYO_CD = 100
+          AND SHINSEI_NO = (
+                SELECT MAX(SHINSEI_NO)
+                FROM SHINSEI
+                WHERE KIGYO_CD = 100
+                  AND SHAIN_UID = #{shainUid}
+          )
     </delete>
 
     <insert id="insertKeiro" parameterType="org.cosmo.domain.HiwariKeiroVO">
-        INSERT INTO SHAIN_KEIRO (
+        INSERT INTO SHINSEI_START_KEIRO (
             KIGYO_CD,
-            SHAIN_UID,
+            SHINSEI_NO,
             KEIRO_SEQ,
+            SHAIN_UID,
             TSUKIN_SHUDAN_KBN,
             START_PLACE,
             END_PLACE,
             KEKKA_SELECT
         )
         VALUES (
-            #{kigyoCd},
-            #{shainUid},
+            100,
+            (SELECT MAX(SHINSEI_NO)
+               FROM SHINSEI
+              WHERE KIGYO_CD = 100
+                AND SHAIN_UID = #{shainUid}),
             #{keiroSeq},
+            #{shainUid},
             #{tsukinShudanKbn},
             #{startPlace},
             #{endPlace},
