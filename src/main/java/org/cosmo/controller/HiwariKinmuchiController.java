@@ -27,7 +27,9 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKinmuchiService service;
 
-
+    // =========================
+    // ① 勤務地 입력 화면
+    // =========================
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
@@ -55,11 +57,11 @@ public class HiwariKinmuchiController {
     }
 
     @GetMapping("/kakunin")
-    public String showKakuninPage(Model model) {
+    public String showKakuninPage(HttpSession session, Model model) {
 
-        Integer dummyShainUid = 1; 
+        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(dummyShainUid);
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -79,11 +81,11 @@ public class HiwariKinmuchiController {
     }
 
     @GetMapping("/keiro")
-    public String showKeiroPage(Model model) {
+    public String showKeiroPage(HttpSession session, Model model) {
 
-        Integer dummyShainUid = 1; 
+        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(dummyShainUid);
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -99,14 +101,15 @@ public class HiwariKinmuchiController {
     @PostMapping("/keiro")
     public String handleKeiro(
             @RequestParam("action") String action,
+            HttpSession session,
             Model model) {
 
         System.out.println("=== DEBUG /keiro POST START ===");
         System.out.println("action = " + action);
 
-        Integer dummyShainUid = 1; 
+        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(dummyShainUid);
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -122,38 +125,36 @@ public class HiwariKinmuchiController {
                 model.addAttribute("repRouteNo", repRouteNo);
                 return "hiwariKinmuchi/hiwariKeiro";
             }
-            hiwariKeiroService.saveApply(dummyShainUid, keiroList);
+            
+            hiwariKeiroService.saveApply(shainUid, keiroList);
             return "redirect:/hiwariKinmuchi/kakunin";
         }
 
         if ("temp".equals(action)) {
-            hiwariKeiroService.saveTemp(dummyShainUid, keiroList);
+            hiwariKeiroService.saveTemp(shainUid, keiroList);
             return "redirect:/hiwariKinmuchi/keiro";
         }
-
+        
         model.addAttribute("keiroList", keiroList);
         model.addAttribute("repRouteNo", repRouteNo);
         return "hiwariKinmuchi/hiwariKeiro";
     }
-
+    
     @GetMapping("/back")
     public String backFromKeiro() {
-
         return "redirect:/hiwariKinmuchi/riyu";
     }
 
     @GetMapping("/keiro/delete")
     public String deleteKeiro(
-            @RequestParam("keiroSeq") Integer keiroSeq) {
+            @RequestParam("keiroSeq") Integer keiroSeq,
+            HttpSession session) {
 
-        Integer dummyShainUid = 1; 
+        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
 
-        hiwariKeiroService.deleteOne(dummyShainUid, keiroSeq);
-
-
+        hiwariKeiroService.deleteOne(shainUid, keiroSeq);
         return "redirect:/hiwariKinmuchi/keiro";
     }
-
 
     @GetMapping("/keiro/edit")
     public String editKeiro(
@@ -162,12 +163,10 @@ public class HiwariKinmuchiController {
         return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
     }
 
-
     private int calcRepRouteNo(List<HiwariKeiroVO> keiroList) {
-              if (keiroList == null || keiroList.isEmpty()) {
+        if (keiroList == null || keiroList.isEmpty()) {
             return 1;
         }
- 
         return keiroList.size();
     }
 
