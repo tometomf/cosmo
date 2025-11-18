@@ -18,93 +18,88 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/idoconfirm")
 @RequiredArgsConstructor
 public class IdoConfirmController {
-	private final AddressInputService addressInputService;
 
-	@GetMapping("/kinmuInput")
-	public String kinmuInput() {
+    private final AddressInputService addressInputService;
 
-		return "idoconfirm/03_kinmuInput";
-	}
+    @GetMapping("/kinmuInput")
+    public String kinmuInput() {
+        return "idoconfirm/03_kinmuInput";
+    }
 
-	@GetMapping("/huzuikanri")
-	public String huzuikanri() {
+    @GetMapping("/huzuikanri")
+    public String huzuikanri() {
+        return "idoconfirm/08_huzuiKanri";
+    }
 
-		return "idoconfirm/08_huzuiKanri";
-	}
+    @GetMapping("/kanryoPage")
+    public String kanryoPage() {
+        return "idoconfirm/10_kanryoPage";
+    }
 
-	@GetMapping("/kanryoPage")
-	public String kanryoPage() {
+    @GetMapping("/tokureiShinsei")
+    public String tokureiShinsei() {
+        return "idoconfirm/k_52_tokureiShinsei";
+    }
 
-		return "idoconfirm/10_kanryoPage";
-	}
+    @GetMapping("/keiroInfo")
+    public String keiroInfo() {
+        return "idoconfirm/05_keiroInfo";
+    }
 
-	@GetMapping("/tokureiShinsei")
-	public String tokureiShinsei() {
+    @GetMapping("/addressinput")
+    public String addressinput(Model model) {
 
-		return "idoconfirm/k_52_tokureiShinsei";
-	}
+        String kigyoCd = "DUMMY";
+        String shainUid = "DUMMY";
 
-	@GetMapping("/keiroInfo")
-	public String keiroInfo() {
+        AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
+        AddressInputForm form = (AddressInputForm) model.asMap().get("form");
 
-		return "idoconfirm/05_keiroInfo";
-	}
+        if (form == null) {
+            form = addressInputService.initForm();
+        }
 
-	@GetMapping("/addressinput")
-	public String addressinput(Model model) {
+        model.addAttribute("view", view);
+        model.addAttribute("form", form);
 
-		String kigyoCd = "DUMMY";
-		String shainUid = "DUMMY";
+        return "idoconfirm/04_addressinput";
+    }
 
-		AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
-		AddressInputForm form = (AddressInputForm) model.asMap().get("form");
+    @GetMapping("/kakuninpage")
+    public String kakuninpage() {
+        return "idoconfirm/09_kakuninPage";
+    }
 
-		if (form == null) {
-			form = addressInputService.initForm();
-		}
+    @GetMapping("/idoconfirm")
+    public String idoconfirm(Model model) {
+        model.addAttribute("form", new IdoCheckForm());
+        return "idoconfirm/02_idoConfirm";
+    }
 
-		model.addAttribute("view", view);
-		model.addAttribute("form", form);
+    @PostMapping("/next")
+    public String next(@ModelAttribute("form") IdoCheckForm form,
+                       RedirectAttributes redirectAttributes) {
 
-		return "idoconfirm/04_addressinput";
-	}
+        boolean kinmu = form.isKinmuChange(); // 勤務地
+        boolean jusho = form.isJushoChange(); // 住所
 
-	@GetMapping("/kakuninpage")
-	public String kakuninpage() {
+        // ① 둘 다 "変わらない(N)"
+        if (!kinmu && !jusho) {
+            redirectAttributes.addFlashAttribute("errorMessage", "勤務先または住所の変更を選択してください。");
+            return "idoconfirm/05_keiroInfo";
+        }
 
-		return "idoconfirm/09_kakuninPage";
-	}
+        // ② 둘 다 "変わる(Y)"
+        if (kinmu && jusho) {
+            return "idoconfirm/03_kinmuInput";
+        }
 
-	@GetMapping("/idoconfirm")
-	public String idoconfirm(Model model) {
+        // ③ 근무지만 변함(Y,N)
+        if (kinmu && !jusho) {
+            return "idoconfirm/03_kinmuInput";
+        }
 
-		model.addAttribute("form", new IdoCheckForm());
-		return "idoconfirm/02_idoConfirm";
-	}
-
-	@PostMapping("/next")
-	public String next(@ModelAttribute("form") IdoCheckForm form, RedirectAttributes redirectAttributes) {
-
-		boolean kinmu = form.isKinmuChange(); // 勤務地
-		boolean jusho = form.isJushoChange(); // 住所
-
-		// ① 둘 다 "変わらない(N)"
-		if (!kinmu && !jusho) {
-			redirectAttributes.addFlashAttribute("errorMessage", "勤務先または住所の変更を選択してください。");
-			return "idoconfirm/05_keiroInfo";
-		}
-
-		// ② 둘 다 "変わる(Y)"
-		if (kinmu && jusho) {
-			return "idoconfirm/03_kinmuInput";
-		}
-
-		// ③ 근무지만 변함(Y,N)
-		if (kinmu && !jusho) {
-			return "idoconfirm/03_kinmuInput";
-		}
-
-		// ④ 주소만 변함(N,Y)
-		return "idoconfirm/04_addressinput";
-	}
+        // ④ 주소만 변함(N,Y)
+        return "idoconfirm/04_addressinput";
+    }
 }
