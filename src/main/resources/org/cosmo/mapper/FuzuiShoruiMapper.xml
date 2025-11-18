@@ -13,12 +13,12 @@
     <select id="selectFuzuiShoruiList" resultMap="fuzuiShoruiResultMap">
         SELECT *
         FROM SHINSEI_FUZUI_SHORUI
-        WHERE KIGYO_CD = #{param1}
-          AND SHINSEI_NO = #{param2}
+        WHERE KIGYO_CD = #{kigyoCd}
+        AND SHINSEI_NO = #{shinseiNo}
         ORDER BY KEIRO_SEQ
     </select>
     
-    <insert id="insertFuzuiShorui" parameterType="ShinseiFuzuiShoruiDTO">
+    <insert id="insertFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
         INSERT INTO SHINSEI_FUZUI_SHORUI (
             KIGYO_CD, SHINSEI_NO, KEIRO_SEQ, SHINSEI_KBN, SHINSEI_YMD, ...
         ) VALUES (
@@ -26,7 +26,7 @@
         )
     </insert>
 
-    <insert id="insertIchijiHozon" parameterType="IchijiHozonDTO">
+    <insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
         INSERT INTO ICHIJI_HOZON (
             HOZON_UID, USER_UID, SHINSEI_KBN, SHOZOKU_CD, DATA, 
             ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
