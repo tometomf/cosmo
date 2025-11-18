@@ -8,62 +8,65 @@
 <meta charset="UTF-8">
 <title>日割 申請理由 入力</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
-
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
 <style>
-#main_Content {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 25px;
-	width: 940px;
-	margin: 30px auto;
-	font-size: 13px;
-}
-
 p {
 	line-height: 1.6;
 	margin-bottom: 5px;
 }
 
-.gridTable {
-	display: grid;
-	grid-template-columns: 22% 1fr;
+.content_Form1 {
+	width: 940px;
+	margin: 0 auto;
 	border: 1px solid #ccc;
 	border-collapse: collapse;
-	width: 940px;
+	font-size: 13px;
 }
 
-.gridRow {
-	display: contents;
+.form_Text1 {
+	display: grid;
+	grid-template-columns: 22% 1fr;
+	border-top: 1px solid #ccc;
 }
 
-.gridLabel {
+.form_Column {
 	background-color: #f4f4f4;
 	font-weight: bold;
-	text-align: left;
-	border: 1px solid #ccc;
-	padding: 6px 8px;
+	padding: 8px 10px;
+	border-right: 1px solid #ccc;
+	display: flex;
+	align-items: center;
 }
 
-.gridCell {
-	border: 1px solid #ccc;
-	padding: 6px 8px;
-}
-
-input[type="text"], select {
-	padding: 4px 6px;
-	font-size: 13px;
+.form_Normal {
+	padding: 8px 10px;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
 }
 
 textarea {
 	width: 100%;
-	height: 80px;
+	height: 40px;
 	font-size: 13px;
 	resize: none;
 	padding: 6px;
 	border: 1px solid #ccc;
+	overflow-y: scroll;
+}
+
+input[type="text"] {
+	padding: 4px 6px;
+	font-size: 13px;
+	border: 1px solid #ccc;
+}
+
+.calendar-icon {
+	cursor: pointer;
+	height: 20px;
+	vertical-align: middle;
 }
 
 button {
@@ -73,15 +76,10 @@ button {
 	margin-left: 4px;
 }
 
-.date-input {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.calendar-icon {
-	cursor: pointer;
-	height: 20px;
+.note {
+	color: #666;
+	margin-left: 8px;
+	font-size: 12px;
 }
 
 .button_Left_Group img {
@@ -90,9 +88,6 @@ button {
 }
 .button_Left_Group img:hover { opacity: 0.85; }
 
-.ui-datepicker {
-	font-size: 13px;
-}
 </style>
 </head>
 
@@ -113,34 +108,37 @@ button {
 				<div class="subtitle">日割 申請理由 入力</div>
 			</div>
 
-			<div id="main_Content">
+			<div class="kin">
 
-				<div class="gridTable">
-					<!-- 1행 -->
-					<div class="gridLabel">日割申請理由</div>
-					<div class="gridCell">
-						<textarea></textarea>
+				<div class="content_Form1">
+					
+					<div class="form_Text1">
+						<div class="form_Column">日割申請理由</div>
+						<div class="form_Normal">
+							<textarea></textarea>
+						</div>
 					</div>
 
-					<div class="gridLabel">申請期間</div>
-					<div class="gridCell">
-						<div class="date-input">
+					<div class="form_Text1">
+						<div class="form_Column">申請期間</div>
+						<div class="form_Normal">
 							<input type="text" id="startDate" value="2013/04/10" style="width:140px;">
 							<img src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
-						</div>
-						 〜
-						<div class="date-input">
+							<span>〜</span>
 							<input type="text" id="endDate" value="2013/04/10" style="width:140px;">
 							<img src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+							<span style="margin-left:10px;">5日間</span>
 						</div>
-						<span style="margin-left:10px;">5日間</span>
 					</div>
 
-					<div class="gridLabel">出勤日数</div>
-					<div class="gridCell">
-						<input type="text" value="4" style="width:40px;"> 日間
-						<span style="margin-left:10px; color:#666;">※実働日数を入力してください。</span>
+					<div class="form_Text1">
+						<div class="form_Column">出勤日数</div>
+						<div class="form_Normal">
+							<input type="text" value="4" style="width:40px;"> 日間
+							<span class="note">※実働日数を入力してください。</span>
+						</div>
 					</div>
+
 				</div>
 
 				<div class="button_Left" style="margin-top:25px;">
