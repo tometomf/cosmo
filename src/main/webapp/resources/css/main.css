@@ -48,11 +48,6 @@ body {
 	margin-bottom: 15px;
 }
 
-.main_Btn img {
-	cursor: pointer;
-	display: block;
-}
-
 .userInfo {
 	display: flex;
 	flex-wrap: wrap;
@@ -72,7 +67,7 @@ body {
 	text-align: center;
 	font-size: 12px;
 	color: #666;
-	padding-bottom: 65px;
+	padding: 65px 0;
 }
 
 .main {
@@ -80,7 +75,6 @@ body {
 	position: relative;
     width: 1080px;
     margin: 0 auto;
-    padding: 0 20px;
     padding-bottom: 60px;
     display: grid;
     gap: 20px;
@@ -88,7 +82,6 @@ body {
 
 .main_Content {
 	display: grid;
-	padding: 0 20px;
 	gap: 20px;
 	margin-top: 25px;
 }
@@ -214,6 +207,13 @@ body {
 .form_Normal {
 	border-right: solid 1px #a0a0a0;
 	border-bottom: solid 1px #a0a0a0;
+	display: flex;
+	gap: 5px;
+	background: white;
+}
+
+.form_Normal > div {
+	display: block;
 }
 
 .form_Required {
@@ -223,7 +223,8 @@ body {
 }
 
 .content_Form2 {
-	padding: 0 35px;
+	width: 1010px;
+    margin: auto;
 }
 
 .content_Form2 > div:not(:first-child) {
@@ -290,6 +291,23 @@ body {
 	cursor: pointer;
 }
 
+.button_Right {
+	width: 1010px;
+    margin: auto;
+}
+
+.button_Right_Group {
+	display: flex;
+	gap: 5px;
+	justify-content: end;
+}
+
+.button_Right_Group > img {
+	display: block;
+	align-items: center;
+	cursor: pointer;
+}
+
 .button_Side {
 	width: 1010px;
     margin: auto;
@@ -306,4 +324,13 @@ body {
 	display: block;
 	align-items: center;
 	cursor: pointer;
+}
+
+.multi_Form {
+	display: flex; 
+	gap: 5px; 
+	width: 1010px; 
+	align-items: flex-start; 
+	justify-content: space-between; 
+	margin: auto;
 }
