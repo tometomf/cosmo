@@ -96,7 +96,7 @@
 		</div>	
 
 
-	<form action="./updateForm" method="post" id="shainForm">	
+	<form action="/huzuiNewInput/updateForm" method="post" id="shainForm">	
 		<div class="content_container">
 			<div class="content_Form2">
 				<div class="form_Title2">

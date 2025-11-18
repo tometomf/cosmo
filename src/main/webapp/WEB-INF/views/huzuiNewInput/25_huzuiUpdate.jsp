@@ -66,11 +66,11 @@
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">免許証有効期限</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.menkyo_Yuko_Kigen ? shainHuzuiShorui.menkyo_Yuko_Kigen : shainHuzui.menkyo_Yuko_Kigen}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">免許証番号</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.menkyo_No}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.menkyo_No ? shainHuzuiShorui.menkyo_No : shainHuzui.menkyo_No}</div>
 		               </div>
 		    </div>
 		    
