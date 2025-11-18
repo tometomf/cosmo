@@ -1,9 +1,13 @@
 package org.cosmo.controller;
 
+import java.util.List;
+
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.IdoCheckForm;
+import org.cosmo.domain.ShozokuVO;
 import org.cosmo.service.AddressInputService;
+import org.cosmo.service.ShozokuService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class IdoConfirmController {
 
     private final AddressInputService addressInputService;
+    private final ShozokuService shozokuService;
 
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
@@ -102,4 +107,19 @@ public class IdoConfirmController {
         // ④ 주소만 변함(N,Y)
         return "idoconfirm/04_addressinput";
     }
+    
+    @GetMapping("/shozokuSearchPopup")
+    public String shozokuSearchPopup(Model model) {
+
+        // 현재 더미데이터는 KIGYO_CD = 100 고정
+        int kigyoCd = 100;
+
+        List<ShozokuVO> list = shozokuService.findShozokuList(kigyoCd);
+
+        model.addAttribute("list", list);
+
+        return "idoconfirm/shozokuSearchPopup";  
+    }
+  
+    
 }

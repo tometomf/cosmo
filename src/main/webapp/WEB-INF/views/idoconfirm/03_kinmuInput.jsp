@@ -72,8 +72,18 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">所属コード</div>
 					<div class = "form_Normal">1234</div>
-					<div class = "form_Normal"><input type="text" value="5678" class="short_input">
-   					 <button class="search_btn">検索</button></div>				
+					<div class = "form_Normal"><input type="text" id="newShozokuCd" name="newShozokuCd" class="short_input">
+											   <button type="button" class="search_btn" onclick="openShozokuPopup();">検索</button>
+
+						<script>
+						function openShozokuPopup() {
+						    window.open("/idoconfirm/shozokuSearchPopup",
+						                "shozokuPopup",
+						                "width=800,height=600,scrollbars=yes");
+						}
+						</script>
+
+   					</div>				
   
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -126,12 +136,22 @@
 	
 		<div class = "button_Left">
 				<div class = "button_Left_Group">   
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
-					<img src="/resources/img/next_btn01.gif" alt="next_btn01">
+				
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01" 
+					 style="cursor:pointer;" 
+					 onclick="location.href='/idoconfirm/idoconfirm';">
+					
+					 
+					<img src="/resources/img/next_btn01.gif" alt="next_btn01"
+								style="cursor:pointer;"
+     onclick="location.href='/idoconfirm/addressinput';">
+     
 					<img src="/resources/img/hozon_btn02.gif" alt="hozon_btn02">
 				</div>
 			</div>	
+			
 		</div>
+		
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 			
