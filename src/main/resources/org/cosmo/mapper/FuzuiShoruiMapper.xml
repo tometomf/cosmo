@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cosmo.mapper.FuzuiShoruiMapper">
+    
+    <resultMap id="fuzuiShoruiResultMap" type="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+        <id column="KIGYO_CD" property="kigyoCd"/>
+        <id column="SHINSEI_NO" property="shinseiNo"/>
+        <id column="KEIRO_SEQ" property="keiroSeq"/>
+    </resultMap>
+
+    <select id="selectFuzuiShoruiList" resultMap="fuzuiShoruiResultMap">
+        SELECT *
+        FROM SHINSEI_FUZUI_SHORUI
+        WHERE KIGYO_CD = #{kigyoCd}
+        AND SHINSEI_NO = #{shinseiNo}
+        ORDER BY KEIRO_SEQ
+    </select>
+    
+    <insert id="insertFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+        INSERT INTO SHINSEI_FUZUI_SHORUI (
+            KIGYO_CD, SHINSEI_NO, KEIRO_SEQ, SHINSEI_KBN, SHINSEI_YMD, ...
+        ) VALUES (
+            #{kigyoCd}, #{shinseiNo}, #{keiroSeq}, #{shinseiKbn}, #{shinseiYmd}, ...
+        )
+    </insert>
+
+    <insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
+        INSERT INTO ICHIJI_HOZON (
+            HOZON_UID, USER_UID, SHINSEI_KBN, SHOZOKU_CD, DATA, 
+            ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+        ) VALUES (
+            #{hozonUid}, #{userUid}, #{shinseiKbn}, #{shozokuCd}, #{data}, 
+            #{addUserId}, NOW(), #{updUserId}, NOW()
+        )
+    </insert>
+</mapper>
