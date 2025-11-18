@@ -68,29 +68,26 @@
 				</div>
 			</div>
 
-
-
-
 			<!-- ===== 상태 정보 ===== -->
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">${jyohou.codeNm}</div>
+					<div class="form_Normal">${empty jyohou.codeNm ? '' : jyohou.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">${jyohou.shinseiNo}</div>
+					<div class="form_Normal">${empty jyohou.shinseiNo ? '' : jyohou.shinseiNo}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">${jyohou.shinseiYmd}</div>
+					<div class="form_Normal">${empty jyohou.shinseiYmd ? '' : jyohou.shinseiYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">${jyohou.ssmdsYmd}</div>
+					<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -100,7 +97,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">不備内容</div>
-					<div class="form_Normal">${jyohou.moComment}</div>
+					<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}</div>
 				</div>
 			</div>
 
@@ -116,7 +113,7 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
 					<!-- 申請前 -->
-					<div class="form_Normal">${jyohou.genAddress}</div>
+					<div class="form_Normal">${empty jyohou.genAddress ? '' : jyohou.genAddress}</div>
 
 					<!-- 申請後 -->
 					<div class="form_Normal"
@@ -127,7 +124,6 @@
 								style="width: 40px; text-align: center;"> - <input
 								type="text" id="zip2New" name="zip2" maxlength="4"
 								style="width: 60px; text-align: center;">
-							<!-- ★ 버튼에서 JS 함수 호출 -->
 							<button type="button" style="padding: 2px 8px;"
 								onclick="searchZipNew()">検索</button>
 						</div>
@@ -188,7 +184,8 @@
 						<!-- 주소1 -->
 						<div>
 							<input type="text" id="address1New" name="address1"
-								value="${jyohou.newAddress}" style="width: 385px;">
+								value="${empty jyohou.newAddress ? '' : jyohou.newAddress}"
+								style="width: 385px;">
 						</div>
 						<!-- 주소2 -->
 						<div>
@@ -198,14 +195,13 @@
 					</div>
 				</div>
 
-
 				<!-- 勤務先 -->
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">中野店</div>
+					<div class="form_Normal">${empty jyohou.genShozoku ? '' : jyohou.genShozoku}</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 5px;">
-						<span>${jyohou.newShozoku}</span>
+						<span>${empty jyohou.newShozoku ? '' : jyohou.newShozoku}</span>
 						<button type="button"
 							style="border: none; background: none; cursor: pointer;">
 							<img src="/resources/img/tn/search_btn02.gif" alt="search"
@@ -217,39 +213,44 @@
 				<!-- 勤務地 -->
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou.genKinmuchi ? '' : jyohou.genKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}</div>
 				</div>
 			</div>
 
-
 			<!-- ===== 経路① ===== -->
-			<!-- ===== 경로 정보 ===== -->
 			<div class="content_Form2" style="margin-top: 20px; font-size: 13px;">
 				<!-- 제목줄 -->
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-					経路①</div>
+					<div>経路&#${9311 + (empty keiro.keiroSeq ? 0 :
+						keiro.keiroSeq)};</div>
+				</div>
 
 				<!-- 본문 내용 -->
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${keiro.shudanName}</div>
+					<div class="form_Normal">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路 自</div>
-					<div class="form_Normal">神奈川県川崎市中原区新丸子1-2-3 レオパレス新丸子201</div>
+					<div class="form_Normal">${empty keiro.startPlace ? '' : keiro.startPlace}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路 至</div>
-					<div class="form_Normal">東京都中野区本町3-30-4 KDX中野坂上ビル8F</div>
+					<div class="form_Normal">${empty keiro.endPlace ? '' : keiro.endPlace}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
-					<div class="form_Normal">${keiro.shinseiKm}km</div>
+					<div class="form_Normal">
+						${empty keiro.shinseiKm ? '' : keiro.shinseiKm}
+						<c:if test="${not empty keiro.shinseiKm}">km</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -259,20 +260,26 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 片道</div>
-					<div class="form_Normal">${keiro.katamichi}円</div>
+					<div class="form_Normal">
+						${empty keiro.katamichi ? '' : keiro.katamichi}
+						<c:if test="${not empty keiro.katamichi}">円</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">1ヶ月金額</div>
-					<div class="form_Normal">22 × 22 × 160 / 10 × 23 + 850 × 2 ×
-						23 = 55,929円</div>
+					<div class="form_Normal">
+						<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
+                            ${keiro.tsuki}円
+                        </c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">月当月実勤務回数</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 5px;">
-						<input type="text" value="15"
+						<input type="text" id="jitsuKinmuInput" value="15"
 							style="width: 50px; text-align: center; border: 1px solid #ccc; height: 20px;">
 						回
 					</div>
@@ -282,14 +289,17 @@
 					<div class="form_Column">月当月金額</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 10px;">
-						<span>${keiro.tsuki}円</span>
+						<span> <c:if
+								test="${keiro.tsuki != null && keiro.tsuki > 0}">
+                                ${keiro.tsuki}円
+                            </c:if>
+						</span>
 						<button type="button"
 							style="border: 1px solid #ccc; background: #f3f3f3; font-size: 12px; cursor: pointer; padding: 2px 10px;">
 							計算</button>
 					</div>
 				</div>
 			</div>
-
 
 			<!-- 오른쪾 정렬 버튼 예제 -->
 			<div class="button_Right">
@@ -298,10 +308,7 @@
 				</div>
 			</div>
 
-
-
-
-			<!-- Multi Form 예제 -->
+			<!-- Multi Form 예제 (dummy 그대로) -->
 			<div class="multi_Form">
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
@@ -388,21 +395,18 @@
 
 			</div>
 
-			<!-- 오른쪾 정렬 버튼 예제 -->
 			<div class="button_Right">
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
 				</div>
 			</div>
 
-			<!-- ===== 経路② ===== -->
+			<!-- ===== 経路② (dummy) ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
-				<!-- 제목줄 -->
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
 					経路②</div>
 
-				<!-- 본문 내용 -->
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
 					<div class="form_Normal">バス</div>
@@ -424,7 +428,7 @@
 					<div class="form_Normal">450円</div>
 				</div>
 			</div>
-			<!-- ===== 付随書類 (経路② 하단 작은 표, 왼쪽 정렬) ===== -->
+
 			<div class="multi_Form"
 				style="justify-content: flex-start; margin-top: 15px;">
 				<div class="content_Form1" style="width: 330px; margin: 0;">
@@ -445,24 +449,18 @@
 				</div>
 			</div>
 
-
-
-			<!-- 오른쪾 정렬 버튼 예제 -->
 			<div class="button_Right">
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
 				</div>
 			</div>
 
-
-			<!-- ===== 経路③ ===== -->
+			<!-- ===== 経路③ (dummy) ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
-				<!-- 제목줄 -->
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
 					経路③</div>
 
-				<!-- 본문 내용 -->
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
 					<div class="form_Normal">電車</div>
@@ -485,10 +483,9 @@
 				</div>
 			</div>
 
-
 			<div class="multi_Form"
 				style="justify-content: flex-start; margin-top: 15px;">
-				<div class="content_Form1" style="width: 330px; margin: 0;">
+				<div class="content_Form1" style="width: 330px; margin: 0%;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
 						<div class="form_Normal">
@@ -506,16 +503,13 @@
 				</div>
 			</div>
 
-			<!-- 오른쪾 정렬 버튼 예제 -->
 			<div class="button_Right">
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
 				</div>
 			</div>
 
-
-
-			<!-- 1번째 테이블 -->
+			<!-- 기타 테이블 (dummy) -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
@@ -526,7 +520,6 @@
 				</div>
 			</div>
 
-			<!-- 2번째 테이블 -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
@@ -537,7 +530,6 @@
 				</div>
 			</div>
 
-			<!-- 3번째 테이블 -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
@@ -548,7 +540,6 @@
 				</div>
 			</div>
 
-			<!-- 4번째 테이블 -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
@@ -559,7 +550,6 @@
 				</div>
 			</div>
 
-			<!-- 5번째 테이블 -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
@@ -570,7 +560,6 @@
 				</div>
 			</div>
 
-			<!-- 오른쪾 정렬 버튼 예제 -->
 			<div class="button_Right">
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01">
@@ -581,50 +570,129 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">農納</div>
+					<div class="form_Normal">${empty jyohou.shinseiName ? '' : jyohou.shinseiName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
 					<div class="form_Normal">
-						<textarea
-							style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;"></textarea>
+
+						<textarea id="shinseiRiyuInput" name="shinseiRiyu"
+							style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;">${empty jyohou.riyu ? '' : jyohou.riyu}</textarea>
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">離納日／移転日</div>
-					<div class="form_Normal">2013/04/10</div>
+					<div class="form_Normal">
+						${empty jyohou.idoYmd ? '' : jyohou.idoYmd}
+						<c:if test="${not empty jyohou.itenYmd}"> / ${jyohou.itenYmd}</c:if>
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">2013/04/09</div>
+					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal"></div>
+					<div class="form_Normal">${empty jyohou.riyoStartYmd ? '' : jyohou.riyoStartYmd}
+					</div>
 				</div>
 			</div>
 
 			<!-- ===== 하단 버튼 (한 줄 정렬) ===== -->
 			<div class="button_Side" style="margin-top: 40px;">
 				<div class="button_Side_Group">
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
-						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01">
-					<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02">
+					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+						onclick="submitBackForm()"> <img
+						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
+						onclick="submitReapplyForm()"> <img
+						src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
+						onclick="goToCancelPage()">
 				</div>
 			</div>
 
-
-
 		</div>
-
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
+
+	<form id="backForm" action="/shinsei/backFromConfirm" method="post">
+		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
+		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+	</form>
+
+	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
+		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
+		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+
+		<input type="hidden" name="shinseiRiyu" id="shinseiRiyuHidden">
+
+
+		<input type="hidden" name="newZipCd" id="newZipCdHidden"> <input
+			type="hidden" name="newAddress1" id="newAddress1Hidden"> <input
+			type="hidden" name="newAddress2" id="newAddress2Hidden"> <input
+			type="hidden" name="jitsuKinmuNissu" id="jitsuKinmuNissuHidden">
+	</form>
+
 	<script>
 		function searchZipNew() {
-			AjaxZip3.zip2addr('zip1', 'zip2', 'prefecture', 'address1',
-					'address2');
+			AjaxZip3.zip2addr('zip1New', 'zip2New', 'prefNew', 'address1New',
+					'address2New');
+		}
+
+		function submitBackForm() {
+			document.getElementById("backForm").submit();
+		}
+
+		function submitReapplyForm() {
+			const textarea = document.getElementById("shinseiRiyuInput");
+			const value = (textarea.value || "").trim();
+
+			if (value.length === 0) {
+				alert("申請理由を入力してください。");
+				return;
+			}
+
+			document.getElementById("shinseiRiyuHidden").value = value;
+
+			const zip1 = document.getElementById("zip1New").value.trim();
+			const zip2 = document.getElementById("zip2New").value.trim();
+			document.getElementById("newZipCdHidden").value = zip1 + zip2; // NEW_ZIP_CD
+
+			const pref = document.getElementById("prefNew").value.trim();
+			const addr1 = document.getElementById("address1New").value.trim();
+			const addr2 = document.getElementById("address2New").value.trim();
+
+			document.getElementById("newAddress1Hidden").value = pref + addr1;
+
+			document.getElementById("newAddress2Hidden").value = addr2;
+
+			const jitsuInput = document
+					.querySelector("input[name='jitsuInput']");
+			if (jitsuInput) {
+				document.getElementById("jitsuKinmuNissuHidden").value = jitsuInput.value
+						.trim();
+			}
+
+			document.getElementById("reapplyForm").submit();
+		}
+
+		function goToCancelPage() {
+			var shinseiNo = "${jyohou.shinseiNo}";
+			var hozonUid = "${hozonUid}";
+
+			if (!shinseiNo) {
+				alert("申請番号が取得できません。");
+				return;
+			}
+
+			var url = "/shinsei/torikesu?no=" + encodeURIComponent(shinseiNo);
+
+			if (hozonUid && hozonUid !== "") {
+				url += "&hozonUid=" + encodeURIComponent(hozonUid);
+			}
+
+			location.href = url;
 		}
 	</script>
 </body>

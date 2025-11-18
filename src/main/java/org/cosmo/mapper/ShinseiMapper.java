@@ -77,8 +77,22 @@ public interface ShinseiMapper {
 
 	void insertProcessLog(@Param("shinseiNo") String shinseiNo, @Param("userUid") String userUid,
 			@Param("type") String type);
-	
+
 	void deleteShinseiByShinseiNo(@Param("shinseiNo") String shinseiNo);
-	
+
 	String getEmailByShainUid(@Param("shainUid") String shainUid);
+
+	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void updateForResubmit(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("shinseiRiyu") String shinseiRiyu, @Param("updUserId") String updUserId);
+
+	void updateShinseiForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("shinseiRiyu") String shinseiRiyu, @Param("newZipCd") String newZipCd,
+			@Param("newPref") String newPref, @Param("newAddress1") String newAddress1,
+			@Param("newAddress2") String newAddress2, @Param("updUserId") Integer updUserId);
+
+	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
+
 }

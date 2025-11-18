@@ -43,7 +43,14 @@ public interface ShinseiService {
 	void insertProcessLog(String shinseiNo, String userUid, String type);
 
 	void loadShinseiDetail(Long shinseiNo, String hozonUid, Model model);
-	
+
 	void deleteShinseiByShinseiNo(String shinseiNo);
-		
+
+	void clearHenkoFlags(Long kigyoCd, Long shinseiNo);
+
+	void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId);
+
+	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newPref,
+			String newAddress1, String newAddress2, String jitsuKinmuNissu, String loginUserId, String userIp);
+
 }

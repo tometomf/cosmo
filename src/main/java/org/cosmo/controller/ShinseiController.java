@@ -154,6 +154,35 @@ public class ShinseiController {
 		return "home";
 	}
 
+	@PostMapping("/saishinsei")
+	public String saishinsei(@RequestParam("kigyoCd") Long kigyoCd, @RequestParam("shinseiNo") Long shinseiNo,
+			@RequestParam("shinseiRiyu") String shinseiRiyu,
+
+			@RequestParam(value = "newZipCd", required = false) String newZipCd,
+			@RequestParam(value = "newPref", required = false) String newPref,
+			@RequestParam(value = "newAddress1", required = false) String newAddress1,
+			@RequestParam(value = "newAddress2", required = false) String newAddress2,
+			@RequestParam(value = "jitsuKinmuNissu", required = false) String jitsuKinmuNissu,
+
+			HttpSession session, HttpServletRequest request, RedirectAttributes rttr) {
+
+		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
+
+		// ShainVO 쪽에서 shainUid 타입이 Integer/Long 이면 이렇게 안전하게 변환하는 게 좋아
+		String loginUserId = (loginShain != null && loginShain.getShain_Uid() != null)
+				? String.valueOf(loginShain.getShain_Uid())
+				: null;
+
+		String userIp = request.getRemoteAddr();
+
+		// ★ 여기 순서가 서비스 시그니처랑 1:1로 일치해야 함
+		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newPref, newAddress1, newAddress2,
+				jitsuKinmuNissu, loginUserId, userIp);
+
+		rttr.addFlashAttribute("message", "再申請が完了しました。");
+		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;
+	}
+
 	@GetMapping("/shinseiDetail")
 	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model) {
 
@@ -188,8 +217,6 @@ public class ShinseiController {
 		return "home";
 	}
 
-	
-	
 	@GetMapping("/kakunin")
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model) {
 
@@ -223,4 +250,41 @@ public class ShinseiController {
 
 		return "shinsei/11_shinseiDetail_03";
 	}
+
+	@PostMapping("/backFromConfirm")
+	public String backFromConfirm(@RequestParam("kigyoCd") Long kigyoCd, @RequestParam("shinseiNo") Long shinseiNo) {
+
+		shinseiService.clearHenkoFlags(kigyoCd, shinseiNo);
+
+		return "redirect:/";
+	}
+
+	@PostMapping("/resubmit")
+	public String resubmit(@RequestParam("shinseiNo") Long shinseiNo, @RequestParam("shinseiRiyu") String shinseiRiyu,
+			HttpSession session, RedirectAttributes rttr) {
+
+		// 1) 세션에서 로그인 사원 정보 꺼내기
+		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
+		if (loginShain == null) {
+			// 로그인 정보 없으면 일단 목록으로 돌려보내기 (임시 처리)
+			rttr.addFlashAttribute("errorMessage", "ログイン情報が取得できませんでした。");
+			return "redirect:/shinsei/list";
+		}
+
+		// 2) 회사코드, 갱신자ID 가져오기
+		Long kigyoCd = null;
+		if (loginShain.getKigyo_Cd() != null && !loginShain.getKigyo_Cd().isEmpty()) {
+			kigyoCd = Long.valueOf(loginShain.getKigyo_Cd()); // NUMBER 컬럼이니까 Long으로 변환
+		}
+
+		String updUserId = loginShain.getShain_Uid(); // ★ 여기! getShainUid()가 아니라 getShain_Uid()
+
+		// 3) 서비스 호출해서 재신청용 UPDATE
+		shinseiService.resubmitShinsei(kigyoCd, shinseiNo, shinseiRiyu, updUserId);
+
+		rttr.addFlashAttribute("message", "再申請しました。");
+		// 재신청 후 이동할 화면 (임시로 신청 목록)
+		return "redirect:/shinsei/list";
+	}
+
 }

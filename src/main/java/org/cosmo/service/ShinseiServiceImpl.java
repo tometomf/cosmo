@@ -255,4 +255,39 @@ public class ShinseiServiceImpl implements ShinseiService {
 		shinseiMapper.deleteShinseiByShinseiNo(shinseiNo);
 	}
 
+	@Override
+	public void clearHenkoFlags(Long kigyoCd, Long shinseiNo) {
+		shinseiMapper.clearHenkoFlags(kigyoCd, shinseiNo);
+	}
+
+	@Override
+	public void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId) {
+		shinseiMapper.updateForResubmit(kigyoCd, shinseiNo, shinseiRiyu, updUserId);
+	}
+
+	@Override
+	@Transactional
+	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newPref,
+			String newAddress1, String newAddress2, String jitsuKinmuNissu, String loginUserId, String userIp) {
+
+		Integer updUserId = null;
+		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
+			try {
+				updUserId = Integer.valueOf(loginUserId.trim());
+			} catch (NumberFormatException e) {
+
+			}
+		}
+
+		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newPref, newAddress1,
+				newAddress2, updUserId);
+
+		Integer jitsu = null;
+		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
+			jitsu = Integer.valueOf(jitsuKinmuNissu.trim());
+		}
+
+		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
+	}
+
 }

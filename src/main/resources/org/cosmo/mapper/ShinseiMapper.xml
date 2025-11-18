@@ -589,6 +589,64 @@
 		SHINSEI_NO = #{shinseiNo}
 	</update>
 
+	<update id="clearHenkoFlags">
+		UPDATE SHINSEI
+		SET ADDRESS_CHG_KBN = NULL,
+		KINMU_ADDRESS_CHG_KBN = NULL
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO
+		= #{shinseiNo}
+	</update>
+
+	<update id="updateForResubmit">
+		UPDATE SHINSEI
+		SET
+		SHINSEI_RIYU = #{shinseiRiyu},
+		SHINCHOKU_KBN = '2',
+		UPD_USER_ID = #{updUserId},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</update>
+
+
+
+	<update id="updateShinseiForReapply">
+		UPDATE SHINSEI
+		SET
+		SHINSEI_RIYU = #{shinseiRiyu},
+		NEW_ZIP_CD = #{newZipCd},
+		NEW_ADDRESS_1 = #{newPref},
+		NEW_ADDRESS_2 = #{newAddress1},
+		NEW_ADDRESS_3 = #{newAddress2},
+		SHINCHOKU_KBN = '2', 
+		UPD_USER_ID = #{updUserId},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</update>
+
+
+
+
+
+
+	<update id="updateStartKeiroForReapply">
+		UPDATE SHINSEI_START_KEIRO
+		SET JITSU_KINMU_NISSU =
+		#{jitsuKinmuNissu}
+		, UPD_USER_ID = #{updUserId}
+		, UPD_DATE =
+		SYSTIMESTAMP
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+		AND KEIRO_SEQ = 1
+	</update>
+
+
+
+
 
 	<select id="selectShinseiDetail"
 		resultType="org.cosmo.domain.ShinseiDetailVO">
@@ -678,5 +736,7 @@
 		AND
 		s.SHINSEI_NO = #{shinseiNo}
 	</select>
+
+
 
 </mapper>
