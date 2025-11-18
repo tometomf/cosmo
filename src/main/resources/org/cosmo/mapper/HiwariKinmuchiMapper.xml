@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cosmo.mapper.HiwariKinmuchiMapper">
+
+    <!-- ============================================================
+         日割勤務地 初期表示（申請前）
+         SHAIN + SHOZOKU からデータ取得
+         ============================================================ -->
+    <select id="selectBeforeShinsei"
+            parameterType="map"
+            resultType="org.cosmo.domain.HiwariKinmuchiVO">
+
+        SELECT
+              s.SHOZOKU_CD      AS shozokuCd        <!-- 所属コード -->
+            , z.SHOZOKU_NM      AS shozokuNm        <!-- 所属名 -->
+
+            , s.KINMU_ZIP_CD    AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
+            , s.KINMU_PREF_CD   AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
+            , s.KINMU_ADDRESS_1 AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
+            , s.KINMU_ADDRESS_2 AS kinmuAddress2    <!-- 現勤務地 建物 -->
+
+            , NULL AS newKinmuAddress1              <!-- 新勤務地（申請前なのでNULL） -->
+            , NULL AS newKinmuAddress2
+
+            , NULL AS shinseiNo                     <!-- 申請番号（申請前なのでNULL） -->
+
+        FROM SHAIN s
+        JOIN SHOZOKU z
+          ON s.KIGYO_CD   = z.KIGYO_CD
+         AND s.SHOZOKU_CD = z.SHOZOKU_CD
+
+        WHERE s.KIGYO_CD  = #{kigyoCd}
+          AND s.SHAIN_UID = #{shainUid}
+
+    </select>
+
+    <!-- ============================================================
+         日割勤務地 初期表示（申請後）
+         SHAIN + SHOZOKU + SHINSEI からデータ取得
+         ============================================================ -->
+    <select id="selectAfterShinsei"
+            parameterType="map"
+            resultType="org.cosmo.domain.HiwariKinmuchiVO">
+
+        SELECT
+              s.SHOZOKU_CD           AS shozokuCd        <!-- 所属コード -->
+            , z.SHOZOKU_NM           AS shozokuNm        <!-- 所属名 -->
+
+            , s.KINMU_ZIP_CD         AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
+            , s.KINMU_PREF_CD        AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
+            , s.KINMU_ADDRESS_1      AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
+            , s.KINMU_ADDRESS_2      AS kinmuAddress2    <!-- 現勤務地 建物 -->
+
+            , si.NEW_KINMU_ADDRESS_2 AS newKinmuAddress1 <!-- 新勤務地 市区町村・番地 -->
+            , si.NEW_KINMU_ADDRESS_3 AS newKinmuAddress2 <!-- 新勤務地 建物 -->
+
+            , si.SHINSEI_NO          AS shinseiNo        <!-- 申請番号 -->
+
+        FROM SHINSEI si
+        JOIN SHAIN s
+          ON si.KIGYO_CD  = s.KIGYO_CD
+         AND si.SHAIN_UID = s.SHAIN_UID
+
+        JOIN SHOZOKU z
+          ON s.KIGYO_CD   = z.KIGYO_CD
+         AND s.SHOZOKU_CD = z.SHOZOKU_CD
+
+        WHERE si.KIGYO_CD  = #{kigyoCd}
+          AND si.SHAIN_UID = #{shainUid}
+          AND si.SHINSEI_NO = #{shinseiNo}
+
+    </select>
+
+</mapper>

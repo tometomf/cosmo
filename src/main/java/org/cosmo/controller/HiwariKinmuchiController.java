@@ -1,10 +1,14 @@
 package org.cosmo.controller;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.HiwariKeiroVO;
+import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.service.HiwariKeiroService;
+import org.cosmo.service.HiwariKinmuchiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +24,28 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKeiroService hiwariKeiroService;
 
+    @Autowired
+    private HiwariKinmuchiService service;
+
+
     @GetMapping("hiwariKinmuchi")
-    public String showKinmuchiPage() {
+    public String showKinmuchiPage(HttpSession session, Model model) {
+
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
+        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
+        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+
+        HiwariKinmuchiVO data;
+
+        if (shinseiNo == null) {
+            // 申請前
+            data = service.getBeforeShinsei(kigyoCd, shainUid);
+        } else {
+            // 申請後
+            data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
+        }
+
+        model.addAttribute("initData", data);
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
 
