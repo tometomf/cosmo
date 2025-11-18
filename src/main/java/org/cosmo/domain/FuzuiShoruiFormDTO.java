@@ -9,32 +9,32 @@ import java.util.List;
 @Data
 public class FuzuiShoruiFormDTO {
 
-    // 1. 신청 기본 정보 (SHINSEI 테이블)
-    private ShinseiDTO shinsei;
-    
-    // 2. 경로별 부수 서류 목록 (SHINSEI_FUZUI_SHORUI 테이블)
-    // 화면에 경로가 여러 개 표시되므로 List 형태입니다.
-    private List<ShinseiFuzuiShoruiDTO> fuzuiShoruiList;
-    
-    // 3. 기업 규정 마스터 데이터 (KIGYO_KITEI 테이블)
-    // 예: 정기 기간 선택 옵션, 보험 등급 옵션 등
-    private List<KigyoKiteiDTO> kiteiOptions; 
-    
-    // 4. (옵션) 임시 저장 데이터 존재 여부
-    // ICHIJI_HOZON 테이블에 저장된 데이터가 있으면 이 플래그를 통해 처리합니다.
-    private boolean isTempSaved;
-    
-    // 5. (옵션) 기타 화면에서 필요한 정보
-    // private String currentUserName;
-    
-    // 생성자 (필요한 데이터를 쉽게 담기 위함)
-    public FuzuiShoruiFormDTO(
-        ShinseiDTO shinsei, 
-        List<ShinseiFuzuiShoruiDTO> fuzuiShoruiList, 
-        List<KigyoKiteiDTO> kiteiOptions
-    ) {
-        this.shinsei = shinsei;
-        this.fuzuiShoruiList = fuzuiShoruiList;
-        this.kiteiOptions = kiteiOptions;
-    }
+	// 1. 신청 기본 정보 (SHINSEI 테이블)
+	private ShinseiDTO shinsei;
+
+	// 2. 경로별 부수 서류 목록 (SHINSEI_FUZUI_SHORUI 테이블)
+	// 화면에 경로가 여러 개 표시되므로 List 형태입니다.
+	private List<ShinseiFuzuiShoruiDTO> fuzuiShoruiList;
+
+	// 3. 기업 규정 마스터 데이터 (KIGYO_KITEI 테이블)
+	// 예: 정기 기간 선택 옵션, 보험 등급 옵션 등
+	private List<KigyoKiteiDTO> kiteiOptions; 
+	
+	// 4. (옵션) 임시 저장 데이터 존재 여부
+	// ICHIJI_HOZON 테이블에 저장된 데이터가 있으면 이 플래그를 통해 처리합니다.
+	private boolean isTempSaved;
+	
+	// 5. (옵션) 기타 화면에서 필요한 정보
+	// private String currentUserName;
+
+	// 생성자 (필요한 데이터를 쉽게 담기 위함)
+	public FuzuiShoruiFormDTO(
+		ShinseiDTO shinsei, 
+		List<ShinseiFuzuiShoruiDTO> fuzuiShoruiList, 
+		List<KigyoKiteiDTO> kiteiOptions
+	) {
+		this.shinsei = shinsei;
+		this.fuzuiShoruiList = fuzuiShoruiList;
+		this.kiteiOptions = kiteiOptions;
+	}
 }
