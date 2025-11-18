@@ -17,7 +17,6 @@ public interface ShinseiMapper {
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
 	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("updUserId") String updUserId);
 
@@ -110,5 +109,3 @@ public interface ShinseiMapper {
                           @Param("userUid") String userUid,
                           @Param("type") String type);
 }
-	
-
