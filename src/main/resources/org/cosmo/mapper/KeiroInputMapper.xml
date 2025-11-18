@@ -56,4 +56,67 @@
 
     </select>
 
+	<resultMap id="ShinseiAddressResultMap" type="org.cosmo.domain.ShinseiDTO">
+        <result property="kigyoCd"     column="KIGYO_CD"/>
+        <result property="shainUid"    column="SHAIN_UID"/>
+        <result property="newAddress1" column="NEW_ADDRESS_1"/>
+        <result property="newAddress2" column="NEW_ADDRESS_2"/>
+        <result property="newAddress3" column="NEW_ADDRESS_3"/>
+    </resultMap>
+
+    <select id="selectAddressWithFallback"
+            parameterType="map"
+            resultMap="ShinseiAddressResultMap">
+
+        SELECT
+              h.KIGYO_CD
+            , h.SHAIN_UID
+            , NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1
+            , NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2
+            , NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
+        FROM SHAIN h
+        LEFT JOIN SHINSEI s
+          ON s.KIGYO_CD  = h.KIGYO_CD
+         AND s.SHAIN_UID = h.SHAIN_UID
+        WHERE h.KIGYO_CD  = #{kigyoCd}
+          AND h.SHAIN_UID = #{shainUid}
+
+    </select>
+    
+    <resultMap id="ShinseiKinmuAddressResultMap" type="org.cosmo.domain.ShinseiDTO">
+        <result property="kigyoCd"          column="KIGYO_CD"/>
+        <result property="shainUid"         column="SHAIN_UID"/>
+        <result property="newKinmuAddress1" column="NEW_KINMU_ADDRESS_1"/>
+        <result property="newKinmuAddress2" column="NEW_KINMU_ADDRESS_2"/>
+        <result property="newKinmuAddress3" column="NEW_KINMU_ADDRESS_3"/>
+    </resultMap>
+
+    <select id="selectKinmuAddressWithFallback"
+            parameterType="map"
+            resultMap="ShinseiKinmuAddressResultMap">
+
+        SELECT
+              h.KIGYO_CD
+            , h.SHAIN_UID
+            , NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1
+            , NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2
+            , NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+        FROM SHAIN h
+        LEFT JOIN SHINSEI s
+          ON s.KIGYO_CD  = h.KIGYO_CD
+         AND s.SHAIN_UID = h.SHAIN_UID
+        WHERE h.KIGYO_CD  = #{kigyoCd}
+          AND h.SHAIN_UID = #{shainUid}
+
+    </select>
+    
+    
+    <update id="updateViaPlace1">
+    	UPDATE SHINSEI_START_KEIRO
+       		SET VIA_PLACE_1 = #{viaPlace1, jdbcType=VARCHAR}
+     	WHERE KIGYO_CD   = #{kigyoCd,   jdbcType=NUMERIC}
+       		AND SHINSEI_NO = #{shinseiNo, jdbcType=NUMERIC}
+       		AND KEIRO_SEQ  = #{keiroSeq,  jdbcType=NUMERIC}
+	</update>
+    
 </mapper>

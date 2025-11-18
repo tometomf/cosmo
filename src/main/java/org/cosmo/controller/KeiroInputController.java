@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.KeiroInputService;
 import org.cosmo.service.OshiraseService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/keiroinput")
@@ -98,17 +100,32 @@ public class KeiroInputController {
 	}
 
 	@GetMapping("/07_keirodtInput_03")
-	public String jidousha(Locale locale, Model model) {
+    public String jidousha(Locale locale, HttpSession session, Model model) {
 
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+        
+        Date date = new Date();
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+        String formattedDate = dateFormat.format(date);
+        model.addAttribute("serverTime", formattedDate);
 
-		String formattedDate = dateFormat.format(date);
+        
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+            return "redirect:/login";
+        }
 
-		model.addAttribute("serverTime", formattedDate);
+        
+        Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
+        Long shainUid = Long.parseLong(shain.getShain_Uid());
 
-		return "keiroinput/07_keirodtInput_03";
-	}
+        
+        ShinseiDTO addr = keiroInputservice.getShinseiAddress(kigyoCd, shainUid);
+        ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid);
+        
+        model.addAttribute("addr", addr);
+        model.addAttribute("kinmuAddr", kinmuAddr);
+        return "keiroinput/07_keirodtInput_03";
+    }
 
 	 @PostMapping("/tempSave")
 	    public String tempSaveCommute(
@@ -148,5 +165,33 @@ public class KeiroInputController {
 	        // 임시저장 후 다음 페이지로 이동
 	        return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
 	    }
+	 
+	 @PostMapping("/saveViaPlace1")
+	 @ResponseBody
+	 public String saveViaPlace1(@RequestParam("viaPlace1") String viaPlace1,
+	                             HttpSession session) {
+
+	     System.out.println(">>> saveViaPlace1 called");
+	     System.out.println("  viaPlace1 = " + viaPlace1);
+
+	     ShainVO shain = (ShainVO) session.getAttribute("shain");
+	     if (shain == null) {
+	         System.out.println("  shain in session is null");
+	         return "NG_NO_SESSION";
+	     }
+
+	     Integer kigyoCd   = Integer.valueOf(shain.getKigyo_Cd());
+	     Integer shinseiNo = 1;  // 지금은 테스트용 더미값
+	     Integer keiroSeq  = 1;  // 지금은 테스트용 더미값
+
+	     System.out.println("  kigyoCd=" + kigyoCd
+	             + ", shinseiNo=" + shinseiNo
+	             + ", keiroSeq=" + keiroSeq);
+
+	     keiroInputservice.saveViaPlace1(kigyoCd, shinseiNo, keiroSeq, viaPlace1);
+
+	     System.out.println(">>> saveViaPlace1 end");
+	     return "OK";
+	 }
 
 }
