@@ -130,13 +130,20 @@
       <div class="subtitle">日割　通勤経路情報</div>
     </div>
 
-    <% 
+    <%
       // 経路タブの丸数字表示용 (index 0은 미사용)
       String[] maruDigits = {"", "①","②","③","④","⑤","⑥","⑦","⑧","⑨"};
       pageContext.setAttribute("maruDigits", maruDigits);
     %>
 
     <div class="page-width">
+
+      <!-- ★ 에러메시지 표시 (디자인 최소 영향, 필요 시에만 표시) -->
+      <c:if test="${not empty errorMsg}">
+        <div style="color:#d00; margin: 4px 0 6px; font-size: 12px;">
+          <c:out value="${errorMsg}"/>
+        </div>
+      </c:if>
 
       <!-- 안내문 + 지도 버튼 -->
       <div class="hint-row">
