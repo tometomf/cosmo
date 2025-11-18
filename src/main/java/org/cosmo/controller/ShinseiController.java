@@ -69,7 +69,7 @@ public class ShinseiController {
 				model.addAttribute("shorui", shoruiVo);
 				model.addAttribute("fileName", fileName);
 				model.addAttribute("isIchiji", false); // 반려 상태
-				model.addAttribute("hozonUid", null);
+				model.addAttribute("hozonUid", hozonUid);
 
 				return "shinsei/dummy_11_shinseiDetail_03";
 			}
@@ -130,7 +130,7 @@ public class ShinseiController {
 		}
 
 		// 신청구분1(임시저장) + 신청번호 ㅇ / 신청구분3(반려) : 취소처리
-		if ("1".equals(shinchokuKbn) && hasShinseiNo) {
+		if (hasShinseiNo && hozonUid != null && !hozonUid.trim().isEmpty()) {
 
 			shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
 			shinseiService.insertOshirase(shain, shinseiNo);

@@ -78,7 +78,7 @@ public interface ShinseiMapper {
 	void insertProcessLog(@Param("shinseiNo") String shinseiNo, @Param("userUid") String userUid,
 			@Param("type") String type);
 	
-	void deleteShinseiByShinseiNo(@Param("shinsenNo") String shinseiNo);
+	void deleteShinseiByShinseiNo(@Param("shinseiNo") String shinseiNo);
 	
 	String getEmailByShainUid(@Param("shainUid") String shainUid);
 }

@@ -36,4 +36,8 @@ public class ShinseiKeiroVO {
 	public BigDecimal getShinseiKm() {
 		return shinseiKm == null ? BigDecimal.ZERO : shinseiKm;
 	}
+	
+	public Long getTotal() {
+		return getTsuki() + getYuryo();
+	}
 }
