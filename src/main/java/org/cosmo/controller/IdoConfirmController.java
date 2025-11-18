@@ -53,7 +53,6 @@ public class IdoConfirmController {
 	@GetMapping("/addressinput")
 	public String addressinput(Model model) {
 
-		// ★ 실제로는 세션에서 회사코드/직원UID 꺼내야 함
 		String kigyoCd = "DUMMY";
 		String shainUid = "DUMMY";
 
