@@ -537,6 +537,7 @@
 			ekiSwap.addEventListener("click", function() {
 				const startStation = document.querySelector('input[name="From_station"]');
 				const endStation = document.querySelector('input[name="To_station"]');
+
 				
 				const emptyStation = startStation.value;
 				startStation.value = endStation.value;
