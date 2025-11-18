@@ -72,17 +72,6 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiIcHozon" parameterType="String"
-		resultType="org.cosmo.domain.ShinseiIcHozonVO">
-		SELECT
-		HOZON_UID AS hozonUid,
-		USER_UID AS userUid,
-		ADD_DATE AS
-		addDate
-		FROM ICHIJI_HOZON
-		WHERE HOZON_UID = #{hozonUid}
-	</select>
-
 	<select id="getFileName" parameterType="String"
 		resultType="String">
 		SELECT f.name
@@ -143,12 +132,26 @@
 		WHERE HOZON_UID = #{hozonUid}
 	</delete>
 
+
+	<select id="getIchijiHozon" parameterType="String"
+		resultType="org.cosmo.domain.ShinseiIcHozonVO">
+
+		SELECT
+		HOZON_UID AS hozonUid,
+		USER_UID AS userUid,
+		DATA
+		FROM ICHIJI_HOZON
+		WHERE HOZON_UID = #{hozonUid}
+	</select>
+
+
 	<insert id="insertOshirase">
 		INSERT INTO OSHIRASE (
 		KIGYO_CD,
 		SHAIN_UID,
 		TSUCHI_YMD,
 		TSUCHI_HM,
+		SHINSEI_NO,
 		OSHIRASE_NAIYO,
 		UPD_DATE
 		) VALUES (
@@ -156,6 +159,7 @@
 		#{shain.shain_Uid},
 		TO_CHAR(SYSDATE,'YYYYMMDD'),
 		TO_CHAR(SYSDATE,'HH24MI'),
+		#{shinseiNo},
 		'申請を取り消しました',
 		SYSTIMESTAMP
 		)
@@ -366,22 +370,29 @@
 		SYSTIMESTAMP,
 		'SHN',
 		#{type},
-		#{shinseiNo}, 
+		#{shinseiNo},
 		(SELECT SHINSEI_KBN
-		FROM SHINSEI
+		FROM
+		SHINSEI
 		WHERE SHINSEI_NO = #{shinseiNo}),
-		(SELECT SHINCHOKU_KBN
-		FROM SHINSEI
+		(SELECT
+		SHINCHOKU_KBN
+		FROM
+		SHINSEI
 		WHERE SHINSEI_NO = #{shinseiNo}),
 		CASE
-		WHEN #{type} = 'CANCEL' THEN '5'
+		WHEN
+		#{type} = 'CANCEL'
+		THEN '5'
 		ELSE (SELECT SHINCHOKU_KBN
 		FROM SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo})
+		WHERE SHINSEI_NO =
+		#{shinseiNo})
 		END,
 		#{userUid}
 		)
 	</insert>
+
 
 
 

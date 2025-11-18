@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
-import org.cosmo.domain.ShinseiIcHozonVO;
+import org.cosmo.domain.ShinseiIcDataVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
@@ -26,51 +26,136 @@ public class ShinseiController {
 	@Autowired
 	private ShinseiService shinseiService;
 
-	@GetMapping("/ichijihozon")
-	public String view(@RequestParam("no") String shinseiNo, @RequestParam("hozonUid") String hozonUid, Model model) {
-		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
-		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
-		ShinseiIcHozonVO hozonVo = shinseiService.getShinseiIcHozon(hozonUid);
+	@GetMapping("/ichiji")
+	public String showIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
 
-		model.addAttribute("keiro", keiroVo);
-		model.addAttribute("jyohou", jyohouVo);
-		model.addAttribute("hozon", hozonVo);
+		ShinseiIcDataVO ichiji = shinseiService.getIcData(hozonUid);
+
+		model.addAttribute("ichiji", ichiji);
+		model.addAttribute("hozonUid", hozonUid);
 
 		return "shinsei/11_shinseiDetail_02";
 	}
 
 	@GetMapping("/torikesu")
-	public String view2(@RequestParam("no") String shinseiNo, Model model) {
-		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
-		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
-		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
+	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
+			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 
-		String fileName = shinseiService.getFileName(shinseiNo);
+		// 1. 신청번호 ㅇ
+		if (shinseiNo != null && !shinseiNo.trim().isEmpty()) {
 
-		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
-			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
-			jyohouVo.setCodeNm(codeNm);
+			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+
+			if (jyohouVo != null) {
+
+				ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
+				ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
+				String fileName = shinseiService.getFileName(shinseiNo);
+
+				if (jyohouVo.getShinchokuKbn() != null) {
+					jyohouVo.setCodeNm(shinseiService.getCodeNm(jyohouVo.getShinchokuKbn()));
+				}
+
+				if (jyohouVo.getShinseiKbn() != null) {
+					jyohouVo.setShinseiName(shinseiService.getShinseiName(jyohouVo.getShinseiKbn()));
+				}
+
+				if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
+					keiroVo.setShudanName(shinseiService.getShudanName(keiroVo.getTsukinShudan()));
+				}
+
+				model.addAttribute("jyohou", jyohouVo);
+				model.addAttribute("keiro", keiroVo);
+				model.addAttribute("shorui", shoruiVo);
+				model.addAttribute("fileName", fileName);
+				model.addAttribute("isIchiji", false); // 반려 상태
+				model.addAttribute("hozonUid", null);
+
+				return "shinsei/dummy_11_shinseiDetail_03";
+			}
 		}
 
-		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
-			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
-			jyohouVo.setShinseiName(shinseiName);
+		// 임시저장번호(hozon_uid) ㅇ
+		if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+
+			ShinseiIcDataVO ichiji = shinseiService.getIcData(hozonUid);
+
+			if (ichiji == null) {
+				model.addAttribute("errorMessage", "一時保存データが見つかりません。");
+				return "shinsei/dummy_11_shinseiDetail_03";
+			}
+
+			if (ichiji.getShinseiKbn() != null) {
+				ichiji.setShinseiName(shinseiService.getShinseiName(ichiji.getShinseiKbn()));
+			}
+
+			if (ichiji.getKeiro() != null && ichiji.getKeiro().getTsukinShudan() != null) {
+				ichiji.getKeiro().setShudanName(shinseiService.getShudanName(ichiji.getKeiro().getTsukinShudan()));
+			}
+
+			model.addAttribute("ichiji", ichiji);
+			model.addAttribute("jyohou", ichiji);
+			model.addAttribute("keiro", ichiji.getKeiro());
+			model.addAttribute("shorui", null);
+			model.addAttribute("isIchiji", true);
+			model.addAttribute("hozonUid", hozonUid);
+
+			return "shinsei/dummy_11_shinseiDetail_03";
 		}
 
-		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
-			keiroVo.setShudanName(shudanName);
-		}
-
-		model.addAttribute("keiro", keiroVo);
-		model.addAttribute("jyohou", jyohouVo);
-		model.addAttribute("shorui", shoruiVo);
-
-		model.addAttribute("fileName", fileName);
-
+		// 에러 처리
+		model.addAttribute("errorMessage", "申請番号または一時保存IDがありません。");
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
+	
+	@PostMapping("/updateTorikesu")
+	public String update(@RequestParam("tkComment") String tkComment,
+			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam("beforeKbn") String shinchokuKbn, @RequestParam("hozonUid") String hozonUid,
+			@RequestParam("shinseiKbn") String shinseiKbn, @RequestParam("shinseiYmd") String shinseiYmd,
+			HttpSession session, Model model) {
+
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		String shainUid = shain.getShain_Uid();
+
+		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
+
+		// 신청구분 1(임시저장) + 신청번호 x : 데이터 삭제
+		if ("1".equals(shinchokuKbn) && !hasShinseiNo) {
+
+			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
+
+			model.addAttribute("errorMessage", "保存データのみ削除しました。");
+			return "home";
+		}
+
+		// 신청구분1(임시저장) + 신청번호 ㅇ / 신청구분3(반려) : 취소처리
+		if ("1".equals(shinchokuKbn) && hasShinseiNo) {
+
+			shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
+			shinseiService.insertOshirase(shain, shinseiNo);
+			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
+
+			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
+
+			return "home";
+		}
+
+		if ("3".equals(shinchokuKbn)) {
+
+			shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
+			shinseiService.insertOshirase(shain, shinseiNo);
+			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
+
+			return "home";
+		}
+
+		return "home";
+	}
+
+	
+	
 	@GetMapping("/kakunin")
 	public String viewKakunin(@RequestParam("no") String shinseiNo, Model model) {
 
@@ -98,13 +183,6 @@ public class ShinseiController {
 		model.addAttribute("shorui", shoruiVo);
 
 		return "shinsei/11_shinseiDetail_03";
-	}
-
-	@GetMapping("/test")
-	public String showShinseiJyohou(@RequestParam("no") String shinseiNo, Model model) {
-		ShinseiJyohouVO vo = shinseiService.getShinseiJyohou(shinseiNo);
-		model.addAttribute("jyohou", vo);
-		return "shinsei/jyohouDetail";
 	}
 
 	@GetMapping("/shinseiDetail")
@@ -137,37 +215,4 @@ public class ShinseiController {
 		rttr.addFlashAttribute("message", "申請を引戻しました。");
 		return "redirect:/shinsei/shinseiDetail?no=" + shinseiNo;
 	}
-
-	@PostMapping("/updateTorikesu")
-	public String update(@RequestParam("tkComment") String tkComment, @RequestParam("shinseiNo") String shinseiNo,
-			@RequestParam("beforeKbn") String beforeKbn, @RequestParam("hozonUid") String hozonUid,
-			@RequestParam("shinseiKbn") String shinseiKbn, // ★ 추가
-			@RequestParam("shinseiYmd") String shinseiYmd, // ★ 추가
-			HttpSession session, Model model) {
-
-		ShainVO shain = (ShainVO) session.getAttribute("shain");
-		String shainUid = shain.getShain_Uid();
-
-		String nowKbn = shinseiService.getShinchokuKbn(shinseiNo);
-
-		if ("1".equals(nowKbn) && (shinseiNo == null || shinseiNo.isEmpty())) {
-
-			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
-
-			model.addAttribute("errorMessage", "保存データのみ削除しました。");
-			return "shinsei/dummy_11_shinseiDetail_03";
-		}
-
-		if (!beforeKbn.equals(nowKbn)) {
-			model.addAttribute("errorMessage", "他のユーザーにより更新されています。再度画面を開いてください。");
-			return "shinsei/dummy_11_shinseiDetail_03";
-		}
-
-		shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
-		shinseiService.insertOshirase(shain);
-		shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
-
-		return "home";
-	}
-
 }
