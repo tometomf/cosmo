@@ -91,17 +91,8 @@ public class ShinseiServiceImpl implements ShinseiService {
 		shinseiMapper.insertProcessLog(shinseiNoStr, loginUserId, "HIKIMODOSHI");
 	}
 
-	public ShinseiJyohouVO getShinseiJyohou(String shinseiNo) {
-		return shinseiMapper.getShinseiJyohou(shinseiNo);
-	}
-
 	@Override
-	public ShinseiKeiroVO getShinseiKeiro(String shinseiNo) {
-		return shinseiMapper.getShinseiKeiro(shinseiNo);
-	}
-
-	@Override
-	public ShinseiShoruiVO getShinseiShorui(String shinseiNo) {
+	public ShinseiShoruiVO getShinseiShorui(Long shinseiNo) {
 		return shinseiMapper.getShinseiShorui(shinseiNo);
 	}
 
@@ -161,7 +152,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public String getFileName(String shinseiNo) {
+	public String getFileName(Long shinseiNo) {
 		return shinseiMapper.getFileName(shinseiNo);
 	}
 
@@ -225,7 +216,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public void loadShinseiDetail(String shinseiNo, String hozonUid, Model model) {
+	public void loadShinseiDetail(Long shinseiNo, String hozonUid, Model model) {
 		ShinseiJyohouVO jyohouVo = getShinseiJyohou(shinseiNo);
 
 		if (jyohouVo != null) {
@@ -257,6 +248,11 @@ public class ShinseiServiceImpl implements ShinseiService {
 
 		model.addAttribute("ichiji", ichijiVo);
 		model.addAttribute("isIchiji", true);
+	}
+
+	@Override
+	public void deleteShinseiByShinseiNo(String shinseiNo) {
+		shinseiMapper.deleteShinseiByShinseiNo(shinseiNo);
 	}
 
 }

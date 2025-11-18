@@ -112,28 +112,41 @@
 		parameterType="map">
 
 		SELECT
-		KIGYO_CD, SHINSEI_NO, SHINSEI_KBN, SHINSEI_YMD, SHINSEI_RIYU,
-		TOKU_SHINSEI_RIYU, SHAIN_UID, SHAIN_NO, DAIRI_SHINSEISHA_CD,
+		KIGYO_CD, SHINSEI_NO, SHINSEI_KBN, SHINSEI_YMD,
+		SHINSEI_RIYU,
+		TOKU_SHINSEI_RIYU, SHAIN_UID, SHAIN_NO,
+		DAIRI_SHINSEISHA_CD,
 		SHINCHOKU_KBN,
-		GEN_TSUKINRO_END_KBN, ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
+		GEN_TSUKINRO_END_KBN,
+		ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
 		GEN_SHOZOKU_CD, GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2,
 		GEN_ADDRESS_3,
-		NEW_SHOZOKU_CD, NEW_ZIP_CD, NEW_ADDRESS_1, NEW_ADDRESS_2, NEW_ADDRESS_3,
-		ADDRESS_IDO_KEIDO, ADDRESS_CORRECT, GEN_KINMU_ZIP_CD,
+		NEW_SHOZOKU_CD, NEW_ZIP_CD, NEW_ADDRESS_1,
+		NEW_ADDRESS_2, NEW_ADDRESS_3,
+		ADDRESS_IDO_KEIDO, ADDRESS_CORRECT,
+		GEN_KINMU_ZIP_CD,
 		GEN_KINMU_ADDRESS_1,
-		GEN_KINMU_ADDRESS_2, GEN_KINMU_ADDRESS_3, NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1,
+		GEN_KINMU_ADDRESS_2,
+		GEN_KINMU_ADDRESS_3, NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1,
 		NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, KINMU_ADDRESS_IDO_KEIDO,
 		KINMU_ADDRESS_CORRECT,
-		GEN_KINMU_PREF_CD, NEW_KINMU_PREF_CD, JUTAKU_KBN, ETC_FILE_UID_1, ETC_FILE_UID_2,
-		ETC_FILE_UID_3, ETC_FILE_UID_4, ETC_FILE_UID_5, ETC_COMMENT_1,
+		GEN_KINMU_PREF_CD, NEW_KINMU_PREF_CD,
+		JUTAKU_KBN, ETC_FILE_UID_1, ETC_FILE_UID_2,
+		ETC_FILE_UID_3,
+		ETC_FILE_UID_4, ETC_FILE_UID_5, ETC_COMMENT_1,
 		ETC_COMMENT_2,
-		ETC_COMMENT_3, ETC_COMMENT_4, ETC_COMMENT_5, RIYO_START_YMD, RIYO_END_YMD,
-		SHIKYU_TEISHI_KBN, KANRIID, IDO_YMD, ITEN_YMD, TENNYU_YMD,
+		ETC_COMMENT_3, ETC_COMMENT_4, ETC_COMMENT_5, RIYO_START_YMD,
+		RIYO_END_YMD,
+		SHIKYU_TEISHI_KBN, KANRIID, IDO_YMD, ITEN_YMD,
+		TENNYU_YMD,
 		HAISHIN_YMD,
-		KEIRO_HENKO_YMD, FIRST_SHINSEI_YMD, KIGYO_SHONIN_YMD, LL_SHONIN_YMD, TSUKINRO_NO,
-		SASHIMODOSHI_YMD, SHINSEI_KIGEN_YMD, MOSHIOKURI_COMMENT, BIBO_COMMENT,
+		KEIRO_HENKO_YMD, FIRST_SHINSEI_YMD,
+		KIGYO_SHONIN_YMD, LL_SHONIN_YMD, TSUKINRO_NO,
+		SASHIMODOSHI_YMD,
+		SHINSEI_KIGEN_YMD, MOSHIOKURI_COMMENT, BIBO_COMMENT,
 		ALERT_UMU,
-		TORIKESHI_YMD, TORIKESHI_RIYU, ICHIJI_HOZON_ID, JITSU_KM, NAVITIME_VIEW_CNT,
+		TORIKESHI_YMD, TORIKESHI_RIYU, ICHIJI_HOZON_ID, JITSU_KM,
+		NAVITIME_VIEW_CNT,
 		ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
 		FROM
 		SHINSEI
@@ -173,7 +186,7 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiKeiro" parameterType="String"
+	<select id="getShinseiKeiro" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiKeiroVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
@@ -192,7 +205,7 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiShorui" parameterType="String"
+	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
@@ -209,7 +222,7 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getFileName" parameterType="String"
+	<select id="getFileName" parameterType="Long"
 		resultType="String">
 		SELECT f.name
 		FROM SHINSEI_FUZUI_SHORUI s
@@ -245,20 +258,25 @@
 		#{code}
 	</select>
 
-	<select id="getShinchokuKbn" resultType="String">
+	<select id="getShinchokuKbn" parameterType="String"
+		resultType="String">
 		SELECT SHINCHOKU_KBN
 		FROM SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
 	</select>
 
 
-	<update id="updateTorikesu">
+	<update id="updateTorikesu" parameterType="map">
 		UPDATE SHINSEI
-		SET TORIKESHI_RIYU = #{tkComment},
+		SET
+		TORIKESHI_RIYU = #{tkComment},
 		SHINCHOKU_KBN = '5',
-		TORIKESHI_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		TORIKESHI_YMD =
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
 		UPD_DATE = SYSTIMESTAMP,
-		UPD_USER_ID = #{shainUid}
+		UPD_USER_ID =
+		#{shainUid}
 		WHERE SHINSEI_NO =
 		#{shinseiNo}
 	</update>
@@ -331,6 +349,19 @@
 		#{shainUid}
 		)
 	</insert>
+
+	<delete id="deleteShinseiByShinseiNo" parameterType="String">
+		DELETE FROM
+		SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</delete>
+
+	<select id="getEmailByShainUid" parameterType="String"
+		resultType="string">
+		SELECT MAIL_ADDR
+		FROM SHAIN
+		WHERE SHAIN_UID = #{shainUid}
+	</select>
 
 
 	<select id="countStartKeiro" resultType="int">
@@ -550,10 +581,12 @@
 	<update id="updateAlertForHikimodoshi">
 		UPDATE ALERT
 		SET SHINSEI_YMD = NULL,
-		UPD_USER_ID = #{loginUserId},
+		UPD_USER_ID =
+		#{loginUserId},
 		UPD_DATE = SYSDATE
 		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO = #{shinseiNo}
+		AND
+		SHINSEI_NO = #{shinseiNo}
 	</update>
 
 

@@ -38,11 +38,11 @@ public class ShinseiController {
 	}
 
 	@GetMapping("/torikesu")
-	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
+	public String viewTorikesu(@RequestParam(value = "no", required = false) Long shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 
 		// 1. 신청번호 ㅇ
-		if (shinseiNo != null && !shinseiNo.trim().isEmpty()) {
+		if (shinseiNo != null) {
 
 			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
@@ -137,6 +137,7 @@ public class ShinseiController {
 			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
 
 			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
+			shinseiService.deleteShinseiByShinseiNo(shinseiNo);
 
 			return "home";
 		}
@@ -151,35 +152,6 @@ public class ShinseiController {
 		}
 
 		return "home";
-	}
-
-	@GetMapping("/kakunin")
-	public String viewKakunin(@RequestParam("no") String shinseiNo, Model model) {
-
-		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
-		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
-		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
-
-		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
-			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
-			jyohouVo.setCodeNm(codeNm);
-		}
-
-		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
-			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
-			jyohouVo.setShinseiName(shinseiName);
-		}
-
-		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
-			keiroVo.setShudanName(shudanName);
-		}
-
-		model.addAttribute("keiro", keiroVo);
-		model.addAttribute("jyohou", jyohouVo);
-		model.addAttribute("shorui", shoruiVo);
-
-		return "shinsei/11_shinseiDetail_03";
 	}
 
 	@GetMapping("/shinseiDetail")
@@ -214,5 +186,41 @@ public class ShinseiController {
 
 		redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
 		return "home";
+	}
+
+	
+	
+	@GetMapping("/kakunin")
+	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model) {
+
+		// Long 타입으로 서비스 호출
+		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
+		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
+
+		// 진척구분 이름 설정
+		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
+			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
+			jyohouVo.setCodeNm(codeNm);
+		}
+
+		// 신청구분 이름 설정
+		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
+			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
+			jyohouVo.setShinseiName(shinseiName);
+		}
+
+		// 통근수단 이름 설정
+		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
+			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
+			keiroVo.setShudanName(shudanName);
+		}
+
+		// 모델에 담기
+		model.addAttribute("keiro", keiroVo);
+		model.addAttribute("jyohou", jyohouVo);
+		model.addAttribute("shorui", shoruiVo);
+
+		return "shinsei/11_shinseiDetail_03";
 	}
 }

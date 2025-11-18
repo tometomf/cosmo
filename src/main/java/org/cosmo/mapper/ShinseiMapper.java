@@ -24,11 +24,7 @@ public interface ShinseiMapper {
 	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("loginUserId") String loginUserId);
 
-	ShinseiJyohouVO getShinseiJyohou(@Param("shinseiNo") String shinseiNo);
-
-	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") String shinsesiNo);
-
-	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") String shinseiNo);
+	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiIcHozonVO getIchijiHozon(String hozonUid);
 
@@ -38,7 +34,7 @@ public interface ShinseiMapper {
 
 	String getShinseiName(@Param("code") String code);
 
-	String getFileName(@Param("shinseiNo") String shinseiNo);
+	String getFileName(@Param("shinseiNo") Long shinseiNo);
 
 	String getShinchokuKbn(@Param("shinseiNo") String shinseiNo);
 
@@ -81,4 +77,8 @@ public interface ShinseiMapper {
 
 	void insertProcessLog(@Param("shinseiNo") String shinseiNo, @Param("userUid") String userUid,
 			@Param("type") String type);
+	
+	void deleteShinseiByShinseiNo(@Param("shinsenNo") String shinseiNo);
+	
+	String getEmailByShainUid(@Param("shainUid") String shainUid);
 }

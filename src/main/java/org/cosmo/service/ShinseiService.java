@@ -18,11 +18,7 @@ public interface ShinseiService {
 
 	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
 
-	ShinseiJyohouVO getShinseiJyohou(String shinseiNo);
-
-	ShinseiKeiroVO getShinseiKeiro(String shinseiNo);
-
-	ShinseiShoruiVO getShinseiShorui(String shinseiNo);
+	ShinseiShoruiVO getShinseiShorui(Long shinseiNo);
 
 	ShinseiIcDataVO getIcData(String hozonUid);
 
@@ -32,7 +28,7 @@ public interface ShinseiService {
 
 	String getShinseiName(String code);
 
-	String getFileName(String shinseiNo);
+	String getFileName(Long shinseiNo);
 
 	String getShinchokuKbn(String shinseiNo);
 
@@ -46,5 +42,8 @@ public interface ShinseiService {
 
 	void insertProcessLog(String shinseiNo, String userUid, String type);
 
-	void loadShinseiDetail(String shinseiNo, String hozonUid, Model model);
+	void loadShinseiDetail(Long shinseiNo, String hozonUid, Model model);
+	
+	void deleteShinseiByShinseiNo(String shinseiNo);
+		
 }
