@@ -5,6 +5,7 @@
 
 <mapper namespace="org.cosmo.mapper.HiwariKeiroMapper">
 
+    <!-- 経路VO 매핑 -->
     <resultMap id="HiwariKeiroMap" type="org.cosmo.domain.HiwariKeiroVO">
         <result column="KIGYO_CD"          property="kigyoCd"/>
         <result column="SHINSEI_NO"        property="shinseiNo"/>
@@ -16,6 +17,7 @@
         <result column="KEKKA_SELECT"      property="kekkaSelect"/>
     </resultMap>
 
+    <!-- 로그인사원(가짜 9001)의 최신 신청번호 기준 경로 조회 -->
     <select id="findByUser"
             parameterType="int"
             resultMap="HiwariKeiroMap">
@@ -34,26 +36,29 @@
             KIGYO_CD = 100
           AND SHINSEI_NO = (
                 SELECT MAX(SHINSEI_NO)
-                FROM SHINSEI
-                WHERE KIGYO_CD = 100
-                  AND SHAIN_UID = #{shainUid}
+                  FROM SHINSEI
+                 WHERE KIGYO_CD = 100
+                   AND SHAIN_UID = #{shainUid}
           )
         ORDER BY
             KEIRO_SEQ
     </select>
 
+    <!-- 해당 사원의 최신 신청에 대한 경로 전체 삭제 -->
     <delete id="deleteByUser" parameterType="int">
         DELETE FROM SHINSEI_START_KEIRO
         WHERE KIGYO_CD = 100
           AND SHINSEI_NO = (
                 SELECT MAX(SHINSEI_NO)
-                FROM SHINSEI
-                WHERE KIGYO_CD = 100
-                  AND SHAIN_UID = #{shainUid}
+                  FROM SHINSEI
+                 WHERE KIGYO_CD = 100
+                   AND SHAIN_UID = #{shainUid}
           )
     </delete>
 
-    <insert id="insertKeiro" parameterType="org.cosmo.domain.HiwariKeiroVO">
+    <!-- 경로 1건 저장 -->
+    <insert id="insertKeiro"
+            parameterType="org.cosmo.domain.HiwariKeiroVO">
         INSERT INTO SHINSEI_START_KEIRO (
             KIGYO_CD,
             SHINSEI_NO,
@@ -78,5 +83,20 @@
             #{kekkaSelect}
         )
     </insert>
+
+    <!-- 경로 1건 삭제 (삭제 링크용)
+         - 같은 사원의 "최신 신청번호" + KEIRO_SEQ 로 삭제 -->
+    <delete id="deleteOne">
+        DELETE FROM SHINSEI_START_KEIRO
+        WHERE KIGYO_CD = 100
+          AND SHINSEI_NO = (
+                SELECT MAX(SHINSEI_NO)
+                  FROM SHINSEI
+                 WHERE KIGYO_CD = 100
+                   AND SHAIN_UID = #{shainUid}
+          )
+          AND SHAIN_UID = #{shainUid}
+          AND KEIRO_SEQ = #{keiroSeq}
+    </delete>
 
 </mapper>

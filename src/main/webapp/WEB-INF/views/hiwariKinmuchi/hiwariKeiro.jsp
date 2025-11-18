@@ -26,7 +26,7 @@
   .hint-text { color: #333; line-height: 1.9; flex: 1; }
   .map-btn img { display: block; }
 
-  /* ===== 경로 박스 전체 ===== */
+  
   .route-section {
     position: relative;
     background: #f7f7f7;
@@ -42,7 +42,7 @@
     align-items: center;
   }
 
-  /* 초록탭 */
+  
   .route-label {
     position: relative;
     top: -23px;
@@ -62,8 +62,7 @@
     border-left: none;
     border-radius: 0 0 6px 0;
   }
-
-  /* 추가하기 버튼 (원래 위치/스타일) */
+  
   .route-add {
     position: relative;
     top: -15px;
@@ -81,7 +80,6 @@
   }
   .route-add:hover { text-decoration: underline; }
 
-  /* DB 경로 표시 박스 */
   .keiro-box {
     background: #ffffff;
     border: 1px solid #dcdcdc;
@@ -99,8 +97,6 @@
   }
 
   .keiro-row span { white-space: nowrap; }
-
-  /* 버튼 */
   .button_Left {
     margin-top: 18px;
   }
@@ -132,7 +128,6 @@
 
     <div class="page-width">
 
-      <!-- 안내문 + 지도 버튼 (원래 쓰던 문구) -->
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
@@ -150,10 +145,8 @@
 
       <br>
 
-      <!-- form: apply/temp 버튼용. 입력 항목 없음 -->
       <form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
 
-        <!-- 통근수단 입력화면 URL 생성 (추가하기용) -->
         <c:url var="tsukinInputUrl" value="/tsukinInput">
           <c:param name="mode" value="add"/>
           <c:param name="shinseiNo" value="${shinseiNo}"/>
@@ -161,10 +154,8 @@
 
         <div class="route-section">
           <div class="route-head">
-            <!-- ★ 초록탭: repRouteNo = keiroList.size() -->
             <span class="route-label">経路${repRouteNo}</span>
 
-            <!-- ★ 추가하기: 원래 위치/아이콘/스타일, 동작만 다른 화면으로 이동 -->
             <button type="button"
                     class="route-add"
                     style="border:none;background:none;padding:0;"
@@ -174,20 +165,36 @@
             </button>
           </div>
 
-          <!-- DB에 데이터가 없을 때 -->
+       
           <c:if test="${empty keiroList}">
             <div class="keiro-box">
               <div class="keiro-row">現在登録されている経路はありません。</div>
             </div>
           </c:if>
 
-          <!-- DB 경로 출력 (읽기 전용, 대표경로 표시는 없음) -->
           <c:forEach var="row" items="${keiroList}">
+
+            <c:url var="editUrl" value="/hiwariKinmuchi/keiro/edit">
+              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
+
+            <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
+              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
+
+
             <div class="keiro-box">
               <div class="keiro-row">
                 <span>通勤手段：<c:out value="${row.tsukinShudanNm}"/></span>
                 <span>出発地：<c:out value="${row.startPlace}"/></span>
                 <span>到着地：<c:out value="${row.endPlace}"/></span>
+
+
+                <span style="margin-left: 20px;">
+                  <a href="${editUrl}">変更する</a>｜
+                  <a href="${deleteUrl}">削除する</a>
+                </span>
+             
               </div>
             </div>
           </c:forEach>
@@ -195,8 +202,7 @@
         </div>
 
         <br><br>
-
-        <!-- 하단 버튼 3개 왼쪽 정렬 -->
+        
         <div class="button_Left">
           <div class="button_Left_Group">
 
