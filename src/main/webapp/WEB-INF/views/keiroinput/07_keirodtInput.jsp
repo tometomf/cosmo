@@ -78,7 +78,7 @@
 	padding-left: 25px;
 }
 
-.swapbotton {
+.swapbutton {
 	grid-column: 3;
 	grid-row: 1/span 2;
 	display: flex;
@@ -300,8 +300,8 @@
 							<div>
 								<input type="text" name="From_station">
 							</div>
-							<div class="swapbotton">
-								<img src="/resources/img/tn/change_btn.gif">
+							<div class="swapbutton">
+								<img src="/resources/img/tn/change_btn.gif" id = "ekiSwapButton">
 							</div>
 							<div class="background">到着地</div>
 							<div>
@@ -475,7 +475,7 @@
 			const keiro = document.getElementById("keiro");
 			const kensaku = document.getElementById("SearchStationBtn");
 			
-			
+			const ekiSwap = document.getElementById("ekiSwapButton");
 			
 			addBtn.addEventListener("click", function() {
 				const count = container.querySelectorAll(".background").length;
@@ -532,6 +532,15 @@
 				const keiroResult = [formStation, ...middles, ToStation].join(" -> ");
 				
 				keiro.innerText = keiroResult;
+			});
+			
+			ekiSwap.addEventListener("click", function() {
+				const startStation = document.querySelector('input[name="From_station"]');
+				const endStation = document.querySelector('input[name="To_station"]');
+				
+				const emptyStation = startStation.value;
+				startStation.value = endStation.value;
+				endStation.value = emptyStation;
 			});
 			
 		});
