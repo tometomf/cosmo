@@ -321,7 +321,8 @@
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
 								class="add_btn">
 							<!-- 경유지 추가버튼 -->
-							<img src="/resources/img/tn/search_btn01.gif" class="add_btn">
+							<img src="/resources/img/tn/search_btn01.gif"
+								id="SearchStationBtn" class="add_btn">
 						</div>
 					</div>
 				</div>
@@ -331,7 +332,9 @@
 				</div>
 			</div>
 			<div class="station_flow">
-				<div class="station_flow_name">동두천 -> 서울 ->경주</div>
+				<div class="station_flow_name">
+					<div id="keiro">経路を入力してください。</div>
+				</div>
 				<div>시간</div>
 			</div>
 
@@ -449,7 +452,7 @@
 			</div>
 
 			<div class="menu_button">
-				<img src="/resources/img/back_btn01.gif"> <img
+				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
 					src="/resources/img/keiro_btn02.gif"> <img
 					src="/resources/img/hozon_btn01.gif">
 			</div>
@@ -459,11 +462,21 @@
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
-	<script>
+
+</body>
+</html>
+
+
+<script>
 		document.addEventListener("DOMContentLoaded", function() {
 			const container = document.getElementById("stationContainer");
 			const addBtn = document.getElementById("addStationBtn");
-
+			const returnToTop = document.getElementById("returnToTop");
+			const keiro = document.getElementById("keiro");
+			const kensaku = document.getElementById("SearchStationBtn");
+			
+			
+			
 			addBtn.addEventListener("click", function() {
 				const count = container.querySelectorAll(".background").length;
 				const newIndex = count + 1;
@@ -481,10 +494,53 @@
 
 				container.appendChild(newLabel);
 				container.appendChild(newInputDiv);
+				
+				if(newIndex > 4){
+					disableBtn = document.getElementById("addStationBtn");
+					/* disableBtn.remove(); */ /*/ 스타일 떄문에 remove하니까 버튼이 당겨져버림 */
+					disableBtn.style.visibility = "hidden";
+					disableBtn.style.pointerEvents = "none";
+					
+				}
 			});
+			
+			returnToTop.addEventListener("click", function(){
+				location.href = "http://localhost:8282/keiroinput/06_keiroInput";
+			});
+			
+			kensaku.addEventListener("click", function(){
+				
+				const formStation = document.querySelector('input[name="From_station"]').value;
+/* 				const middleStation01 = document.querySelector('input[name="middle_station_01"]')?.value|| "";
+				const middleStation02 = document.querySelector('input[name="middle_station_02"]')?.value|| "";
+				const middleStation03 = document.querySelector('input[name="middle_station_03"]')?.value|| "";
+				const middleStation04 = document.querySelector('input[name="middle_station_04"]')?.value|| "";
+				const middleStation05 = document.querySelector('input[name="middle_station_05"]')?.value|| ""; */
+				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+				const middles = [];
+				middleInputs.forEach(input => {
+					const v = input.value.trim();
+					if(v !== ""){
+						middles.push(v);
+					}
+				});
+				
+				
+				
+				const ToStation = document.querySelector('input[name="To_station"]').value;
+				
+				const keiroResult = [formStation, ...middles, ToStation].join(" -> ");
+				
+				keiro.innerText = keiroResult;
+			});
+			
 		});
+		/* document.addEventListener("click", function()) */
+		
 	</script>
-<script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl" defer></script>
+<script
+	src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl"
+	defer></script>
 <script>
   window.addEventListener('load', function () {
     var mapOptions = {
@@ -495,7 +551,3 @@
   });
 </script>
 
-
-
-</body>
-</html>
