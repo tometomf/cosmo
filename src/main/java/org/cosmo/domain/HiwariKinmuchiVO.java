@@ -21,4 +21,5 @@ public class HiwariKinmuchiVO {
     private String kinmuPrefCd;       // KINMU_PREF_CD 또는 NEW_KINMU_PREF_CD
     private String kinmuAddress1;     // KINMU_ADDRESS_1 또는 NEW_KINMU_ADDRESS_1
     private String kinmuAddress2;     // KINMU_ADDRESS_2 또는 NEW_KINMU_ADDRESS_2
+    private String kinmuAddress3; 
 }

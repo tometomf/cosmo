@@ -15,9 +15,11 @@
 
         SH.KINMU_ZIP_CD    AS kinmuZipCd,
         SH.KINMU_PREF_CD   AS kinmuPrefCd,
-        C.CODE_NM          AS kinmuPrefNm,       -- ★ 도도부현 이름 추가!
+        C.CODE_NM          AS kinmuPrefNm,     
         SH.KINMU_ADDRESS_1 AS kinmuAddress1,
-        SH.KINMU_ADDRESS_2 AS kinmuAddress2
+        SH.KINMU_ADDRESS_2 AS kinmuAddress2,
+        SH.KINMU_ADDRESS_3 AS kinmuAddress3
+        
 
     FROM SHAIN SH
     LEFT JOIN SHOZOKU SZ

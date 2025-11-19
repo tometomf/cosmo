@@ -110,7 +110,7 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">都道府県</div>
-						<div class="form_Normal">${leftData.kinmuPrefNm}</div>
+						<div class="form_Normal">${leftData.kinmuAddress1}</div>
 						<div>
 							<input type="text" name="prefecture"
 								style="width: 100px; height: 20px;" readonly>
@@ -119,7 +119,7 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">所在地1</div>
-						<div class="form_Normal">${leftData.kinmuAddress1}</div>
+						<div class="form_Normal">${leftData.kinmuAddress2}</div>
 						<div>
 							<input type="text" name="city"
 								style="width: 380px; height: 20px;" readonly>
@@ -128,7 +128,7 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">所在地2（建物名等）</div>
-						<div class="form_Normal">${leftData.kinmuAddress2}</div>
+						<div class="form_Normal">${leftData.kinmuAddress3}</div>
 						<div>
 							<input type="text" style="width: 380px; height: 20px;">
 						</div>
