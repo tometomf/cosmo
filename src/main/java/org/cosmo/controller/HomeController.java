@@ -23,10 +23,14 @@ public class HomeController {
 		ShainVO vo = new ShainVO();
 		
 		vo.setKigyo_Cd("100");				// 기업코드
-		vo.setKigyo_Nm("(株)○○○○○○○○");
-		vo.setShain_Uid("123456");			// 사원 Uid
-		vo.setShain_No("net001");			// 사원 No
-		vo.setShain_Nm("田中　太郎");
+		vo.setKigyo_Nm("ABCDEFG");
+		vo.setShain_Uid("30000001");			// 사원 Uid
+		vo.setShain_No("000001");			// 사원 No
+		vo.setShain_Nm("山田 一郎");
+		vo.setJigyosho_cd("11000001");
+		vo.setJigyosho_Nm("丸の内ｵﾌｨｽ");
+		vo.setShozoku_Cd("000C00740");
+		vo.setShozoku_Nm("東京書類センター");
 		
 		session.setAttribute("shain", vo);
 		
@@ -35,4 +39,9 @@ public class HomeController {
 		return "home";
 	}
 	
+	@RequestMapping(value = "/exam", method = RequestMethod.GET)
+	public String exam() {
+		
+		return "exam"; 
+	}
 }

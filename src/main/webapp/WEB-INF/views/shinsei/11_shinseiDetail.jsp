@@ -230,7 +230,7 @@
 			<!-- ===== 돌아가기 버튼 (왼쪽 정렬) ===== -->
 			<div class="button_Left">
 				<div class="button_Left_Group">
-					<a href="/shinsei/list"> <img
+					<a href="사원톱메뉴"> <img
 						src="/resources/img/back_btn01.gif" alt="back_btn01">
 					</a>
 				</div>

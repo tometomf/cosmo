@@ -108,7 +108,6 @@ public class ShinseiController {
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
-	
 	@PostMapping("/updateTorikesu")
 	public String update(@RequestParam("tkComment") String tkComment,
 			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
@@ -154,8 +153,6 @@ public class ShinseiController {
 		return "home";
 	}
 
-	
-	
 	@GetMapping("/kakunin")
 	public String viewKakunin(@RequestParam("no") String shinseiNo, Model model) {
 
@@ -204,15 +201,18 @@ public class ShinseiController {
 
 	@PostMapping("/hikimodosu")
 	public String hikimodosu(@RequestParam("shinseiNo") Long shinseiNo, HttpSession session, HttpServletRequest request,
-			RedirectAttributes rttr) {
+			RedirectAttributes redirectAttributes) {
 
 		Long kigyoCd = (Long) session.getAttribute("kigyoCd");
-		String loginUserId = (String) session.getAttribute("loginUserId");
+
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		String loginUserId = (shain != null) ? shain.getShain_Uid() : "0";
+
 		String userIp = request.getRemoteAddr();
 
 		shinseiService.hikimodosu(kigyoCd, shinseiNo, loginUserId, userIp);
 
-		rttr.addFlashAttribute("message", "申請を引戻しました。");
-		return "redirect:/shinsei/shinseiDetail?no=" + shinseiNo;
+		redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
+		return "home";
 	}
 }
