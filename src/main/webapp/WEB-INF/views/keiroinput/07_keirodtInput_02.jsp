@@ -210,6 +210,10 @@
 	width: 1010px;
 	margin: auto;
 }
+
+input[type="text"]:disabled {
+	background: #ccc;
+}
 </style>
 </head>
 <body>
@@ -253,10 +257,26 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">バス</div>
 					<div class="form_Column">
-						<input type="text" id="otherTransport" name="otherTransport">
+						<c:choose>
+						    <c:when test="${shudanType == '7'}">
+						        <input type="text" id="otherTransport" name="otherTransport" required >
+						    </c:when>
+						
+						    <c:otherwise>
+						     	<input type="text" id="otherTransport" name="otherTransport" disabled >
+						    </c:otherwise>
+						</c:choose>
 					</div>
 					<div class="form_Column">
-						<input type="text" id="busCompany" name="busCompany">
+						<c:choose>
+						    <c:when test="${shudanType == '7'}">
+						       <input type="text" id="busCompany" name="busCompany" disabled >
+						    </c:when>
+						
+						    <c:otherwise>
+						     	<input type="text" id="busCompany" name="busCompany" required >
+						    </c:otherwise>
+						</c:choose>
 					</div>
 					<div class="form_Column">
 						<input type="text" id="busStopFrom" name="busStopFrom"
