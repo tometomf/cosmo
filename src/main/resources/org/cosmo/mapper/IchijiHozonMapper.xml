@@ -5,44 +5,87 @@
 
 <mapper namespace="org.cosmo.mapper.IchijiHozonMapper">
 
-    <!-- ICHIJI_HOZON INSERT -->
-    <insert id="insertIchijiHozon"
-            parameterType="org.cosmo.domain.IchijiHozonDTO">
+	<!-- 1) USER_UID + ACTION_NM 으로 UPDATE -->
+	<update id="updateByUserAndAction"
+		parameterType="org.cosmo.domain.IchijiHozonDTO">
 
-        <!-- PK 시퀀스 생성 -->
-        <selectKey keyProperty="hozonUid"
-                   resultType="int"
-                   order="BEFORE">
-            SELECT ICHIJI_HOZON_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
+		UPDATE ICHIJI_HOZON
+		SET
+		SHINSEI_KBN = #{shinseiKbn},
+		SHOZOKU_CD = #{shozokuCd},
+		DATA = #{data, jdbcType=BLOB},
+		UPD_USER_ID =
+		#{updUserId},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE USER_UID = #{userUid}
+		AND
+		ACTION_NM = #{actionNm}
+	</update>
 
-        INSERT INTO ICHIJI_HOZON (
-            HOZON_UID,
-            USER_UID,
-            SHINSEI_KBN,
-            SHOZOKU_CD,
-            ALERT_NO,
-            ALERT_SEQ,
-            ACTION_NM,
-            DATA,
-            ADD_USER_ID,
-            ADD_DATE,
-            UPD_USER_ID,
-            UPD_DATE
-        ) VALUES (
-            #{hozonUid,   jdbcType=INTEGER},
-            #{userUid,    jdbcType=INTEGER},
-            #{shinseiKbn, jdbcType=VARCHAR},
-            #{shozokuCd,  jdbcType=VARCHAR},
-            #{alertNo,    jdbcType=INTEGER},
-            #{alertSeq,   jdbcType=INTEGER},
-            #{actionNm,   jdbcType=VARCHAR},
-            #{data,       jdbcType=BLOB},
-            #{addUserId,  jdbcType=INTEGER},
-            SYSTIMESTAMP,
-            #{updUserId,  jdbcType=INTEGER},
-            SYSTIMESTAMP
-        )
-    </insert>
+	<!-- 2) INSERT (새 임시저장 레코드) -->
+	<insert id="insertIchijiHozon"
+		parameterType="org.cosmo.domain.IchijiHozonDTO">
+
+		<!-- HOZON_UID 시퀀스 사용 -->
+		<selectKey keyProperty="hozonUid" resultType="int"
+			order="BEFORE">
+			SELECT ICHIJI_HOZON_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO ICHIJI_HOZON (
+		HOZON_UID,
+		USER_UID,
+		SHINSEI_KBN,
+		SHOZOKU_CD,
+		ALERT_NO,
+		ALERT_SEQ,
+		ACTION_NM,
+		DATA,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		) VALUES (
+		#{hozonUid},
+		#{userUid},
+		#{shinseiKbn},
+		#{shozokuCd},
+		NULL,
+		NULL,
+		#{actionNm},
+		#{data, jdbcType=BLOB},
+		#{addUserId},
+		SYSTIMESTAMP,
+		#{updUserId},
+		SYSTIMESTAMP
+		)
+	</insert>
+
+	<!-- 3) 최신 1건 조회 (USER_UID + ACTION_NM 기준) -->
+	<select id="selectLatestByUserAndAction" parameterType="map"
+		resultType="org.cosmo.domain.IchijiHozonDTO">
+
+		SELECT *
+		FROM (
+		SELECT
+		HOZON_UID AS hozonUid,
+		USER_UID AS userUid,
+		SHINSEI_KBN AS shinseiKbn,
+		SHOZOKU_CD AS shozokuCd,
+		ALERT_NO AS alertNo,
+		ALERT_SEQ AS alertSeq,
+		ACTION_NM AS actionNm,
+		DATA AS data,
+		ADD_USER_ID AS addUserId,
+		ADD_DATE AS addDate,
+		UPD_USER_ID AS updUserId,
+		UPD_DATE AS updDate
+		FROM ICHIJI_HOZON
+		WHERE USER_UID = #{userUid}
+		AND ACTION_NM = #{actionNm}
+		ORDER BY ADD_DATE DESC, UPD_DATE DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
 
 </mapper>

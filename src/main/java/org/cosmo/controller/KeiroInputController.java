@@ -127,44 +127,37 @@ public class KeiroInputController {
         return "keiroinput/07_keirodtInput_03";
     }
 
-	 @PostMapping("/tempSave")
-	    public String tempSaveCommute(
-	            @RequestParam("commuteJson") String commuteJson,
-	            HttpSession session) {
+	@PostMapping("/tempSave")
+    public String tempSaveCommute(
+            @RequestParam("commuteJson") String commuteJson,
+            HttpSession session) {
 
-	        ShainVO shain = (ShainVO) session.getAttribute("shain");
-	        if (shain == null) {
-	            throw new RuntimeException("セッションに社員情報がありません。");
-	        }
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
 
-	        Integer userUid   = Integer.parseInt(shain.getShain_Uid());
-	        String shozokuCd  = shain.getShozoku_Cd();
-	        String shinseiKbn = shain.getShinchoku_kbn();
+        Integer userUid   = Integer.parseInt(shain.getShain_Uid());
+        String  shozokuCd = shain.getShozoku_Cd();
+        String  shinseiKbn = shain.getShinchoku_kbn();
 
-	        if (shinseiKbn == null) {
-	            shinseiKbn = "01"; // 기본값 (필요 시 변경)
-	        }
+        if (shinseiKbn == null || shinseiKbn.isEmpty()) {
+            shinseiKbn = "01";
+        }
 
-	        byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
+        byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
 
-	        IchijiHozonDTO dto = new IchijiHozonDTO();
-	        dto.setUserUid(userUid);
-	        dto.setShinseiKbn(shinseiKbn);
-	        dto.setShozokuCd(shozokuCd);
-	        dto.setActionNm("TSUKIN_SHUDAN_TEMP_SAVE");
-	        dto.setData(dataBytes);
+        IchijiHozonDTO dto = new IchijiHozonDTO();
+        dto.setUserUid(userUid);
+        dto.setShinseiKbn(shinseiKbn);
+        dto.setShozokuCd(shozokuCd);
+        dto.setActionNm("TSUKIN_SHUDAN_TEMP_SAVE");
+        dto.setData(dataBytes);
 
-	        dto.setAddUserId(userUid);
-	        dto.setUpdUserId(userUid);
+        dto.setAddUserId(userUid);
+        dto.setUpdUserId(userUid);
 
-	        ichijiHozonService.saveTemp(dto);
-	        int newUid = dto.getHozonUid(); 
+        int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-	        oshiraseService.saveTempOshirase(shain);
-
-	        // 임시저장 후 다음 페이지로 이동
-	        return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
-	    }
+        return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+    }
 	 
 	 @PostMapping("/saveViaPlace1")
 	 @ResponseBody
