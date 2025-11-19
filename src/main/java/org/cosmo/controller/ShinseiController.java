@@ -1,11 +1,14 @@
 package org.cosmo.controller;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
-import org.cosmo.domain.ShinseiIcDataVO;
+import org.cosmo.domain.ShinseiIcDataDTO;
+import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.gson.Gson;
+
 @Controller
 @RequestMapping("/shinsei")
 public class ShinseiController {
@@ -34,10 +39,19 @@ public class ShinseiController {
 	@GetMapping("/ichiji")
 	public String showIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
 
-		ShinseiIcDataVO ichiji = shinseiService.getIcData(hozonUid);
+		ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
+		ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
+		ShainVO shinseiUser = null;
+		
+		if (ichiji != null && ichiji.getShainUid() != null) {
+			shinseiUser = shinseiService.getShainByUid(ichiji.getShainUid());
+		}
 
 		model.addAttribute("ichiji", ichiji);
+		model.addAttribute("shinseiUser", shinseiUser);
 		model.addAttribute("hozonUid", hozonUid);
+	    model.addAttribute("hozon", hozon);
+
 
 		return "shinsei/11_shinseiDetail_02";
 	}
@@ -83,7 +97,7 @@ public class ShinseiController {
 		// 임시저장번호(hozon_uid) ㅇ
 		if (hozonUid != null && !hozonUid.trim().isEmpty()) {
 
-			ShinseiIcDataVO ichiji = shinseiService.getIcData(hozonUid);
+			ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
 
 			if (ichiji == null) {
 				model.addAttribute("errorMessage", "一時保存データが見つかりません。");
@@ -121,7 +135,6 @@ public class ShinseiController {
 			HttpSession session, Model model) {
 
 		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
-
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
 
 		// 신청구분 1(임시저장) + 신청번호 x : 데이터 삭제
@@ -133,40 +146,30 @@ public class ShinseiController {
 			return "home";
 		}
 
-		// 신청구분1(임시저장) + 신청번호 ㅇ / 신청구분3(반려) : 취소처리
-		if (hasShinseiNo && hozonUid != null && !hozonUid.trim().isEmpty()) {
+		 if (hasShinseiNo && ("1".equals(shinchokuKbn) || "3".equals(shinchokuKbn))) {
 
-			ShainVO shinseiUser = shinseiService.getShainByShinseiNo(shinseiNo);
-			String email = shinseiService.getEmailByShainUid(shinseiUser.getShain_Uid());
+		        String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
+		        ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
+		        String email = shinseiService.getEmailByShainUid(shainUid);
 
-			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
-			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
-			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
+		        shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
+		        shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
+		        shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
 
-			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
-			shinseiService.deleteShinseiByShinseiNo(shinseiNo);
-			
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(email);
-			message.setSubject("申請取消のご案内");
-			message.setText("ご申請内容につきまして、取消処理が完了しましたのでご連絡申し上げます。");
+		        if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+		            shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
+		        }
 
-			mailSender.send(message);
+		        if (email != null && !email.trim().isEmpty()) {
+		            SimpleMailMessage message = new SimpleMailMessage();
+		            message.setTo(email);
+		            message.setSubject("申請取消のご案内");
+		            message.setText("ご申請内容につきまして、取消処理が完了しましたのでご連絡申し上げます。");
+		            mailSender.send(message);
+		        }
 
-			return "/huzuiNewInput/26_huzuiKanryo";
-		}
-
-		if ("3".equals(shinchokuKbn)) {
-
-			ShainVO shinseiUser = shinseiService.getShainByShinseiNo(shinseiNo);
-
-			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
-			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
-			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
-			
-
-			return "/huzuiNewInput/26_huzuiKanryo";
-		}
+		        return "/huzuiNewInput/26_huzuiKanryo";
+		    }
 
 		return "/huzuiNewInput/26_huzuiKanryo";
 	}

@@ -1,8 +1,10 @@
 package org.cosmo.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
-import org.cosmo.domain.ShinseiIcDataVO;
+import org.cosmo.domain.ShinseiIcDataDTO;
+import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
@@ -16,13 +18,17 @@ public interface ShinseiService {
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
 	
-	ShainVO getShainByShinseiNo(String shinseiNo);
+	String getShainUidByShinseiNo(String shinseiNo);
+	
+	ShinseiIcHozonVO getIchijiHozon(String hozonUid);
+
+	ShainVO getShainByUid(String shainUid);
 
 	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
 
 	ShinseiShoruiVO getShinseiShorui(Long shinseiNo);
 
-	ShinseiIcDataVO getIcData(String hozonUid);
+	ShinseiIcDataDTO getIcData(String hozonUid);
 
 	String getCodeNm(String code);
 

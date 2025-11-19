@@ -16,7 +16,9 @@ public interface ShinseiMapper {
 
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinseiNo);
 	
-	ShainVO getShainByShinseiNo(@Param("shinseiNo") String shinseiNo);
+	String getShainUidByShinseiNo(@Param("shinseiNo") String shinseiNo);
+	
+	ShainVO getShainByUid(@Param("shainUid") String shainUid);
 
 	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 

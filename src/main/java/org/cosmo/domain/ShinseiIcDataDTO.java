@@ -3,11 +3,13 @@ package org.cosmo.domain;
 import lombok.Data;
 
 @Data
-public class ShinseiJyohouVO {
-	private Integer kigyoCd;
-	private Long shinseiNo;
+public class ShinseiIcDataDTO {
+
+	private String kigyoCd;
+	private String shinseiNo;
 	private String shinseiYmd;
 	private String shinseiKbn;
+	private String shainUid;
 	private String shinchokuKbn;
 	private String genAddress1;
 	private String genAddress2;
@@ -23,7 +25,7 @@ public class ShinseiJyohouVO {
 	private String newKinmuchi1;
 	private String newKinmuchi2;
 	private String newKinmuchi3;
-
+	
 	private String riyu;
 	private String idoYmd;
 	private String itenYmd;
@@ -31,11 +33,13 @@ public class ShinseiJyohouVO {
 	private String riyoStartYmd;
 	private String ssmdsYmd;
 	private String moComment;
-
+	
 	private String codeNm;
 	private String shinseiName;
-
-	public String getGenAddress() {
+    private ShinseiKeiroVO keiro; 
+ 
+    
+    public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();
 
 		if (genAddress1 != null && !genAddress1.trim().isEmpty()) {
@@ -89,5 +93,4 @@ public class ShinseiJyohouVO {
 
 		return sb.toString();
 	}
-
 }

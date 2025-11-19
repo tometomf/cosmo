@@ -8,4 +8,5 @@ public class ShinseiIcHozonVO {
 	private String userUid;
 	private String shinseiKbn;
 	private byte[] data;
+	private String addDate;
 }

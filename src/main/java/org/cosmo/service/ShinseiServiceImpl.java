@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
-import org.cosmo.domain.ShinseiIcDataVO;
+import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroVO;
@@ -39,37 +39,43 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 	
 	@Override
-	public ShainVO getShainByShinseiNo(String shinseiNo) {
-		return shinseiMapper.getShainByShinseiNo(shinseiNo);
+	public ShinseiIcHozonVO getIchijiHozon(String hozonUid) {
+		return shinseiMapper.getIchijiHozon(hozonUid);
+	}
+
+	
+	@Override
+	public String getShainUidByShinseiNo(String shinseiNo) {
+		return shinseiMapper.getShainUidByShinseiNo(shinseiNo);
+	}
+	
+	@Override
+	public ShainVO getShainByUid(String shainUid) {
+		return shinseiMapper.getShainByUid(shainUid);
 	}
 
 	@Override
 	@Transactional
 	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
 
-		// �侠�ｲｭ��簿ｳｴ�｡ｰ巐�
 		ShinseiJyohouVO jyohou = shinseiMapper.getShinseiJyohou(shinseiNo);
 		if (jyohou == null) {
-			// �侠�ｲｭ��簿ｳｴ�螺�愍�ｩｴ �乱�洳
-			throw new IllegalStateException("逕ｳ隲区ュ蝣ｱ縺悟ｭ伜惠縺励∪縺帙ｓ縲�(逕ｳ隲狗分蜿ｷ=" + shinseiNo + ")");
+			throw new IllegalStateException("エラーが発生しました。" + shinseiNo + ")");
 		}
-		String shinseiKbn = jyohou.getShinseiKbn(); // �侠�ｲｭ�ｵｬ�ｶ� �ｽ罷糖
-		String shinseiYmd = jyohou.getShinseiYmd(); // �侠�ｲｭ�攵�梵
+		String shinseiKbn = jyohou.getShinseiKbn();
+		String shinseiYmd = jyohou.getShinseiYmd(); 
 
-		// �メ夋� �攵�亨�ｳｴ�｡ｴ�愍�｡� �据�曙�ｦｬ�ｸｰ
 		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
 
-		// �侠�ｲｭ�攵�梵 null�｡� �ｳ��ｲｽ. �螺�株�侠�ｲｭ�愍�｡� �ｹｨ
 		shinseiMapper.updateAlertForHikimodoshi(kigyoCd, shinseiNo, loginUserId);
 
-		String kigyoCdStr = String.valueOf(kigyoCd); // �ｧ､寘ｼ �｡懋ｷｸ �ｩ肥�罹糖�豆�捩 String �ぎ�圸
+		String kigyoCdStr = String.valueOf(kigyoCd);
 		String shinseiNoStr = String.valueOf(shinseiNo);
 
-		int syoriKbn = 6; // 6�ｲ� hikimodoshi
-		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); // �共�搆 LOG_SEQ �ｱ�ｲ�
+		int syoriKbn = 6; 
+		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); 
 
-		// �｡懋ｷｸ�乱 INSERT
-		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, // 6 : 蠑墓綾縺�
+		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, 
 				shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
 		);
 
@@ -102,7 +108,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public ShinseiIcDataVO getIcData(String hozonUid) {
+	public ShinseiIcDataDTO getIcData(String hozonUid) {
 
 		ShinseiIcHozonVO row = shinseiMapper.getIchijiHozon(hozonUid);
 
@@ -113,12 +119,12 @@ public class ShinseiServiceImpl implements ShinseiService {
 		String json = new String(row.getData(), StandardCharsets.UTF_8);
 
 		ObjectMapper mapper = new ObjectMapper();
-		ShinseiIcDataVO vo;
+		ShinseiIcDataDTO vo;
 
 		try {
-			vo = mapper.readValue(json, ShinseiIcDataVO.class);
+			vo = mapper.readValue(json, ShinseiIcDataDTO.class);
 		} catch (Exception e) {
-			throw new RuntimeException("�桷�亨����棗 �魂�擽奓ｰ �ｳ�嶹� �丶�･�", e);
+			throw new RuntimeException("エラーが発生しました。", e);
 		}
 
 		if (row.getShinseiKbn() != null && !row.getShinseiKbn().isEmpty()) {
@@ -186,12 +192,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Override
 	public void insertOshirase(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
 		shinseiMapper.insertOshirase(loginUser, shinseiUser, shinseiNo);
-		
-		System.out.println("INSERT OSHIRASE 실행됨!!!");
-		System.out.println("loginUser = " + loginUser);
-		System.out.println("shinseiUser = " + shinseiUser);
-		System.out.println("shinseiNo = " + shinseiNo);
-
 	}
 
 	@Override
@@ -257,10 +257,10 @@ public class ShinseiServiceImpl implements ShinseiService {
 		}
 
 		if (hozonUid == null) {
-			throw new RuntimeException("hozonUid縺後≠繧翫∪縺帙ｓ縲�");
+			throw new RuntimeException("エラーが発生しました。");
 		}
 
-		ShinseiIcDataVO ichijiVo = getIcData(hozonUid);
+		ShinseiIcDataDTO ichijiVo = getIcData(hozonUid);
 
 		model.addAttribute("ichiji", ichijiVo);
 		model.addAttribute("isIchiji", true);
