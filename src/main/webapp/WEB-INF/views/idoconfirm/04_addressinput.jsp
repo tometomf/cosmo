@@ -108,7 +108,7 @@
 
 .button_Left {
     display: flex;
-    gap: 10px;          /* 버튼 간 간격 */
+    gap: 5px;          /* 버튼 간 간격 */
     margin-top: 20px;   /* 위와의 간격 */
     margin-left: auto;  /* 왼쪽 여백 자동 → 오른쪽으로 이동 */
     margin-right: 30px; /* 오른쪽 끝에서 30px 떨어짐 */
@@ -168,7 +168,7 @@
 				</div>
 			</div>
 
-			<!-- form 영역 -->
+			<!-- form 영역 (지금은 단순 표시/입력만, 별도 form 태그 없음) -->
 			<div class="content_Form1">
 				<div class="form_Title1" id="form_Title1">
 					<div></div>
@@ -180,8 +180,9 @@
 					<div class="form_Column">郵便番号</div>
 					<div class="form_Normal">213-0001</div>
 					<div class="form_Normal">
-						<input type="text" value="211" class="zipcode"><div>-</div> <input
-							type="text" value="0001" class="zipcode">
+						<input type="text" value="211" class="zipcode">
+						<div>-</div>
+						<input type="text" value="0001" class="zipcode">
 						<button class="search_btn">検索</button>
 					</div>
 				</div>
@@ -211,25 +212,83 @@
 				</div>
 
 			</div>
-			<div class = "content_Form3">
+
+			<div class="content_Form3">
 				<div class="form_Text1" id="form_Text4">
 					<div class="form_Column">転入日</div>
 					<div class="form_Normal">
-						<input type="text" value="2013/04/13"> <img
-							src="/resources/img/cal_icon.gif" alt="cal_icon">
+						
+						<input type="date">
+							<img src="/resources/img/cal_icon.gif" alt="cal_icon.gif" style="cursor:pointer;">
+						</div>
 					</div>
 				</div>
 			</div>
+
 			<!-- 버튼 그룹 -->
 			<div class="button_Left">
-			<div class="button_Left_Group">
-				<img src="/resources/img/back_btn01.gif" alt="back_btn01"> <img
-					src="/resources/img/next_btn01.gif" alt="next_btn01">
-				<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
+				<div class="button_Left_Group" style="display:flex; gap:10px;">
+					<!-- 뒤로가기 -->
+					<button type="button"
+						style="border:none; background:none; padding:0; cursor:pointer;"
+						onclick="goBack()">
+						<img src="/resources/img/back_btn01.gif" alt="back_btn01">
+					</button>
+
+					<!-- 다음 -->
+					<button type="button"
+						style="border:none; background:none; padding:0; cursor:pointer;"
+						onclick="goNext()">
+						<img src="/resources/img/next_btn01.gif" alt="next_btn01">
+					</button>
+
+					<!-- 일시보존 -->
+					<button type="button"
+						style="border:none; background:none; padding:0; cursor:pointer;"
+						onclick="goTempSave()">
+						<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
+					</button>
+				</div>
 			</div>
+
 		</div>
 		<!-- main 끝 -->
+
+		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 	<!-- layout 끝 -->
+
+	<script>
+		
+		function goBack() {
+			history.back();
+		}
+
+		
+		function goNext() {
+			
+			location.href = "<c:url value='/idoconfirm/keiroInfo' />";
+		}
+
+		function goTempSave() {
+			alert("一時保存しました。");
+		}
+
+		// 4. 캘린더 아이콘 → 날짜 input 포커스
+		 document.addEventListener('DOMContentLoaded', function () {
+            const moveInInput = document.getElementById('moveInDate');
+            const calendarBtn = document.getElementById('calendarBtn');
+
+            if (moveInInput && calendarBtn) {
+                calendarBtn.addEventListener('click', function () {
+                    if (moveInInput.showPicker) {
+                        moveInInput.showPicker();
+                    } else {
+                        moveInInput.focus();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

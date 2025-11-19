@@ -185,7 +185,7 @@
 			<div class="commute-box">
 				<div class="commute-row">
 					<div class="commute-label dark">現 通勤手段</div>
-					<div class="commute-value">バス</div>
+					<div class="commute-value" id="tsukinShudanDiv"></div>
 				</div>
 				<div class="commute-panel">
 					<div class="commute-label light">新 通勤手段</div>
@@ -216,6 +216,23 @@
 
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {
+			  const keiro = {
+				        kigyoCd: "${keiro.kigyoCd}",
+				        shainUid: "${keiro.shainUid}",
+				        keiroSeq: "${keiro.keiroSeq}",
+				        tsukinShudanKbn: "${keiro.tsukinShudanKbn}",
+				        tsukinShudanNm: "${keiro.tsukinShudanNm}",
+				        startPlace: "${keiro.startPlace}",
+				        endPlace: "${keiro.endPlace}",
+				        viaPlace1: "${keiro.viaPlace1}",
+				        viaPlace2: "${keiro.viaPlace2}",
+				        viaPlace3: "${keiro.viaPlace3}",
+				        viaPlace4: "${keiro.viaPlace4}",
+				        viaPlace5: "${keiro.viaPlace5}",
+				        shinseiKm: "${keiro.shinseiKm}",
+				        shikyuKin: "${keiro.shikyuKin}"
+				    };
+			document.getElementById("tsukinShudanDiv").innerText = keiro.tsukinShudanNm;
 			const keiroBtn = document
 					.querySelector('img[alt="nyuryoku_btn01"]');
 			const radios = document.querySelectorAll('input[name="way"]');
