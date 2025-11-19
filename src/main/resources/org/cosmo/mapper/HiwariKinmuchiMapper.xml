@@ -2,60 +2,74 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
 <mapper namespace="org.cosmo.mapper.HiwariKinmuchiMapper">
 
-	<!-- ========================= -->
-	<!-- 申請前（신청 전） -->
-	<!-- ========================= -->
-	<select id="getBeforeShinsei"
-		resultType="org.cosmo.domain.HiwariKinmuchiVO">
-		SELECT
-		S.KIGYO_CD,
-		S.SHAIN_UID,
+    <!-- 申請前：SHAIN + SHOZOKU -->
+<select id="getBeforeShinsei" resultType="org.cosmo.domain.HiwariKinmuchiVO">
+    SELECT
+        SH.KIGYO_CD,
+        SH.SHAIN_UID,
 
-		-- 所属コード（申請前）
-		S.SHOZOKU_CD AS beforeShozokuCd,     <!-- ★ -->
-		Z.SHOZOKU_NM AS beforeShozokuNm,     <!-- ★ -->
+        SH.SHOZOKU_CD      AS beforeShozokuCd,
+        SZ.SHOZOKU_NM      AS beforeShozokuNm,
 
-		-- 現勤務地（申請前）
-		S.KINMU_ZIP_CD AS kinmuZipCd,
-		S.KINMU_PREF_CD AS kinmuPrefCd,
-		S.KINMU_ADDRESS_1 AS kinmuAddress1,
-		S.KINMU_ADDRESS_2 AS kinmuAddress2
+        SH.KINMU_ZIP_CD    AS kinmuZipCd,
+        SH.KINMU_PREF_CD   AS kinmuPrefCd,
+        C.CODE_NM          AS kinmuPrefNm,       -- ★ 도도부현 이름 추가!
+        SH.KINMU_ADDRESS_1 AS kinmuAddress1,
+        SH.KINMU_ADDRESS_2 AS kinmuAddress2
 
-		FROM SHAIN S
-		JOIN SHOZOKU Z
-		ON Z.KIGYO_CD = S.KIGYO_CD
-		AND Z.SHOZOKU_CD = S.SHOZOKU_CD
-		WHERE S.KIGYO_CD = #{kigyoCd}
-		AND S.SHAIN_UID = #{shainUid}
-	</select>
+    FROM SHAIN SH
+    LEFT JOIN SHOZOKU SZ
+      ON SH.KIGYO_CD   = SZ.KIGYO_CD
+     AND SH.SHOZOKU_CD = SZ.SHOZOKU_CD
 
-	<!-- ========================= -->
-	<!-- 申請後（신청 후） -->
-	<!-- ========================= -->
+    -- ★ 도도부현 코드마스터 JOIN
+    LEFT JOIN CODE C
+      ON SH.KINMU_PREF_CD = C.CODE
+     AND C.CODE_SYBTSU = '003'   -- 003 = 도도부현 코드 그룹
+
+    WHERE SH.KIGYO_CD = #{kigyoCd}
+      AND SH.SHAIN_UID = #{shainUid}
+</select>
+
+    <!-- 申請後：SHINSEI + SHOZOKU -->
 <select id="getAfterShinsei" resultType="org.cosmo.domain.HiwariKinmuchiVO">
     SELECT
-        SS.KIGYO_CD,
-        SS.SHAIN_UID,
+        S.KIGYO_CD,
+        S.SHAIN_UID,
 
-        -- 現所属コード（申請後）
-        SS.GEN_SHOZOKU_CD AS afterShozokuCd,   <!-- ★ -->
-        Z.SHOZOKU_NM      AS afterShozokuNm,   <!-- ★ -->
+        S.NEW_SHOZOKU_CD      AS beforeShozokuCd,
+        SZ.SHOZOKU_NM         AS beforeShozokuNm,
 
-        -- 新勤務地（申請後）
-        SS.GEN_KINMU_ZIP_CD     AS kinmuZipCd,
-        SS.GEN_KINMU_ADDRESS_1  AS kinmuAddress1,
-        SS.GEN_KINMU_ADDRESS_2  AS kinmuAddress2
+        S.NEW_KINMU_ZIP_CD    AS kinmuZipCd,
+        S.NEW_KINMU_PREF_CD   AS kinmuPrefCd,
+        C.CODE_NM             AS kinmuPrefNm,      -- ★ 추가
+        S.NEW_KINMU_ADDRESS_1 AS kinmuAddress1,
+        S.NEW_KINMU_ADDRESS_2 AS kinmuAddress2
 
-    FROM SHINSEI SS
-    LEFT JOIN SHOZOKU Z
-      ON Z.KIGYO_CD = SS.KIGYO_CD
-     AND Z.SHOZOKU_CD = SS.GEN_SHOZOKU_CD
-    WHERE SS.KIGYO_CD = #{kigyoCd}
-      AND SS.SHAIN_UID = #{shainUid}
-      AND SS.SHINSEI_NO = #{shinseiNo}
+    FROM SHINSEI S
+    LEFT JOIN SHOZOKU SZ
+      ON S.KIGYO_CD        = SZ.KIGYO_CD
+     AND S.NEW_SHOZOKU_CD  = SZ.SHOZOKU_CD
+
+    -- ★ 도도부현 코드 JOIN
+    LEFT JOIN CODE C
+      ON S.NEW_KINMU_PREF_CD = C.CODE
+     AND C.CODE_SYBTSU = '003'
+
+    WHERE S.KIGYO_CD = #{kigyoCd}
+      AND S.SHAIN_UID = #{shainUid}
+      AND S.SHINSEI_NO = #{shinseiNo}
 </select>
+
+
+    <!-- 所属 리스트 -->
+    <select id="getShozokuNames" resultType="string">
+        SELECT SHOZOKU_NM
+        FROM SHOZOKU
+        WHERE KIGYO_CD = #{kigyoCd}
+        ORDER BY SHOZOKU_NM
+    </select>
 
 </mapper>

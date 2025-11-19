@@ -3,6 +3,7 @@ package org.cosmo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.HiwariKeiroVO;
@@ -27,33 +28,51 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKinmuchiService service;
 
+    
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
-        // =========================
-        // ① 勤務地 
-        // =========================
-
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
-
-        if (kigyoCd == null) kigyoCd = 1001;   // ← テスト用企業コード
-        if (shainUid == null) shainUid = 1L;   // ← テスト用社員UID
+        // 강제 더미
+        Integer kigyoCd = 1001;
+        Long shainUid = 1L;
+        Long shinseiNo = null;
 
         HiwariKinmuchiVO data;
 
         if (shinseiNo == null) {
-            // 申請前
             data = service.getBeforeShinsei(kigyoCd, shainUid);
         } else {
-            // 申請後
             data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
         }
 
-        model.addAttribute("initData", data);
+        // 🔥 근무지 리스트 추가 (이거 없어서 안 뜬 거임)
+        List<String> shoList = service.getShozokuNames(kigyoCd);
+        model.addAttribute("shoList", shoList);
+
+        // 기존 데이터
+        model.addAttribute("leftData", data);
+
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
+    
+    
+    @GetMapping("testData")
+    public String testData(HttpServletResponse response) throws Exception {
+        Integer kigyoCd = 1001;
+        Long shainUid = 1L;
+
+        HiwariKinmuchiVO data = service.getBeforeShinsei(kigyoCd, shainUid);
+
+        response.setContentType("text/plain; charset=UTF-8");
+        response.getWriter().println("===== DB TEST =====");
+        response.getWriter().println("kigyoCd = " + data.getKigyoCd());
+        response.getWriter().println("shainUid = " + data.getShainUid());
+        response.getWriter().println("shozoNm = " + data.getBeforeShozokuNm());
+        response.getWriter().println("zip = " + data.getKinmuZipCd());
+        return null;
+    }
+    
+    
 
     @GetMapping("/address")
     public String showHiwariAddressPage() {

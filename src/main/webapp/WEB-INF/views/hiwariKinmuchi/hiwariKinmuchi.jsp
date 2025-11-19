@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
 <html>
@@ -62,7 +63,7 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">勤務先コード</div>
-						<div class="form_Normal">123</div>
+						<div class="form_Normal">${leftData.beforeShozokuCd}</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
 								<input type="text" maxlength="3"
@@ -75,19 +76,24 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">勤務先</div>
-						<div class="form_Normal">${initData.beforeShozokuNm}</div>
+						<div class="form_Normal">${leftData.beforeShozokuNm}</div>
 						<div class="form_Normal">
-							<select style="width: 120px;">
-								<option selected>江戸川店</option>
-								<option>品川店</option>
-								<option>目黒店</option>
+							<select style="width: 120px;" name="newShozokuNm">
+								<c:forEach var="nm" items="${shoList}">
+									<option>${nm}</option>
+								</c:forEach>
 							</select>
 						</div>
 					</div>
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">郵便番号</div>
-						<div class="form_Normal">164-0012</div>
+						<div class="form_Normal">
+							<c:if test="${not empty leftData.kinmuZipCd}">
+    <c:set var="zip" value="${fn:trim(leftData.kinmuZipCd)}"/>
+    ${fn:substring(zip, 0, 3)}-${fn:substring(zip, 3, 7)}
+</c:if>
+						</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
 								<input type="text" name="zip1" maxlength="3"
@@ -104,8 +110,8 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">都道府県</div>
-						<div class="form_Normal">東京都</div>
-						<div style="display: flex; align-items: center; gap: 4px;">
+						<div class="form_Normal">${leftData.kinmuPrefNm}</div>
+						<div>
 							<input type="text" name="prefecture"
 								style="width: 100px; height: 20px;" readonly>
 						</div>
@@ -113,8 +119,8 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">所在地1</div>
-						<div class="form_Normal">中野区本町3-30-4</div>
-						<div style="display: flex; align-items: center; gap: 4px;">
+						<div class="form_Normal">${leftData.kinmuAddress1}</div>
+						<div>
 							<input type="text" name="city"
 								style="width: 380px; height: 20px;" readonly>
 						</div>
@@ -122,8 +128,8 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">所在地2（建物名等）</div>
-						<div class="form_Normal">KDX中野坂上ビル8F</div>
-						<div style="display: flex; align-items: center; gap: 4px;">
+						<div class="form_Normal">${leftData.kinmuAddress2}</div>
+						<div>
 							<input type="text" style="width: 380px; height: 20px;">
 						</div>
 					</div>
@@ -136,7 +142,8 @@ p {
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
 							style="cursor: pointer;" onclick="location.href='/'"> <img
 							src="/resources/img/next_btn01.gif" alt="次へ"
-							style="cursor: pointer;" onclick="location.href='/hiwariKinmuchi/address'"> <img
+							style="cursor: pointer;"
+							onclick="location.href='/hiwariKinmuchi/address'"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存">
 					</div>
 				</div>
