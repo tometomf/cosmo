@@ -1,13 +1,18 @@
 package org.cosmo.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.HiwariKakuninRouteVO;
+import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
+import org.cosmo.service.HiwariKakuninService;
 import org.cosmo.service.HiwariKeiroService;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,9 @@ public class HiwariKinmuchiController {
 
     @Autowired
     private HiwariKinmuchiService service;
+    
+    @Autowired
+    private HiwariKakuninService hiwariKakuninService;
 
     
     @GetMapping("hiwariKinmuchi")
@@ -79,21 +87,77 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariAddress";
     }
 
+ // =========================
+    // ② 確認画面
+    // =========================
     @GetMapping("/kakunin")
     public String showKakuninPage(HttpSession session, Model model) {
 
-        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
+        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
-        if (keiroList == null) {
-            keiroList = new ArrayList<HiwariKeiroVO>();
+        // 세션에 값 없으면 경로 입력으로 돌려보냄
+        if (kigyoCd == null || shinseiNo == null) {
+            return "redirect:/hiwariKinmuchi/keiro";
         }
 
-        int repRouteNo = calcRepRouteNo(keiroList);
+        // 1) 헤더 (社員・申請情報)
+        HiwariKakuninVO header = hiwariKakuninService.getHeader(kigyoCd, shinseiNo);
 
-        model.addAttribute("keiroList", keiroList);
-        model.addAttribute("repRouteNo", repRouteNo);
+        // 2) 경로 리스트
+        List<HiwariKakuninRouteVO> routes = hiwariKakuninService.getRoutes(kigyoCd, shinseiNo);
+        if (routes == null) {
+            routes = new ArrayList<HiwariKakuninRouteVO>();
+        }
 
+        // ==== emp 세팅 (JSP: ${emp.no}, ${emp.name}, ${emp.workplace}, ${emp.address}) ====
+        Map<String, Object> emp = new HashMap<String, Object>();
+        if (header != null) {
+            emp.put("no",        header.getEmpNo());
+            emp.put("name",      header.getEmpName());
+            emp.put("workplace", header.getEmpWorkplace());
+            emp.put("address",   header.getEmpAddress());
+        }
+        model.addAttribute("emp", emp);
+
+        // ==== route1 / route2 세팅 (JSP: ${route1.xxx}, ${route2.xxx}) ====
+        HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
+        HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
+
+        Map<String, Object> route1 = new HashMap<String, Object>();
+        if (r1 != null) {
+            route1.put("transport",     r1.getTsukinShudanNm());
+            route1.put("route",         r1.getKeiroSection());
+            route1.put("workDays",      r1.getShukkinNissuu() + "日間");
+            route1.put("oneWayFee",     r1.getKataMichiRyokin());
+            route1.put("amount",        r1.getKingaku());
+            route1.put("amountMonthly", r1.getKingakuMonthly());
+        }
+        model.addAttribute("route1", route1);
+
+        Map<String, Object> route2 = new HashMap<String, Object>();
+        if (r2 != null) {
+            route2.put("transport",     r2.getTsukinShudanNm());
+            route2.put("route",         r2.getKeiroSection());
+            route2.put("workDays",      r2.getShukkinNissuu() + "日間");
+            route2.put("oneWayFee",     r2.getKataMichiRyokin());
+            route2.put("amount",        r2.getKingaku());
+            route2.put("amountMonthly", r2.getKingakuMonthly());
+        }
+        model.addAttribute("route2", route2);
+
+        // ==== apply 세팅 (JSP: ${apply.kind}, ${apply.reason}, ${apply.periodText} …) ====
+        Map<String, Object> apply = new HashMap<String, Object>();
+        if (header != null) {
+            apply.put("kind",        header.getShinseiKbnNm());
+            apply.put("reason",      header.getShinseiRiyu());
+            apply.put("periodText",  header.getTaishoKikanFrom() + " ～ " + header.getTaishoKikanTo());
+            apply.put("workDays",    header.getShukkinNissuu() + "日間");
+            apply.put("totalAmount", header.getKingakuGokei());
+        }
+        model.addAttribute("apply", apply);
+
+        // JSP 레이아웃은 네가 만든 정적 kakunin.jsp 그대로 사용
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
