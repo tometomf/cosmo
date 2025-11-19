@@ -388,7 +388,7 @@
 
 			<div class="menu_button">
 				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
-					src="/resources/img/keiro_btn02.gif"> <img
+					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
 					src="/resources/img/hozon_btn01.gif">
 			</div>
 		</div>
@@ -411,6 +411,9 @@
 			const kensaku = document.getElementById("SearchStationBtn");
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
+			
+			const Kakutei = document.getElementById("keiroKakutei");
+			let searchedRoute = null;
 			
 			addBtn.addEventListener("click", function() {
 				const count = container.querySelectorAll(".background").length;
@@ -470,6 +473,8 @@
 				
 				
 				document.getElementById("kensakuTime").innerText = getCurrentTime();
+				
+				
 			});
 			
 			ekiSwap.addEventListener("click", function() {
@@ -481,6 +486,47 @@
 				startStation.value = endStation.value;
 				endStation.value = emptyStation;
 			});
+			
+			Kakutei.addEventListener("click", function(){
+				
+				const displayedRoute = keiro.innerText.trim();
+				
+				if(!displayedRoute || displayedRoute === "経路を入力してください。"){
+			        alert("経路を入力してください。");
+			        return;
+				}
+				
+				const formStation = document.querySelector('input[name="From_station"]').value;
+				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+					const middles = [];
+					middleInputs.forEach(input => {
+						const v = input.value.trim();
+						if(v !== ""){
+							middles.push(v);
+						}
+					});
+								
+				const ToStation = document.querySelector('input[name="To_station"]').value;
+				const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
+
+			    // 3. 비교
+			    if (currentRoute !== displayedRoute) {
+			        alert("입력한 경로와 조회된 경로가 일치하지 않습니다.");
+			        return;
+			    }
+
+			    if (total1 === 0){
+			        alert("정기권 정보가 없습니다.");
+			        return;
+			    }
+			    			    // 4. 여기까지 왔으면 OK → 다음 로직
+			    alert("경로가 일치합니다. 다음 단계로 진행합니다.");
+			    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
+			    
+			    
+			    
+			});
+			
 			
 		});
 		/* document.addEventListener("click", function()) */
@@ -587,7 +633,7 @@
 		name : "東武東上線",
 		from: "渋谷",
 		to: "新宿",
-		onemonth: 4620,     // 분
+		onemonth: 0,     // 분
 		threemonth: 13170,      // 회
 		sixmonth: 24950        // 엔
 		},
@@ -595,7 +641,7 @@
 		name : "東京メトロ丸ノ内線",
 		from: "渋谷",
 		to: "新宿",
-		onemonth: 8500,     // 분
+		onemonth: 0,     // 분
 		threemonth: 24230,      // 회
 		sixmonth: 45900        // 엔
 		},
@@ -611,13 +657,17 @@
 	
     const shozokuCD = '${sessionScope.shain.shozoku_Cd}'.trim();
 
+	let total1 = 0;
+	let total3 = 0;
+	let total6 = 0;
+
 	function chargeList(){
 		const container = document.getElementById("chargeContainer");
 		container.innerHTML = "";
 		
-		let total1 = 0;
-		let total3 = 0;
-		let total6 = 0;
+		total1 = 0;
+		total3 = 0;
+		total6 = 0;
 		
 		teikiken.forEach(function(route,index) {
 			const row = document.createElement("div");
@@ -675,6 +725,8 @@
 			'<div></div>' +
 			'<div></div>'
 		}
+		
+		
 		container.appendChild(finalRow);
 	}
 	document.addEventListener("DOMContentLoaded", function() {
@@ -683,6 +735,10 @@
 	</script>
 
 
+
+<script>
+		
+	</script>
 
 <script
 	src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl"
