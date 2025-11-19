@@ -10,8 +10,6 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
-  html { overflow-y: scroll; }
-
   .page-width {
     width: 950px;
     margin: 0 auto;
