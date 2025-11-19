@@ -1,26 +1,24 @@
 package org.cosmo.domain;
 
+import org.apache.ibatis.type.Alias;
 import lombok.Data;
 
-/**
- * “úŠ„‹Î–±’n ‰Šú•\¦ VO
- */
 @Data
+@Alias("HiwariKinmuchiVO")
 public class HiwariKinmuchiVO {
 
-    // Š‘®
-    private String shozokuCd;     // Š‘®ƒR[ƒh
-    private String shozokuNm;     // Š‘®–¼
+    // ê¸°ë³¸í‚¤
+    private Integer kigyoCd;     // KIGYO_CD
+    private Long shainUid;       // SHAIN_UID
+    private String kinmuPrefNm;   // éƒ½é“åºœçœŒåï¼ˆä¾‹ï¼šæ±äº¬éƒ½ï¼‰
 
-    // Œ»‹Î–±’niŠù‘¶FSHAINj
-    private String kinmuZipCd;    // ‹Î–±’n—X•Ö”Ô†
-    private String kinmuPrefCd;   // ‹Î–±’n ZŠi“s“¹•{Œ§j
-    private String kinmuAddress1; // ‹Î–±’n ZŠis‹æ’¬‘ºE”Ô’nj
-    private String kinmuAddress2; // ‹Î–±’n ZŠiŒš•¨j
+    // æ‰€å± (ì‹ ì²­ ì „/í›„ ê³µí†µ)
+    private String beforeShozokuCd;   // DB_SHOZOKU_CD ë˜ëŠ” NEW_SHOZOKU_CD
+    private String beforeShozokuNm;   // SHOZOKU.SHOZOKU_NM
 
-    // V‹Î–±’ni\¿Œã‚Ì‚İFSHINSEIj
-    private String newKinmuAddress1; // V‹Î–±’n s‹æ’¬‘ºE”Ô’n
-    private String newKinmuAddress2; // V‹Î–±’n Œš•¨
-
-    private Long shinseiNo;       // \¿”Ô†i\¿Œã‚Ì‚İƒZƒbƒgj
+    // å‹¤å‹™åœ° ì£¼ì†Œ (ì‹ ì²­ ì „/í›„ ê³µí†µ)
+    private String kinmuZipCd;        // KINMU_ZIP_CD ë˜ëŠ” NEW_KINMU_ZIP_CD
+    private String kinmuPrefCd;       // KINMU_PREF_CD ë˜ëŠ” NEW_KINMU_PREF_CD
+    private String kinmuAddress1;     // KINMU_ADDRESS_1 ë˜ëŠ” NEW_KINMU_ADDRESS_1
+    private String kinmuAddress2;     // KINMU_ADDRESS_2 ë˜ëŠ” NEW_KINMU_ADDRESS_2
 }

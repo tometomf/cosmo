@@ -1,5 +1,7 @@
 package org.cosmo.service;
 
+import java.util.List;
+
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.mapper.HiwariKinmuchiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,16 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
 
     @Override
     public HiwariKinmuchiVO getBeforeShinsei(Integer kigyoCd, Long shainUid) {
-        return mapper.selectBeforeShinsei(kigyoCd, shainUid);
+        return mapper.getBeforeShinsei(kigyoCd, shainUid);
     }
 
     @Override
     public HiwariKinmuchiVO getAfterShinsei(Integer kigyoCd, Long shainUid, Long shinseiNo) {
-        return mapper.selectAfterShinsei(kigyoCd, shainUid, shinseiNo);
+        return mapper.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
+    }
+
+    @Override
+    public List<String> getShozokuNames(Integer kigyoCd) {
+        return mapper.getShozokuNames(kigyoCd);
     }
 }
