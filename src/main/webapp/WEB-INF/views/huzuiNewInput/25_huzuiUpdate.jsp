@@ -83,19 +83,19 @@
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">車種</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.shashu}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.shashu ? shainHuzuiShorui.shashu : shainHuzui.shashu}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">ナンバー</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.toroku_No}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.toroku_No.trim() ? shainHuzuiShorui.toroku_No : shainHuzui.toroku_No}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">排気量</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.haikiryo}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.haikiryo ? shainHuzuiShorui.haikiryo : shainHuzui.haikiryo}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">車検有効期限</div>
-		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
+		                  <div class="form_Normal" style="color: red;">${not empty shainHuzuiShorui.shaken_Yuko_Kigen ? shainHuzuiShorui.shaken_Yuko_Kigen : shainHuzui.shaken_Yuko_Kigen}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">燃費</div>
@@ -116,27 +116,27 @@
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">保険満了日</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.hoken_Manryo_Ymd ? shainHuzuiShorui.hoken_Manryo_Ymd : shainHuzui.hoken_Manryo_Ymd}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">対人賠償</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.taijin_Baisho}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.taijin_Baisho ? shainHuzuiShorui.taijin_Baisho : shainHuzui.taijin_Baisho}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">対物賠償</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.taibutsu_Baisho}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.taibutsu_Baisho ? shainHuzuiShorui.taibutsu_Baisho : shainHuzui.taibutsu_Baisho}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">人身障害</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.jinshin_Shogai}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.jinshin_Shogai ? shainHuzuiShorui.jinshin_Shogai : shainHuzui.jinshin_Shogai}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">搭乗者障害</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.tojosha_Shogai}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.tojosha_Shogai ? shainHuzuiShorui.tojosha_Shogai : shainHuzui.tojosha_Shogai}</div>
 	               </div>
 	                 <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">等級</div>
-	                  <div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
+	                  <div class="form_Normal">${not empty shainHuzuiShorui.tokyu ? shainHuzuiShorui.tokyu : shainHuzui.tokyu}</div>
 	               </div>
 	            </div>
 	         </div>

@@ -3,8 +3,10 @@ package org.cosmo.domain;
 import lombok.Data;
 
 @Data
-public class Shain_Fuzui_Shorui_HuzuiNewInputVO {
+public class ShainFuzuiShoruiHuzuiNewInputVO {
 
+	private Integer kigyo_Cd;
+	private Integer shain_Uid;
 	private String menkyo_Yuko_Kigen;
 	private String menkyo_No;
 	private String shashu;
@@ -17,6 +19,13 @@ public class Shain_Fuzui_Shorui_HuzuiNewInputVO {
 	private String jinshin_Shogai;
 	private String tojosha_Shogai;
 	private Integer tokyu;
+	private Integer file_Uid_1;
+	private Integer file_Uid_2;
+	private Integer file_Uid_3;
+	private Integer file_Uid_4;
+	private Integer file_Uid_5;
+	private Integer file_Uid_6;
+	private Integer file_Uid_7;
 	private Integer etc_File_Uid_1;
 	private Integer etc_File_Uid_2;
 	private Integer etc_File_Uid_3;

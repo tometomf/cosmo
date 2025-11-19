@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
+	
+	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiHuzuiNewInputVO">
+		SELECT * 
+		FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+    	on a.KIGYO_CD = b.KIGYO_CD
+    	where a.FILE_UID_4 = b.FILE_UID
+    	and a.KIGYO_CD = #{kigyo_Cd}
+   	 	and a.SHAIN_UID = #{shain_Uid}
+	</select>
+	
+</mapper>

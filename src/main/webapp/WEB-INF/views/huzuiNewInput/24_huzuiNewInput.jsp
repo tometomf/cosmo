@@ -108,7 +108,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
-					<div class = "form_Normal"><a href="">表示</a></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
 					<div class = "form_Normal henkou1"><input type="text" name="">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -137,7 +137,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">車検証コピー</div>
-					<div class = "form_Normal"><a href="">表示</a></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_5}"><a href="#">表示</a></c:if></div>
 					<div class = "form_Normal henkou2"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -187,12 +187,12 @@
 					</div>
 					<div class="form_Text1" id="form_Text1" style="border:solid 1px #a0a0a0; border-bottom:none;">
 						<div class="form_Column">保険証券コピー（期間）</div>
-						<div class = "form_Normal"><a href="">表示</a></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_6}"><a href="#">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column">保険証券コピー（賠償内容）</div>
-						<div class = "form_Normal"><a href="">表示</a></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_7}"><a href="#">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
