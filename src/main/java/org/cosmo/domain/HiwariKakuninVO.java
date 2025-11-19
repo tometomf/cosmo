@@ -1,33 +1,45 @@
 package org.cosmo.domain;
 
+import java.util.List;
+
+import org.apache.ibatis.type.Alias;
 import lombok.Data;
 
 @Data
+@Alias("HiwariKakuninVO")
 public class HiwariKakuninVO {
 
-
-    private String empNo;         
-    private String empName;       
-    private String empWorkplace;  
-    private String empAddress;    
+    private Integer kigyoCd;
     
-    private String route1Transport;    
-    private String route1Route;         
-    private String route1WorkDays;     
-    private String route1OneWayFee;    
-    private String route1Amount;        
-    private String route1AmountMonthly; 
-    
-    private String route2Transport;
-    private String route2Route;
-    private String route2WorkDays;
-    private String route2OneWayFee;
-    private String route2Amount;
-    private String route2AmountMonthly;
+    private Integer shainUid;
 
-    private String applyKind;        
-    private String applyReason;      
-    private String applyPeriodText;  
-    private String applyWorkDays;   
-    private String applyTotalAmount;
+    private String empNo;
+
+    private String empName;
+
+    private String empWorkplace;
+
+    private String empAddress;
+
+    private Long shinseiNo;
+
+    private String shinseiKbn;
+
+    private String shinseiKbnNm;
+
+    private String shinseiRiyu;
+
+    private String taishoKikanFrom;
+
+    private String taishoKikanTo;
+
+    private Integer shukkinNissuu;
+
+    private Integer kingakuGokei;
+
+    private List<HiwariKakuninRouteVO> routeList;
+
+    private String uploadFileName;
+
+    private Boolean uploadExists;
 }
