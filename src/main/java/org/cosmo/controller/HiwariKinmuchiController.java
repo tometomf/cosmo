@@ -168,6 +168,11 @@ public class HiwariKinmuchiController {
             return 1;
         }
         return keiroList.size();
+        
+    }
+    @GetMapping("/keiroInput")
+    public String showKeiroInputPage() {
+        return "keiroinput/06_keiroInput";
     }
 
     @GetMapping("/riyu")

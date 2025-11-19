@@ -26,7 +26,6 @@
   .hint-text { color: #333; line-height: 1.9; flex: 1; }
   .map-btn img { display: block; }
 
-  /* ===== 경로 박스 전체 ===== */
   .route-section {
     position: relative;
     background: #f7f7f7;
@@ -42,7 +41,6 @@
     align-items: center;
   }
 
-  /* 초록탭 */
   .route-label {
     position: relative;
     top: -23px;
@@ -63,7 +61,6 @@
     border-radius: 0 0 6px 0;
   }
 
-  /* 추가하기 링크 */
   .route-add {
     position: relative;
     top: -15px;
@@ -81,7 +78,6 @@
   }
   .route-add:hover { text-decoration: underline; }
 
-  /* 경로 한 줄 박스 */
   .keiro-box {
     background: #ffffff;
     border: 1px solid #dcdcdc;
@@ -100,7 +96,6 @@
 
   .keiro-row span { white-space: nowrap; }
 
-  /* 하단 버튼 */
   .button_Left {
     margin-top: 18px;
   }
@@ -138,14 +133,12 @@
 
     <div class="page-width">
 
-      <!-- ★ 에러메시지 표시 (디자인 최소 영향, 필요 시에만 표시) -->
       <c:if test="${not empty errorMsg}">
         <div style="color:#d00; margin: 4px 0 6px; font-size: 12px;">
           <c:out value="${errorMsg}"/>
         </div>
       </c:if>
 
-      <!-- 안내문 + 지도 버튼 -->
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
@@ -163,33 +156,25 @@
 
       <br>
 
-      <!-- form: apply / temp -->
       <form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
 
-        <!-- 통근수단 입력화면 이동 URL (追加する용) -->
-        <c:url var="tsukinInputUrl" value="/tsukinInput">
-          <c:param name="mode" value="add"/>
-          <c:param name="shinseiNo" value="${shinseiNo}"/>
-        </c:url>
+        <c:url var="keiroInputUrl" value="/hiwariKinmuchi/keiroInput" />
 
         <div class="route-section">
           <div class="route-head">
-            <!-- ★ 경로탭: 経路＋丸数字, repRouteNo=0일 때도 ①로 보이도록 컨트롤러에서 1로 세팅 -->
             <span class="route-label">
               経路${maruDigits[repRouteNo]}
             </span>
 
-            <!-- ★ 추가하기 버튼: 통근수단 입력 화면으로 이동 -->
             <button type="button"
                     class="route-add"
                     style="border:none;background:none;padding:0;"
-                    onclick="location.href='${tsukinInputUrl}'">
+                    onclick="location.href='${keiroInputUrl}'">
               <img src="/resources/img/tuika_icon.gif" alt="追加">
               追加する
             </button>
           </div>
 
-          <!-- DB 경로 리스트 -->
           <c:forEach var="row" items="${keiroList}">
 
             <c:url var="editUrl" value="/hiwariKinmuchi/keiro/edit">
@@ -218,7 +203,7 @@
 
         <br><br>
 
-        <!-- 하단 버튼 3개 왼쪽 정렬 -->
+      
         <div class="button_Left">
           <div class="button_Left_Group">
 
