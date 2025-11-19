@@ -37,6 +37,11 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
 		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
 	}
+	
+	@Override
+	public ShainVO getShainByShinseiNo(String shinseiNo) {
+		return shinseiMapper.getShainByShinseiNo(shinseiNo);
+	}
 
 	@Override
 	@Transactional
@@ -105,7 +110,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 			return null;
 		}
 
-		// BLOB 竊� JSON �ｬｸ�梵�龍 �ｳ�嶹�
 		String json = new String(row.getData(), StandardCharsets.UTF_8);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -161,6 +165,11 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public String getShinchokuKbn(String shinseiNo) {
 		return shinseiMapper.getShinchokuKbn(shinseiNo);
 	}
+	
+	@Override
+	public String getEmailByShainUid(String shainUid) {
+		return shinseiMapper.getEmailByShainUid(shainUid);
+	}
 
 	@Override
 	public void updateTorikesu(String shinseiNo, String tkComment, String shainUid) {
@@ -175,8 +184,14 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public void insertOshirase(ShainVO shain, String shinseiNo) {
-		shinseiMapper.insertOshirase(shain, shinseiNo);
+	public void insertOshirase(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshirase(loginUser, shinseiUser, shinseiNo);
+		
+		System.out.println("INSERT OSHIRASE 실행됨!!!");
+		System.out.println("loginUser = " + loginUser);
+		System.out.println("shinseiUser = " + shinseiUser);
+		System.out.println("shinseiNo = " + shinseiNo);
+
 	}
 
 	@Override

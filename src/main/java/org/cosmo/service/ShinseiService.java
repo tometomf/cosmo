@@ -15,6 +15,8 @@ public interface ShinseiService {
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
+	
+	ShainVO getShainByShinseiNo(String shinseiNo);
 
 	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
 
@@ -31,12 +33,14 @@ public interface ShinseiService {
 	String getFileName(Long shinseiNo);
 
 	String getShinchokuKbn(String shinseiNo);
+	
+	String getEmailByShainUid(String shainUid);
 
 	void updateTorikesu(String shinseiNo, String tkComment, String shainUid);
 
 	void deleteIchijiHozonByHozonUid(String hozonUid);
 
-	void insertOshirase(ShainVO shain, String shinseiNo);
+	void insertOshirase(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
 	void insertCancelLogs(String shinseiNo, String shinseiKbn, String shinseiYmd, ShainVO shain);
 

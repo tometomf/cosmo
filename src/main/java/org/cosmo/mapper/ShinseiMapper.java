@@ -15,6 +15,8 @@ public interface ShinseiMapper {
 	ShinseiJyohouVO getShinseiJyohou(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinseiNo);
+	
+	ShainVO getShainByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
 	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
@@ -43,7 +45,7 @@ public interface ShinseiMapper {
 
 	void deleteIchijiHozonByHozonUid(String hozonUid);
 
-	void insertOshirase(@Param("shain") ShainVO shain, @Param("shinseiNo") String shinseiNo);
+	void insertOshirase(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser, @Param("shinseiNo") String shinseiNo);
 
 	Long getNextLogSeq(@Param("kigyoCd") String kigyoCd, @Param("shinseiNo") String shinseiNo);
 

@@ -222,6 +222,17 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
+	<select id="getShainByShinseiNo" parameterType="String"
+		resultType="org.cosmo.domain.ShainVO">
+		SELECT
+		SHAIN_UID AS shain_Uid,
+		SHAIN_NO AS shain_No,
+		KIGYO_CD
+		AS kigyo_Cd
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
 	<select id="getFileName" parameterType="Long"
 		resultType="String">
 		SELECT f.name
@@ -298,7 +309,8 @@
 		DATA
 		FROM
 		ICHIJI_HOZON
-		WHERE HOZON_UID = #{hozonUid}
+		WHERE HOZON_UID =
+		#{hozonUid}
 	</select>
 
 
@@ -306,18 +318,30 @@
 		INSERT INTO OSHIRASE (
 		KIGYO_CD,
 		SHAIN_UID,
+		SHAIN_NO,
 		TSUCHI_YMD,
 		TSUCHI_HM,
+		TSUCHISHA_KIGYO_CD,
+		TSUCHISHA_CD,
 		SHINSEI_NO,
 		OSHIRASE_NAIYO,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
 		UPD_DATE
 		) VALUES (
-		#{shain.kigyo_Cd},
-		#{shain.shain_Uid},
+		#{shinseiUser.kigyo_Cd},
+		#{shinseiUser.shain_Uid},
+		#{shinseiUser.shain_No},
 		TO_CHAR(SYSDATE,'YYYYMMDD'),
 		TO_CHAR(SYSDATE,'HH24MI'),
+		#{loginUser.kigyo_Cd},
+		#{loginUser.shain_No},
 		#{shinseiNo},
 		'申請を取り消しました',
+		#{loginUser.shain_Uid},
+		SYSTIMESTAMP,
+		#{loginUser.shain_Uid},
 		SYSTIMESTAMP
 		)
 	</insert>
@@ -619,12 +643,14 @@
 		SHINSEI_RIYU = #{shinseiRiyu},
 		NEW_ZIP_CD = #{newZipCd},
 		NEW_ADDRESS_1 = #{newPref},
-		NEW_ADDRESS_2 = #{newAddress1},
+		NEW_ADDRESS_2 =
+		#{newAddress1},
 		NEW_ADDRESS_3 = #{newAddress2},
-		SHINCHOKU_KBN = '2', 
+		SHINCHOKU_KBN = '2',
 		UPD_USER_ID = #{updUserId},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE KIGYO_CD = #{kigyoCd}
+		WHERE KIGYO_CD =
+		#{kigyoCd}
 		AND SHINSEI_NO = #{shinseiNo}
 	</update>
 
