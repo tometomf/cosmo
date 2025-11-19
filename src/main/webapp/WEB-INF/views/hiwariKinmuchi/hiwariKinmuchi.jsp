@@ -8,74 +8,22 @@
 <meta charset="UTF-8">
 <title>日割 勤務地 入力</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
-<style>
-#main_Content {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 25px;
-	width: 940px;
-	margin: 30px auto;
-	font-size: 13px;
-}
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 
+<style>
 p {
 	line-height: 1.6;
 	margin-bottom: 5px;
 }
 
-.gridTable {
+#form_Ttile1 {
 	display: grid;
-	grid-template-columns: 26% 1fr 22% 1fr;  
-	border: 1px solid #ccc;
-	border-collapse: collapse;
+	grid-template-columns: 1fr 2fr 2fr;
 }
 
-.gridHeader {
-	background-color: #555;
-	color: white;
-	font-weight: bold;
-	text-align: center;
-	padding: 6px 8px;
-	border: 1px solid #ccc;
-}
-
-.gridLabel {
-	background-color: #f4f4f4;
-	font-weight: bold;
-	text-align: left;
-	border: 1px solid #ccc;
-	padding: 6px 8px;
-	line-height: 1.3;        
-	word-break: keep-all;     
-	white-space: normal;      
-}
-
-.gridCell {
-	border: 1px solid #ccc;
-	padding: 6px 8px;
-	vertical-align: middle;
-}
-
-input[type="text"], select {
-	padding: 2px 4px;
-	font-size: 13px;
-}
-
-button {
-	padding: 2px 6px;
-	font-size: 12px;
-	cursor: pointer;
-	margin-left: 4px;
-}
-
-.button_Left_Group img {
-	cursor: pointer;
-	transition: 0.2s;
-}
-
-.button_Left_Group img:hover {
-	opacity: 0.85;
+#form_Text1 {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr;
 }
 </style>
 </head>
@@ -97,66 +45,99 @@ button {
 				<div class="subtitle">日割 勤務地 入力</div>
 			</div>
 
-			<div id="main_Content">
-				<p>
-					日割期間の勤務地を入力してください。<br>
-					勤務地を選択後、「次へ」ボタンをクリックしてください。
+			<div class="kin">
+				<p style="width: 1010px; margin: 0 auto 15px auto;">
+					日割期間の勤務地を入力してください。<br> 勤務地を選択後、「次へ」ボタンをクリックしてください。
 				</p>
 
-				<div class="gridTable">
-					<!-- 제목 행 -->
-					<div class="gridHeader" style="grid-column: span 2;">現勤務地</div>
-					<div class="gridHeader" style="grid-column: span 2;">日割期間 勤務地</div>
 
-					<div class="gridLabel">勤務地コード</div>
-					<div class="gridCell">1234</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<input type="text" value="5678" style="width:70px;">
-						<button type="button">検索</button>
+
+				<div class="content_Form1" style="margin-top: 20px;">
+					<!-- 제목예제1 -->
+					<div class="form_Title1" id="form_Ttile1">
+						<div></div>
+						<div>現勤務地</div>
+						<div>日割期間 勤務地</div>
 					</div>
 
-					<div class="gridLabel">勤務地先</div>
-					<div class="gridCell">中野店</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<select style="width:120px;">
-							<option selected>江戸川店</option>
-							<option>品川店</option>
-							<option>目黒店</option>
-						</select>
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">勤務先コード</div>
+						<div class="form_Normal">123</div>
+						<div class="form_Normal">
+							<div style="display: flex; align-items: center; gap: 4px;">
+								<input type="text" maxlength="3"
+									style="width: 120px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
+								<button type="button" style="height: 24px;">検索</button>
+							</div>
+						</div>
 					</div>
 
-					<div class="gridLabel">郵便番号</div>
-					<div class="gridCell">164-0012</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<input type="text" value="134" style="width:40px;"> -
-						<input type="text" value="4567" style="width:60px;">
-						<button type="button">検索</button>
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">勤務先</div>
+						<div class="form_Normal">中野店</div>
+						<div class="form_Normal">
+							<select style="width: 120px;">
+								<option selected>江戸川店</option>
+								<option>品川店</option>
+								<option>目黒店</option>
+							</select>
+						</div>
 					</div>
 
-					<div class="gridLabel">都道府県</div>
-					<div class="gridCell">東京都</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<input type="text" value="東京都" style="width:120px;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">郵便番号</div>
+						<div class="form_Normal">164-0012</div>
+						<div class="form_Normal">
+							<div style="display: flex; align-items: center; gap: 4px;">
+								<input type="text" name="zip1" maxlength="3"
+									style="width: 40px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
+								<span>-</span> <input type="text" name="zip2" maxlength="4"
+									style="width: 60px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);">
+								<button type="button" style="height: 24px;"
+									onclick="AjaxZip3.zip2addr('zip1','zip2','prefecture','city');">検索</button>
+							</div>
+						</div>
 					</div>
 
-					<div class="gridLabel">所在地1</div>
-					<div class="gridCell">中野区本町3-30-4</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<input type="text" value="江戸川区船堀2-1-5" style="width:96%;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">都道府県</div>
+						<div class="form_Normal">東京都</div>
+						<div style="display: flex; align-items: center; gap: 4px;">
+							<input type="text" name="prefecture"
+								style="width: 100px; height: 20px;" readonly>
+						</div>
 					</div>
 
-					<div class="gridLabel">所在地2（建物名等）</div>
-					<div class="gridCell">KDX中野坂上ビル8F</div>
-					<div class="gridCell" style="grid-column: span 2;">
-						<input type="text" value="江戸川店" style="width:96%;">
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">所在地1</div>
+						<div class="form_Normal">中野区本町3-30-4</div>
+						<div style="display: flex; align-items: center; gap: 4px;">
+							<input type="text" name="city"
+								style="width: 380px; height: 20px;" readonly>
+						</div>
 					</div>
+
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">所在地2（建物名等）</div>
+						<div class="form_Normal">KDX中野坂上ビル8F</div>
+						<div style="display: flex; align-items: center; gap: 4px;">
+							<input type="text" style="width: 380px; height: 20px;">
+						</div>
+					</div>
+
 				</div>
 
-				<div class="button_Left" style="margin-top:25px;">
+
+				<div class="button_Left" style="margin-top: 25px;">
 					<div class="button_Left_Group">
-						<img src="/resources/img/back_btn01.gif" alt="戻る">
-						<img src="/resources/img/next_btn01.gif" alt="次へ">
-						<img src="/resources/img/hozon_btn01.gif" alt="一時保存">
+						<img src="/resources/img/back_btn01.gif" alt="戻る"
+							style="cursor: pointer;" onclick="location.href='/'"> <img
+							src="/resources/img/next_btn01.gif" alt="次へ"
+							style="cursor: pointer;" onclick="location.href='/hiwariKinmuchi/address'"> <img
+							src="/resources/img/hozon_btn01.gif" alt="一時保存">
 					</div>
 				</div>
 			</div>
@@ -164,5 +145,7 @@ button {
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+
 </body>
 </html>

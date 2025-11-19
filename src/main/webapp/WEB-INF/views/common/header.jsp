@@ -26,7 +26,7 @@
 			</div>
 			<div>
 				<div class = "userInfo_Title">所属名</div>
-				<div class = "userInfo_Text"></div>
+				<div class = "userInfo_Text">${shain.shozoku_Nm }</div>
 			</div>
 			<div>
 				<div class = "userInfo_Title">現役職</div>

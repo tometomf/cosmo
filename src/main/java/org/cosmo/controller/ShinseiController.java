@@ -11,6 +11,8 @@ import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.service.ShinseiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,9 @@ public class ShinseiController {
 
 	@Autowired
 	private ShinseiService shinseiService;
+
+	@Autowired
+	private JavaMailSender mailSender;
 
 	@GetMapping("/ichiji")
 	public String showIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
@@ -115,8 +120,7 @@ public class ShinseiController {
 			@RequestParam("shinseiKbn") String shinseiKbn, @RequestParam("shinseiYmd") String shinseiYmd,
 			HttpSession session, Model model) {
 
-		ShainVO shain = (ShainVO) session.getAttribute("shain");
-		String shainUid = shain.getShain_Uid();
+		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
 
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
 
@@ -132,26 +136,39 @@ public class ShinseiController {
 		// 신청구분1(임시저장) + 신청번호 ㅇ / 신청구분3(반려) : 취소처리
 		if (hasShinseiNo && hozonUid != null && !hozonUid.trim().isEmpty()) {
 
-			shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
-			shinseiService.insertOshirase(shain, shinseiNo);
-			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
+			ShainVO shinseiUser = shinseiService.getShainByShinseiNo(shinseiNo);
+			String email = shinseiService.getEmailByShainUid(shinseiUser.getShain_Uid());
+
+			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
+			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
+			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
 
 			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
 			shinseiService.deleteShinseiByShinseiNo(shinseiNo);
+			
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(email);
+			message.setSubject("申請取消のご案内");
+			message.setText("ご申請内容につきまして、取消処理が完了しましたのでご連絡申し上げます。");
 
-			return "home";
+			mailSender.send(message);
+
+			return "/huzuiNewInput/26_huzuiKanryo";
 		}
 
 		if ("3".equals(shinchokuKbn)) {
 
-			shinseiService.updateTorikesu(shinseiNo, tkComment, shainUid);
-			shinseiService.insertOshirase(shain, shinseiNo);
-			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, shain);
+			ShainVO shinseiUser = shinseiService.getShainByShinseiNo(shinseiNo);
 
-			return "home";
+			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
+			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
+			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
+			
+
+			return "/huzuiNewInput/26_huzuiKanryo";
 		}
 
-		return "home";
+		return "/huzuiNewInput/26_huzuiKanryo";
 	}
 
 	@PostMapping("/saishinsei")
