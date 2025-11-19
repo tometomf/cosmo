@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>title</title>
+<title>特例申請</title>
 	<link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 </head>
 <style>
@@ -76,6 +76,7 @@
 .confirm_box {
   text-align: center;
   margin-top: 60px;
+  margin-bottom: 20px;
   font-size: 14px;
 }
 
@@ -134,6 +135,10 @@
 		<div class="main">
 			<div class = "main_title">
 			
+<form id="tokureiForm" method="post" action="/tokurei/submit">
+
+<input type="hidden" name="shinseiNo" value="${shinseiNo}">
+<input type="hidden" name="tokureiType" value="${tokureiType}">			
 			
 <div class="wrapper">
   <!-- 노란 경고 박스 -->
@@ -144,45 +149,84 @@
   </div>
 
   <!-- 안내문 박스 -->
-  <div class="notice_box">
-    <p>上限金額を超過しているため、特例申請となります。</p>
+<!-- ==== 특례 타입별 문구 자동 변경 ==== -->
+<c:set var="tokureiType" value="${tokureiType}" />
 
-    <p>
-      特例申請を行う場合、特例申請理由を入力する欄が表示されます。<br>
-      <span class="highlight_red">
-        特例申請理由は入力必須であり、入力せずに申請することはできません。
-      </span>
-    </p>
+<c:choose>
 
-    <p>
-      特例申請は、申請理由をレオパレス・リーシングおよび(企業名)ご担当者様で確認の上、承認させていただきます。
-    </p>
+    <c:when test="${tokureiType == 'A'}">
+        <div class="notice_box">
+            <p>上限金額を超過しているため、特例申請となります。</p>
+            <p>
+                特例申請を行う場合、特例申請理由を入力する欄が表示されます。<br>
+                <span class="highlight_red">
+                    特例申請理由は入力必須であり、入力せずに申請することはできません。
+                </span>
+            </p>
+            <p>
+                特例申請は、申請理由をレオパレス・リーシングおよび(企業名)ご担当者様で確認の上、承認させていただきます。
+            </p>
+        </div>
+    </c:when>
+
+    <c:when test="${tokureiType == 'B'}">
+        <div class="notice_box">
+            <p>下限距離を下回っているため、特例申請となります。</p>
+            <p>
+                特例申請を行う場合、特例申請理由を入力する欄が表示されます。<br>
+                <span class="highlight_red">
+                    特例申請理由は必ず入力してください。
+                </span>
+            </p>
+            <p>
+                入力された理由はレオパレス・リーシングおよび(企業名)ご担当者様が確認し、承認可否を判断します。
+            </p>
+        </div>
+    </c:when>
+
+</c:choose>
+
+
+
+
+    
   </div>
+  
 </div>
 
-
+<!-- 특례 체크 -->
 <div class="confirm_box">
   <label>
-    <input type="radio" name="agree" value="yes">
+    <input type="radio" name="agree" value="1" id="agreeRadio">
     <span class="underline_text">特例について内容を理解した上で申請します。</span>
   </label>
 </div>
 
-
-<div class="reason_wrapper">
+<!-- 이유 입력 (처음엔 숨김) -->
+<div class="reason_wrapper" id="reasonBox" style="display:none;">
   <div class="reason_label">特例申請理由</div>
   <div class="reason_field">
-    <textarea class="reason_textarea"></textarea>
+    <textarea class="reason_textarea"  name="tokureiReason" id="reason"></textarea>
   </div>
 </div>
 
 <div class = "button_Center">
 				<div class = "button_Center_Group">
-					<div><img src="/resources/img/back_btn01.gif" alt="back_btn01"></div>
-					<div><img src="/resources/img/shinsei_btn01.gif" alt="shinsei_btn01"></div>
+
+					<div>
+						<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+								 style="cursor:pointer;" 
+								 onclick="location.href='/idoconfirm/kakuninpage';">
+					</div>
+					<div>
+						<img src="/resources/img/shinsei_btn01.gif" alt="shinsei_btn01"
+						   		 id="submitBtn"
+           						 style="display:none;">
+           			</div>
+
 				</div>
-			</div>
-	
+</div>
+</form>
 
 			</div>
 			
@@ -190,5 +234,30 @@
 			<div></div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+	
+<script>
+window.onload = function() {
+
+    const radio = document.getElementById("agreeRadio");
+    const reasonBox = document.getElementById("reasonBox");
+    const submitBtn = document.getElementById("submitBtn");
+    const form = document.getElementById("tokureiForm");
+
+    // 라디오 체크되면 textarea + 신청버튼 활성화
+    radio.addEventListener("change", function() {
+        reasonBox.style.display = "grid";
+        
+        submitBtn.style.display = "inline";   // 숨긴 버튼 보이게
+        submitBtn.style.cursor = "pointer";
+
+        submitBtn.onclick = function() {
+            form.submit();
+        }
+    });
+};
+</script>
+	
+
 </body>
 </html>
