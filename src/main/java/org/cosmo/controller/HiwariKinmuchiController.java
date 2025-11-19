@@ -27,15 +27,19 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKinmuchiService service;
 
-    // =========================
-    // ① 勤務地 입력 화면
-    // =========================
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
+
+        // =========================
+        // ① 勤務地 
+        // =========================
 
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
         Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+
+        if (kigyoCd == null) kigyoCd = 1001;   // ← テスト用企業コード
+        if (shainUid == null) shainUid = 1L;   // ← テスト用社員UID
 
         HiwariKinmuchiVO data;
 

@@ -2,25 +2,34 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-/**
- * “úŠ„‹Î–±’n ‰Šú•\¦ VO
- */
 @Data
 public class HiwariKinmuchiVO {
 
-    // Š‘®
-    private String shozokuCd;     // Š‘®ƒR[ƒh
-    private String shozokuNm;     // Š‘®–¼
+    // ===========================
+    // ç”³è«‹å‰ã®æ‰€å±æƒ…å ±
+    // ===========================
+    private String beforeShozokuCd;   // ç”³è«‹å‰ï¼‰ç¤¾å“¡Mï¼æ‰€å±ã‚³ãƒ¼ãƒ‰
+    private String beforeShozokuNm;   // ç”³è«‹å‰ï¼‰æ‰€å±Mï¼æ‰€å±å
 
-    // Œ»‹Î–±’niŠù‘¶FSHAINj
-    private String kinmuZipCd;    // ‹Î–±’n—X•Ö”Ô†
-    private String kinmuPrefCd;   // ‹Î–±’n ZŠi“s“¹•{Œ§j
-    private String kinmuAddress1; // ‹Î–±’n ZŠis‹æ’¬‘ºE”Ô’nj
-    private String kinmuAddress2; // ‹Î–±’n ZŠiŒš•¨j
+    // ===========================
+    // ç”³è«‹å¾Œã®æ‰€å±æƒ…å ±
+    // ===========================
+    private String afterShozokuCd;    // ç”³è«‹å¾Œï¼‰ç”³è«‹Tï¼ç¾æ‰€å±ã‚³ãƒ¼ãƒ‰
+    private String afterShozokuNm;    // ç”³è«‹å¾Œï¼‰æ‰€å±Mï¼æ‰€å±å
 
-    // V‹Î–±’ni\¿Œã‚Ì‚İFSHINSEIj
-    private String newKinmuAddress1; // V‹Î–±’n s‹æ’¬‘ºE”Ô’n
-    private String newKinmuAddress2; // V‹Î–±’n Œš•¨
+    // ===========================
+    // æ—¢å­˜ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ï¼ˆå‹¤å‹™åœ°ãƒ»ä½æ‰€é–¢é€£ï¼‰
+    // ===========================
+    private String shozokuCd;         // æ‰€å±ã‚³ãƒ¼ãƒ‰
+    private String shozokuNm;         // æ‰€å±å
 
-    private Long shinseiNo;       // \¿”Ô†i\¿Œã‚Ì‚İƒZƒbƒgj
+    private String kinmuZipCd;        // ç¾å‹¤å‹™åœ°ï¼šéƒµä¾¿ç•ªå·
+    private String kinmuPrefCd;       // ç¾å‹¤å‹™åœ°ï¼šéƒ½é“åºœçœŒã‚³ãƒ¼ãƒ‰
+    private String kinmuAddress1;     // ç¾å‹¤å‹™åœ°ï¼šä½æ‰€1
+    private String kinmuAddress2;     // ç¾å‹¤å‹™åœ°ï¼šä½æ‰€2
+
+    private String newKinmuAddress1;  // æ—¥å‰²æœŸé–“å‹¤å‹™åœ°ï¼šä½æ‰€1
+    private String newKinmuAddress2;  // æ—¥å‰²æœŸé–“å‹¤å‹™åœ°ï¼šä½æ‰€2
+
+    private Long shinseiNo;           // ç”³è«‹ç•ªå·
 }

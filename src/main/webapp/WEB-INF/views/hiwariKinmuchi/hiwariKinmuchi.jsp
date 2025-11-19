@@ -75,7 +75,7 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">勤務先</div>
-						<div class="form_Normal">中野店</div>
+						<div class="form_Normal">${initData.beforeShozokuNm}</div>
 						<div class="form_Normal">
 							<select style="width: 120px;">
 								<option selected>江戸川店</option>

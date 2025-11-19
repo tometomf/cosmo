@@ -13,11 +13,11 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
 
     @Override
     public HiwariKinmuchiVO getBeforeShinsei(Integer kigyoCd, Long shainUid) {
-        return mapper.selectBeforeShinsei(kigyoCd, shainUid);
+        return mapper.getBeforeShinsei(kigyoCd, shainUid);
     }
 
     @Override
     public HiwariKinmuchiVO getAfterShinsei(Integer kigyoCd, Long shainUid, Long shinseiNo) {
-        return mapper.selectAfterShinsei(kigyoCd, shainUid, shinseiNo);
+        return mapper.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
     }
 }
