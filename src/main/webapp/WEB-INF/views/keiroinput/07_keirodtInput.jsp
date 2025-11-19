@@ -271,7 +271,9 @@
 </head>
 <body>
 	<div class="layout">
+
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
+
 		<div class="main">
 			<!-- <div class="subtitle"> -->
 			<div class="flow">
@@ -577,6 +579,9 @@
 
 <script>
 		
+
+
+
 	const teikiken = [
 		{
 		name : "東武東上線",
@@ -604,8 +609,8 @@
 		}
 	]
 	
-	const shozokuCD = '${sessionScope.shain.shozoku_Cd}'
-	
+    const shozokuCD = '${sessionScope.shain.shozoku_Cd}'.trim();
+
 	function chargeList(){
 		const container = document.getElementById("chargeContainer");
 		container.innerHTML = "";
