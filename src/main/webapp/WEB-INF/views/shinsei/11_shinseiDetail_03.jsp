@@ -78,10 +78,8 @@
 		console.log('=== applyAddressFromCheck 호출됨 ===');
 		console.log('받은 값: pref=' + pref + ', addr1=' + addr1 + ', addr2='
 				+ addr2 + ', lat=' + lat + ', lng=' + lng);
-		console.log("addressChgKbnHidden 최종값 = " + flgElement.value);
 
 		try {
-
 			var latNum = Number(lat);
 			var lngNum = Number(lng);
 
@@ -126,32 +124,35 @@
 
 			var idoKeidoElement = document
 					.getElementById("addressIdoKeidoHidden");
+			var oldIdoKeidoElement = document
+					.getElementById("oldAddressIdoKeido");
+			var flgElement = document.getElementById("addressChgKbnHidden");
 
 			if (!idoKeidoElement) {
 				console.error('addressIdoKeidoHidden 요소를 찾을 수 없습니다.');
 				alert('緯度経度の保存領域が見つかりません。');
 				return;
 			}
-
-			idoKeidoElement.value = newIdoKeido;
-			console.log('新しい緯度経度: ' + newIdoKeido);
-
-			var oldIdoKeidoElement = document
-					.getElementById("oldAddressIdoKeido");
-			var flgElement = document.getElementById("addressChgKbnHidden");
-
 			if (!flgElement) {
 				console.error('addressChgKbnHidden 요소를 찾을 수 없습니다.');
 				alert('住所変更フラグの保存領域が見つかりません。');
 				return;
 			}
 
+			// 여기서 찍어야 함 (이제 flgElement가 존재)
+			console.log("addressChgKbnHidden 최종값 = "
+					+ (flgElement.value || '(未設定)'));
+
+			idoKeidoElement.value = newIdoKeido;
+			console.log('新しい緯度経度: ' + newIdoKeido);
+
 			var oldVal = oldIdoKeidoElement ? oldIdoKeidoElement.value : '';
 
 			console.log('修正前緯度経度: ' + oldVal);
 			console.log('修正後緯度経度: ' + newIdoKeido);
 
-			if (oldVal && oldVal.trim() !== '' && oldVal !== newIdoKeido) {
+			if (newIdoKeido && newIdoKeido.trim() !== ''
+					&& oldVal !== newIdoKeido) {
 				flgElement.value = "1";
 				console.log('住所変更フラグ: 1 (変更あり)');
 				alert("住所情報が更新されました。\n緯度経度: " + newIdoKeido
@@ -260,6 +261,11 @@
 
 		location.href = url;
 	}
+
+	function submitBackForm() {
+		document.getElementById("backForm").submit();
+	}
+	
 </script>
 <style>
 /* ====== 테이블 구조 ====== */
@@ -377,7 +383,7 @@
 								type="text" id="zipCode2" name="zip2" maxlength="4"
 								style="width: 60px; text-align: center;">
 							<button type="button" style="padding: 2px 8px;"
-								onclick="AjaxZip3.zip2addr('zip1','zip2','prefecture','address1','address2');">検索</button>
+								onclick="AjaxZip3.zip2addr('zipCode1','zipCode2','prefectureSelect','address1Input','address2Input');">検索</button>
 						</div>
 						<!-- 도도부현 -->
 						<div>
@@ -916,7 +922,7 @@
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 	</form>
 
-	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
+	<form id="reapplyForm" action="<c:url value='/idoconfirm/kanryoPage'/>" method="get">
 		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 

@@ -204,7 +204,7 @@ public class ShinseiController {
 				loginUserId, userIp);
 
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
-		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;
+		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;  
 	}
 
 	@GetMapping("/shinseiDetail")
