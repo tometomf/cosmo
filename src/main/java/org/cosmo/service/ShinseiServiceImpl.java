@@ -268,26 +268,33 @@ public class ShinseiServiceImpl implements ShinseiService {
 
 	@Override
 	@Transactional
-	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newPref,
-			String newAddress1, String newAddress2, String jitsuKinmuNissu, String loginUserId, String userIp) {
+	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
+			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
+			String addressChgKbn, String loginUserId, String userIp) {
 
 		Integer updUserId = null;
 		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
 			try {
 				updUserId = Integer.valueOf(loginUserId.trim());
 			} catch (NumberFormatException e) {
-
+				// 변환 실패하면 그냥 null 유지
 			}
 		}
 
-		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newPref, newAddress1,
-				newAddress2, updUserId);
+		// ★ 1) 주소 + 위도경도 + 플래그 업데이트
+		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2,
+				newAddress3, addressIdoKeido, addressChgKbn, updUserId);
 
+		// ★ 2) 실근무일수 변환
 		Integer jitsu = null;
 		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
-			jitsu = Integer.valueOf(jitsuKinmuNissu.trim());
+			try {
+				jitsu = Integer.valueOf(jitsuKinmuNissu.trim());
+			} catch (NumberFormatException e) {
+			}
 		}
 
+		// ★ 3) 경로 쪽 업데이트
 		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
 	}
 

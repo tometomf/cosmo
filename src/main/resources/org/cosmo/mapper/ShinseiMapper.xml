@@ -298,7 +298,8 @@
 		DATA
 		FROM
 		ICHIJI_HOZON
-		WHERE HOZON_UID = #{hozonUid}
+		WHERE HOZON_UID =
+		#{hozonUid}
 	</select>
 
 
@@ -613,19 +614,21 @@
 
 
 
-	<update id="updateShinseiForReapply">
-		UPDATE SHINSEI
-		SET
-		SHINSEI_RIYU = #{shinseiRiyu},
+	<update id="updateShinseiForReapply" parameterType="map">
+		UPDATE
+		SHINSEI
+		SET SHINSEI_RIYU = #{shinseiRiyu},
 		NEW_ZIP_CD = #{newZipCd},
-		NEW_ADDRESS_1 = #{newPref},
-		NEW_ADDRESS_2 = #{newAddress1},
-		NEW_ADDRESS_3 = #{newAddress2},
-		SHINCHOKU_KBN = '2', 
-		UPD_USER_ID = #{updUserId},
+		NEW_ADDRESS_1 = #{newAddress1},
+		NEW_ADDRESS_2 = #{newAddress2},
+		NEW_ADDRESS_3 = #{newAddress3},
+		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
+		ADDRESS_CHG_KBN = #{addressChgKbn},
+		UPD_USER_ID = #{updUserId, jdbcType=NUMERIC},
 		UPD_DATE = SYSTIMESTAMP
 		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO = #{shinseiNo}
+		AND SHINSEI_NO =
+		#{shinseiNo}
 	</update>
 
 
@@ -637,12 +640,11 @@
 		UPDATE SHINSEI_START_KEIRO
 		SET JITSU_KINMU_NISSU =
 		#{jitsuKinmuNissu}
-		, UPD_USER_ID = #{updUserId}
+		, UPD_USER_ID = #{updUserId, jdbcType=NUMERIC}
 		, UPD_DATE =
 		SYSTIMESTAMP
 		WHERE KIGYO_CD = #{kigyoCd}
 		AND SHINSEI_NO = #{shinseiNo}
-		AND KEIRO_SEQ = 1
 	</update>
 
 

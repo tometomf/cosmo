@@ -50,7 +50,8 @@ public interface ShinseiService {
 
 	void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId);
 
-	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newPref,
-			String newAddress1, String newAddress2, String jitsuKinmuNissu, String loginUserId, String userIp);
+	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
+			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
+			String addressChgKbn, String loginUserId, String userIp);
 
 }

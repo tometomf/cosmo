@@ -159,10 +159,12 @@ public class ShinseiController {
 			@RequestParam("shinseiRiyu") String shinseiRiyu,
 
 			@RequestParam(value = "newZipCd", required = false) String newZipCd,
-			@RequestParam(value = "newPref", required = false) String newPref,
 			@RequestParam(value = "newAddress1", required = false) String newAddress1,
 			@RequestParam(value = "newAddress2", required = false) String newAddress2,
+			@RequestParam(value = "newAddress3", required = false) String newAddress3,
 			@RequestParam(value = "jitsuKinmuNissu", required = false) String jitsuKinmuNissu,
+			@RequestParam(value = "addressIdoKeido", required = false) String addressIdoKeido,
+			@RequestParam(value = "addressChgKbn", required = false) String addressChgKbn,
 
 			HttpSession session, HttpServletRequest request, RedirectAttributes rttr) {
 
@@ -176,8 +178,10 @@ public class ShinseiController {
 		String userIp = request.getRemoteAddr();
 
 		// ★ 여기 순서가 서비스 시그니처랑 1:1로 일치해야 함
-		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newPref, newAddress1, newAddress2,
-				jitsuKinmuNissu, loginUserId, userIp);
+		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
+				jitsuKinmuNissu, addressIdoKeido, // ★ 추가
+				addressChgKbn, // ★ 추가
+				loginUserId, userIp);
 
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
 		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;
@@ -287,4 +291,10 @@ public class ShinseiController {
 		return "redirect:/shinsei/list";
 	}
 
+	@GetMapping("/addressCheck")
+	public String addressCheck(@RequestParam(required = false) String zip, @RequestParam(required = false) String pref,
+			@RequestParam(required = false) String addr1, @RequestParam(required = false) String addr2, Model model) {
+
+		return "shinsei/addressCheck";
+	}
 }

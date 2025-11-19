@@ -89,8 +89,9 @@ public interface ShinseiMapper {
 
 	void updateShinseiForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("shinseiRiyu") String shinseiRiyu, @Param("newZipCd") String newZipCd,
-			@Param("newPref") String newPref, @Param("newAddress1") String newAddress1,
-			@Param("newAddress2") String newAddress2, @Param("updUserId") Integer updUserId);
+			@Param("newAddress1") String newAddress1, @Param("newAddress2") String newAddress2,
+			@Param("newAddress3") String newAddress3, @Param("addressIdoKeido") String addressIdoKeido,
+			@Param("addressChgKbn") String addressChgKbn, @Param("updUserId") Integer updUserId);
 
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
