@@ -42,29 +42,29 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Transactional
 	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
 
-		// 신청정보조회
+		// �侠�ｲｭ��簿ｳｴ�｡ｰ巐�
 		ShinseiJyohouVO jyohou = shinseiMapper.getShinseiJyohou(shinseiNo);
 		if (jyohou == null) {
-			// 신청정보없으면 에러
-			throw new IllegalStateException("申請情報が存在しません。(申請番号=" + shinseiNo + ")");
+			// �侠�ｲｭ��簿ｳｴ�螺�愍�ｩｴ �乱�洳
+			throw new IllegalStateException("逕ｳ隲区ュ蝣ｱ縺悟ｭ伜惠縺励∪縺帙ｓ縲�(逕ｳ隲狗分蜿ｷ=" + shinseiNo + ")");
 		}
-		String shinseiKbn = jyohou.getShinseiKbn(); // 신청구분 코드
-		String shinseiYmd = jyohou.getShinseiYmd(); // 신청일자
+		String shinseiKbn = jyohou.getShinseiKbn(); // �侠�ｲｭ�ｵｬ�ｶ� �ｽ罷糖
+		String shinseiYmd = jyohou.getShinseiYmd(); // �侠�ｲｭ�攵�梵
 
-		// 상태 일시보존으로 되돌리기
+		// �メ夋� �攵�亨�ｳｴ�｡ｴ�愍�｡� �据�曙�ｦｬ�ｸｰ
 		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
 
-		// 신청일자 null로 변경. 없는신청으로 침
+		// �侠�ｲｭ�攵�梵 null�｡� �ｳ��ｲｽ. �螺�株�侠�ｲｭ�愍�｡� �ｹｨ
 		shinseiMapper.updateAlertForHikimodoshi(kigyoCd, shinseiNo, loginUserId);
 
-		String kigyoCdStr = String.valueOf(kigyoCd); // 매퍼 로그 메서드들은 String 사용
+		String kigyoCdStr = String.valueOf(kigyoCd); // �ｧ､寘ｼ �｡懋ｷｸ �ｩ肥�罹糖�豆�捩 String �ぎ�圸
 		String shinseiNoStr = String.valueOf(shinseiNo);
 
-		int syoriKbn = 6; // 6번 hikimodoshi
-		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); // 다음 LOG_SEQ 채번
+		int syoriKbn = 6; // 6�ｲ� hikimodoshi
+		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); // �共�搆 LOG_SEQ �ｱ�ｲ�
 
-		// 로그에 INSERT
-		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, // 6 : 引戻し
+		// �｡懋ｷｸ�乱 INSERT
+		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, // 6 : 蠑墓綾縺�
 				shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
 		);
 
@@ -105,7 +105,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 			return null;
 		}
 
-		// BLOB → JSON 문자열 변환
+		// BLOB 竊� JSON �ｬｸ�梵�龍 �ｳ�嶹�
 		String json = new String(row.getData(), StandardCharsets.UTF_8);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -114,11 +114,12 @@ public class ShinseiServiceImpl implements ShinseiService {
 		try {
 			vo = mapper.readValue(json, ShinseiIcDataVO.class);
 		} catch (Exception e) {
-			throw new RuntimeException("임시저장 데이터 변환 오류", e);
+			throw new RuntimeException("�桷�亨����棗 �魂�擽奓ｰ �ｳ�嶹� �丶�･�", e);
 		}
 
-		if (vo.getShinseiKbn() != null && !vo.getShinseiKbn().isEmpty()) {
-			String shinseiName = shinseiMapper.getShinseiName(vo.getShinseiKbn());
+		if (row.getShinseiKbn() != null && !row.getShinseiKbn().isEmpty()) {
+			vo.setShinseiKbn(row.getShinseiKbn());
+			String shinseiName = shinseiMapper.getShinseiName(row.getShinseiKbn());
 			vo.setShinseiName(shinseiName);
 		}
 
@@ -241,7 +242,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 		}
 
 		if (hozonUid == null) {
-			throw new RuntimeException("hozonUidがありません。");
+			throw new RuntimeException("hozonUid縺後≠繧翫∪縺帙ｓ縲�");
 		}
 
 		ShinseiIcDataVO ichijiVo = getIcData(hozonUid);

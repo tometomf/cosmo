@@ -294,6 +294,7 @@
 		SELECT
 		HOZON_UID AS hozonUid,
 		USER_UID AS userUid,
+		SHINSEI_KBN AS shinseiKbn,
 		DATA
 		FROM
 		ICHIJI_HOZON
