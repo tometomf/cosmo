@@ -50,7 +50,8 @@ public class KeiroInputController {
 	}
 
 	@GetMapping("/07_keirodtInput_02")
-	public String bus(Locale locale, Model model) {
+	public String bus(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale,
+			Model model) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -58,10 +59,11 @@ public class KeiroInputController {
 		String formattedDate = dateFormat.format(date);
 
 		model.addAttribute("serverTime", formattedDate);
+	    model.addAttribute("shudanType", shudanType);
 
 		return "keiroinput/07_keirodtInput_02";
 	}
-
+	
 	@GetMapping("/07_keirodtInput_04")
 	public String toho(Locale locale, Model model) {
 
@@ -130,6 +132,7 @@ public class KeiroInputController {
 	@PostMapping("/tempSave")
     public String tempSaveCommute(
             @RequestParam("commuteJson") String commuteJson,
+            @RequestParam("url") String url,
             HttpSession session) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
@@ -141,6 +144,8 @@ public class KeiroInputController {
         if (shinseiKbn == null || shinseiKbn.isEmpty()) {
             shinseiKbn = "01";
         }
+        
+        System.out.println(url);
 
         byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
 
@@ -155,6 +160,7 @@ public class KeiroInputController {
         dto.setUpdUserId(userUid);
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
+        oshiraseService.saveTempOshirase(shain);
 
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
@@ -182,7 +188,7 @@ public class KeiroInputController {
 	             + ", keiroSeq=" + keiroSeq);
 
 	     keiroInputservice.saveViaPlace1(kigyoCd, shinseiNo, keiroSeq, viaPlace1);
-
+	     
 	     System.out.println(">>> saveViaPlace1 end");
 	     return "OK";
 	 }

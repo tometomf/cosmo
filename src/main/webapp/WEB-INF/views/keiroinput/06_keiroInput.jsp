@@ -211,6 +211,7 @@
         <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
             <!-- ShinseiIcDataVO 구조의 JSON 문자열 -->
             <input type="hidden" name="commuteJson" value="">
+            <input type="hidden" name="url" value="/keiroinput/06_keiroinput">
         </form>
 
     </div>
@@ -244,7 +245,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
     const radios   = document.querySelectorAll('input[name="way"]');
 
-    // 1) 경로 상세 입력 화면으로 이동 (기존 기능)
+ 	// 통근수단 value → 코드 매핑 (CODE 103과 맞춰서 사용하는 코드)
+    const TSUKIN_SHUDAN_MAP = {
+        densha: "1",   // 電車
+        bus:    "2",   // バス
+        car:    "3",   // 自動車
+        toho:   "6",   // 徒歩
+        other:  "7"    // その他
+    };
+ 	
     keiroBtn.addEventListener('click', function() {
         const selected = document.querySelector('input[name="way"]:checked');
         if (!selected) {
@@ -252,36 +261,33 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        let url = "";
-        switch (selected.value) {
+        const value = selected.value;
+        let baseUrl = "";
+
+        switch (value) {
             case "densha":
-                url = "07_keirodtInput";
+                baseUrl = "<c:url value='/keiroinput/07_keirodtInput'/>";
                 break;
             case "bus":
-                url = "07_keirodtInput_02";
-                break;
-            case "toho":
-                url = "07_keirodtInput_04";
+            case "other":
+                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
                 break;
             case "car":
-                url = "07_keirodtInput_03";
+                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
                 break;
-            case "other":
-                alert("その他ページは未設定です。");
-                return;
+            case "toho":
+                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
+                break;
         }
 
-        window.location.href = url;
-    });
+        const urlObj = new URL(baseUrl, window.location.origin);
 
- // 통근수단 value → 코드 매핑 (CODE 103과 맞춰서 사용하는 코드)
-    const TSUKIN_SHUDAN_MAP = {
-        densha: "01",   // 電車
-        bus:    "02",   // バス
-        car:    "03",   // 自動車
-        toho:   "04",   // 徒歩
-        other:  "99"    // その他
-    };
+        if (value === "bus" || value === "other") {
+            urlObj.searchParams.set("shudanType", TSUKIN_SHUDAN_MAP[value]);
+        }
+
+        window.location.href = urlObj.toString();
+    });
 
     hozonBtn.addEventListener('click', function () {
         const selected = document.querySelector('input[name="way"]:checked');
@@ -297,10 +303,8 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // 라디오 옆에 표시된 일본어 텍스트 (電車, バス, …)
         const labelText = selected.parentElement.textContent.trim();
 
-        // 🔹 ShinseiIcDataVO 구조에 맞춘 임시저장용 JSON
         const shinseiIcData = {
             // 공통 정보 – 이 화면엔 없으니 일단 null/빈값
             kigyoCd:   keiro.kigyoCd || null,
@@ -326,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function() {
             codeNm: null,
             shinseiName: null,
 
-            // 🔸 통근경로 정보 (ShinseiKeiroVO로 매핑)
+            // 통근경로 정보 
             keiro: {
                 tsukinShudan: kbn,        // ShinseiKeiroVO.tsukinShudan
                 shudanName:   labelText   // ShinseiKeiroVO.shudanName
@@ -341,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("tsukinTempForm");
         form.querySelector('input[name="commuteJson"]').value = jsonString;
 
-        form.submit(); // → /keiro/tempSave POST
+        form.submit();
     });
 });
 </script>

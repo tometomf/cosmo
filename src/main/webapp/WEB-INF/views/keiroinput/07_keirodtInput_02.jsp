@@ -226,7 +226,16 @@
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-				<div class="transport">手段：バス</div>
+				<c:set var="shudanType"
+					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
+				<c:set var="shudanLabel" value="バス" />
+				<c:set var="kuganLabel" value="バス停名" />
+				<c:if test="${shudanType == '7'}">
+					<c:set var="shudanLabel" value="その他" />
+					<c:set var="kuganLabel" value="区間" />
+				</c:if>
+
+				<div class="transport">手段：${shudanLabel}</div>
 			</div>
 
 			<div class="content_Form1">
@@ -235,7 +244,7 @@
 					<div>移動手段</div>
 					<div>その他移動手段</div>
 					<div>バス会社</div>
-					<div>バス停名</div>
+					<div>${kuganLabel}</div>
 					<div>片道料金</div>
 					<div>1ケ月</div>
 					<div>3ケ月</div>
@@ -273,16 +282,19 @@
 				</div>
 				<div class="form_Text2" id="form_Text2">
 					<div class="form_Column">合計</div>
-					<div class="form_Column">4,620円</div>
-					<div class="form_Column">13,170円</div>
-					<div class="form_Column">24,950円</div>
+					<!-- 1개월 합계 -->
+					<div class="form_Column" id="total1m">0円</div>
+					<!-- 3개월 합계 -->
+					<div class="form_Column" id="total3m">0円</div>
+					<!-- 6개월 합계 -->
+					<div class="form_Column" id="total6m">0円</div>
 				</div>
 			</div>
 			<div class="info-box">
 				<p>
 					バス検索はこちらから（外部サイトが開きます）<br> <a
-						href="http://transit.loco.yahoo.co.jp" target="_blank"
-						rel="noopener noreferrer"> http://transit.loco.yahoo.co.jp </a>
+						href="https://transit.yahoo.co.jp" target="_blank"
+						rel="noopener noreferrer"> https://transit.yahoo.co.jp </a>
 				</p>
 			</div>
 			<div class="button_box">
@@ -311,5 +323,31 @@
 					location.href = '/';
 				});
 	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+
+			function updateTotal(idInput, idTotal) {
+				const input = document.getElementById(idInput);
+				const total = document.getElementById(idTotal);
+
+				input.addEventListener("input", function() {
+					const value = input.value;
+					if (value === "" || isNaN(value)) {
+						total.textContent = "0円";
+					} else {
+						total.textContent = parseInt(value).toLocaleString(
+								'ja-JP')
+								+ "円";
+					}
+				});
+			}
+
+			updateTotal("pass1m", "total1m");
+			updateTotal("pass3m", "total3m");
+			updateTotal("pass6m", "total6m");
+
+		});
+	</script>
+
 </body>
 </html>
