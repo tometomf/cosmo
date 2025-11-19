@@ -61,9 +61,18 @@
 			
 			
 			
-			<div class = "main">
+			<div class = "main">		
 			<!-- form 예제 -->
 			<div>勤務地を入力してください</div>
+			
+			<form id="kinmuForm" action="/idoconfirm/kinmuNext" method="post">
+			
+			<%-- ① 통합 주소 hidden 필드 --%>
+   			 <input type="hidden" name="newAddress" id="newAddress">
+   			 
+   			<%-- ② 주소 변경여부 hidden (일단 기본은 1) --%>
+  		     <input type="hidden" name="addressChange" id="addressChange" value="1">
+  		     
 			<div class="content_Form1">
 				<!-- 제목예제1 -->
 				<div class="form_Title1" id="form_Ttile1">
@@ -119,7 +128,7 @@
 				</div>
 			</div>
 			
-			<div class="content_Form1" style = "margin-top: 5px;">
+			<div class="content_Form1" style = "margin-top: 20px;">
 			
 			<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">異動区分</div>
@@ -135,22 +144,36 @@
   </div>
 			</div>
 			</div>
+			
+			
 	
-		<div class = "button_Left">
-				<div class = "button_Left_Group">   
+		<div class = "button_Left" style = "margin-top: 30px;">
+				<div class = "button_Left_Group" >   
 				
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01" 
-					 style="cursor:pointer;" 
-					 onclick="location.href='/idoconfirm/idoconfirm';">
+					<!-- 뒤로가기 버튼 -->
+        <button type="button" style="border:none; background:none; padding:0; cursor:pointer;"
+                onclick="location.href='/idoconfirm/idoconfirm';">
+            <img src="/resources/img/back_btn01.gif" alt="back">
+        </button>
 					
 					 
-					<img src="/resources/img/next_btn01.gif" alt="next_btn01"
-								style="cursor:pointer;"
-     onclick="location.href='/idoconfirm/addressinput';">
+				<button type="button" id="nextBtn"
+                style="border:none; background:none; padding:0; cursor:pointer;"
+                onclick="beforeSubmitNext();">
+            <img src="/resources/img/next_btn01.gif" alt="next">
+        </button>
+
      
-					<img src="/resources/img/hozon_btn02.gif" alt="hozon_btn02">
+					<!-- 일시보존 버튼 -->
+        <button type="submit"
+                style="border:none; background:none; padding:0; cursor:pointer;">
+            <img src="/resources/img/hozon_btn02.gif" alt="hozon">
+        </button>
+					
 				</div>
 			</div>	
+			
+			</form>
 			
 		</div>
 		
@@ -163,6 +186,21 @@ function fillNewAddressFromZip() {
     AjaxZip3.zip2addr('newZip1', 'newZip2', 'newPref', 'newAddress1', 'newAddress2');
 }
 </script>
+
+<script>
+function beforeSubmitNext() {
+    const pref = document.querySelector('input[name="newPref"]').value;
+    const a1 = document.querySelector('input[name="newAddress1"]').value;
+    const a2 = document.querySelector('input[name="newAddress2"]').value;
+
+    const full = pref + " " + a1 + " " + a2;
+
+    document.getElementById("newAddress").value = full;
+
+    document.getElementById("kinmuForm").submit();
+}
+</script>
+
 		
 </body>
 </html>
