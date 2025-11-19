@@ -1,12 +1,13 @@
 package org.cosmo.mapper;
 
+import java.util.Map;
 import org.cosmo.domain.IchijiHozonDTO;
 
 public interface IchijiHozonMapper {
 
-    /**
-     * ICHIJI_HOZON 임시저장 INSERT
-     */
-    int insertIchijiHozon(IchijiHozonDTO dto);
+    int updateByUserAndAction(IchijiHozonDTO dto);
 
+    void insertIchijiHozon(IchijiHozonDTO dto);
+
+    IchijiHozonDTO selectLatestByUserAndAction(Map<String, Object> param);
 }
