@@ -135,7 +135,8 @@
 		<div class="main">
 			<div class = "main_title">
 			
-<form id="tokureiForm" method="post" action="/tokurei/submit">
+<form id="tokureiForm" method="post" action="/idoconfirm/tokureiSubmit">
+
 
 <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 <input type="hidden" name="tokureiType" value="${tokureiType}">			
@@ -243,20 +244,39 @@ window.onload = function() {
     const reasonBox = document.getElementById("reasonBox");
     const submitBtn = document.getElementById("submitBtn");
     const form = document.getElementById("tokureiForm");
+    const reason = document.getElementById("reason");
 
     // 라디오 체크되면 textarea + 신청버튼 활성화
     radio.addEventListener("change", function() {
-        reasonBox.style.display = "grid";
-        
-        submitBtn.style.display = "inline";   // 숨긴 버튼 보이게
-        submitBtn.style.cursor = "pointer";
-
-        submitBtn.onclick = function() {
-            form.submit();
+        if (radio.checked) {
+            reasonBox.style.display = "grid";
+            submitBtn.style.display = "inline";
+            submitBtn.style.cursor = "pointer";
         }
     });
+
+    // 신청 버튼 클릭 시 유효성 체크 후 form submit
+    submitBtn.onclick = function() {
+
+        // 1) 라디오 체크 여부
+        if (!radio.checked) {
+            alert("特例について内容を理解した上で申請にチェックしてください。");
+            return;
+        }
+
+        // 2) 특례사유 입력 여부
+        if (reason.value.trim() === "") {
+            alert("特例申請理由を入力してください。");
+            reason.focus();
+            return;
+        }
+
+        // 3) 조건 통과 시 제출
+        form.submit();
+    };
 };
 </script>
+
 	
 
 </body>
