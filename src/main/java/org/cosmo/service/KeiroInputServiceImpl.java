@@ -4,6 +4,7 @@ import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.mapper.KeiroInputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,10 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 		
 		return mapper.selectDenshaKeiroDetail(kigyoCd, shainUid, shinseiNo, keiroSeq);
 	}
+	
+	@Override
+    public ShinseiStartKeiroVO getViaPlace1(Integer kigyoCd, Long shainUid) {
+        return mapper.selectViaPlace1(kigyoCd, shainUid);
+    }
 
 }

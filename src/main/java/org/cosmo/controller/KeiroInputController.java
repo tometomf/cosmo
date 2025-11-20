@@ -13,6 +13,7 @@ import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.KeiroInputService;
 import org.cosmo.service.OshiraseService;
@@ -141,11 +142,16 @@ public class KeiroInputController {
         
         ShinseiDTO addr = keiroInputservice.getShinseiAddress(kigyoCd, shainUid);
         ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid);
+        ShinseiStartKeiroVO startKeiro = keiroInputservice.getViaPlace1(kigyoCd, shainUid);
+        
+        
         
         model.addAttribute("addr", addr);
         model.addAttribute("kinmuAddr", kinmuAddr);
+        model.addAttribute("startkeiro", startKeiro);
         return "keiroinput/07_keirodtInput_03";
     }
+
 
 	@PostMapping("/tempSave")
     public String tempSaveCommute(

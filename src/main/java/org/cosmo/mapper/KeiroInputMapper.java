@@ -5,6 +5,7 @@ import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface KeiroInputMapper {
 
@@ -31,4 +32,9 @@ public interface KeiroInputMapper {
             @Param("shainUid") Long shainUid,
             @Param("shinseiNo") Integer shinseiNo,
             @Param("keiroSeq") Integer keiroSeq);
+    
+    ShinseiStartKeiroVO selectViaPlace1(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid
+    );
 }
