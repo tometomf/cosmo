@@ -4,7 +4,7 @@
 
 <mapper namespace = "org.cosmo.mapper.HomeMapper">
 	
-	<select id="getList" resultType="org.cosmo.domain.ShainVO">
+	<select id="getList" resultType="org.cosmo.domain.HomeShainVO">
 		
 		select ROW_NUMBER() OVER(ORDER BY a.shinsei_ymd desc) seq, shinsei_no, '' as shinsei_naiyou
 		     , to_char(to_date(shinsei_ymd, 'yyyymmdd'), 'yyyy/mm/dd') shinsei_ymd

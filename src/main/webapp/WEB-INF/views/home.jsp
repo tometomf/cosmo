@@ -159,22 +159,15 @@
 	
 	function onClick(shinseiNo, shinchokuKbn) {
 		
-		var target = window.location.origin; 
-	    var url = '';
+		var target = window.location.origin + '/shinsei'; 
 	    
 		if (shinchokuKbn == '1') {
-			url = target + '/shinsei/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + '';
+			window.location.href = target + '/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + '';
 		} else if (shinchokuKbn == '2') {
-			url = target + '/shinsei/shinseiDetail' + '?no' + shinseiNo;
+			window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
 		} else if (shinchokuKbn == '3') {
-			url = target + '/shinsei/shinseiDetail' + '?no' + shinseiNo;
-		} else if (shinchokuKbn == '4') {
-			
-		} else if (shinchokuKbn == '5') {
-			
+			// window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
 		}
-		
-		window.location.href = url;	
 	}
 	
 </script>
