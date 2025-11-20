@@ -9,6 +9,7 @@ import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.ShozokuService;
+import org.cosmo.service.TokureiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class IdoConfirmController {
 
     private final AddressInputService addressInputService;
     private final ShozokuService shozokuService;
+    private final TokureiService tokureiService;
 
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
@@ -44,15 +46,23 @@ public class IdoConfirmController {
     }
 
     @GetMapping("/tokureiShinsei")
-    public String tokureiShinsei(@RequestParam(name = "type", required = false) String type,
-                                 Model model) {
+    public String tokureiShinsei(
+    		@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+            @RequestParam(name = "type", required = false) String type,
+            Model model) {
 
-        // 기본값: A타입 (상한 초과)
-        if (type == null) {
+    	// type 기본값 세팅 (A / B 중 A를 기본)
+        if (type == null || type.trim().isEmpty()) {
             type = "A";
+        }
+        
+        // shinseiNo 안 넘어오면 기본값 1 사용
+        if (shinseiNo == null || shinseiNo.trim().isEmpty()) {
+            shinseiNo = "1";
         }
 
         model.addAttribute("tokureiType", type);
+        model.addAttribute("shinseiNo", shinseiNo);
 
         return "idoconfirm/k_52_tokureiShinsei";
     }
@@ -157,13 +167,15 @@ public class IdoConfirmController {
             return "redirect:/idoconfirm/tokureiShinsei";
         }
 
-        // ③ 여기서 나중에 Service 불러서 DB 저장하게 됨
-        //    예: tokureiService.save(form);
+        // ③ 여기서 DB 저장 (Service 호출)
+        tokureiService.saveTokurei(form);
 
         // ④ 지금은 일단 "완료 페이지"로 보내기만 한다
         rttr.addFlashAttribute("message", "特例申請を受け付けました。");
         return "redirect:/idoconfirm/kanryoPage";
     }
+    
+    
   
     
 }
