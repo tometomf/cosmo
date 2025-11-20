@@ -148,6 +148,9 @@
 		AND sk.KEIRO_SEQ = #{keiroSeq}
 	</select>
 
+	
+	
+	
 
 
 </mapper>
