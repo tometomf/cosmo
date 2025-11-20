@@ -114,9 +114,17 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Required">${empty keiro.startPlace ? '' : keiro.startPlace}
-						${empty keiro.endPlace ? '' : '⟶ ' += keiro.endPlace}</div>
+					<div class="form_Required">
+						${empty keiro.startPlace ? '' : keiro.startPlace}
+
+						<c:if
+							test="${not empty keiro.startPlace && not empty keiro.endPlace}">
+       						     ⟶
+      				  </c:if>
+						${empty keiro.endPlace ? '' : keiro.endPlace}
+					</div>
 				</div>
+
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
@@ -129,14 +137,25 @@
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">金額 1ヶ月</div>
 					<div class="form_Required">
-						${empty keiro.tsuki ? '' : keiro.tsuki}
-						<c:if test="${not empty keiro.yuryo}"> + ${keiro.yuryo}</c:if>
+						<c:choose>
+							<c:when test="${keiro.total > 0}">
+       								 ${keiro.total} 円
+   								 </c:when>
+							<c:otherwise>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 1ヶ月</div>
-					<div class="form_Required">${empty keiro.yuryo ? '' : keiro.yuryo}</div>
+					<div class="form_Required">
+						<c:choose>
+							<c:when test="${keiro.yuryo != null && keiro.yuryo > 0}">
+                ${keiro.yuryo} 円
+            </c:when>
+						</c:choose>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -217,9 +236,9 @@
 						type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 					<input type="hidden" name="beforeKbn"
 						value="${jyohou.shinchokuKbn}"> <input type="hidden"
-						name="hozonUid" value="${hozon.hozonUid}"> <input
-						type="hidden" name="shinseiKbn" value="${jyohou.shinseiKbn}">
-					<input type="hidden" name="shinseiYmd" value="${jyohou.shinseiYmd}">
+						name="hozonUid" value="${hozonUid}"> <input type="hidden"
+						name="shinseiKbn" value="${jyohou.shinseiKbn}"> <input
+						type="hidden" name="shinseiYmd" value="${jyohou.shinseiYmd}">
 				</form>
 
 			</div>

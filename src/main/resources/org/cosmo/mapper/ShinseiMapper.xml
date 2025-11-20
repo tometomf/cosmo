@@ -5,141 +5,186 @@
 
 <mapper namespace="org.cosmo.mapper.ShinseiMapper">
 
-	<resultMap id="shinseiResultMap" type="org.cosmo.domain.ShinseiDTO">
+	<resultMap id="shinseiResultMap"
+		type="org.cosmo.domain.ShinseiDTO">
 
-		<id column="KIGYO_CD" property="kigyoCd"/>
-		<id column="SHINSEI_NO" property="shinseiNo"/>
+		<id column="KIGYO_CD" property="kigyoCd" />
+		<id column="SHINSEI_NO" property="shinseiNo" />
 
-		<result column="SHINSEI_KBN" property="shinseiKbn"/>
-		<result column="SHINSEI_YMD" property="shinseiYmd"/>
-		<result column="SHINSEI_RIYU" property="shinseiRiyu"/>
-		<result column="TOKU_SHINSEI_RIYU" property="tokuShinseiRiyu"/>
-		<result column="SHAIN_UID" property="shainUid"/>
-		<result column="SHAIN_NO" property="shainNo"/>
-		<result column="DAIRI_SHINSEISHA_CD" property="dairiShinseishaCd"/>
-		<result column="SHINCHOKU_KBN" property="shinchokuKbn"/>
-		<result column="GEN_TSUKINRO_END_KBN" property="genTsukinroEndKbn"/>
+		<result column="SHINSEI_KBN" property="shinseiKbn" />
+		<result column="SHINSEI_YMD" property="shinseiYmd" />
+		<result column="SHINSEI_RIYU" property="shinseiRiyu" />
+		<result column="TOKU_SHINSEI_RIYU" property="tokuShinseiRiyu" />
+		<result column="SHAIN_UID" property="shainUid" />
+		<result column="SHAIN_NO" property="shainNo" />
+		<result column="DAIRI_SHINSEISHA_CD"
+			property="dairiShinseishaCd" />
+		<result column="SHINCHOKU_KBN" property="shinchokuKbn" />
+		<result column="GEN_TSUKINRO_END_KBN"
+			property="genTsukinroEndKbn" />
 
-		<result column="ADDRESS_CHG_KBN" property="addressChgKbn"/>
-		<result column="KINMU_ADDRESS_CHG_KBN" property="kinmuAddressChgKbn"/>
-		<result column="KYUSHOKU_HUKKI_KBN" property="kyushokuHukkiKbn"/>
+		<result column="ADDRESS_CHG_KBN" property="addressChgKbn" />
+		<result column="KINMU_ADDRESS_CHG_KBN"
+			property="kinmuAddressChgKbn" />
+		<result column="KYUSHOKU_HUKKI_KBN" property="kyushokuHukkiKbn" />
 
-		<result column="GEN_SHOZOKU_CD" property="genShozokuCd"/>
-		<result column="GEN_ZIP_CD" property="genZipCd"/>
-		<result column="GEN_ADDRESS_1" property="genAddress1"/>
-		<result column="GEN_ADDRESS_2" property="genAddress2"/>
-		<result column="GEN_ADDRESS_3" property="genAddress3"/>
+		<result column="GEN_SHOZOKU_CD" property="genShozokuCd" />
+		<result column="GEN_ZIP_CD" property="genZipCd" />
+		<result column="GEN_ADDRESS_1" property="genAddress1" />
+		<result column="GEN_ADDRESS_2" property="genAddress2" />
+		<result column="GEN_ADDRESS_3" property="genAddress3" />
 
-		<result column="NEW_SHOZOKU_CD" property="newShozokuCd"/>
-		<result column="NEW_ZIP_CD" property="newZipCd"/>
-		<result column="NEW_ADDRESS_1" property="newAddress1"/>
-		<result column="NEW_ADDRESS_2" property="newAddress2"/>
-		<result column="NEW_ADDRESS_3" property="newAddress3"/>
-		<result column="ADDRESS_IDO_KEIDO" property="addressIdoKeido"/>
-		<result column="ADDRESS_CORRECT" property="addressCorrect"/>
+		<result column="NEW_SHOZOKU_CD" property="newShozokuCd" />
+		<result column="NEW_ZIP_CD" property="newZipCd" />
+		<result column="NEW_ADDRESS_1" property="newAddress1" />
+		<result column="NEW_ADDRESS_2" property="newAddress2" />
+		<result column="NEW_ADDRESS_3" property="newAddress3" />
+		<result column="ADDRESS_IDO_KEIDO" property="addressIdoKeido" />
+		<result column="ADDRESS_CORRECT" property="addressCorrect" />
 
-		<result column="GEN_KINMU_ZIP_CD" property="genKinmuZipCd"/>
-		<result column="GEN_KINMU_ADDRESS_1" property="genKinmuAddress1"/>
-		<result column="GEN_KINMU_ADDRESS_2" property="genKinmuAddress2"/>
-		<result column="GEN_KINMU_ADDRESS_3" property="genKinmuAddress3"/>
-		<result column="GEN_KINMU_PREF_CD" property="genKinmuPrefCd"/>
+		<result column="GEN_KINMU_ZIP_CD" property="genKinmuZipCd" />
+		<result column="GEN_KINMU_ADDRESS_1"
+			property="genKinmuAddress1" />
+		<result column="GEN_KINMU_ADDRESS_2"
+			property="genKinmuAddress2" />
+		<result column="GEN_KINMU_ADDRESS_3"
+			property="genKinmuAddress3" />
+		<result column="GEN_KINMU_PREF_CD" property="genKinmuPrefCd" />
 
-		<result column="NEW_KINMU_ZIP_CD" property="newKinmuZipCd"/>
-		<result column="NEW_KINMU_ADDRESS_1" property="newKinmuAddress1"/>
-		<result column="NEW_KINMU_ADDRESS_2" property="newKinmuAddress2"/>
-		<result column="NEW_KINMU_ADDRESS_3" property="newKinmuAddress3"/>
-		<result column="KINMU_ADDRESS_IDO_KEIDO" property="kinmuAddressIdoKeido"/>
-		<result column="KINMU_ADDRESS_CORRECT" property="kinmuAddressCorrect"/>
-		<result column="NEW_KINMU_PREF_CD" property="newKinmuPrefCd"/>
-		<result column="JUTAKU_KBN" property="jutakuKbn"/>
+		<result column="NEW_KINMU_ZIP_CD" property="newKinmuZipCd" />
+		<result column="NEW_KINMU_ADDRESS_1"
+			property="newKinmuAddress1" />
+		<result column="NEW_KINMU_ADDRESS_2"
+			property="newKinmuAddress2" />
+		<result column="NEW_KINMU_ADDRESS_3"
+			property="newKinmuAddress3" />
+		<result column="KINMU_ADDRESS_IDO_KEIDO"
+			property="kinmuAddressIdoKeido" />
+		<result column="KINMU_ADDRESS_CORRECT"
+			property="kinmuAddressCorrect" />
+		<result column="NEW_KINMU_PREF_CD" property="newKinmuPrefCd" />
+		<result column="JUTAKU_KBN" property="jutakuKbn" />
 
-		<result column="ETC_FILE_UID_1" property="etcFileUid1"/>
-		<result column="ETC_FILE_UID_2" property="etcFileUid2"/>
-		<result column="ETC_FILE_UID_3" property="etcFileUid3"/>
-		<result column="ETC_FILE_UID_4" property="etcFileUid4"/>
-		<result column="ETC_FILE_UID_5" property="etcFileUid5"/>
-		<result column="ETC_COMMENT_1" property="etcComment1"/>
-		<result column="ETC_COMMENT_2" property="etcComment2"/>
-		<result column="ETC_COMMENT_3" property="etcComment3"/>
-		<result column="ETC_COMMENT_4" property="etcComment4"/>
-		<result column="ETC_COMMENT_5" property="etcComment5"/>
+		<result column="ETC_FILE_UID_1" property="etcFileUid1" />
+		<result column="ETC_FILE_UID_2" property="etcFileUid2" />
+		<result column="ETC_FILE_UID_3" property="etcFileUid3" />
+		<result column="ETC_FILE_UID_4" property="etcFileUid4" />
+		<result column="ETC_FILE_UID_5" property="etcFileUid5" />
+		<result column="ETC_COMMENT_1" property="etcComment1" />
+		<result column="ETC_COMMENT_2" property="etcComment2" />
+		<result column="ETC_COMMENT_3" property="etcComment3" />
+		<result column="ETC_COMMENT_4" property="etcComment4" />
+		<result column="ETC_COMMENT_5" property="etcComment5" />
 
-		<result column="RIYO_START_YMD" property="riyoStartYmd"/>
-		<result column="RIYO_END_YMD" property="riyoEndYmd"/>
-		<result column="SHIKYU_TEISHI_KBN" property="shikyTeishiKbn"/>
-		<result column="KANRIID" property="kanriId"/>
-		<result column="IDO_YMD" property="idoYmd"/>
-		<result column="ITEN_YMD" property="itenYmd"/>
-		<result column="TENNYU_YMD" property="tennyuYmd"/>
-		<result column="HAISHIN_YMD" property="haishinYmd"/>
-		<result column="KEIRO_HENKO_YMD" property="keiroHenkoYmd"/>
-		<result column="FIRST_SHINSEI_YMD" property="firstShinseiYmd"/>
-		<result column="KIGYO_SHONIN_YMD" property="kigyoShoninYmd"/>
-		<result column="LL_SHONIN_YMD" property="llShoninYmd"/>
-		<result column="TSUKINRO_NO" property="tsukinroNo"/>
-		<result column="SASHIMODOSHI_YMD" property="sashimodoshiYmd"/>
-		<result column="SHINSEI_KIGEN_YMD" property="shinseiKigenYmd"/>
-		<result column="MOSHIOKURI_COMMENT" property="moshiokuriComment"/>
-		<result column="BIBO_COMMENT" property="biboComment"/>
-		<result column="ALERT_UMU" property="alertUmu"/>
-		<result column="TORIKESHI_YMD" property="torikeshiYmd"/>
-		<result column="TORIKESHI_RIYU" property="torikeshiRiyu"/>
-		<result column="ICHIJI_HOZON_ID" property="ichijiHozonId"/>
-		<result column="JITSU_KM" property="jitsuKm"/>
-		<result column="NAVITIME_VIEW_CNT" property="navitimeViewCnt"/>
+		<result column="RIYO_START_YMD" property="riyoStartYmd" />
+		<result column="RIYO_END_YMD" property="riyoEndYmd" />
+		<result column="SHIKYU_TEISHI_KBN" property="shikyTeishiKbn" />
+		<result column="KANRIID" property="kanriId" />
+		<result column="IDO_YMD" property="idoYmd" />
+		<result column="ITEN_YMD" property="itenYmd" />
+		<result column="TENNYU_YMD" property="tennyuYmd" />
+		<result column="HAISHIN_YMD" property="haishinYmd" />
+		<result column="KEIRO_HENKO_YMD" property="keiroHenkoYmd" />
+		<result column="FIRST_SHINSEI_YMD" property="firstShinseiYmd" />
+		<result column="KIGYO_SHONIN_YMD" property="kigyoShoninYmd" />
+		<result column="LL_SHONIN_YMD" property="llShoninYmd" />
+		<result column="TSUKINRO_NO" property="tsukinroNo" />
+		<result column="SASHIMODOSHI_YMD" property="sashimodoshiYmd" />
+		<result column="SHINSEI_KIGEN_YMD" property="shinseiKigenYmd" />
+		<result column="MOSHIOKURI_COMMENT"
+			property="moshiokuriComment" />
+		<result column="BIBO_COMMENT" property="biboComment" />
+		<result column="ALERT_UMU" property="alertUmu" />
+		<result column="TORIKESHI_YMD" property="torikeshiYmd" />
+		<result column="TORIKESHI_RIYU" property="torikeshiRiyu" />
+		<result column="ICHIJI_HOZON_ID" property="ichijiHozonId" />
+		<result column="JITSU_KM" property="jitsuKm" />
+		<result column="NAVITIME_VIEW_CNT" property="navitimeViewCnt" />
 
-		<result column="ADD_USER_ID" property="addUserId"/>
-		<result column="ADD_DATE" property="addDate"/>
-		<result column="UPD_USER_ID" property="updUserId"/>
-		<result column="UPD_DATE" property="updDate"/>
+		<result column="ADD_USER_ID" property="addUserId" />
+		<result column="ADD_DATE" property="addDate" />
+		<result column="UPD_USER_ID" property="updUserId" />
+		<result column="UPD_DATE" property="updDate" />
 
 	</resultMap>
 
-	<select id="selectShinseiList" 
-		resultMap="shinseiResultMap" 
+	<select id="selectShinseiList" resultMap="shinseiResultMap"
 		parameterType="map">
 
-	SELECT 
-		KIGYO_CD, SHINSEI_NO, SHINSEI_KBN, SHINSEI_YMD, SHINSEI_RIYU, 
-		TOKU_SHINSEI_RIYU, SHAIN_UID, SHAIN_NO, DAIRI_SHINSEISHA_CD, SHINCHOKU_KBN, 
-		GEN_TSUKINRO_END_KBN, ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN, 
-		GEN_SHOZOKU_CD, GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2, GEN_ADDRESS_3, 
-		NEW_SHOZOKU_CD, NEW_ZIP_CD, NEW_ADDRESS_1, NEW_ADDRESS_2, NEW_ADDRESS_3, 
-		ADDRESS_IDO_KEIDO, ADDRESS_CORRECT, GEN_KINMU_ZIP_CD, GEN_KINMU_ADDRESS_1, 
-		GEN_KINMU_ADDRESS_2, GEN_KINMU_ADDRESS_3, NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1, 
-		NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, KINMU_ADDRESS_IDO_KEIDO, KINMU_ADDRESS_CORRECT, 
-		GEN_KINMU_PREF_CD, NEW_KINMU_PREF_CD, JUTAKU_KBN, ETC_FILE_UID_1, ETC_FILE_UID_2, 
-		ETC_FILE_UID_3, ETC_FILE_UID_4, ETC_FILE_UID_5, ETC_COMMENT_1, ETC_COMMENT_2, 
-		ETC_COMMENT_3, ETC_COMMENT_4, ETC_COMMENT_5, RIYO_START_YMD, RIYO_END_YMD, 
-		SHIKYU_TEISHI_KBN, KANRIID, IDO_YMD, ITEN_YMD, TENNYU_YMD, HAISHIN_YMD, 
-		KEIRO_HENKO_YMD, FIRST_SHINSEI_YMD, KIGYO_SHONIN_YMD, LL_SHONIN_YMD, TSUKINRO_NO, 
-		SASHIMODOSHI_YMD, SHINSEI_KIGEN_YMD, MOSHIOKURI_COMMENT, BIBO_COMMENT, ALERT_UMU, 
-		TORIKESHI_YMD, TORIKESHI_RIYU, ICHIJI_HOZON_ID, JITSU_KM, NAVITIME_VIEW_CNT, 
+		SELECT
+		KIGYO_CD, SHINSEI_NO, SHINSEI_KBN, SHINSEI_YMD,
+		SHINSEI_RIYU,
+		TOKU_SHINSEI_RIYU, SHAIN_UID, SHAIN_NO,
+		DAIRI_SHINSEISHA_CD,
+		SHINCHOKU_KBN,
+		GEN_TSUKINRO_END_KBN,
+		ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
+		GEN_SHOZOKU_CD, GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2,
+		GEN_ADDRESS_3,
+		NEW_SHOZOKU_CD, NEW_ZIP_CD, NEW_ADDRESS_1,
+		NEW_ADDRESS_2, NEW_ADDRESS_3,
+		ADDRESS_IDO_KEIDO, ADDRESS_CORRECT,
+		GEN_KINMU_ZIP_CD,
+		GEN_KINMU_ADDRESS_1,
+		GEN_KINMU_ADDRESS_2,
+		GEN_KINMU_ADDRESS_3, NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1,
+		NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, KINMU_ADDRESS_IDO_KEIDO,
+		KINMU_ADDRESS_CORRECT,
+		GEN_KINMU_PREF_CD, NEW_KINMU_PREF_CD,
+		JUTAKU_KBN, ETC_FILE_UID_1, ETC_FILE_UID_2,
+		ETC_FILE_UID_3,
+		ETC_FILE_UID_4, ETC_FILE_UID_5, ETC_COMMENT_1,
+		ETC_COMMENT_2,
+		ETC_COMMENT_3, ETC_COMMENT_4, ETC_COMMENT_5, RIYO_START_YMD,
+		RIYO_END_YMD,
+		SHIKYU_TEISHI_KBN, KANRIID, IDO_YMD, ITEN_YMD,
+		TENNYU_YMD,
+		HAISHIN_YMD,
+		KEIRO_HENKO_YMD, FIRST_SHINSEI_YMD,
+		KIGYO_SHONIN_YMD, LL_SHONIN_YMD, TSUKINRO_NO,
+		SASHIMODOSHI_YMD,
+		SHINSEI_KIGEN_YMD, MOSHIOKURI_COMMENT, BIBO_COMMENT,
+		ALERT_UMU,
+		TORIKESHI_YMD, TORIKESHI_RIYU, ICHIJI_HOZON_ID, JITSU_KM,
+		NAVITIME_VIEW_CNT,
 		ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
-	FROM 
+		FROM
 		SHINSEI
-	WHERE 
+		WHERE
 		-- 복합 기본 키를 사용하여 특정 신청 건을 조회하는 조건 예시
 		KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO = #{shinseiNo}
+		AND SHINSEI_NO
+		= #{shinseiNo}
 	</select>
 
-	<select id="getShinseiJyohou" parameterType="String"
+	<select id="getShinseiJyohou" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiJyohouVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
 		SHINSEI_NO AS shinseiNo,
 		SHINSEI_KBN AS shinseiKbn,
 		SHINCHOKU_KBN AS shinchokuKbn,
+		GEN_ADDRESS_1
+		AS genAddress1,
+		GEN_ADDRESS_2
+		AS genAddress2,
 		GEN_ADDRESS_3
-		AS genAddress,
-		NEW_ADDRESS_3 AS newAddress,
+		AS genAddress3,
+		NEW_ADDRESS_1 AS newAddress1,
+				NEW_ADDRESS_2 AS newAddress2,
+				NEW_ADDRESS_3 AS newAddress3,
 		GEN_SHOZOKU_CD AS
 		genShozoku,
 		NEW_SHOZOKU_CD AS newShozoku,
+		GEN_KINMU_ADDRESS_1 AS
+		genKinmuchi1,
+		GEN_KINMU_ADDRESS_2 AS
+		genKinmuchi2,
 		GEN_KINMU_ADDRESS_3 AS
-		genKinmuchi,
-		NEW_KINMU_ADDRESS_3 AS newKinmuchi,
+		genKinmuchi3,
+		NEW_KINMU_ADDRESS_1 AS newKinmuchi1,
+		NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
+		NEW_KINMU_ADDRESS_3 AS newKinmuchi3,
 		SHINSEI_RIYU AS riyu,
 		IDO_YMD AS idoYmd,
 		ITEN_YMD AS itenYmd,
@@ -153,7 +198,7 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiKeiro" parameterType="String"
+	<select id="getShinseiKeiro" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiKeiroVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
@@ -172,7 +217,7 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiShorui" parameterType="String"
+	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
@@ -189,7 +234,27 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getFileName" parameterType="String"
+	<select id="getShainUidByShinseiNo" parameterType="String"
+		resultType="String">
+		SELECT SHAIN_UID
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<select id="getShainByUid" parameterType="String"
+		resultType="org.cosmo.domain.ShainVO">
+		SELECT
+		KIGYO_CD AS kigyo_Cd,
+		SHAIN_UID AS shain_Uid,
+		SHAIN_NO AS shain_No,
+		SHAIN_NM AS shain_Nm,
+		SHOZOKU_CD AS shozoku_Cd
+		FROM SHAIN
+		WHERE SHAIN_UID = #{shainUid}
+	</select>
+
+
+	<select id="getFileName" parameterType="Long"
 		resultType="String">
 		SELECT f.name
 		FROM SHINSEI_FUZUI_SHORUI s
@@ -225,20 +290,25 @@
 		#{code}
 	</select>
 
-	<select id="getShinchokuKbn" resultType="String">
+	<select id="getShinchokuKbn" parameterType="String"
+		resultType="String">
 		SELECT SHINCHOKU_KBN
 		FROM SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
 	</select>
 
 
-	<update id="updateTorikesu">
+	<update id="updateTorikesu" parameterType="map">
 		UPDATE SHINSEI
-		SET TORIKESHI_RIYU = #{tkComment},
+		SET
+		TORIKESHI_RIYU = #{tkComment},
 		SHINCHOKU_KBN = '5',
-		TORIKESHI_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		TORIKESHI_YMD =
+		TO_CHAR(SYSDATE, 'YYYYMMDD'),
 		UPD_DATE = SYSTIMESTAMP,
-		UPD_USER_ID = #{shainUid}
+		UPD_USER_ID =
+		#{shainUid}
 		WHERE SHINSEI_NO =
 		#{shinseiNo}
 	</update>
@@ -256,28 +326,45 @@
 		SELECT
 		HOZON_UID AS hozonUid,
 		USER_UID AS userUid,
-		DATA
-		FROM ICHIJI_HOZON
-		WHERE HOZON_UID = #{hozonUid}
+		SHINSEI_KBN AS shinseiKbn,
+		ACTION_NM AS actionNm,
+		DATA AS data,
+		TO_CHAR(ADD_DATE, 'YYYYMMDD') AS addDate
+		FROM
+		ICHIJI_HOZON
+		WHERE HOZON_UID =
+		#{hozonUid}
 	</select>
 
 
-	<insert id="insertOshirase">
+	<insert id="insertOshirase" parameterType="map">
 		INSERT INTO OSHIRASE (
 		KIGYO_CD,
 		SHAIN_UID,
+		SHAIN_NO,
 		TSUCHI_YMD,
 		TSUCHI_HM,
+		TSUCHISHA_KIGYO_CD,
+		TSUCHISHA_CD,
 		SHINSEI_NO,
 		OSHIRASE_NAIYO,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
 		UPD_DATE
 		) VALUES (
-		#{shain.kigyo_Cd},
-		#{shain.shain_Uid},
+		#{shinseiUser.kigyo_Cd},
+		#{shinseiUser.shain_Uid},
+		#{shinseiUser.shain_No},
 		TO_CHAR(SYSDATE,'YYYYMMDD'),
 		TO_CHAR(SYSDATE,'HH24MI'),
+		#{loginUser.kigyo_Cd},
+		#{loginUser.shain_No},
 		#{shinseiNo},
 		'申請を取り消しました',
+		#{loginUser.shain_Uid},
+		SYSTIMESTAMP,
+		#{loginUser.shain_Uid},
 		SYSTIMESTAMP
 		)
 	</insert>
@@ -310,6 +397,19 @@
 		#{shainUid}
 		)
 	</insert>
+
+	<delete id="deleteShinseiByShinseiNo" parameterType="String">
+		DELETE FROM
+		SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</delete>
+
+	<select id="getEmailByShainUid" parameterType="String"
+		resultType="string">
+		SELECT MAIL_ADDR
+		FROM SHAIN
+		WHERE SHAIN_UID = #{shainUid}
+	</select>
 
 
 	<select id="countStartKeiro" resultType="int">
@@ -518,9 +618,10 @@
 	<update id="updateShinseiToIchijihozon">
 		UPDATE SHINSEI
 		SET SHINCHOKU_KBN = '1', -- 一時保存中
-		UPD_USER_ID = #{updUserId},
+		UPD_USER_ID = #{updUserId, jdbcType=VARCHAR},
 		UPD_DATE = SYSDATE
-		WHERE KIGYO_CD =
+		WHERE
+		KIGYO_CD =
 		#{kigyoCd}
 		AND SHINSEI_NO = #{shinseiNo}
 	</update>
@@ -529,12 +630,90 @@
 		UPDATE ALERT
 		SET SHINSEI_YMD = NULL,
 		UPD_USER_ID =
-		#{updUserId},
+		#{loginUserId},
 		UPD_DATE = SYSDATE
 		WHERE KIGYO_CD = #{kigyoCd}
 		AND
 		SHINSEI_NO = #{shinseiNo}
 	</update>
+
+	<update id="clearHenkoFlags">
+		UPDATE SHINSEI
+		SET ADDRESS_CHG_KBN = NULL,
+		KINMU_ADDRESS_CHG_KBN = NULL
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO
+		= #{shinseiNo}
+	</update>
+
+	<update id="updateForResubmit">
+		UPDATE SHINSEI
+		SET
+		SHINSEI_RIYU = #{shinseiRiyu},
+		SHINCHOKU_KBN = '2',
+		UPD_USER_ID = #{updUserId},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</update>
+
+
+
+	<update id="updateShinseiForReapply" parameterType="map">
+		UPDATE
+		SHINSEI
+		SET SHINSEI_RIYU = #{shinseiRiyu},
+		NEW_ZIP_CD = #{newZipCd},
+		NEW_ADDRESS_1 = #{newAddress1},
+		NEW_ADDRESS_2 = #{newAddress2},
+		NEW_ADDRESS_3 = #{newAddress3},
+		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
+		ADDRESS_CHG_KBN = #{addressChgKbn},
+		UPD_USER_ID = #{updUserId,
+		jdbcType=NUMERIC},
+
+		NEW_ADDRESS_1 = #{newPref},
+		NEW_ADDRESS_2 =
+		#{newAddress1},
+		NEW_ADDRESS_3 = #{newAddress2},
+		SHINCHOKU_KBN = '2',
+		UPD_USER_ID = #{updUserId},
+
+		UPD_DATE = SYSTIMESTAMP
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND
+		SHINSEI_NO = #{shinseiNo}
+
+	</update>
+
+
+
+
+
+
+	<update id="updateStartKeiroForReapply">
+		UPDATE SHINSEI_START_KEIRO
+		SET JITSU_KINMU_NISSU =
+		#{jitsuKinmuNissu}
+		, UPD_USER_ID = #{updUserId, jdbcType=NUMERIC}
+		,
+		UPD_DATE =
+		SYSTIMESTAMP
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+	</update>
+
+
+
+
 
 	<select id="selectShinseiDetail"
 		resultType="org.cosmo.domain.ShinseiDetailVO">
@@ -624,5 +803,7 @@
 		AND
 		s.SHINSEI_NO = #{shinseiNo}
 	</select>
+
+
 
 </mapper>

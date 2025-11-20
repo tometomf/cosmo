@@ -8,6 +8,8 @@
 <meta charset="UTF-8">
 <title>日割 勤務地 入力</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+
 <style>
 p {
 	line-height: 1.6;
@@ -17,14 +19,12 @@ p {
 #form_Ttile1 {
 	display: grid;
 	grid-template-columns: 1fr 2fr 2fr;
-
 }
 
 #form_Text1 {
 	display: grid;
 	grid-template-columns: 1fr 2fr 2fr;
 }
-
 </style>
 </head>
 
@@ -49,8 +49,8 @@ p {
 				<p style="width: 1010px; margin: 0 auto 15px auto;">
 					日割期間の勤務地を入力してください。<br> 勤務地を選択後、「次へ」ボタンをクリックしてください。
 				</p>
-				
-				
+
+
 
 				<div class="content_Form1" style="margin-top: 20px;">
 					<!-- 제목예제1 -->
@@ -62,11 +62,12 @@ p {
 
 					<div class="form_Text1" id="form_Text1">
 						<div class="form_Column">勤務先コード</div>
-						<div class="form_Normal">1234</div>
+						<div class="form_Normal">123</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" value="5678"
-									style="width: 120px; height: 20px;">
+								<input type="text" maxlength="3"
+									style="width: 120px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
 								<button type="button" style="height: 24px;">検索</button>
 							</div>
 						</div>
@@ -89,45 +90,53 @@ p {
 						<div class="form_Normal">164-0012</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" value="134"style="width: 40px; height: 20px;"> 
-								<span>-</span> 
-								<input type="text" value="4567"style="width: 60px; height: 20px;">
-								<button type="button" style="height: 24px;">検索</button>
+								<input type="text" name="zip1" maxlength="3"
+									style="width: 40px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
+								<span>-</span> <input type="text" name="zip2" maxlength="4"
+									style="width: 60px; height: 20px;"
+									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);">
+								<button type="button" style="height: 24px;"
+									onclick="AjaxZip3.zip2addr('zip1','zip2','prefecture','city');">検索</button>
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="form_Text1" id="form_Text1">
-						<div class = "form_Column">都道府県</div>
-						<div class = "form_Normal">東京都</div>
+						<div class="form_Column">都道府県</div>
+						<div class="form_Normal">東京都</div>
 						<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" value="東京都"style="width: 100px; height: 20px;">
+							<input type="text" name="prefecture"
+								style="width: 100px; height: 20px;" readonly>
 						</div>
 					</div>
-					
+
 					<div class="form_Text1" id="form_Text1">
-						<div class = "form_Column">所在地1</div>
-						<div class = "form_Normal">中野区本町3-30-4</div>
+						<div class="form_Column">所在地1</div>
+						<div class="form_Normal">中野区本町3-30-4</div>
 						<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" value="江戸川区船堀2-1-5"style="width: 380px; height: 20px;">
+							<input type="text" name="city"
+								style="width: 380px; height: 20px;" readonly>
 						</div>
 					</div>
-					
+
 					<div class="form_Text1" id="form_Text1">
-						<div class = "form_Column">所在地2（建物名等）</div>
-						<div class = "form_Normal">KDX中野坂上ビル8F</div>
+						<div class="form_Column">所在地2（建物名等）</div>
+						<div class="form_Normal">KDX中野坂上ビル8F</div>
 						<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" value="江戸川店"style="width: 380px; height: 20px;">
+							<input type="text" style="width: 380px; height: 20px;">
 						</div>
 					</div>
-					
+
 				</div>
 
 
 				<div class="button_Left" style="margin-top: 25px;">
 					<div class="button_Left_Group">
-						<img src="/resources/img/back_btn01.gif" alt="戻る"> <img
-							src="/resources/img/next_btn01.gif" alt="次へ"> <img
+						<img src="/resources/img/back_btn01.gif" alt="戻る"
+							style="cursor: pointer;" onclick="location.href='/'"> <img
+							src="/resources/img/next_btn01.gif" alt="次へ"
+							style="cursor: pointer;" onclick="location.href='/hiwariKinmuchi/address'"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存">
 					</div>
 				</div>
@@ -136,5 +145,7 @@ p {
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+
+
 </body>
 </html>
