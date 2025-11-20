@@ -932,9 +932,12 @@
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 	</form>
 
-	<form id="reapplyForm" action="/saishinsei" method="post">
+	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
 		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+
+
+		
 
 		<!-- 申請理由 -->
 		<input type="hidden" name="shinseiRiyu" id="shinseiRiyuHidden"

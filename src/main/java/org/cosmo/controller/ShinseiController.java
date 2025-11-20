@@ -214,9 +214,8 @@ public class ShinseiController {
 
 			HttpSession session, HttpServletRequest request, RedirectAttributes rttr) {
 
-		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
+		ShainVO loginShain = (ShainVO) session.getAttribute("shain");
 
-		// ShainVO 쪽에서 shainUid 타입이 Integer/Long 이면 이렇게 안전하게 변환하는 게 좋아
 		String loginUserId = (loginShain != null && loginShain.getShain_Uid() != null)
 				? String.valueOf(loginShain.getShain_Uid())
 				: null;
@@ -228,13 +227,11 @@ public class ShinseiController {
 
 		if (loginShain != null && loginShain.getShain_Uid() != null) {
 
-		
-			
 			String email = "homeking12345@gmail.com";
 
 			if (email != null && !email.trim().isEmpty()) {
 				SimpleMailMessage message = new SimpleMailMessage();
-				message.setTo(email); 
+				message.setTo(email);
 
 				String userName = (loginShain.getShain_Nm() != null) ? loginShain.getShain_Nm() : "ご担当者様";
 
@@ -242,11 +239,15 @@ public class ShinseiController {
 				message.setText(
 						userName + " 様\n\n" + "通勤費申請の再申請処理が完了しました。\n" + "申請番号：" + shinseiNo + "\n\n" + "内容をご確認ください。");
 
+				System.out.println("★ メール送信開始 → " + email);
 				mailSender.send(message);
+				System.out.println("★ メール送信完了");
+
 			}
 		}
+
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
-		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;
+		return "redirect:/idoconfirm/kanryoPage?shinseiNo=" + shinseiNo;
 	}
 
 	@GetMapping("/shinseiDetail")
@@ -329,27 +330,24 @@ public class ShinseiController {
 	public String resubmit(@RequestParam("shinseiNo") Long shinseiNo, @RequestParam("shinseiRiyu") String shinseiRiyu,
 			HttpSession session, RedirectAttributes rttr) {
 
-		// 1) 세션에서 로그인 사원 정보 꺼내기
 		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
 		if (loginShain == null) {
-			// 로그인 정보 없으면 일단 목록으로 돌려보내기 (임시 처리)
+
 			rttr.addFlashAttribute("errorMessage", "ログイン情報が取得できませんでした。");
 			return "redirect:/shinsei/list";
 		}
 
-		// 2) 회사코드, 갱신자ID 가져오기
 		Long kigyoCd = null;
 		if (loginShain.getKigyo_Cd() != null && !loginShain.getKigyo_Cd().isEmpty()) {
-			kigyoCd = Long.valueOf(loginShain.getKigyo_Cd()); // NUMBER 컬럼이니까 Long으로 변환
+			kigyoCd = Long.valueOf(loginShain.getKigyo_Cd());
 		}
 
-		String updUserId = loginShain.getShain_Uid(); // ★ 여기! getShainUid()가 아니라 getShain_Uid()
+		String updUserId = loginShain.getShain_Uid();
 
-		// 3) 서비스 호출해서 재신청용 UPDATE
 		shinseiService.resubmitShinsei(kigyoCd, shinseiNo, shinseiRiyu, updUserId);
 
 		rttr.addFlashAttribute("message", "再申請しました。");
-		// 재신청 후 이동할 화면 (임시로 신청 목록)
+
 		return "redirect:/shinsei/list";
 	}
 
@@ -359,4 +357,5 @@ public class ShinseiController {
 
 		return "shinsei/addressCheck";
 	}
+
 }

@@ -169,25 +169,30 @@
 		GEN_ADDRESS_2
 		AS genAddress2,
 		GEN_ADDRESS_3
-		AS genAddress3,
+		AS
+		genAddress3,
 		NEW_ADDRESS_1 AS newAddress1,
-				NEW_ADDRESS_2 AS newAddress2,
-				NEW_ADDRESS_3 AS newAddress3,
+		NEW_ADDRESS_2 AS newAddress2,
+		NEW_ADDRESS_3 AS newAddress3,
 		GEN_SHOZOKU_CD AS
 		genShozoku,
-		NEW_SHOZOKU_CD AS newShozoku,
+		NEW_SHOZOKU_CD AS
+		newShozoku,
 		GEN_KINMU_ADDRESS_1 AS
 		genKinmuchi1,
 		GEN_KINMU_ADDRESS_2 AS
 		genKinmuchi2,
 		GEN_KINMU_ADDRESS_3 AS
 		genKinmuchi3,
-		NEW_KINMU_ADDRESS_1 AS newKinmuchi1,
+		NEW_KINMU_ADDRESS_1 AS
+		newKinmuchi1,
 		NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
-		NEW_KINMU_ADDRESS_3 AS newKinmuchi3,
+		NEW_KINMU_ADDRESS_3
+		AS newKinmuchi3,
 		SHINSEI_RIYU AS riyu,
 		IDO_YMD AS idoYmd,
-		ITEN_YMD AS itenYmd,
+		ITEN_YMD AS
+		itenYmd,
 		TENNYU_YMD AS tennyuYmd,
 		RIYO_START_YMD AS riyoStartYmd,
 		SHINSEI_YMD AS shinseiYmd,
@@ -212,11 +217,13 @@
 		TSUKI_SHIKYU_KIN AS tsuki,
 		SHINSEI_KM AS shinseiKm,
 		START_PLACE AS startPlace,
-		YURYO_IC_S AS yuryoIcS,
+		YURYO_IC_S AS
+		yuryoIcS,
 		YURYO_IC_E AS yuryoIcE,
 		END_PLACE AS
 		endPlace
-		FROM SHINSEI_START_KEIRO
+		FROM
+		SHINSEI_START_KEIRO
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
@@ -249,7 +256,8 @@
 		SELECT
 		KIGYO_CD AS kigyo_Cd,
 		SHAIN_UID AS shain_Uid,
-		SHAIN_NO AS shain_No,
+		SHAIN_NO
+		AS shain_No,
 		SHAIN_NM AS shain_Nm,
 		SHOZOKU_CD AS shozoku_Cd
 		FROM SHAIN
@@ -335,7 +343,8 @@
 		TO_CHAR(ADD_DATE, 'YYYYMMDD') AS addDate
 		FROM
 		ICHIJI_HOZON
-		WHERE HOZON_UID =
+		WHERE
+		HOZON_UID =
 		#{hozonUid}
 	</select>
 
@@ -662,10 +671,8 @@
 	</update>
 
 
-
 	<update id="updateShinseiForReapply" parameterType="map">
-		UPDATE
-		SHINSEI
+		UPDATE SHINSEI
 		SET SHINSEI_RIYU = #{shinseiRiyu},
 		NEW_ZIP_CD = #{newZipCd},
 		NEW_ADDRESS_1 = #{newAddress1},
@@ -673,28 +680,13 @@
 		NEW_ADDRESS_3 = #{newAddress3},
 		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
 		ADDRESS_CHG_KBN = #{addressChgKbn},
-		UPD_USER_ID = #{updUserId,
-		jdbcType=NUMERIC},
-
-		NEW_ADDRESS_1 = #{newPref},
-		NEW_ADDRESS_2 =
-		#{newAddress1},
-		NEW_ADDRESS_3 = #{newAddress2},
 		SHINCHOKU_KBN = '2',
-		UPD_USER_ID = #{updUserId},
-
+		UPD_USER_ID       = #{updUserId, jdbcType=NUMERIC},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE KIGYO_CD =
-		#{kigyoCd}
-		AND SHINSEI_NO =
-		#{shinseiNo}
-
-		WHERE KIGYO_CD =
-		#{kigyoCd}
-		AND
-		SHINSEI_NO = #{shinseiNo}
-
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
 	</update>
+
 
 
 
