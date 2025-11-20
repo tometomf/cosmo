@@ -66,10 +66,9 @@ p {
 						<div class="form_Normal">${leftData.beforeShozokuCd}</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
-								<input type="text" maxlength="3"
+								<input type="text" name="newShozokuCd" maxlength="3"
 									style="width: 120px; height: 20px;"
 									oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
-								<button type="button" style="height: 24px;">検索</button>
 							</div>
 						</div>
 					</div>
@@ -143,7 +142,7 @@ p {
 							style="cursor: pointer;" onclick="location.href='/'"> <img
 							src="/resources/img/next_btn01.gif" alt="次へ"
 							style="cursor: pointer;"
-							onclick="location.href='/hiwariKinmuchi/address'"> <img
+							onclick="validateAddress()"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存">
 					</div>
 				</div>
@@ -152,6 +151,27 @@ p {
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
+	
+	<script>
+	function validateAddress() {
+	    const code = document.querySelector("input[name='newShozokuCd']").value.trim();
+	    const zip1 = document.querySelector("input[name='zip1']").value.trim();
+	    const zip2 = document.querySelector("input[name='zip2']").value.trim();
+	    const pref = document.querySelector("input[name='prefecture']").value.trim();
+	    const city = document.querySelector("input[name='city']").value.trim();
+
+	    // 하나라도 비어 있으면 에러
+	    if (code === "" || zip1 === "" || zip2 === "" || pref === "" || city === "") {
+	        alert("必須項目に入力漏れがあります。すべて入力してください。");
+	        return false;
+	    }
+
+	    window.location.href = "/hiwariKinmuchi/address";
+	}
+</script>
+	
+	
+
 
 
 </body>
