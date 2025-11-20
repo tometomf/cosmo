@@ -86,10 +86,11 @@ public class ShinseiController {
 	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 		
-		Long shinseiNoLong = Long.parseLong(shinseiNo);
 		
 		// 1. 신청번호 ㅇ
 		if (shinseiNo != null) {
+			
+			Long shinseiNoLong = Long.parseLong(shinseiNo);
 
 			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
 
