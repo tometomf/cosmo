@@ -15,5 +15,6 @@ public class IdoCheckForm {
 
     public boolean isJushoChange() {
         return "Y".equals(jushoChange);
+        //sdfd
     }
 }
