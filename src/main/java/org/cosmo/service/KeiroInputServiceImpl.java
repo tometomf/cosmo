@@ -15,16 +15,6 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 
 	@Autowired
 	private KeiroInputMapper mapper;
-
-    
-    @Override
-    @Transactional
-    public void saveViaPlace1(Integer kigyoCd, Integer shinseiNo, Integer keiroSeq, String viaPlace1) {
-    	System.out.println("saveViaPlace1 Service >>> viaPlace1=" + viaPlace1
-                + ", shinseiNo=" + shinseiNo
-                + ", keiroSeq=" + keiroSeq);
-        mapper.updateViaPlace1(kigyoCd, shinseiNo, keiroSeq, viaPlace1);
-    }
     
     @Override
     public ShainLocationVO getShainLocation(Long kigyoCd, Long shainUid) {

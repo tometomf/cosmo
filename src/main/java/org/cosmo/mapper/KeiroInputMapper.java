@@ -21,12 +21,6 @@ public interface KeiroInputMapper {
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid);
     
-    int updateViaPlace1(
-            @Param("kigyoCd")   Integer kigyoCd,
-            @Param("shinseiNo") Integer shinseiNo,
-            @Param("keiroSeq")  Integer keiroSeq,
-            @Param("viaPlace1") String  viaPlace1);
-   
     ShainLocationVO selectShainLocationByUid(
         @Param("kigyoCd") Long kigyoCd,
         @Param("shainUid") Long shainUid
