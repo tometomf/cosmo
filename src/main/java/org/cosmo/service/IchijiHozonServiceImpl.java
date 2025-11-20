@@ -30,7 +30,6 @@ public class IchijiHozonServiceImpl implements IchijiHozonService {
         // 3) USER_UID + ACTION_NM 기준으로 최종 데이터 조회
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("userUid", dto.getUserUid());
-        param.put("actionNm", dto.getActionNm());
 
         IchijiHozonDTO latest = ichijiHozonMapper.selectLatestByUserAndAction(param);
 

@@ -132,7 +132,8 @@ public class KeiroInputController {
 	@PostMapping("/tempSave")
     public String tempSaveCommute(
             @RequestParam("commuteJson") String commuteJson,
-            @RequestParam("url") String url,
+            @RequestParam("actionUrl") String actionUrl,
+            @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
             HttpSession session) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
@@ -145,7 +146,7 @@ public class KeiroInputController {
             shinseiKbn = "01";
         }
         
-        System.out.println(url);
+        System.out.println(actionUrl);
 
         byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
 
@@ -153,7 +154,7 @@ public class KeiroInputController {
         dto.setUserUid(userUid);
         dto.setShinseiKbn(shinseiKbn);
         dto.setShozokuCd(shozokuCd);
-        dto.setActionNm("TSUKIN_SHUDAN_TEMP_SAVE");
+        dto.setActionNm(actionUrl);
         dto.setData(dataBytes);
 
         dto.setAddUserId(userUid);
@@ -162,7 +163,11 @@ public class KeiroInputController {
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
         oshiraseService.saveTempOshirase(shain);
 
-        return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+        if(redirectUrl == "") {        	
+        	return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+        }
+        
+        return "redirect:" + redirectUrl;
     }
 	 
 	 @PostMapping("/saveViaPlace1")

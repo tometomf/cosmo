@@ -208,11 +208,15 @@
         </div>
         
         <!-- 임시저장용 폼 -->
-        <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
-            <!-- ShinseiIcDataVO 구조의 JSON 문자열 -->
-            <input type="hidden" name="commuteJson" value="">
-            <input type="hidden" name="url" value="/keiroinput/06_keiroinput">
-        </form>
+	    <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
+	    <input type="hidden" name="commuteJson" value="">
+	    
+	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+	    <input type="hidden" name="actionUrl" value="TSUKIN_SHUDAN_TEMP_SAVE">
+	    
+	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+	    <input type="hidden" name="redirectUrl" value="">
+</form>
 
     </div>
     <%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -220,6 +224,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    // 서버에서 내려주는 기존 정보
     const keiro = {
         kigyoCd: "${keiro.kigyoCd}",
         shainUid: "${keiro.shainUid}",
@@ -238,14 +243,17 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // 현 통근수단 표시
-    document.getElementById("tsukinShudanDiv").innerText = keiro.tsukinShudanNm;
+    const tsukinShudanDiv = document.getElementById("tsukinShudanDiv");
+    if (tsukinShudanDiv) {
+        tsukinShudanDiv.innerText = keiro.tsukinShudanNm || "";
+    }
 
-    // 버튼 이미지 DOM
+    // 버튼 / 라디오 DOM
     const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn01.gif"]');
     const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
     const radios   = document.querySelectorAll('input[name="way"]');
 
- 	// 통근수단 value → 코드 매핑 (CODE 103과 맞춰서 사용하는 코드)
+    // 통근수단 value → 코드 매핑 (CODE 103 등과 맞춰서 사용)
     const TSUKIN_SHUDAN_MAP = {
         densha: "1",   // 電車
         bus:    "2",   // バス
@@ -253,64 +261,40 @@ document.addEventListener("DOMContentLoaded", function() {
         toho:   "6",   // 徒歩
         other:  "7"    // その他
     };
- 	
-    keiroBtn.addEventListener('click', function() {
+
+    // 폼 / hidden input
+    const form             = document.getElementById("tsukinTempForm");
+    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+    // actionUrl은 JSP에서 value="TSUKIN_SHUDAN_TEMP_SAVE" 로 이미 박혀 있음
+
+    /**
+     * 현재 선택된 라디오값을 기반으로
+     * 서버에 보낼 통근정보 JSON 문자열을 생성
+     */
+    function buildCommuteJson() {
         const selected = document.querySelector('input[name="way"]:checked');
         if (!selected) {
             alert("通勤手段を選択してください。");
-            return;
+            return null;
         }
 
-        const value = selected.value;
-        let baseUrl = "";
-
-        switch (value) {
-            case "densha":
-                baseUrl = "<c:url value='/keiroinput/07_keirodtInput'/>";
-                break;
-            case "bus":
-            case "other":
-                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
-                break;
-            case "car":
-                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
-                break;
-            case "toho":
-                baseUrl = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
-                break;
-        }
-
-        const urlObj = new URL(baseUrl, window.location.origin);
-
-        if (value === "bus" || value === "other") {
-            urlObj.searchParams.set("shudanType", TSUKIN_SHUDAN_MAP[value]);
-        }
-
-        window.location.href = urlObj.toString();
-    });
-
-    hozonBtn.addEventListener('click', function () {
-        const selected = document.querySelector('input[name="way"]:checked');
-        if (!selected) {
-            alert("通勤手段を選択してください。");
-            return;
-        }
-
-        const value = selected.value;              // "densha" / "bus" / ...
-        const kbn   = TSUKIN_SHUDAN_MAP[value];    // "01" / "02" ...
+        const value = selected.value;            // "densha" / "bus" / ...
+        const kbn   = TSUKIN_SHUDAN_MAP[value];  // "1" / "2" / ...
         if (!kbn) {
             alert("通勤手段コードが未設定です。(" + value + ")");
-            return;
+            return null;
         }
 
-        const labelText = selected.parentElement.textContent.trim();
+        const labelText = selected.parentElement.textContent.trim();  // "電車" 등
 
+        // 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식 가정)
         const shinseiIcData = {
-            // 공통 정보 – 이 화면엔 없으니 일단 null/빈값
+            // 공통 정보 (이 화면에는 값이 없어서 일단 null로)
             kigyoCd:   keiro.kigyoCd || null,
             shinseiNo: null,
             shinseiYmd: null,
-            shinseiKbn: null,        // 이후 다른 화면/서버에서 세팅
+            shinseiKbn: null,
             shinchokuKbn: null,
             genAddress: null,
             newAddress: null,
@@ -318,7 +302,6 @@ document.addEventListener("DOMContentLoaded", function() {
             newShozoku: null,
             genKinmuchi: null,
             newKinmuchi: null,
-
             riyu: null,
             idoYmd: null,
             itenYmd: null,
@@ -326,27 +309,77 @@ document.addEventListener("DOMContentLoaded", function() {
             riyoStartYmd: null,
             ssmdsYmd: null,
             moComment: null,
-
             codeNm: null,
             shinseiName: null,
 
-            // 통근경로 정보 
+            // 통근 경로 정보
             keiro: {
-                tsukinShudan: kbn,        // ShinseiKeiroVO.tsukinShudan
-                shudanName:   labelText   // ShinseiKeiroVO.shudanName
-                // 필요하면 추가:
-                // startPlace: keiro.startPlace || null,
-                // endPlace:   keiro.endPlace   || null,
+                tsukinShudan: kbn,       // 예: "1"
+                shudanName:   labelText  // 예: "電車"
+                // 필요하면 여기서 startPlace/endPlace 등도 같이 넣을 수 있음
             }
         };
 
-        const jsonString = JSON.stringify(shinseiIcData);
+        return JSON.stringify(shinseiIcData);
+    }
 
-        const form = document.getElementById("tsukinTempForm");
-        form.querySelector('input[name="commuteJson"]').value = jsonString;
+    //  hozonBtn: 임시저장 → 컨트롤러가 기본 redirect(/shinsei/ichiji) 사용
+    if (hozonBtn) {
+        hozonBtn.addEventListener('click', function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
 
-        form.submit();
-    });
+            commuteJsonInput.value = jsonString;
+
+            redirectUrlInput.value = "";
+
+            form.submit();
+        });
+    }
+
+    //  keiroBtn: 임시저장 + 다음 경로 입력 화면으로 이동
+    if (keiroBtn) {
+        keiroBtn.addEventListener('click', function() {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            const selected = document.querySelector('input[name="way"]:checked');
+            if (!selected) {
+                alert("通勤手段を選択してください。");
+                return;
+            }
+
+            const value = selected.value;  // "densha", "bus", "car", "toho", "other"
+            let redirectPath = "";
+
+            switch (value) {
+                case "densha":
+                    redirectPath = "<c:url value='/keiroinput/07_keirodtInput'/>";
+                    break;
+                case "bus":
+                case "other":
+                    redirectPath = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
+                    // 버스/기타는 shudanType 쿼리파라미터 필요
+                    redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
+                    break;
+                case "car":
+                    redirectPath = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
+                    break;
+                case "toho":
+                    redirectPath = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
+                    break;
+                default:
+                    alert("通勤手段が不正です。");
+                    return;
+            }
+
+            redirectUrlInput.value = redirectPath;
+
+            form.submit();
+        });
+    }
 });
 </script>
 
