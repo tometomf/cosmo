@@ -265,7 +265,6 @@
 	function submitBackForm() {
 		document.getElementById("backForm").submit();
 	}
-	
 </script>
 <style>
 /* ====== 테이블 구조 ====== */
@@ -350,7 +349,8 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請解除日</div>
-					<div class="form_Normal" style="color: red;">2013/02/04</div>
+					<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -383,7 +383,7 @@
 								type="text" id="zipCode2" name="zip2" maxlength="4"
 								style="width: 60px; text-align: center;">
 							<button type="button" style="padding: 2px 8px;"
-								onclick="AjaxZip3.zip2addr('zipCode1','zipCode2','prefectureSelect','address1Input','address2Input');">検索</button>
+								onclick="AjaxZip3.zip2addr('zip1','zip2','prefecture','address1','address2');">検索</button>
 						</div>
 						<!-- 도도부현 -->
 						<div>
@@ -472,11 +472,21 @@
 				</div>
 
 				<!-- 勤務地 -->
+
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
 					<div class="form_Normal">${empty jyohou.genKinmuchi ? '' : jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}
+						<button type="button"
+							style="border: none; background: none; cursor: pointer; padding: 5px;"
+							onclick="openAddressCheck()">
+							<img src="/resources/img/tn/search_btn02.gif" alt="勤務地確認"
+								style="vertical-align: middle; display: block;">
+						</button>
+					</div>
 				</div>
+
+
 			</div>
 
 			<!-- ===== 経路① ===== -->
@@ -516,7 +526,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 IC</div>
-					<div class="form_Normal">用賀IC ～ 中野IC</div>
+					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -588,11 +598,11 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証有効期限</div>
-						<div class="form_Normal">2015/10/21</div>
+						<div class="form_Normal">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証番号</div>
-						<div class="form_Normal">1234-5678-90</div>
+						<div class="form_Normal">${shainHuzuiShorui.menkyo_No}</div>
 					</div>
 				</div>
 				<div class="content_Form1" style="width: 330px; margin: 0;">
@@ -604,19 +614,19 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車種</div>
-						<div class="form_Normal">ベンツ</div>
+						<div class="form_Normal">${shainHuzuiShorui.shashu}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">ナンバー</div>
-						<div class="form_Normal">品川 300 い 1111</div>
+						<div class="form_Normal">${shainHuzuiShorui.toroku_No}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">排気量</div>
-						<div class="form_Normal">3000CC</div>
+						<div class="form_Normal">${shainHuzuiShorui.haikiryo}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車検有効期限</div>
-						<div class="form_Normal">2014/12/24</div>
+						<div class="form_Normal">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">燃費</div>
@@ -638,27 +648,27 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">保険満了日</div>
-						<div class="form_Normal">2015/10/21</div>
+						<div class="form_Normal">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対人賠償</div>
-						<div class="form_Normal">無制限万円</div>
+						<div class="form_Normal">${shainHuzuiShorui.taijin_Baisho}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対物賠償</div>
-						<div class="form_Normal">無制限万円</div>
+						<div class="form_Normal">${shainHuzuiShorui.taibutsu_Baisho}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">人身障害</div>
-						<div class="form_Normal">無制限万円</div>
+						<div class="form_Normal">${shainHuzuiShorui.jinshin_Shogai}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">搭乗者障害</div>
-						<div class="form_Normal">無制限万円</div>
+						<div class="form_Normal">${shainHuzuiShorui.tojosha_Shogai}</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">等級</div>
-						<div class="form_Normal">3級等級</div>
+						<div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
 					</div>
 				</div>
 
@@ -922,9 +932,12 @@
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 	</form>
 
-	<form id="reapplyForm" action="<c:url value='/idoconfirm/kanryoPage'/>" method="get">
+	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
 		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+
+
+		
 
 		<!-- 申請理由 -->
 		<input type="hidden" name="shinseiRiyu" id="shinseiRiyuHidden"
