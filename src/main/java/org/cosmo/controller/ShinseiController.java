@@ -229,7 +229,8 @@ public class ShinseiController {
 
 		if (loginShain != null && loginShain.getShain_Uid() != null) {
 
-			String email = "homeking12345@gmail.com";
+			String loginUidStr = loginShain.getShain_Uid();
+			String email = shinseiService.getEmailByShainUid(loginUidStr); 
 
 			if (email != null && !email.trim().isEmpty()) {
 				SimpleMailMessage message = new SimpleMailMessage();
@@ -311,32 +312,61 @@ public class ShinseiController {
 	}
 
 	@GetMapping("/kakunin")
-	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model) {
+	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
+			HttpServletRequest request) {
 
-		// Long 타입으로 서비스 호출
-		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
+	
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+
+		
+		if (jyohouVo == null) {
+			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
+			String referer = request.getHeader("Referer");
+			if (referer != null && !referer.isEmpty()) {
+				return "redirect:" + referer;
+			} else {
+				return "redirect:/";
+			}
+		}
+
+		
+		String kbn = jyohouVo.getShinchokuKbn();
+		if (!"3".equals(kbn)) { 
+			rttr.addFlashAttribute("errorMsg", "この画面は「差戻し」の申請のみ参照できます。");
+
+			String referer = request.getHeader("Referer");
+			if (referer != null && !referer.isEmpty()) {
+				return "redirect:" + referer;
+			} else {
+				return "redirect:/";
+			}
+		}
+
+		
+		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 
-		// 진척구분 이름 설정
-		if (jyohouVo != null && jyohouVo.getShinchokuKbn() != null) {
+		
+		if (jyohouVo.getShinchokuKbn() != null) {
 			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 			jyohouVo.setCodeNm(codeNm);
 		}
 
-		// 신청구분 이름 설정
-		if (jyohouVo != null && jyohouVo.getShinseiKbn() != null) {
+		if (jyohouVo.getShinseiKbn() != null) {
 			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
 			jyohouVo.setShinseiName(shinseiName);
 		}
 
-		// 통근수단 이름 설정
 		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
 			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
 			keiroVo.setShudanName(shudanName);
 		}
 
-		// 모델에 담기
+		
+		model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
+		model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
+
+	
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);
