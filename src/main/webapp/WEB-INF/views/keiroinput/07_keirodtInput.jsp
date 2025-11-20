@@ -481,7 +481,7 @@
 						arrive: "18:07",
 						duration: "36分",     // 분
 						transfer: "1回",      // 회
-						fare: "370円",        // 엔
+						fare: 370,        // 엔
 						icons: ["icon_jr"]
 					},
 					{
@@ -489,7 +489,7 @@
 						arrive: "18:20",
 						duration: "40分",
 						transfer: "2回",
-						fare: "340円",
+						fare: 340,
 						icons: ["icon_shitetu", "icon_jr"]
 					},
 					{
@@ -497,7 +497,7 @@
 						arrive: "18:10",
 						duration: "50分",
 						transfer: "0回",
-						fare: "410円",
+						fare: 410,
 						icons: ["icon_subway", "icon_jr"]
 					}
 				];
@@ -529,6 +529,10 @@
 					sixmonth: "↓"        // 엔
 					}
 				];
+				
+				routes.sort(function(a,b) {
+					return a.fare - b.fare;
+				});
 				
 				renderRoutes();
 				chargeList();
@@ -606,10 +610,10 @@
 	
 	let routes = [];
 
-	
+/* 	
 	routes.sort(function(a,b) {
 		return a.fare - b.fare;
-	});
+	}); */
 	
 	
 	function renderRoutes(){
@@ -631,7 +635,7 @@
 				'<div>' + route.depart + '発 -> ' + route.arrive + '着</div>' + 
 				'<div>'+route.duration+'</div>' + 
 				'<div>'+route.transfer+'</div>' + 
-				'<div>'+route.fare+'</div>' + 
+				'<div>'+route.fare+'円</div>' + 
 				'<div>'+iconsHTML+'</div>'
 				;
 		
