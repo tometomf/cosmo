@@ -2,6 +2,7 @@ package org.cosmo.controller;
 
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.HomeShainVO;
 import org.cosmo.service.HomeService;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,7 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(HttpSession session, Model model) {
 		
-		HomeShainVO vo = new HomeShainVO();
+		ShainVO vo = new ShainVO();
 		
 		vo.setKigyo_Cd("100");				// 기업코드
 		vo.setKigyo_Nm("ABCDEFG");
