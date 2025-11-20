@@ -1,6 +1,7 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.ShainKeiroDTO;
+import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.mapper.KeiroInputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,13 @@ public class KeiroInputServiceImpl implements KeiroInputService {
                 + ", shinseiNo=" + shinseiNo
                 + ", keiroSeq=" + keiroSeq);
         mapper.updateViaPlace1(kigyoCd, shinseiNo, keiroSeq, viaPlace1);
+    }
+    
+    @Override
+    public ShainLocationVO getShainLocation(Long kigyoCd, Long shainUid) {
+        if (kigyoCd == null || shainUid == null) {
+            return null;
+        }
+        return mapper.selectShainLocationByUid(kigyoCd, shainUid);
     }
 }

@@ -148,6 +148,42 @@
 		AND sk.KEIRO_SEQ = #{keiroSeq}
 	</select>
 
+	  <!-- 위치만 매핑하는 ResultMap -->
+    <resultMap id="ShainLocationResultMap" type="org.cosmo.domain.ShainLocationVO">
+        <id     property="kigyoCd"        column="KIGYO_CD" />
+        <id     property="shainUid"       column="SHAIN_UID" />
 
+        <result property="zipCd"          column="ZIP_CD" />
+        <result property="address1"       column="ADDRESS_1" />
+        <result property="address2"       column="ADDRESS_2" />
+        <result property="address3"       column="ADDRESS_3" />
+        <result property="addressIdoKeido" column="ADDRESS_IDO_KEIDO" />
+
+        <result property="kinmuZipCd"         column="KINMU_ZIP_CD" />
+        <result property="kinmuAddress1"      column="KINMU_ADDRESS_1" />
+        <result property="kinmuAddress2"      column="KINMU_ADDRESS_2" />
+        <result property="kinmuAddress3"      column="KINMU_ADDRESS_3" />
+        <result property="kinmuAddressIdoKeido" column="KINMU_ADDRESS_IDO_KEIDO" />
+    </resultMap>
+
+    <!-- PK로 주소/위치만 조회 -->
+    <select id="selectShainLocationByUid" parameterType="map" resultMap="ShainLocationResultMap">
+        SELECT
+            KIGYO_CD,
+            SHAIN_UID,
+            ZIP_CD,
+            ADDRESS_1,
+            ADDRESS_2,
+            ADDRESS_3,
+            ADDRESS_IDO_KEIDO,
+            KINMU_ZIP_CD,
+            KINMU_ADDRESS_1,
+            KINMU_ADDRESS_2,
+            KINMU_ADDRESS_3,
+            KINMU_ADDRESS_IDO_KEIDO
+        FROM SHAIN
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND SHAIN_UID = #{shainUid}
+    </select>
 
 </mapper>

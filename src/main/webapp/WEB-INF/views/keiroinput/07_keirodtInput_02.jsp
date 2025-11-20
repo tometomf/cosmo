@@ -326,48 +326,155 @@ input[type="text"]:disabled {
 				</div>
 			</div>
 		</div>
-		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
-	</div>
+		  <!-- 임시저장용 폼 -->
+	    <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
+	    <input type="hidden" name="commuteJson" value="">
+	    
+	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+	    <input type="hidden" name="actionUrl" value="/keiroinput/07_keiroInput_02">
+	    
+	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+	    <input type="hidden" name="redirectUrl" value="">
+		</form>
 
 	<script>
-		document.getElementById('btnBack').addEventListener('click',
-				function() {
-					if (document.referrer) {
-						location.href = document.referrer;
-						return;
-					}
-					if (history.length > 1) {
-						history.go(-1);
-						return;
-					}
-					location.href = '/';
-				});
-	</script>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+    /* 뒤로가기 버튼 */
+    const btnBack = document.getElementById('btnBack');
+    if (btnBack) {
+        btnBack.addEventListener('click', function () {
+            if (document.referrer) {
+                location.href = document.referrer;
+                return;
+            }
+            if (history.length > 1) {
+                history.go(-1);
+                return;
+            }
+            location.href = '/';
+        });
+    }
 
-			function updateTotal(idInput, idTotal) {
-				const input = document.getElementById(idInput);
-				const total = document.getElementById(idTotal);
+    /* 합계 표시  */
+    function updateTotal(idInput, idTotal) {
+        const input = document.getElementById(idInput);
+        const total = document.getElementById(idTotal);
 
-				input.addEventListener("input", function() {
-					const value = input.value;
-					if (value === "" || isNaN(value)) {
-						total.textContent = "0円";
-					} else {
-						total.textContent = parseInt(value).toLocaleString(
-								'ja-JP')
-								+ "円";
-					}
-				});
-			}
+        if (!input || !total) return;
 
-			updateTotal("pass1m", "total1m");
-			updateTotal("pass3m", "total3m");
-			updateTotal("pass6m", "total6m");
+        input.addEventListener("input", function () {
+            const value = input.value;
+            if (value === "" || isNaN(value)) {
+                total.textContent = "0円";
+            } else {
+                total.textContent = parseInt(value, 10).toLocaleString('ja-JP') + "円";
+            }
+        });
+    }
 
-		});
-	</script>
+    updateTotal("pass1m", "total1m");
+    updateTotal("pass3m", "total3m");
+    updateTotal("pass6m", "total6m");
+
+    /* 임시저장 + 이동 처리 공통 준비 */
+
+    const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn02.gif"]');
+    const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+
+    const form             = document.getElementById("tsukinTempForm");
+    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+
+    // JSTL로 세팅된 값들
+    const shudanType  = "${shudanType}";   // "2" or "7"
+    const shudanLabel = "${shudanLabel}";  // "バス" or "その他"
+    
+    const busCompany   = document.getElementById("busCompany");
+    const busStopFrom  = document.getElementById("busStopFrom");
+    const busStopTo    = document.getElementById("busStopTo");
+    const oneWayFare   = document.getElementById("oneWayFare");
+    const pass1m       = document.getElementById("pass1m");
+    const pass3m       = document.getElementById("pass3m");
+    const pass6m       = document.getElementById("pass6m");
+
+    /**
+     * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
+     */
+    function buildCommuteJson() {
+        // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
+        const kbn        = shudanType || null;   // "2" 또는 "7"
+        const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
+ 
+        const shinseiIcData = {
+            kigyoCd:   null,
+            shinseiNo: null,
+            shinseiYmd: null,
+            shinseiKbn: null,
+            shinchokuKbn: null,
+            genAddress: null,
+            newAddress: null,
+            genShozoku: null,
+            newShozoku: null,
+            genKinmuchi: null,
+            newKinmuchi: null,
+            riyu: null,
+            idoYmd: null,
+            itenYmd: null,
+            tennyuYmd: null,
+            riyoStartYmd: null,
+            ssmdsYmd: null,
+            moComment: null,
+            codeNm: null,
+            shinseiName: null,
+
+            // 통근 경로 정보
+            keiro: {
+                tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
+                shudanName:   labelText,  // 예: "バス", "その他"
+                startPlace: busStopFrom.value,
+                endPlace:  busStopTo.value,
+            }
+        };
+		
+        console.log(shinseiIcData);
+        return JSON.stringify(shinseiIcData);
+    }
+
+    /* hozon 버튼: 임시저장 + 기본 화면(/shinsei/ichiji)으로 */
+    if (hozonBtn) {
+        hozonBtn.addEventListener("click", function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // redirectUrl 비워서 → 컨트롤러: "redirect:/shinsei/ichiji?hozonUid=..." 로 이동
+            redirectUrlInput.value = "";
+
+            form.submit();
+        });
+    }
+
+    /* 다음 단계: 임시저장 + 원하는 페이지로 이동 */
+    if (keiroBtn) {
+        keiroBtn.addEventListener("click", function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // 이 화면 이후에 이동할 URL 지정
+            // 예시: 다음이 경로 확인 화면이라면
+            const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+
+            // 컨트롤러에서 return redirectUrl; 그대로 쓰므로
+            redirectUrlInput.value =  nextPath;
+
+            form.submit();
+        });
+    }
+});
+</script>
 
 </body>
 </html>

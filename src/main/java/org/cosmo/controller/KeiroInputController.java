@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainKeiroDTO;
+import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.service.IchijiHozonService;
@@ -65,7 +66,7 @@ public class KeiroInputController {
 	}
 	
 	@GetMapping("/07_keirodtInput_04")
-	public String toho(Locale locale, Model model) {
+	public String toho(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale, Model model) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -73,7 +74,8 @@ public class KeiroInputController {
 		String formattedDate = dateFormat.format(date);
 
 		model.addAttribute("serverTime", formattedDate);
-
+		model.addAttribute("shudanType", shudanType);
+		
 		return "keiroinput/07_keirodtInput_04";
 	}
 
@@ -197,5 +199,18 @@ public class KeiroInputController {
 	     System.out.println(">>> saveViaPlace1 end");
 	     return "OK";
 	 }
+	 
+	 @GetMapping(value = "/shain/location", produces = "application/json; charset=UTF-8")
+	    @ResponseBody
+	    public ShainLocationVO getShainLocation(HttpSession session) {
+
+		    ShainVO shain = (ShainVO) session.getAttribute("shain");
+
+	        Long userUid   = Long.valueOf(shain.getShain_Uid());
+	        Long kigyoCd   =  Long.valueOf(shain.getKigyo_Cd());
+	        
+
+	        return keiroInputservice.getShainLocation(kigyoCd, userUid);
+	    }
 
 }

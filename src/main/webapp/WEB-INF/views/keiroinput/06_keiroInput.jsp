@@ -192,6 +192,8 @@
                         <label><input type="radio"
                             name="way" value="car"> 自動車</label>
                         <label><input type="radio" name="way"
+                            value="jiten"> 自転車</label>
+                        <label><input type="radio" name="way"
                             value="toho"> 徒歩</label>
                         <label><input type="radio" name="way"
                             value="other"> その他</label>
@@ -212,11 +214,11 @@
 	    <input type="hidden" name="commuteJson" value="">
 	    
 	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
-	    <input type="hidden" name="actionUrl" value="TSUKIN_SHUDAN_TEMP_SAVE">
+	    <input type="hidden" name="actionUrl" value="/keiroinput/06_keiroInput">
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
-</form>
+		</form>
 
     </div>
     <%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -258,6 +260,7 @@ document.addEventListener("DOMContentLoaded", function() {
         densha: "1",   // 電車
         bus:    "2",   // バス
         car:    "3",   // 自動車
+        jiten:  "5",   // 自転車
         toho:   "6",   // 徒歩
         other:  "7"    // その他
     };
@@ -361,12 +364,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 case "bus":
                 case "other":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
-                    // 버스/기타는 shudanType 쿼리파라미터 필요
-                    redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
                     break;
                 case "car":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
                     break;
+                case "jiten":    
                 case "toho":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
                     break;
@@ -375,6 +377,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
             }
 
+            redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
             redirectUrlInput.value = redirectPath;
 
             form.submit();
