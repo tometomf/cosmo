@@ -1,14 +1,27 @@
 package org.cosmo.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import javax.servlet.http.HttpSession;
 
-import org.cosmo.domain.ShainFuzuiShoruiHuzuiNewInputVO;
+import org.cosmo.domain.ShainFuzuiShoruiVO;
+import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.mapper.HuzuiNewInputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value="/huzuiNewInput")
@@ -20,52 +33,106 @@ public class HuzuiNewInputController {
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model,HttpSession session) {
 		
-		Integer kigyo_Cd = (Integer) session.getAttribute("kigyo_Cd");
-		Integer shain_Uid = (Integer) session.getAttribute("shain_Uid");
-		if(kigyo_Cd != null && shain_Uid != null) {
-		model.addAttribute("shainHuzuiShorui", huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid));
-		};
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		
+		if(shain != null) {
+			
+			String kigyo_Cd = shain.getKigyo_Cd();
+			String shain_Uid = shain.getShain_Uid();
+			
+			ShainFuzuiShoruiVO data = huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
+			
+			model.addAttribute("shainHuzuiShorui", data);
+		}
 		return "/huzuiNewInput/24_huzuiNewInput";
 	}
 	
-	@RequestMapping(value = "/updateForm", method = RequestMethod.POST)
-	public String update(ShainFuzuiShoruiHuzuiNewInputVO vo, Model model) {
-		
 	
-		ShainFuzuiShoruiHuzuiNewInputVO data = new ShainFuzuiShoruiHuzuiNewInputVO();
-		// 값 설정
-		data.setMenkyo_Yuko_Kigen("2026/10/11"); 
-		data.setMenkyo_No("1234-5678-AB");
-		data.setShashu("승용차");
-		data.setToroku_No("서울 12가 3456");
-		data.setHaikiryo(2000);
-		data.setShaken_Yuko_Kigen("2026/11/1");
-		data.setHoken_Manryo_Ymd("2026/10/30"); 
-		data.setTaijin_Baisho("무제한");
-		data.setTaibutsu_Baisho("2억");
-		data.setJinshin_Shogai("1억");
-		data.setTojosha_Shogai("5천만");
-		data.setTokyu(1);
-		data.setEtc_File_Uid_1(101);
-		data.setEtc_File_Uid_2(102);
-		data.setEtc_File_Uid_3(103);
-		data.setEtc_File_Uid_4(104);
-		data.setEtc_File_Uid_5(105);
-		data.setEtc_Comment_1("첨부파일 1 관련 코멘트");
-		data.setEtc_Comment_2("첨부파일 2 관련 코멘트");
-		data.setEtc_Comment_3("첨부파일 3 관련 코멘트");
-		data.setEtc_Comment_4("첨부파일 4 관련 코멘트");
-		data.setEtc_Comment_5("첨부파일 5 관련 코멘트");
+	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	public String fileUpload(@RequestParam("file") MultipartFile file,int fileNo, HttpSession session) {
+		if(!file.isEmpty()) {
+		try {
+			ShainVO shain = (ShainVO) session.getAttribute("shain");
+			if(shain != null) {
+				
+				String kigyo_Cd = shain.getKigyo_Cd();
+				String shain_Uid = shain.getShain_Uid();
+				
+			
+			Long uniqueId = System.currentTimeMillis();
+			
+			File destination = new File("/upload/path/" + uniqueId + "-" + file.getOriginalFilename());
+			file.transferTo(destination);
+			
+			huzuiNewInputMapper.fileUpload(kigyo_Cd, shain_Uid, fileNo, uniqueId);
+			return "uid:" + uniqueId;
+			} else {
+				return "사원 정보가 없습니다.";
+			}
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+			return "파일 업로드 실패";
+		}
+		}else {
+			return "파일을 선택해주세요";
+		}
+	}
+			
+	
+	@RequestMapping(value = "/updateForm", method = RequestMethod.POST)
+	public String update(ShainFuzuiShoruiVO vo, Model model, HttpSession session) {
 		
-		model.addAttribute("shainHuzui", data);
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		
-		model.addAttribute("shainHuzuiShorui", vo);
+		if(shain != null) {
+			
+			String kigyo_Cd = shain.getKigyo_Cd();
+			String shain_Uid = shain.getShain_Uid();
+			
+			ShainFuzuiShoruiVO data = huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
+			
+			model.addAttribute("shainHuzuiShorui", data);
+			System.out.println(data);
+		}
+		
+		
+		model.addAttribute("shainHuzui", vo);
 		
 		System.out.print(vo);
 		
 		
 		return "/huzuiNewInput/25_huzuiUpdate";
 	}
+	
+	@PostMapping(value= "/shinseiFuzuiShorui")
+    public ResponseEntity<?> handleSubmit(@RequestBody ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,HttpSession session) {
+        try {
+        	//첫번째 로직
+        	ShainVO shain = (ShainVO) session.getAttribute("shain");
+    		
+            LocalDate today = LocalDate.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            String toDay = today.format(formatter);
+            String date = today.format(format);
+            
+            String shinsei = shain.getKigyo_Cd().substring(0, 3) + date;
+            long shinseiNo = Long.parseLong(shinsei);
+            
+            shinseiFuzuiShorui.setShinseiYmd(toDay);
+            shinseiFuzuiShorui.setShinseiNo(shinseiNo);
+            
+            
+ 	        huzuiNewInputMapper.addFuzuiShorui(shinseiFuzuiShorui, shain);
+            return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리 중 오류가 발생했습니다.");
+        }
+    }
 	
 	
 	@RequestMapping(value = "/finalForm", method = RequestMethod.GET)

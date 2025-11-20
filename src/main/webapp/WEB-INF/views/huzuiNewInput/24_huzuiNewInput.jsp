@@ -72,12 +72,12 @@
 		background:#ededed;
 		gap:20px;
 	}
-/* .henkou1 > *,
-.henkou2 > *,
-.henkou3 > *
- {
-	opacity: 0; 
-} */
+	
+input[type="file"] {
+    display: none; /* 기본 파일 입력 요소를 숨깁니다 */
+}
+
+
 
  </style>
 <body>
@@ -109,7 +109,7 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
 					<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
-					<div class = "form_Normal henkou1"><input type="text" name="">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
+					<div class = "form_Normal henkou1"><input type="text" name="" id="file-name-display">　<input type="file" id="file" class="custom-file-upload"><input type="button" value="参照" id="file-select-button">　<input type="button" value="アップロード" id="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証有効期限</div>
@@ -416,6 +416,58 @@
 		});
 		
 		
+
+		// DOM이 완전히 로드된 후 실행
+		document.addEventListener("DOMContentLoaded", function() {
+		    // 파일 선택 버튼 클릭 시, 숨겨진 파일 입력 필드를 클릭하도록 합니다.
+		    document.getElementById("file-select-button").addEventListener("click", function(event) {
+		        event.preventDefault(); // 기본 동작 막기 (필요 시)
+		        document.getElementById("file").click(); // 숨겨진 파일 입력 필드를 클릭
+		    });
+
+		    // 파일이 선택되면 선택된 파일 이름을 입력 텍스트 필드에 표시
+		    document.getElementById("file").addEventListener("change", function(event) {
+		        var selectedFile = event.target.files[0];
+		        if (selectedFile) {
+		            // 인풋 텍스트 필드에 선택된 파일의 이름을 표시
+		            document.getElementById("file-name-display").value = "選択されたファイル: " + selectedFile.name;
+		        } else {
+		            // 파일이 선택되지 않았을 경우
+		            document.getElementById("file-name-display").value = "ファイルが選択されていません。";
+		        }
+		    });
+		});
+
+		document.getElementById("upload-btn").addEventListener("click", function(event){
+		    var fileInput = document.getElementById("file");
+		    var file = fileInput.files[0];
+		    
+		    if(file){
+		        var formData = new FormData();
+		        formData.append("file", file);
+		        
+		        fetch('/huzuiNewInput/upload', {
+		            method : 'POST',
+		            body : formData
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('파일 업로드 실패');
+		            }
+		            return response.json(); // 응답을 JSON으로 파싱
+		        })
+		        .then(data => {
+		            console.log("파일 업로드 성공:", data); // 성공적인 업로드 후 데이터 처리
+		        })
+		        .catch(error => {
+		            console.error("파일 업로드 실패:", error); // 실패 시 오류 처리
+		        });
+		    } else {
+		        alert('파일을 선택해주세요');
+		    }
+		});
+
+
 		
 </script>
 </html>

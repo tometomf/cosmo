@@ -4,7 +4,7 @@
 
 <mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
 	
-	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiHuzuiNewInputVO">
+	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
 		SELECT * 
 		FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
     	on a.KIGYO_CD = b.KIGYO_CD
@@ -12,5 +12,113 @@
     	and a.KIGYO_CD = #{kigyo_Cd}
    	 	and a.SHAIN_UID = #{shain_Uid}
 	</select>
+	
+	<select id="getFiles">
+		SELECT
+    	* FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+    	on a.KIGYO_CD = b.KIGYO_CD
+    	where a.ETC_FILE_UID_1 = b.FILE_UID;
+    	and a.KIGYO_CD = #{kigyo_Cd}
+    	and a.SHAIN_UID = #{shain_Uid}
+		union all
+		SELECT
+    	* FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+    	on a.KIGYO_CD = b.KIGYO_CD
+    	where a.ETC_FILE_UID_2 = b.FILE_UID;
+    	and a.KIGYO_CD = #{kigyo_Cd}
+    	and a.SHAIN_UID = #{shain_Uid}
+		union all      
+	    SELECT
+	    * FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+	    on a.KIGYO_CD = b.KIGYO_CD
+	    where a.ETC_FILE_UID_3 = b.FILE_UID;
+	    and a.KIGYO_CD = #{kigyo_Cd}
+	    and a.SHAIN_UID = #{shain_Uid}
+		union all
+	    SELECT
+	    * FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+	    on a.KIGYO_CD = b.KIGYO_CD
+	    where a.ETC_FILE_UID_4 = b.FILE_UID;
+	    and a.KIGYO_CD = #{kigyo_Cd}
+	    and a.SHAIN_UID = #{shain_Uid}
+		union all    
+	    SELECT
+	    * FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
+	    on a.KIGYO_CD = b.KIGYO_CD
+	    where a.ETC_FILE_UID_5 = b.FILE_UID;
+	    and a.KIGYO_CD = #{kigyo_Cd}
+	    and a.SHAIN_UID = #{shain_Uid}
+	</select>
+	
+	<update id="fileUpload">
+		update SHAIN_FUZUI_SHORUI 
+		set #{fileNo} = #{fileUid} 
+		where KIGYO_CD = #{kigyo_Cd} 
+		and shain_uid = #{shain_Uid}
+	</update>
+	
+	<insert id="addFuzuiShorui">
+		insert into SHINSEI_FUZUI_SHORUI(
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID,
+		SHAIN_NO,
+		TSUKIN_SHUDAN_KBN,
+		file_uid_1,
+		file_uid_2,
+		file_uid_3,
+		file_uid_4,
+		file_uid_5,
+		MENKYO_YUKO_KIGEN,
+		MENKYO_NO,
+		SHASHU,
+		TOROKU_NO,
+		HAIKIRYO,
+		SHAKEN_YUKO_KIGEN,
+		HOKEN_MANRYO_YMD,
+		TAIJIN_BAISHO,
+		TAIBUTSU_BAISHO,
+		JINSHIN_SHOGAI,
+		TOJOSHA_SHOGAI,
+		TOKYU,
+		ADD_USER_ID,
+		ADD_DATE ,
+		UPD_USER_ID,
+		UPD_DATE) VALUES (
+		#{shain.kigyo_Cd},
+		#{shinseiFuzuiShorui.shinseiNo},
+		1,
+		6,
+		#{shinseiFuzuiShorui.shinseiYmd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		3,
+		#{shinseiFuzuiShorui.fileUid1, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid2, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid3, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid4, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid5, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.menkyoYukoKigen},
+		#{shinseiFuzuiShorui.menkyoNo},
+		#{shinseiFuzuiShorui.shashu},
+		#{shinseiFuzuiShorui.torokuNo},
+		#{shinseiFuzuiShorui.haikiryo},
+		#{shinseiFuzuiShorui.shakenYukoKigen},
+		#{shinseiFuzuiShorui.hokenManryoYmd},
+		#{shinseiFuzuiShorui.taijinBaisho},
+		#{shinseiFuzuiShorui.taibutsuBaisho},
+		#{shinseiFuzuiShorui.jinshinShogai},
+		#{shinseiFuzuiShorui.tojoshaShogai},
+		#{shinseiFuzuiShorui.tokyu},
+		#{shinseiFuzuiShorui.addUserId, jdbcType=VARCHAR},
+		#{shinseiFuzuiShorui.addDate, jdbcType=TIMESTAMP},
+		#{shinseiFuzuiShorui.updUserId, jdbcType=VARCHAR},
+		#{shinseiFuzuiShorui.updDate, jdbcType=TIMESTAMP})
+	</insert>
+	
+	
 	
 </mapper>
