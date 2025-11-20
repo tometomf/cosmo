@@ -90,7 +90,7 @@
 		UPD_DATE) VALUES (
 		#{shain.kigyo_Cd},
 		#{shinseiFuzuiShorui.shinseiNo},
-		1,
+		SHINSEI_FUZUI_SHORUI_SEQ.NEXTVAL,
 		6,
 		#{shinseiFuzuiShorui.shinseiYmd},
 		#{shain.shain_Uid},
