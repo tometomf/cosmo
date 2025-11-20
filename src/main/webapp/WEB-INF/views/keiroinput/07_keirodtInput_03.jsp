@@ -8,55 +8,7 @@
    <meta charset="UTF-8">
    <title>title</title>
    <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
-   <script async
-
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&callback=initMap">
-
-   </script>
-
-   <style>
-
-       #map {
-
-           height: 50vh; /* 화면 전체 높이를 지도에 사용 */
-
-           width: 100%;
-
-       }
-
-   </style>
-
-   <script>
-
-       function initMap() {
-
-           // 지도 기본 설정 (서울 중심)
-
-           const center = { lat: 37.5665, lng: 126.9780 }; // 서울 좌표
-
-           const map = new google.maps.Map(document.getElementById("map"), {
-
-               zoom: 10,
-
-               center: center,
-
-           });
-
-           // 마커 추가
-
-           const marker = new google.maps.Marker({
-
-               position: center,
-
-               map: map,
-
-               title: "서울",
-
-           });
-
-       }
-
-   </script>
+   
 </head>
 
 <style>
@@ -350,7 +302,7 @@ p　{
             <div class="content1" id="content1">
                <div>
                   <div>上記の住所から勤務地までを検索します。</div>
-                  <div><img src="/resources/img/tn/search_btn01.gif" alt=search_btn01></div>            
+                  <div><img src="/resources/img/tn/search_btn01.gif" id="search"></div>            
                </div>
                
             </div>
@@ -681,8 +633,156 @@ p　{
     });
 </script>
 
-   
-   
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&libraries=maps"
+	defer></script>
+<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+<script>
+  // "35.6909,139.7003" → {lat: 35.6909, lng: 139.7003}
+  function parseLatLng(latlng) {
+    if (!latlng || latlng.indexOf(",") === -1) return null;
+    var parts = latlng.split(",");
+    var lat = parseFloat(parts[0]);
+    var lng = parseFloat(parts[1]);
+    if (isNaN(lat) || isNaN(lng)) return null;
+    return { lat: lat, lng: lng };
+  }
+
+  // 전역 변수로 자택/근무지 좌표 저장 (페이지 로드시 채워짐)
+  var homePos = null;
+  var workPos = null;
+
+  var homeFullAddress = null;
+  var workFullAddress = null;
+  var distance    = null;
+  /**
+   * ① 페이지 로드 후에 실행: 사원 위치 정보만 가져와서
+   *    address / kinmuAddress div 채우고, 좌표를 변수에 저장
+   */
+  function loadShainLocation() {
+    fetch('/keiroinput/shain/location', { method: 'GET' })
+      .then(function(res) {
+        if (!res.ok) {
+          console.error('HTTP 오류:', res.status);
+          throw new Error('HTTP error ' + res.status);
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        console.log('사원 위치 정보:', data);
+
+        var addressDiv = document.getElementById('address');
+        var kinmuAddressDiv = document.getElementById('kinmuAddress');
+
+        var a1 = data.address1 || '';
+        var a2 = data.address2 || '';
+        var a3 = data.address3 || '';
+        var k1 = data.kinmuAddress1 || '';
+        var k2 = data.kinmuAddress2 || '';
+        var k3 = data.kinmuAddress3 || '';
+
+        homeFullAddress = (a1 + ' ' + a2 + ' ' + a3).trim();
+        workFullAddress = (k1 + ' ' + k2 + ' ' + k3).trim();
+
+        if (addressDiv) addressDiv.textContent = homeFullAddress;
+        if (kinmuAddressDiv) kinmuAddressDiv.textContent = workFullAddress;
+
+        // 좌표는 전역 변수에 저장만 해둠
+        homePos = parseLatLng(data.addressIdoKeido);
+        workPos = parseLatLng(data.kinmuAddressIdoKeido);
+
+        if (!homePos || !workPos) {
+          console.error('위도/경도 정보 부족:', data);
+        }
+      })
+      .catch(function(err) {
+        console.error('위치 정보 요청/처리 오류:', err);
+      });
+  }
+
+  /**
+   * ② 검색 버튼 클릭 시 실행: 이미 저장된 homePos / workPos로
+   *    지도 + 경로 + 거리 표시
+   */
+  function initMapAndRoute() {
+    if (!homePos || !workPos) {
+      alert('위치 정보가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.');
+      console.error('homePos/workPos 없음:', homePos, workPos);
+      return;
+    }
+
+    var centerPos = {
+      lat: (homePos.lat + workPos.lat) / 2,
+      lng: (homePos.lng + workPos.lng) / 2
+    };
+
+    var mapDiv = document.getElementById('map');
+    if (!mapDiv) {
+      console.error('map 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    var map = new google.maps.Map(mapDiv, {
+      center: centerPos,
+      zoom: 13
+    });
+
+/*     new google.maps.Marker({
+      position: homePos,
+      map: map,
+      title: '自宅（자택）'
+    });
+
+    new google.maps.Marker({
+      position: workPos,
+      map: map,
+      title: '勤務先（근무지）'
+    }); */
+
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    var request = {
+      origin: homePos,
+      destination: workPos,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    directionsService.route(request, function(result, status) {
+      if (status === google.maps.DirectionsStatus.OK) {
+        directionsRenderer.setDirections(result);
+
+        var leg = result.routes[0].legs[0];
+        distance = (leg.distance.value / 1000).toFixed(1);
+        console.log("distance", distance)
+        var distanceDiv = document.getElementById("distance");
+        if (distanceDiv) distanceDiv.textContent = leg.distance.text;
+      } else {
+        console.error('경로 검색 실패:', status);
+      }
+    });
+  }
+
+  
+  //  1) 위치 정보 먼저 가져오기
+  //  2) 검색 버튼 클릭 시 지도/경로 표시
+  window.addEventListener('load', function () {
+    // 1) 위치 정보 로딩
+    loadShainLocation();
+
+    // 2) 검색 버튼 클릭 → initMapAndRoute
+    var searchBtn = document.getElementById('search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+    	  
+        var box = document.getElementById('resultBox');
+        if (box) box.classList.remove('hidden');  
+        initMapAndRoute();
+      });
+    }
+  });
+</script>
 </body>
 
 </html>
