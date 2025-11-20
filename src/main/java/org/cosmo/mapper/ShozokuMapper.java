@@ -22,4 +22,7 @@ public interface ShozokuMapper {
         "ORDER BY SHOZOKU_CD"
     )
     List<ShozokuVO> findShozokuList(@Param("kigyoCd") int kigyoCd);
+
 }
+
+

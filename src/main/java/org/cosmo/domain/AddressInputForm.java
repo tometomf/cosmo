@@ -1,64 +1,24 @@
 package org.cosmo.domain;
 
+import lombok.Data;
+
+/**
+ * 0400 住所入力 화면 폼
+ */
+@Data
 public class AddressInputForm {
 
-    // 신규 우편번호
-    private String newZip1;
-    private String newZip2;
+	// 화면 오른쪽 "新住所" 영역
 
-    // 신규 주소
-    private String newPref;
-    private String newCityStreet;
-    private String newBuilding;
+	private String newZip1; // 郵便番号(앞 3자리)
+	private String newZip2; // 郵便番号(뒤 4자리)
 
-    // 전입일(yyyy/MM/dd)
-    private String moveInDate;
+	private String newPref; // 都道府県
+	private String newCity; // 市区町村
+	private String newStreet; // 丁目・番地 등
+	private String newBuilding; // 建物名 등
 
-    public String getNewZip1() {
-        return newZip1;
-    }
+	private String moveInDate; // 転入日 (yyyy/MM/dd 문자열로 받기)
 
-    public void setNewZip1(String newZip1) {
-        this.newZip1 = newZip1;
-    }
-
-    public String getNewZip2() {
-        return newZip2;
-    }
-
-    public void setNewZip2(String newZip2) {
-        this.newZip2 = newZip2;
-    }
-
-    public String getNewPref() {
-        return newPref;
-    }
-
-    public void setNewPref(String newPref) {
-        this.newPref = newPref;
-    }
-
-    public String getNewCityStreet() {
-        return newCityStreet;
-    }
-
-    public void setNewCityStreet(String newCityStreet) {
-        this.newCityStreet = newCityStreet;
-    }
-
-    public String getNewBuilding() {
-        return newBuilding;
-    }
-
-    public void setNewBuilding(String newBuilding) {
-        this.newBuilding = newBuilding;
-    }
-
-    public String getMoveInDate() {
-        return moveInDate;
-    }
-
-    public void setMoveInDate(String moveInDate) {
-        this.moveInDate = moveInDate;
-    }
+	// 화면 왼쪽 "現住所"는 readonly로 보여줄 거라 폼에는 안 넣어도 됨.
 }

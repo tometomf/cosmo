@@ -2,201 +2,124 @@ package org.cosmo.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
-import org.cosmo.domain.AlertType;
-import org.cosmo.domain.NextScreen;
-import org.cosmo.domain.NextStep;
+import org.cosmo.domain.IdoCheckForm;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.service.AddressInputService;
-import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.ShozokuService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/idoconfirm")
+@RequiredArgsConstructor
 public class IdoConfirmController {
 
-	private final ShozokuService shozokuService;
-	private final AddressInputService addressInputService;
-	private final IdoConfirmService idoConfirmService;
+    private final AddressInputService addressInputService;
+    private final ShozokuService shozokuService;
 
-	 @Autowired
-	    public IdoConfirmController(
-	            ShozokuService shozokuService,
-	            IdoConfirmService idoConfirmService,
-	            AddressInputService addressInputService) {
+    @GetMapping("/kinmuInput")
+    public String kinmuInput() {
+        return "idoconfirm/03_kinmuInput";
+    }
 
-	        this.shozokuService = shozokuService;
-	        this.idoConfirmService = idoConfirmService;
-	        this.addressInputService = addressInputService;
-	    }
+    @GetMapping("/huzuikanri")
+    public String huzuikanri() {
+        return "idoconfirm/08_huzuiKanri";
+    }
 
-	/**
-	 * ================================ 0200 異動有無確認 (GET)
-	 */
-	@RequestMapping(value = { "", "/idoconfirm" }, method = RequestMethod.GET)
-	public String showForm(@RequestParam(value = "alertType", required = false) String alertTypeParam,
-			HttpSession session, Model model) {
+    @GetMapping("/kanryoPage")
+    public String kanryoPage() {
+        return "idoconfirm/10_kanryoPage";
+    }
 
-		AlertType alertType = null;
+    @GetMapping("/tokureiShinsei")
+    public String tokureiShinsei() {
+        return "idoconfirm/k_52_tokureiShinsei";
+    }
 
-		if (alertTypeParam != null) {
-			String tmp = alertTypeParam.toUpperCase();
-			if ("IDOU_ITEN".equals(tmp)) {
-				alertType = AlertType.IDOU_ITEN;
-			} else if ("SONOTA".equals(tmp)) {
-				alertType = AlertType.SONOTA;
-			} else if ("JISHIN".equals(tmp)) {
-				alertType = AlertType.JISHIN;
-			} else {
-				alertType = AlertType.SONOTA;
-			}
-			session.setAttribute("alertType", alertType);
-		} else {
-			alertType = (AlertType) session.getAttribute("alertType");
-			if (alertType == null) {
-				alertType = AlertType.SONOTA;
-				session.setAttribute("alertType", alertType);
-			}
-		}
+    @GetMapping("/keiroInfo")
+    public String keiroInfo() {
+        return "idoconfirm/05_keiroInfo";
+    }
 
-		model.addAttribute("currWorkPlaceText", "東京都中野区本町3-30-4KDX中野坂上ビル8F");
-		model.addAttribute("currAddressText", "神奈川県川崎市高津区下作延1-2-3 レオパレス溝の口 103");
+    @GetMapping("/addressinput")
+    public String addressinput(Model model) {
 
-		// 異動/移転인 경우 勤務地 = 변함 고정
-		model.addAttribute("isWorkPlaceFixed", alertType == AlertType.IDOU_ITEN);
+        String kigyoCd = "DUMMY";
+        String shainUid = "DUMMY";
 
-		return "idoconfirm/02_idoConfirm";
-	}
+        AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
+        AddressInputForm form = (AddressInputForm) model.asMap().get("form");
 
-	@RequestMapping(value = "/next", method = RequestMethod.POST)
-	public String goNext(@RequestParam("workPlaceChange") boolean workPlaceChange,
-			@RequestParam("addressChange") boolean addressChange, HttpSession session) {
+        if (form == null) {
+            form = addressInputService.initForm();
+        }
 
-		AlertType alertType = (AlertType) session.getAttribute("alertType");
-		if (alertType == null)
-			alertType = AlertType.SONOTA;
+        model.addAttribute("view", view);
+        model.addAttribute("form", form);
 
-		NextStep nextStep = idoConfirmService.decideNextStep(alertType, workPlaceChange, addressChange);
+        return "idoconfirm/04_addressinput";
+    }
 
-		// 自ら申請④ 패턴이면 mustChangeRoute 저장
-		session.setAttribute("mustChangeRoute", nextStep.isMustChangeRoute());
+    @GetMapping("/kakuninpage")
+    public String kakuninpage() {
+        return "idoconfirm/09_kakuninPage";
+    }
 
-		NextScreen screen = nextStep.getFirstScreen();
+    @GetMapping("/idoconfirm")
+    public String idoconfirm(Model model) {
+        model.addAttribute("form", new IdoCheckForm());
+        return "idoconfirm/02_idoConfirm";
+    }
 
-		if (screen == NextScreen.WORK_INPUT) {
-			return "redirect:/idoconfirm/kinmuInput";
-		}
-		if (screen == NextScreen.ADDRESS_INPUT) {
-			return "redirect:/idoconfirm/addressinput";
-		}
-		if (screen == NextScreen.APPLICATION_ERROR) {
-			return "redirect:/idoconfirm/applyError";
-		}
+    @PostMapping("/next")
+    public String next(@ModelAttribute("form") IdoCheckForm form,
+                       RedirectAttributes redirectAttributes) {
 
-		return "redirect:/idoconfirm/keiroInfo";
-	}
+        boolean kinmu = form.isKinmuChange(); // 勤務地
+        boolean jusho = form.isJushoChange(); // 住所
 
-	@RequestMapping("/kinmuInput")
-	public String kinmuInput() {
-		return "idoconfirm/03_kinmuInput";
-	}
+        // ① 둘 다 "変わらない(N)"
+        if (!kinmu && !jusho) {
+            redirectAttributes.addFlashAttribute("errorMessage", "勤務先または住所の変更を選択してください。");
+            return "idoconfirm/05_keiroInfo";
+        }
 
-	@RequestMapping("/huzuikanri")
-	public String huzuikanri() {
-		return "idoconfirm/08_huzuiKanri";
-	}
+        // ② 둘 다 "変わる(Y)"
+        if (kinmu && jusho) {
+            return "idoconfirm/03_kinmuInput";
+        }
 
-	 @RequestMapping(value = "/addressinput", method = RequestMethod.GET)
-	    public String addressinput(Model model, HttpSession session) {
+        // ③ 근무지만 변함(Y,N)
+        if (kinmu && !jusho) {
+            return "idoconfirm/03_kinmuInput";
+        }
 
-	        // 실제로는 세션에서 기업코드/직원UID 꺼내야 함
-	        String kigyoCd = "DUMMY";
-	        String shainUid = "DUMMY";
+        // ④ 주소만 변함(N,Y)
+        return "idoconfirm/04_addressinput";
+    }
+    
+    @GetMapping("/shozokuSearchPopup")
+    public String shozokuSearchPopup(Model model) {
 
-	        AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
+        // 현재 더미데이터는 KIGYO_CD = 100 고정
+        int kigyoCd = 100;
 
-	        AddressInputForm form =
-	                (AddressInputForm) model.asMap().get("addressForm");
-	        if (form == null) {
-	            form = addressInputService.initForm();
-	        }
+        List<ShozokuVO> list = shozokuService.findShozokuList(kigyoCd);
 
-	        model.addAttribute("view", view);
-	        model.addAttribute("addressForm", form);
+        model.addAttribute("list", list);
 
-	        return "idoconfirm/04_addressinput";
-	    }
-
-	    // 0400 버튼 처리 (POST)
-	    @RequestMapping(value = "/addressinput", method = RequestMethod.POST)
-	    public String handleAddressInput(
-	            @ModelAttribute("addressForm") AddressInputForm form,
-	            @RequestParam("action") String action,
-	            HttpSession session,
-	            RedirectAttributes redirectAttributes) {
-
-	        String kigyoCd = "DUMMY";
-	        String shainUid = "DUMMY";
-
-	        if ("back".equals(action)) {
-	            // 「戻る」 → 03_勤務先入力
-	            return "redirect:/idoconfirm/kinmuInput";
-	        } else if ("save".equals(action)) {
-	            // 「一時保存」
-	            addressInputService.saveTemporary(form, kigyoCd, shainUid);
-	            redirectAttributes.addFlashAttribute("message", "一時保存しました。");
-	            redirectAttributes.addFlashAttribute("addressForm", form);
-	            return "redirect:/idoconfirm/addressinput";
-	        } else if ("next".equals(action)) {
-	            // 「次へ」 → 신규주소 반영 후 0500(経路入力)으로
-	            addressInputService.reflectAddress(form, kigyoCd, shainUid);
-	            return "redirect:/idoconfirm/keiroInfo";
-	        }
-
-	        // 알 수 없는 action이면 그냥 다시 0400으로
-	        redirectAttributes.addFlashAttribute("addressForm", form);
-	        return "redirect:/idoconfirm/addressinput";
-	    }
-
-
-	@RequestMapping("/keiroInfo")
-	public String keiroInfo() {
-		return "idoconfirm/05_keiroInfo";
-	}
-
-	@RequestMapping("/shozokuSearchPopup")
-	public String shozokuSearchPopup(Model model) {
-
-		int kigyoCd = 100;
-		List<ShozokuVO> list = shozokuService.findShozokuList(kigyoCd);
-		model.addAttribute("list", list);
-
-		return "idoconfirm/shozokuSearchPopup";
-	}
-
-	@RequestMapping("/kanryoPage")
-	public String kanryoPage() {
-		return "idoconfirm/10_kanryoPage";
-	}
-
-	@RequestMapping("/tokureiShinsei")
-	public String tokureiShinsei() {
-		return "idoconfirm/k_52_tokureiShinsei";
-	}
-
-	@RequestMapping("/kakuninpage")
-	public String kakuninpage() {
-		return "idoconfirm/09_kakuninPage";
-	}
+        return "idoconfirm/shozokuSearchPopup";  
+    }
+  
+    
 }

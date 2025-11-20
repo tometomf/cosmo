@@ -1,68 +1,21 @@
 package org.cosmo.domain;
 
+import lombok.Data;
+
+/**
+ * 0400 화면에 표시할 주소 정보 (현재/신청후)
+ */
+@Data
 public class AddressViewDto {
 
-    // 현 우편번호
-    private String currZip1;
-    private String currZip2;
+    // 現住所 (신청 전: 社員M 등)
+    private String curZip;       // 213-0001
+    private String curPref;      // 神奈川県
+    private String curCity;      // 川崎市中原区
+    private String curStreet;    // 上小田中1-2-3
+    private String curBuilding;  // レオパレス清の103
 
-    // 현 주소 (都道府県, 市区町村～番地, 建物名～号室)
-    private String currPref;
-    private String currCityStreet;
-    private String currBuilding;
-
-    public String getCurrZip1() {
-        return currZip1;
-    }
-
-    public void setCurrZip1(String currZip1) {
-        this.currZip1 = currZip1;
-    }
-
-    public String getCurrZip2() {
-        return currZip2;
-    }
-
-    public void setCurrZip2(String currZip2) {
-        this.currZip2 = currZip2;
-    }
-
-    public String getCurrPref() {
-        return currPref;
-    }
-
-    public void setCurrPref(String currPref) {
-        this.currPref = currPref;
-    }
-
-    public String getCurrCityStreet() {
-        return currCityStreet;
-    }
-
-    public void setCurrCityStreet(String currCityStreet) {
-        this.currCityStreet = currCityStreet;
-    }
-
-    public String getCurrBuilding() {
-        return currBuilding;
-    }
-
-    public void setCurrBuilding(String currBuilding) {
-        this.currBuilding = currBuilding;
-    }
-
-    // 화면 상단의 "住所" 한 줄짜리 문구용 (편의 메서드)
-    public String getCurrFullAddress() {
-        StringBuilder sb = new StringBuilder();
-        if (currPref != null) {
-            sb.append(currPref);
-        }
-        if (currCityStreet != null) {
-            sb.append(currCityStreet);
-        }
-        if (currBuilding != null) {
-            sb.append(currBuilding);
-        }
-        return sb.toString();
-    }
+    // 新住所 (신청 후: 申請T or 一時保存)
+    // 여기 값은 AddressInputForm으로 옮겨서 input value로 쓸 거라
+    // 꼭 있어야 하는 건 아님. 필요하면 추가로 사용.
 }
