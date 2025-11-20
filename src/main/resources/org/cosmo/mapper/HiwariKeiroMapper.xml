@@ -2,7 +2,6 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="org.cosmo.mapper.HiwariKeiroMapper">
 
     <!-- 経路VO 매핑 -->
@@ -12,53 +11,64 @@
         <result column="KEIRO_SEQ"         property="keiroSeq"/>
         <result column="SHAIN_UID"         property="shainUid"/>
         <result column="TSUKIN_SHUDAN_KBN" property="tsukinShudanKbn"/>
+        <result column="TSUKIN_SHUDAN_NM"  property="tsukinShudanNm"/>  <!-- ★ 추가 -->
         <result column="START_PLACE"       property="startPlace"/>
         <result column="END_PLACE"         property="endPlace"/>
+        <result column="VIA_PLACE_1"       property="viaPlace1"/>       <!-- ★ 추가 -->
+        <result column="VIA_PLACE_2"       property="viaPlace2"/>       <!-- ★ 추가 -->
+        <result column="VIA_PLACE_3"       property="viaPlace3"/>       <!-- ★ 추가 -->
+        <result column="VIA_PLACE_4"       property="viaPlace4"/>       <!-- ★ 추가 -->
+        <result column="VIA_PLACE_5"       property="viaPlace5"/>       <!-- ★ 추가 -->
         <result column="KEKKA_SELECT"      property="kekkaSelect"/>
     </resultMap>
 
-    <!-- 로그인사원(가짜 9001)의 최신 신청번호 기준 경로 조회 -->
-    <select id="findByUser"
-            parameterType="int"
-            resultMap="HiwariKeiroMap">
+    <!-- 로그인사원의 최신 신청번호 기준 경로 조회 -->
+    <select id="findByUser" resultMap="HiwariKeiroMap">
         SELECT
-            KIGYO_CD,
-            SHINSEI_NO,
-            KEIRO_SEQ,
-            SHAIN_UID,
-            TSUKIN_SHUDAN_KBN,
-            START_PLACE,
-            END_PLACE,
-            KEKKA_SELECT
+            SSK.KIGYO_CD,
+            SSK.SHINSEI_NO,
+            SSK.KEIRO_SEQ,
+            SSK.SHAIN_UID,
+            SSK.TSUKIN_SHUDAN_KBN,
+            C.CODE_NM AS TSUKIN_SHUDAN_NM,    -- ★ 추가: 통근수단명
+            SSK.START_PLACE,
+            SSK.END_PLACE,
+            SSK.VIA_PLACE_1,                   -- ★ 추가
+            SSK.VIA_PLACE_2,                   -- ★ 추가
+            SSK.VIA_PLACE_3,                   -- ★ 추가
+            SSK.VIA_PLACE_4,                   -- ★ 추가
+            SSK.VIA_PLACE_5,                   -- ★ 추가
+            SSK.KEKKA_SELECT
         FROM
-            SHINSEI_START_KEIRO
+            SHINSEI_START_KEIRO SSK
+        LEFT JOIN CODE C ON C.CODE_SYBTSU = '103'     -- ★ 추가: 통근수단 코드
+                        AND C.CODE = SSK.TSUKIN_SHUDAN_KBN
         WHERE
-            KIGYO_CD = 100
-          AND SHINSEI_NO = (
+            SSK.KIGYO_CD = #{kigyoCd}                  -- ★ 수정: 파라미터로 받기
+          AND SSK.SHINSEI_NO = (
                 SELECT MAX(SHINSEI_NO)
                   FROM SHINSEI
-                 WHERE KIGYO_CD = 100
+                 WHERE KIGYO_CD = #{kigyoCd}           -- ★ 수정
                    AND SHAIN_UID = #{shainUid}
           )
         ORDER BY
-            KEIRO_SEQ
+            SSK.KEIRO_SEQ
     </select>
 
     <!-- 해당 사원의 최신 신청에 대한 경로 전체 삭제 -->
-    <delete id="deleteByUser" parameterType="int">
+    <delete id="deleteByUser">
         DELETE FROM SHINSEI_START_KEIRO
-        WHERE KIGYO_CD = 100
+        WHERE KIGYO_CD = #{kigyoCd}                    -- ★ 수정
           AND SHINSEI_NO = (
                 SELECT MAX(SHINSEI_NO)
                   FROM SHINSEI
-                 WHERE KIGYO_CD = 100
+                 WHERE KIGYO_CD = #{kigyoCd}           -- ★ 수정
                    AND SHAIN_UID = #{shainUid}
           )
     </delete>
 
     <!-- 경로 1건 저장 -->
-    <insert id="insertKeiro"
-            parameterType="org.cosmo.domain.HiwariKeiroVO">
+    <insert id="insertKeiro" parameterType="org.cosmo.domain.HiwariKeiroVO">
         INSERT INTO SHINSEI_START_KEIRO (
             KIGYO_CD,
             SHINSEI_NO,
@@ -67,32 +77,49 @@
             TSUKIN_SHUDAN_KBN,
             START_PLACE,
             END_PLACE,
-            KEKKA_SELECT
+            VIA_PLACE_1,                               -- ★ 추가
+            VIA_PLACE_2,                               -- ★ 추가
+            VIA_PLACE_3,                               -- ★ 추가
+            VIA_PLACE_4,                               -- ★ 추가
+            VIA_PLACE_5,                               -- ★ 추가
+            KEKKA_SELECT,
+            ADD_USER_ID,
+            ADD_DATE,
+            UPD_USER_ID,
+            UPD_DATE
         )
         VALUES (
-            100,
+            #{kigyoCd},                                -- ★ 수정
             (SELECT MAX(SHINSEI_NO)
                FROM SHINSEI
-              WHERE KIGYO_CD = 100
+              WHERE KIGYO_CD = #{kigyoCd}              -- ★ 수정
                 AND SHAIN_UID = #{shainUid}),
             #{keiroSeq},
             #{shainUid},
             #{tsukinShudanKbn},
             #{startPlace},
             #{endPlace},
-            #{kekkaSelect}
+            #{viaPlace1},                              -- ★ 추가
+            #{viaPlace2},                              -- ★ 추가
+            #{viaPlace3},                              -- ★ 추가
+            #{viaPlace4},                              -- ★ 추가
+            #{viaPlace5},                              -- ★ 추가
+            #{kekkaSelect},
+            #{shainUid},
+            SYSTIMESTAMP,
+            #{shainUid},
+            SYSTIMESTAMP
         )
     </insert>
 
-    <!-- 경로 1건 삭제 (삭제 링크용)
-         - 같은 사원의 "최신 신청번호" + KEIRO_SEQ 로 삭제 -->
+    <!-- 경로 1건 삭제 -->
     <delete id="deleteOne">
         DELETE FROM SHINSEI_START_KEIRO
-        WHERE KIGYO_CD = 100
+        WHERE KIGYO_CD = #{kigyoCd}                    -- ★ 수정
           AND SHINSEI_NO = (
                 SELECT MAX(SHINSEI_NO)
                   FROM SHINSEI
-                 WHERE KIGYO_CD = 100
+                 WHERE KIGYO_CD = #{kigyoCd}           -- ★ 수정
                    AND SHAIN_UID = #{shainUid}
           )
           AND SHAIN_UID = #{shainUid}
