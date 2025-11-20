@@ -23,3 +23,6 @@ public class HiwariKinmuchiVO {
     private String kinmuAddress2;     // KINMU_ADDRESS_2 또는 NEW_KINMU_ADDRESS_2
     private String kinmuAddress3; 
 }
+
+
+
