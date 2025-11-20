@@ -83,19 +83,21 @@ public class ShinseiController {
 	}
 
 	@GetMapping("/torikesu")
-	public String viewTorikesu(@RequestParam(value = "no", required = false) Long shinseiNo,
+	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
-
+		
+		Long shinseiNoLong = Long.parseLong(shinseiNo);
+		
 		// 1. 신청번호 ㅇ
 		if (shinseiNo != null) {
 
-			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
 
 			if (jyohouVo != null) {
 
-				ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
-				ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
-				String fileName = shinseiService.getFileName(shinseiNo);
+				ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNoLong);
+				ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNoLong);
+				String fileName = shinseiService.getFileName(shinseiNoLong);
 
 				if (jyohouVo.getShinchokuKbn() != null) {
 					jyohouVo.setCodeNm(shinseiService.getCodeNm(jyohouVo.getShinchokuKbn()));
