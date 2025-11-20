@@ -52,9 +52,9 @@ public class HiwariKinmuchiController {
 
         if (shain == null) {
             shain = new ShainVO();
-            shain.setShain_Uid("1");        // 더미 사원 UID
-            shain.setShozoku_Cd("100");     // 더미 소속 코드
-            shain.setShinchoku_kbn("01");   // 기본 진척구분
+            shain.setShain_Uid("1");
+            shain.setShozoku_Cd("100");
+            shain.setShinchoku_kbn("01");
             session.setAttribute("shain", shain);
 
             System.out.println("🔥 [DEBUG] 더미 shain 세션 자동 생성됨");
@@ -68,7 +68,7 @@ public class HiwariKinmuchiController {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
-            return "redirect:/";   // 홈에서 shain 생성 후 다시 오게
+            return "redirect:/";
         }
 
         Integer kigyoCd = 1001;
@@ -85,23 +85,17 @@ public class HiwariKinmuchiController {
 
         List<String> shoList = service.getShozokuNames(kigyoCd);
         model.addAttribute("shoList", shoList);
-
         model.addAttribute("leftData", data);
 
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
-    
-    
-
-    
-    
 
     @GetMapping("/address")
     public String showHiwariAddressPage() {
         return "hiwariKinmuchi/hiwariAddress";
     }
 
- // =========================
+    // =========================
     // ② 確認画面
     // =========================
     @GetMapping("/kakunin")
@@ -110,12 +104,11 @@ public class HiwariKinmuchiController {
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
 
-        // 세션에 값 없으면 경로 입력으로 돌려보냄
         if (kigyoCd == null || shinseiNo == null) {
             return "redirect:/hiwariKinmuchi/keiro";
         }
 
-        // 1) 헤더 (社員・申請情報)
+        // 1) 헤더 정보
         HiwariKakuninVO header = hiwariKakuninService.getHeader(kigyoCd, shinseiNo);
 
         // 2) 경로 리스트
@@ -124,7 +117,7 @@ public class HiwariKinmuchiController {
             routes = new ArrayList<HiwariKakuninRouteVO>();
         }
 
-        // ==== emp 세팅 (JSP: ${emp.no}, ${emp.name}, ${emp.workplace}, ${emp.address}) ====
+        // ==== emp 세팅 ====
         Map<String, Object> emp = new HashMap<String, Object>();
         if (header != null) {
             emp.put("no",        header.getEmpNo());
@@ -134,7 +127,7 @@ public class HiwariKinmuchiController {
         }
         model.addAttribute("emp", emp);
 
-        // ==== route1 / route2 세팅 (JSP: ${route1.xxx}, ${route2.xxx}) ====
+        // ==== route1 / route2 세팅 ====
         HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
         HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
 
@@ -160,7 +153,7 @@ public class HiwariKinmuchiController {
         }
         model.addAttribute("route2", route2);
 
-        // ==== apply 세팅 (JSP: ${apply.kind}, ${apply.reason}, ${apply.periodText} …) ====
+        // ==== apply 세팅 ====
         Map<String, Object> apply = new HashMap<String, Object>();
         if (header != null) {
             apply.put("kind",        header.getShinseiKbnNm());
@@ -171,22 +164,34 @@ public class HiwariKinmuchiController {
         }
         model.addAttribute("apply", apply);
 
-        // JSP 레이아웃은 네가 만든 정적 kakunin.jsp 그대로 사용
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
+    // =========================
+    // 完了画面
+    // =========================
     @GetMapping("/kanryo")
     public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
         model.addAttribute("shinseiNo", shinseiNo);
         return "hiwariKinmuchi/hiwariKanryo";
     }
 
+    // =========================
+    // ③ 経路入力画面 (GET)
+    // =========================
     @GetMapping("/keiro")
     public String showKeiroPage(HttpSession session, Model model) {
 
+        // kigyoCd 추가
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+        
+        // 테스트용 기본값
+        if (kigyoCd == null) kigyoCd = 100;
+        if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
+        // kigyoCd 파라미터 추가
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -199,6 +204,9 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariKeiro";
     }
 
+    // =========================
+    // ③ 経路入力画面 (POST)
+    // =========================
     @PostMapping("/keiro")
     public String handleKeiro(
             @RequestParam("action") String action,
@@ -208,9 +216,16 @@ public class HiwariKinmuchiController {
         System.out.println("=== DEBUG /keiro POST START ===");
         System.out.println("action = " + action);
 
+        // kigyoCd 추가
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+        
+        // 테스트용 기본값
+        if (kigyoCd == null) kigyoCd = 100;
+        if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
+        // kigyoCd 파라미터 추가
+        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -219,7 +234,7 @@ public class HiwariKinmuchiController {
         System.out.println("keiroList size = " + keiroList.size());
 
         if ("apply".equals(action)) {
-
+            // 경로 없으면 에러
             if (keiroList.isEmpty()) {
                 model.addAttribute("errorMsg", "経路が1件も登録されていません。");
                 model.addAttribute("keiroList", keiroList);
@@ -227,12 +242,13 @@ public class HiwariKinmuchiController {
                 return "hiwariKinmuchi/hiwariKeiro";
             }
             
-            hiwariKeiroService.saveApply(shainUid, keiroList);
+            // ★ 최종 수정: 확인 화면으로 이동
             return "redirect:/hiwariKinmuchi/kakunin";
         }
 
         if ("temp".equals(action)) {
-            hiwariKeiroService.saveTemp(shainUid, keiroList);
+            // kigyoCd 파라미터 추가
+            hiwariKeiroService.saveTemp(kigyoCd, shainUid, keiroList);
             return "redirect:/hiwariKinmuchi/keiro";
         }
         
@@ -240,24 +256,31 @@ public class HiwariKinmuchiController {
         model.addAttribute("repRouteNo", repRouteNo);
         return "hiwariKinmuchi/hiwariKeiro";
     }
-    
-    
 
+    // =========================
+    // 経路削除
+    // =========================
     @GetMapping("/keiro/delete")
     public String deleteKeiro(
             @RequestParam("keiroSeq") Integer keiroSeq,
             HttpSession session) {
 
+        // kigyoCd 추가
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+        
+        // 테스트용 기본값
+        if (kigyoCd == null) kigyoCd = 100;
+        if (shainUid == null) shainUid = 30000001;
 
-        hiwariKeiroService.deleteOne(shainUid, keiroSeq);
+        // kigyoCd 파라미터 추가
+        hiwariKeiroService.deleteOne(kigyoCd, shainUid, keiroSeq);
         return "redirect:/hiwariKinmuchi/keiro";
     }
 
     @GetMapping("/keiro/edit")
     public String editKeiro(
             @RequestParam("keiroSeq") Integer keiroSeq) {
-
         return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
     }
 
@@ -266,8 +289,8 @@ public class HiwariKinmuchiController {
             return 1;
         }
         return keiroList.size();
-        
     }
+    
     @GetMapping("/keiroInput")
     public String showKeiroInputPage() {
         return "keiroinput/06_keiroInput";
@@ -306,23 +329,17 @@ public class HiwariKinmuchiController {
         dto.setShozokuCd(shozokuCd);
         dto.setActionNm(actionUrl);
         dto.setData(dataBytes);
-
         dto.setAddUserId(userUid);
         dto.setUpdUserId(userUid);
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-        // ★ 알림
         oshiraseService.saveTempOshirase(shain);
 
-        // 임시저장 버튼 → 기본 이동
         if (redirectUrl == null || redirectUrl.isEmpty()) {
             return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
         }
 
         return "redirect:" + redirectUrl;
     }
-    
-    
-    
 }

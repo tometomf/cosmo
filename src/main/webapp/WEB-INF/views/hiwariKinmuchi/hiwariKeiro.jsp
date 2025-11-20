@@ -48,7 +48,6 @@
   .route-add img { width: 14px; height: 14px; }
   .route-add:hover { text-decoration: underline; }
 
-  /* ===== DB 있을 때 전용 ===== */
   .route-actions {
     margin-top: -18px;
     display: flex; align-items: center; gap: 8px;
@@ -145,9 +144,7 @@
 
         <c:choose>
 
-          <!-- ==========================================
-               1) DB에 경로 없을 때
-               ========================================== -->
+    
           <c:when test="${empty keiroList}">
             <div class="route-section">
               <div class="route-head">
@@ -162,12 +159,10 @@
             </div>
           </c:when>
 
-          <!-- ==========================================
-               2) DB에 경로 있을 때
-               ========================================== -->
+        
           <c:otherwise>
 
-            <!-- 상단 追加する 버튼 -->
+       
             <div style="text-align:right; margin-bottom:4px;">
               <button type="button" class="route-add"
                       style="border:none;background:none;padding:0;"
@@ -178,8 +173,12 @@
 
             <c:forEach var="row" items="${keiroList}" varStatus="st">
 
-              <c:url var="editUrl"   value="/hiwariKinmuchi/keiroInput"><c:param name="keiroSeq" value="${row.keiroSeq}"/></c:url>
-              <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete"><c:param name="keiroSeq" value="${row.keiroSeq}"/></c:url>
+              <c:url var="editUrl"   value="/hiwariKinmuchi/keiroInput">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+              </c:url>
+              <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+              </c:url>
 
               <div class="route-section">
 
@@ -198,13 +197,13 @@
 
                 <div class="keiro-box">
 
-                  <!-- 통근수단 -->
+                 
                   <div class="keiro-method-bar">
                     <span class="keiro-method-label">通勤手段</span>
                     <span class="keiro-method-value">${row.tsukinShudanNm}</span>
                   </div>
 
-                  <!-- 発 / 着 -->
+                 
                   <div class="keiro-route-body">
                     <div class="keiro-point-row">
                       <span class="keiro-point-type keiro-from">発</span>
@@ -226,24 +225,22 @@
 
         <br><br>
 
-        <!-- ==========================================
-             버튼 영역 (submit 방식 유지)
-             ========================================== -->
+       
         <div class="button_Left">
           <div class="button_Left_Group">
 
-            <!-- 戻る -->
-            <a href="<c:url value='/hiwariKinmuchi/back'/>">
+        
+            <a href="<c:url value='/hiwariKinmuchi/riyu'/>">
               <img src="/resources/img/back_btn01.gif" alt="戻る">
             </a>
 
-            <!-- 次へ → POST(action=apply) -->
+          
             <button type="submit" name="action" value="apply"
                     style="border:none;background:none;padding:0;cursor:pointer;">
               <img src="/resources/img/next_btn01.gif" alt="次へ">
             </button>
 
-            <!-- 一時保存(action=temp) -->
+        
             <button type="submit" name="action" value="temp"
                     style="border:none;background:none;padding:0;cursor:pointer;">
               <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
