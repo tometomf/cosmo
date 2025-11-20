@@ -7,62 +7,96 @@
     <!-- 申請前：SHAIN + SHOZOKU -->
 <select id="getBeforeShinsei" resultType="org.cosmo.domain.HiwariKinmuchiVO">
     SELECT
-        SH.KIGYO_CD,
-        SH.SHAIN_UID,
+        -- 勤務先コード（現勤務地）
+        s.SHOZOKU_CD          AS genKinmusakiCd,
 
-        SH.SHOZOKU_CD      AS beforeShozokuCd,
-        SZ.SHOZOKU_NM      AS beforeShozokuNm,
+        -- 勤務先名（現勤務地）
+        z.SHOZOKU_NM          AS genKinmusakiNm,
 
-        SH.KINMU_ZIP_CD    AS kinmuZipCd,
-        SH.KINMU_PREF_CD   AS kinmuPrefCd,
-        C.CODE_NM          AS kinmuPrefNm,     
-        SH.KINMU_ADDRESS_1 AS kinmuAddress1,
-        SH.KINMU_ADDRESS_2 AS kinmuAddress2,
-        SH.KINMU_ADDRESS_3 AS kinmuAddress3
-        
+        -- 郵便番号（現勤務地）
+        s.KINMU_ZIP_CD        AS genKinmuZip,
 
-    FROM SHAIN SH
-    LEFT JOIN SHOZOKU SZ
-      ON SH.KIGYO_CD   = SZ.KIGYO_CD
-     AND SH.SHOZOKU_CD = SZ.SHOZOKU_CD
+        -- 都道府県（現勤務地）
+        s.KINMU_ADDRESS_1     AS genKinmuAddress1,
 
-    -- ★ 도도부현 코드마스터 JOIN
-    LEFT JOIN CODE C
-      ON SH.KINMU_PREF_CD = C.CODE
-     AND C.CODE_SYBTSU = '003'   -- 003 = 도도부현 코드 그룹
+        -- 所在地１（現勤務地）
+        s.KINMU_ADDRESS_2     AS genKinmuAddress2,
 
-    WHERE SH.KIGYO_CD = #{kigyoCd}
-      AND SH.SHAIN_UID = #{shainUid}
+        -- 所在地２（現勤務地）
+        s.KINMU_ADDRESS_3     AS genKinmuAddress3,
+
+
+        -- 日割期間 勤務地 쪽은 신청 전에는 없음 → NULL
+        NULL AS hiwariKinmusakiCd,
+        NULL AS hiwariKinmusakiNm,
+        NULL AS hiwariKinmuZip,
+        NULL AS hiwariKinmuAddress1,
+        NULL AS hiwariKinmuAddress2,
+        NULL AS hiwariKinmuAddress3
+
+    FROM SHAIN s
+    LEFT JOIN SHOZOKU z
+      ON z.KIGYO_CD   = s.KIGYO_CD
+     AND z.SHOZOKU_CD = s.SHOZOKU_CD
+
+    WHERE s.KIGYO_CD  = #{kigyoCd}
+      AND s.SHAIN_UID = #{shainUid}
 </select>
 
     <!-- 申請後：SHINSEI + SHOZOKU -->
 <select id="getAfterShinsei" resultType="org.cosmo.domain.HiwariKinmuchiVO">
     SELECT
-        S.KIGYO_CD,
-        S.SHAIN_UID,
+        -- ===== 現勤務地 쪽 =====
+        -- 勤務先コード（現在の勤務先）
+        sh.GEN_SHOZOKU_CD     AS genKinmusakiCd,
 
-        S.NEW_SHOZOKU_CD      AS beforeShozokuCd,
-        SZ.SHOZOKU_NM         AS beforeShozokuNm,
+        -- 勤務先名（GEN_SHOZOKU_CD 기준）
+        z1.SHOZOKU_NM         AS genKinmusakiNm,
 
-        S.NEW_KINMU_ZIP_CD    AS kinmuZipCd,
-        S.NEW_KINMU_PREF_CD   AS kinmuPrefCd,
-        C.CODE_NM             AS kinmuPrefNm,      -- ★ 추가
-        S.NEW_KINMU_ADDRESS_1 AS kinmuAddress1,
-        S.NEW_KINMU_ADDRESS_2 AS kinmuAddress2
+        -- 郵便番号（現勤務地）
+        sh.GEN_KINMU_ZIP_CD   AS genKinmuZip,
 
-    FROM SHINSEI S
-    LEFT JOIN SHOZOKU SZ
-      ON S.KIGYO_CD        = SZ.KIGYO_CD
-     AND S.NEW_SHOZOKU_CD  = SZ.SHOZOKU_CD
+        -- 都道府県（現勤務地）
+        sh.GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
 
-    -- ★ 도도부현 코드 JOIN
-    LEFT JOIN CODE C
-      ON S.NEW_KINMU_PREF_CD = C.CODE
-     AND C.CODE_SYBTSU = '003'
+        -- 所在地１（現勤務地）
+        sh.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
 
-    WHERE S.KIGYO_CD = #{kigyoCd}
-      AND S.SHAIN_UID = #{shainUid}
-      AND S.SHINSEI_NO = #{shinseiNo}
+        -- 所在地２（現勤務地）
+        sh.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
+
+
+        -- ===== 日割期間 勤務地 쪽 =====
+        -- 勤務先コード（日割期間）
+        sh.NEW_SHOZOKU_CD     AS hiwariKinmusakiCd,
+
+        -- 勤務先名（日割期間）
+        z2.SHOZOKU_NM         AS hiwariKinmusakiNm,
+
+        -- 郵便番号（日割期間 勤務地）
+        sh.NEW_KINMU_ZIP_CD   AS hiwariKinmuZip,
+
+        -- 都道府県（日割期間 勤務地）
+        sh.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+
+        -- 所在地１（日割기간 勤務地）
+        sh.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+
+        -- 所在地２（日割기간 勤務地）
+        sh.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
+
+    FROM SHINSEI sh
+    LEFT JOIN SHOZOKU z1
+      ON z1.KIGYO_CD   = sh.KIGYO_CD
+     AND z1.SHOZOKU_CD = sh.GEN_SHOZOKU_CD   -- 現勤務地용
+
+    LEFT JOIN SHOZOKU z2
+      ON z2.KIGYO_CD   = sh.KIGYO_CD
+     AND z2.SHOZOKU_CD = sh.NEW_SHOZOKU_CD   -- 日割기간용
+
+    WHERE sh.KIGYO_CD   = #{kigyoCd}
+      AND sh.SHAIN_UID  = #{shainUid}
+      AND sh.SHINSEI_NO = #{shinseiNo}
 </select>
 
 
