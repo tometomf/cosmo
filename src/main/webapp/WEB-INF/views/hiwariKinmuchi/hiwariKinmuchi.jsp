@@ -51,10 +51,8 @@ p {
 					日割期間の勤務地を入力してください。<br> 勤務地を選択後、「次へ」ボタンをクリックしてください。
 				</p>
 
-
-
 				<div class="content_Form1" style="margin-top: 20px;">
-					<!-- 제목예제1 -->
+
 					<div class="form_Title1" id="form_Ttile1">
 						<div></div>
 						<div>現勤務地</div>
@@ -89,9 +87,9 @@ p {
 						<div class="form_Column">郵便番号</div>
 						<div class="form_Normal">
 							<c:if test="${not empty leftData.kinmuZipCd}">
-    <c:set var="zip" value="${fn:trim(leftData.kinmuZipCd)}"/>
-    ${fn:substring(zip, 0, 3)}-${fn:substring(zip, 3, 7)}
-</c:if>
+							    <c:set var="zip" value="${fn:trim(leftData.kinmuZipCd)}"/>
+							    ${fn:substring(zip, 0, 3)}-${fn:substring(zip, 3, 7)}
+							</c:if>
 						</div>
 						<div class="form_Normal">
 							<div style="display: flex; align-items: center; gap: 4px;">
@@ -129,21 +127,24 @@ p {
 						<div class="form_Column">所在地2（建物名等）</div>
 						<div class="form_Normal">${leftData.kinmuAddress3}</div>
 						<div>
-							<input type="text" style="width: 380px; height: 20px;">
+							<input type="text" name="address2"
+								style="width: 380px; height: 20px;">
 						</div>
 					</div>
 
 				</div>
 
-
 				<div class="button_Left" style="margin-top: 25px;">
 					<div class="button_Left_Group">
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
-							style="cursor: pointer;" onclick="location.href='/'"> <img
-							src="/resources/img/next_btn01.gif" alt="次へ"
+							style="cursor: pointer;" onclick="location.href='/'">
+
+						<img src="/resources/img/next_btn01.gif" alt="次へ"
 							style="cursor: pointer;"
-							onclick="validateAddress()"> <img
-							src="/resources/img/hozon_btn01.gif" alt="一時保存">
+							onclick="validateAddress()">
+
+						<img src="/resources/img/hozon_btn01.gif" alt="一時保存"
+							style="cursor: pointer;">
 					</div>
 				</div>
 			</div>
@@ -151,8 +152,17 @@ p {
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
-	
-	<script>
+
+	<!-- ▼ 임시저장용 폼 추가 -->
+	<form id="kinmuTempForm" method="post" action="<c:url value='/hiwariKinmuchi/tempSave'/>">
+	    <input type="hidden" name="commuteJson" value="">
+	    <input type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE">
+	    <input type="hidden" name="redirectUrl" value="">
+	</form>
+	<!-- ▲ 임시저장용 폼 끝 -->
+
+<script>
+
 	function validateAddress() {
 	    const code = document.querySelector("input[name='newShozokuCd']").value.trim();
 	    const zip1 = document.querySelector("input[name='zip1']").value.trim();
@@ -160,7 +170,6 @@ p {
 	    const pref = document.querySelector("input[name='prefecture']").value.trim();
 	    const city = document.querySelector("input[name='city']").value.trim();
 
-	    // 하나라도 비어 있으면 에러
 	    if (code === "" || zip1 === "" || zip2 === "" || pref === "" || city === "") {
 	        alert("必須項目に入力漏れがあります。すべて入力してください。");
 	        return false;
@@ -168,11 +177,84 @@ p {
 
 	    window.location.href = "/hiwariKinmuchi/address";
 	}
+
+	/* ▼ 임시저장 JSON 만들기 */
+
+	function buildKinmuTempJson() {
+
+	    const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
+	    const newShozokuNm = document.querySelector("select[name='newShozokuNm']").value.trim();
+	    const zip1 = document.querySelector("input[name='zip1']").value.trim();
+	    const zip2 = document.querySelector("input[name='zip2']").value.trim();
+	    const prefecture = document.querySelector("input[name='prefecture']").value.trim();
+	    const city = document.querySelector("input[name='city']").value.trim();
+	    const address2 = document.querySelector("input[name='address2']").value.trim();
+
+	    let fullZip = "";
+	    if (zip1 !== "" && zip2 !== "") fullZip = zip1 + zip2;
+
+	    // ⭐⭐⭐ ShinseiIcDataVO 에 맞춘 구조
+	    const shinseiIcData = {
+
+	        kigyoCd: null,
+	        shinseiNo: null,
+	        shinseiYmd: null,
+	        shinseiKbn: null,
+	        shinchokuKbn: null,
+
+	        // 기존(현)값은 화면에서 받을 수 없으니 null 또는 leftData에서 가져오면 추가 가능
+	        genAddress: null,
+	        newAddress: prefecture && city ? (prefecture + " " + city + " " + address2) : null,
+
+	        genShozoku: null,
+	        newShozoku: newShozokuNm || null,
+
+	        genKinmuchi: null,
+	        newKinmuchi: newShozokuCd || null,
+
+	        riyu: null,
+	        idoYmd: null,
+	        itenYmd: null,
+	        tennyuYmd: null,
+	        riyoStartYmd: null,
+	        ssmdsYmd: null,
+	        moComment: null,
+
+	        codeNm: null,
+	        shinseiName: null,
+
+	        // ⭐⭐⭐ 근무지 화면에서는 keiro 없음
+	        keiro: null
+	    };
+
+	    return JSON.stringify(shinseiIcData);
+	}
+	/* ▲ JSON 생성 끝 */
+
+	/* ▼ 임시저장 버튼 이벤트 ⭐⭐⭐ 수정 없음, 유지 */
+	document.addEventListener("DOMContentLoaded", function () {
+
+	    const hozonBtn = document.querySelector('img[alt="一時保存"]');
+
+	    const form = document.getElementById("kinmuTempForm");
+	    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+	    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+
+	    if (hozonBtn) {
+	        hozonBtn.addEventListener("click", function () {
+
+	            const jsonString = buildKinmuTempJson();
+	            commuteJsonInput.value = jsonString;
+
+	            redirectUrlInput.value = "";
+
+	            form.submit();
+	        });
+	    }
+	});
+	/* ▲ 임시저장 끝 */
+
 </script>
-	
-	
-
-
 
 </body>
 </html>

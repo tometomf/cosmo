@@ -1,20 +1,24 @@
 package org.cosmo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKakuninService;
 import org.cosmo.service.HiwariKeiroService;
 import org.cosmo.service.HiwariKinmuchiService;
+import org.cosmo.service.IchijiHozonService;
+import org.cosmo.service.OshiraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +30,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/hiwariKinmuchi")
 public class HiwariKinmuchiController {
+	
+	@Autowired
+	private IchijiHozonService ichijiHozonService;
+	
+	@Autowired
+	private OshiraseService oshiraseService;
 
     @Autowired
     private HiwariKeiroService hiwariKeiroService;
@@ -37,10 +47,30 @@ public class HiwariKinmuchiController {
     private HiwariKakuninService hiwariKakuninService;
 
     
+    private ShainVO ensureDummyShain(HttpSession session) {
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+
+        if (shain == null) {
+            shain = new ShainVO();
+            shain.setShain_Uid("1");        // 더미 사원 UID
+            shain.setShozoku_Cd("100");     // 더미 소속 코드
+            shain.setShinchoku_kbn("01");   // 기본 진척구분
+            session.setAttribute("shain", shain);
+
+            System.out.println("🔥 [DEBUG] 더미 shain 세션 자동 생성됨");
+        }
+
+        return shain;
+    }
+    
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
-        // 강제 더미
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";   // 홈에서 shain 생성 후 다시 오게
+        }
+
         Integer kigyoCd = 1001;
         Long shainUid = 1L;
         Long shinseiNo = null;
@@ -53,32 +83,16 @@ public class HiwariKinmuchiController {
             data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
         }
 
-        // 🔥 근무지 리스트 추가 (이거 없어서 안 뜬 거임)
         List<String> shoList = service.getShozokuNames(kigyoCd);
         model.addAttribute("shoList", shoList);
 
-        // 기존 데이터
         model.addAttribute("leftData", data);
 
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
     
     
-    @GetMapping("testData")
-    public String testData(HttpServletResponse response) throws Exception {
-        Integer kigyoCd = 1001;
-        Long shainUid = 1L;
 
-        HiwariKinmuchiVO data = service.getBeforeShinsei(kigyoCd, shainUid);
-
-        response.setContentType("text/plain; charset=UTF-8");
-        response.getWriter().println("===== DB TEST =====");
-        response.getWriter().println("kigyoCd = " + data.getKigyoCd());
-        response.getWriter().println("shainUid = " + data.getShainUid());
-        response.getWriter().println("shozoNm = " + data.getBeforeShozokuNm());
-        response.getWriter().println("zip = " + data.getKinmuZipCd());
-        return null;
-    }
     
     
 
@@ -227,10 +241,7 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariKeiro";
     }
     
-    @GetMapping("/back")
-    public String backFromKeiro() {
-        return "redirect:/hiwariKinmuchi/riyu";
-    }
+    
 
     @GetMapping("/keiro/delete")
     public String deleteKeiro(
@@ -266,4 +277,52 @@ public class HiwariKinmuchiController {
     public String showRiyuPage() {
         return "hiwariKinmuchi/hiwariRiyu";
     }
+    
+    @PostMapping("/tempSave")
+    public String tempSaveKinmu(
+            @RequestParam("commuteJson") String commuteJson,
+            @RequestParam("actionUrl") String actionUrl,
+            @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
+            HttpSession session) {
+
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/"; 
+        }
+
+        Integer userUid   = Integer.parseInt(shain.getShain_Uid());
+        String  shozokuCd = shain.getShozoku_Cd();
+        String  shinseiKbn = shain.getShinchoku_kbn();
+
+        if (shinseiKbn == null || shinseiKbn.isEmpty()) {
+            shinseiKbn = "01";
+        }
+
+        byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
+
+        IchijiHozonDTO dto = new IchijiHozonDTO();
+        dto.setUserUid(userUid);
+        dto.setShinseiKbn(shinseiKbn);
+        dto.setShozokuCd(shozokuCd);
+        dto.setActionNm(actionUrl);
+        dto.setData(dataBytes);
+
+        dto.setAddUserId(userUid);
+        dto.setUpdUserId(userUid);
+
+        int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
+
+        // ★ 알림
+        oshiraseService.saveTempOshirase(shain);
+
+        // 임시저장 버튼 → 기본 이동
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
+            return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+        }
+
+        return "redirect:" + redirectUrl;
+    }
+    
+    
+    
 }
