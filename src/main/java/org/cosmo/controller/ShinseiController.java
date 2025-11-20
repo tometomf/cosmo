@@ -55,6 +55,33 @@ public class ShinseiController {
 		return "shinsei/11_shinseiDetail_02";
 	}
 
+	@GetMapping("/reload")
+	public String reloadIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
+
+		ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
+		if (hozon == null) {
+			model.addAttribute("errorMessage", "데이터 없음");
+			return "home";
+		}
+
+		String action = hozon.getActionNm();
+		if (action == null || action.trim().isEmpty()) {
+			model.addAttribute("errorMessage", "데이터 없음");
+			return "home";
+		}
+
+		byte[] jsonBytes = hozon.getData();
+		String jsonStr = new String(jsonBytes, StandardCharsets.UTF_8);
+
+		Gson gson = new Gson();
+		ShinseiIcDataDTO data = gson.fromJson(jsonStr, ShinseiIcDataDTO.class);
+
+		model.addAttribute("ichiji", data);
+		model.addAttribute("hozonUid", hozonUid);
+
+		return "redirect:" + action;
+	}
+
 	@GetMapping("/torikesu")
 	public String viewTorikesu(@RequestParam(value = "no", required = false) Long shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {

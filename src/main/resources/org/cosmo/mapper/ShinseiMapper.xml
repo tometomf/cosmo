@@ -330,6 +330,7 @@
 		HOZON_UID AS hozonUid,
 		USER_UID AS userUid,
 		SHINSEI_KBN AS shinseiKbn,
+		ACTION_NM AS actionNm,
 		DATA AS data,
 		TO_CHAR(ADD_DATE, 'YYYYMMDD') AS addDate
 		FROM
