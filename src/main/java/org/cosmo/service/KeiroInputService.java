@@ -4,6 +4,7 @@ import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface KeiroInputService {
 
@@ -13,9 +14,9 @@ public interface KeiroInputService {
     
     ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid);
     
-    void saveViaPlace1(Integer kigyoCd, Integer shinseiNo, Integer keiroSeq, String viaPlace1);
-    
     ShainLocationVO getShainLocation(Long kigyoCd, Long shainUid);
 
 	KeiroInputDenshaDTO getDenshaKeiroDetail(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
+	
+	ShinseiStartKeiroVO getViaPlace1(Integer kigyoCd, Long shainUid);
 }

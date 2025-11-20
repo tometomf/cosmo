@@ -316,6 +316,7 @@
 
   var homeFullAddress = null;
   var workFullAddress = null;
+  var distance    = null;
   /**
    * ① 페이지 로드 후에 실행: 사원 위치 정보만 가져와서
    *    address / kinmuAddress div 채우고, 좌표를 변수에 저장
@@ -415,9 +416,10 @@
         directionsRenderer.setDirections(result);
 
         var leg = result.routes[0].legs[0];
-        var distanceText = leg.distance.text;
+        distance = (leg.distance.value / 1000).toFixed(1);
+        console.log("distance", distance)
         var distanceDiv = document.getElementById("distance");
-        if (distanceDiv) distanceDiv.textContent = distanceText;
+        if (distanceDiv) distanceDiv.textContent = leg.distance.text;
       } else {
         console.error('경로 검색 실패:', status);
       }
@@ -442,8 +444,7 @@
       });
     }
   });
-</script>
-<script>
+
 document.addEventListener("DOMContentLoaded", function () {
     /* 뒤로가기 버튼 */
     const btnBack = document.getElementById('btnBack');
@@ -531,6 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 shudanName:   labelText,  // 예: "バス", "その他"
                 startPlace: homeFullAddress,
                 endPlace:  workFullAddress,
+                shinseiKm: distance 
             }
         };
 		

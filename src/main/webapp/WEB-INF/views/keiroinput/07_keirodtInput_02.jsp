@@ -433,6 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 shudanName:   labelText,  // 예: "バス", "その他"
                 startPlace: busStopFrom.value,
                 endPlace:  busStopTo.value,
+                tsuki: pass1m.value
             }
         };
 		

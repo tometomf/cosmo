@@ -13,6 +13,7 @@ import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.KeiroInputService;
 import org.cosmo.service.OshiraseService;
@@ -141,11 +142,16 @@ public class KeiroInputController {
         
         ShinseiDTO addr = keiroInputservice.getShinseiAddress(kigyoCd, shainUid);
         ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid);
+        ShinseiStartKeiroVO startKeiro = keiroInputservice.getViaPlace1(kigyoCd, shainUid);
+        
+        
         
         model.addAttribute("addr", addr);
         model.addAttribute("kinmuAddr", kinmuAddr);
+        model.addAttribute("startkeiro", startKeiro);
         return "keiroinput/07_keirodtInput_03";
     }
+
 
 	@PostMapping("/tempSave")
     public String tempSaveCommute(
@@ -187,34 +193,6 @@ public class KeiroInputController {
         
         return "redirect:" + redirectUrl;
     }
-	 
-	 @PostMapping("/saveViaPlace1")
-	 @ResponseBody
-	 public String saveViaPlace1(@RequestParam("viaPlace1") String viaPlace1,
-	                             HttpSession session) {
-
-	     System.out.println(">>> saveViaPlace1 called");
-	     System.out.println("  viaPlace1 = " + viaPlace1);
-
-	     ShainVO shain = (ShainVO) session.getAttribute("shain");
-	     if (shain == null) {
-	         System.out.println("  shain in session is null");
-	         return "NG_NO_SESSION";
-	     }
-
-	     Integer kigyoCd   = Integer.valueOf(shain.getKigyo_Cd());
-	     Integer shinseiNo = 1;  // 지금은 테스트용 더미값
-	     Integer keiroSeq  = 1;  // 지금은 테스트용 더미값
-
-	     System.out.println("  kigyoCd=" + kigyoCd
-	             + ", shinseiNo=" + shinseiNo
-	             + ", keiroSeq=" + keiroSeq);
-
-	     keiroInputservice.saveViaPlace1(kigyoCd, shinseiNo, keiroSeq, viaPlace1);
-	     
-	     System.out.println(">>> saveViaPlace1 end");
-	     return "OK";
-	 }
 	 
 	 @GetMapping(value = "/shain/location", produces = "application/json; charset=UTF-8")
 	    @ResponseBody
