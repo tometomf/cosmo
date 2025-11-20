@@ -475,6 +475,63 @@
 				document.getElementById("kensakuTime").innerText = getCurrentTime();
 				
 				
+				routes = [
+					{
+						depart: "17:31",
+						arrive: "18:07",
+						duration: "36分",     // 분
+						transfer: "1回",      // 회
+						fare: "370円",        // 엔
+						icons: ["icon_jr"]
+					},
+					{
+						depart: "17:40",
+						arrive: "18:20",
+						duration: "40分",
+						transfer: "2回",
+						fare: "340円",
+						icons: ["icon_shitetu", "icon_jr"]
+					},
+					{
+						depart: "17:20",
+						arrive: "18:10",
+						duration: "50分",
+						transfer: "0回",
+						fare: "410円",
+						icons: ["icon_subway", "icon_jr"]
+					}
+				];
+				
+				
+				teikiken = [
+					{
+					name : "東武東上線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: 8500,     // 분
+					threemonth: 13170,      // 회
+					sixmonth: 24950        // 엔
+					},
+					{
+					name : "東京メトロ丸ノ内線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: 4260,     // 분
+					threemonth: 24230,      // 회
+					sixmonth: 45900        // 엔
+					},
+					{
+					name : "東京メトロ丸ノ内線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: "↓",     // 분
+					threemonth: "↓",      // 회
+					sixmonth: "↓"        // 엔
+					}
+				];
+				
+				renderRoutes();
+				chargeList();
 			});
 			
 			ekiSwap.addEventListener("click", function() {
@@ -547,32 +604,7 @@
 
 <script>
 	
-	const routes = [
-		{
-			depart: "17:31",
-			arrive: "18:07",
-			duration: "36分",     // 분
-			transfer: "1回",      // 회
-			fare: "370円",        // 엔
-			icons: ["icon_jr"]
-		},
-		{
-			depart: "17:40",
-			arrive: "18:20",
-			duration: "40分",
-			transfer: "2回",
-			fare: "340円",
-			icons: ["icon_shitetu", "icon_jr"]
-		},
-		{
-			depart: "17:20",
-			arrive: "18:10",
-			duration: "50分",
-			transfer: "0回",
-			fare: "410円",
-			icons: ["icon_subway", "icon_jr"]
-		}
-	];
+	let routes = [];
 
 	
 	routes.sort(function(a,b) {
@@ -628,32 +660,7 @@
 
 
 
-	const teikiken = [
-		{
-		name : "東武東上線",
-		from: "渋谷",
-		to: "新宿",
-		onemonth: 0,     // 분
-		threemonth: 13170,      // 회
-		sixmonth: 24950        // 엔
-		},
-		{
-		name : "東京メトロ丸ノ内線",
-		from: "渋谷",
-		to: "新宿",
-		onemonth: 0,     // 분
-		threemonth: 24230,      // 회
-		sixmonth: 45900        // 엔
-		},
-		{
-		name : "東京メトロ丸ノ内線",
-		from: "渋谷",
-		to: "新宿",
-		onemonth: "↓",     // 분
-		threemonth: "↓",      // 회
-		sixmonth: "↓"        // 엔
-		}
-	]
+	let teikiken = [];
 	
     const shozokuCD = '${sessionScope.shain.shozoku_Cd}'.trim();
 
