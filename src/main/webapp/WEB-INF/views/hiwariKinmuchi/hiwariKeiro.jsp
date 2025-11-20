@@ -158,50 +158,85 @@
 
         <c:url var="keiroInputUrl" value="/hiwariKinmuchi/keiroInput" />
 
-        <div class="route-section">
-          <div class="route-head">
-            <span class="route-label">
-              経路${maruDigits[repRouteNo]}
-            </span>
+        <%-- ▼ DB 유무에 따른 분기 ▼ --%>
+        <c:choose>
 
-            <button type="button"
-                    class="route-add"
-                    style="border:none;background:none;padding:0;"
-                    onclick="location.href='${keiroInputUrl}'">
-              <img src="/resources/img/tuika_icon.gif" alt="追加">
-              追加する
-            </button>
-          </div>
-
-          <c:forEach var="row" items="${keiroList}">
-
-            <c:url var="editUrl" value="/hiwariKinmuchi/keiro/edit">
-              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
-            </c:url>
-
-            <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
-              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
-            </c:url>
-
-            <div class="keiro-box">
-              <div class="keiro-row">
-                <span>通勤手段：<c:out value="${row.tsukinShudanNm}"/></span>
-                <span>出発地：<c:out value="${row.startPlace}"/></span>
-                <span>到着地：<c:out value="${row.endPlace}"/></span>
-
-                <span style="margin-left: 20px;">
-                  <a href="${editUrl}">変更する</a>｜
-                  <a href="${deleteUrl}">削除する</a>
+          <%-- 1) DB에 경로가 없을 때: 경로 repRouteNo + 追加する + 빈 리스트 --%>
+          <c:when test="${empty keiroList}">
+            <div class="route-section">
+              <div class="route-head">
+                <span class="route-label">
+                  経路${maruDigits[repRouteNo]}
                 </span>
-              </div>
-            </div>
-          </c:forEach>
 
-        </div>
+                <button type="button"
+                        class="route-add"
+                        style="border:none;background:none;padding:0;"
+                        onclick="location.href='${keiroInputUrl}'">
+                  <img src="/resources/img/tuika_icon.gif" alt="追加">
+                  追加する
+                </button>
+              </div>
+
+              <!-- keiroList가 비어 있으므로 실제 경로행 없음 -->
+            </div>
+          </c:when>
+
+          <%-- 2) DB에 경로가 있을 때: 경로①,②,... 를 회색 박스로 반복 표시 --%>
+          <c:otherwise>
+            <c:forEach var="row" items="${keiroList}" varStatus="st">
+
+              <%-- 수정 화면용: 추가 화면과 동일한 keiroInput 으로, keiroSeq 파라미터만 추가 --%>
+              <c:url var="editUrl" value="/hiwariKinmuchi/keiroInput">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+              </c:url>
+
+              <%-- 삭제용: GET /keiro/delete?keiroSeq=... 으로 전송 --%>
+              <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+              </c:url>
+
+              <div class="route-section">
+                <div class="route-head">
+                  <span class="route-label">
+                    <%-- 리스트 index 기준으로 経路①,②,... 부여 --%>
+                    経路${maruDigits[st.index + 1]}
+                  </span>
+
+                  <button type="button"
+                          class="route-add"
+                          style="border:none;background:none;padding:0;"
+                          onclick="location.href='${keiroInputUrl}'">
+                    <img src="/resources/img/tuika_icon.gif" alt="追加">
+                    追加する
+                  </button>
+                </div>
+
+                <div class="keiro-box">
+                  <div class="keiro-row">
+                    <span>通勤手段：<c:out value="${row.tsukinShudanNm}"/></span>
+                    <span>出発地：<c:out value="${row.startPlace}"/></span>
+                    <span>到着地：<c:out value="${row.endPlace}"/></span>
+
+                    <span style="margin-left: 20px;">
+                      <a href="${editUrl}">変更する</a>｜
+                      <a href="${deleteUrl}"
+                         onclick="return confirm('この経路を削除しますか？');">
+                        削除する
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            </c:forEach>
+          </c:otherwise>
+
+        </c:choose>
+        <%-- ▲ 분기 끝 ▲ --%>
 
         <br><br>
 
-      
         <div class="button_Left">
           <div class="button_Left_Group">
 
