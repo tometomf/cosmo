@@ -85,9 +85,9 @@ public class ShinseiController {
 	@GetMapping("/torikesu")
 	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
-		
+
 		Long shinseiNoLong = Long.parseLong(shinseiNo);
-		
+
 		// 1. 신청번호 ㅇ
 		if (shinseiNo != null) {
 
@@ -253,7 +253,8 @@ public class ShinseiController {
 	}
 
 	@GetMapping("/shinseiDetail")
-	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model) {
+	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model,
+			RedirectAttributes rttr, HttpServletRequest request) {
 
 		Long kigyoCd = (Long) session.getAttribute("kigyoCd");
 
@@ -263,6 +264,29 @@ public class ShinseiController {
 		}
 
 		ShinseiDetailVO detail = shinseiService.getShinseiDetail(kigyoCd, shinseiNo);
+
+		if (detail == null) {
+			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
+
+			String referer = request.getHeader("Referer");
+			if (referer != null && !referer.isEmpty()) {
+				return "redirect:" + referer;
+			} else {
+				return "redirect:/"; // 진짜 아무 것도 없을 때 기본 이동
+			}
+		}
+
+		String kbn = detail.getShinchokuKbn();
+		if (!"2".equals(kbn) && !"4".equals(kbn)) {
+			rttr.addFlashAttribute("errorMsg", "この画面は「承認待ち」または「承認済み」の申請のみ参照できます。");
+
+			String referer = request.getHeader("Referer");
+			if (referer != null && !referer.isEmpty()) {
+				return "redirect:" + referer;
+			} else {
+				return "redirect:/";
+			}
+		}
 
 		model.addAttribute("detail", detail);
 

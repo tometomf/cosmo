@@ -186,7 +186,8 @@
 		genKinmuchi3,
 		NEW_KINMU_ADDRESS_1 AS
 		newKinmuchi1,
-		NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
+		NEW_KINMU_ADDRESS_2 AS
+		newKinmuchi2,
 		NEW_KINMU_ADDRESS_3
 		AS newKinmuchi3,
 		SHINSEI_RIYU AS riyu,
@@ -201,7 +202,8 @@
 		TORIKESHI_YMD AS torikeshiYmd
 		FROM
 		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
 	</select>
 
 	<select id="getShinseiKeiro" parameterType="Long"
@@ -672,7 +674,8 @@
 
 
 	<update id="updateShinseiForReapply" parameterType="map">
-		UPDATE SHINSEI
+		UPDATE
+		SHINSEI
 		SET SHINSEI_RIYU = #{shinseiRiyu},
 		NEW_ZIP_CD = #{newZipCd},
 		NEW_ADDRESS_1 = #{newAddress1},
@@ -681,9 +684,11 @@
 		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
 		ADDRESS_CHG_KBN = #{addressChgKbn},
 		SHINCHOKU_KBN = '2',
-		UPD_USER_ID       = #{updUserId, jdbcType=NUMERIC},
+		UPD_USER_ID =
+		#{updUserId, jdbcType=NUMERIC},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE KIGYO_CD = #{kigyoCd}
+		WHERE KIGYO_CD =
+		#{kigyoCd}
 		AND SHINSEI_NO = #{shinseiNo}
 	</update>
 
@@ -714,6 +719,7 @@
 		resultType="org.cosmo.domain.ShinseiDetailVO">
 		SELECT
 		s.SHINSEI_NO AS shinseiNo,
+		s.SHINCHOKU_KBN AS shinchokuKbn,
 		c_status.CODE_NM AS
 		joutaiName,
 		s.SHINSEI_YMD AS shinseiYmd,
