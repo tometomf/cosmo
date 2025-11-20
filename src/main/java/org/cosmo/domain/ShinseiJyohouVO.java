@@ -34,6 +34,14 @@ public class ShinseiJyohouVO {
 
 	private String codeNm;
 	private String shinseiName;
+	private String torikeshiYmd;
+	private String sashimodoshiYmd;
+	
+	private String yuryoIcS;
+	private String yuryoIcE;
+	
+	private String addressIdoKeido;
+
 
 	public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();

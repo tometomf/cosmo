@@ -42,7 +42,7 @@ public class ShinseiController {
 		ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
 		ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
 		ShainVO shinseiUser = null;
-		
+
 		if (ichiji != null && ichiji.getShainUid() != null) {
 			shinseiUser = shinseiService.getShainByUid(ichiji.getShainUid());
 		}
@@ -50,8 +50,7 @@ public class ShinseiController {
 		model.addAttribute("ichiji", ichiji);
 		model.addAttribute("shinseiUser", shinseiUser);
 		model.addAttribute("hozonUid", hozonUid);
-	    model.addAttribute("hozon", hozon);
-
+		model.addAttribute("hozon", hozon);
 
 		return "shinsei/11_shinseiDetail_02";
 	}
@@ -146,30 +145,30 @@ public class ShinseiController {
 			return "home";
 		}
 
-		 if (hasShinseiNo && ("1".equals(shinchokuKbn) || "3".equals(shinchokuKbn))) {
+		if (hasShinseiNo && ("1".equals(shinchokuKbn) || "3".equals(shinchokuKbn))) {
 
-		        String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
-		        ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
-		        String email = shinseiService.getEmailByShainUid(shainUid);
+			String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
+			ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
+			String email = shinseiService.getEmailByShainUid(shainUid);
 
-		        shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
-		        shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
-		        shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
+			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
+			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
+			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
 
-		        if (hozonUid != null && !hozonUid.trim().isEmpty()) {
-		            shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
-		        }
+			if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+				shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
+			}
 
-		        if (email != null && !email.trim().isEmpty()) {
-		            SimpleMailMessage message = new SimpleMailMessage();
-		            message.setTo(email);
-		            message.setSubject("申請取消のご案内");
-		            message.setText("ご申請内容につきまして、取消処理が完了しましたのでご連絡申し上げます。");
-		            mailSender.send(message);
-		        }
+			if (email != null && !email.trim().isEmpty()) {
+				SimpleMailMessage message = new SimpleMailMessage();
+				message.setTo(email);
+				message.setSubject("申請取消のご案内");
+				message.setText("ご申請内容につきまして、取消処理が完了しましたのでご連絡申し上げます。");
+				mailSender.send(message);
+			}
 
-		        return "/huzuiNewInput/26_huzuiKanryo";
-		    }
+			return "/huzuiNewInput/26_huzuiKanryo";
+		}
 
 		return "/huzuiNewInput/26_huzuiKanryo";
 	}
@@ -197,14 +196,30 @@ public class ShinseiController {
 
 		String userIp = request.getRemoteAddr();
 
-		// ★ 여기 순서가 서비스 시그니처랑 1:1로 일치해야 함
 		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
-				jitsuKinmuNissu, addressIdoKeido, // ★ 추가
-				addressChgKbn, // ★ 추가
-				loginUserId, userIp);
+				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, loginUserId, userIp);
 
+		if (loginShain != null && loginShain.getShain_Uid() != null) {
+
+		
+			
+			String email = "homeking12345@gmail.com";
+
+			if (email != null && !email.trim().isEmpty()) {
+				SimpleMailMessage message = new SimpleMailMessage();
+				message.setTo(email); 
+
+				String userName = (loginShain.getShain_Nm() != null) ? loginShain.getShain_Nm() : "ご担当者様";
+
+				message.setSubject("再申請処理完了のお知らせ");
+				message.setText(
+						userName + " 様\n\n" + "通勤費申請の再申請処理が完了しました。\n" + "申請番号：" + shinseiNo + "\n\n" + "内容をご確認ください。");
+
+				mailSender.send(message);
+			}
+		}
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
-		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;  
+		return "redirect:/shinsei/kanryo?shinseiNo=" + shinseiNo;
 	}
 
 	@GetMapping("/shinseiDetail")

@@ -192,7 +192,8 @@
 		RIYO_START_YMD AS riyoStartYmd,
 		SHINSEI_YMD AS shinseiYmd,
 		SASHIMODOSHI_YMD AS ssmdsYmd,
-		MOSHIOKURI_COMMENT AS moComment
+		MOSHIOKURI_COMMENT AS moComment,
+		TORIKESHI_YMD AS torikeshiYmd
 		FROM
 		SHINSEI
 		WHERE SHINSEI_NO = #{shinseiNo}
@@ -211,6 +212,8 @@
 		TSUKI_SHIKYU_KIN AS tsuki,
 		SHINSEI_KM AS shinseiKm,
 		START_PLACE AS startPlace,
+		YURYO_IC_S AS yuryoIcS,
+		YURYO_IC_E AS yuryoIcE,
 		END_PLACE AS
 		endPlace
 		FROM SHINSEI_START_KEIRO
