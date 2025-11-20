@@ -39,4 +39,9 @@ public class HomeController {
 		return "home";
 	}
 	
+	@RequestMapping(value = "/exam", method = RequestMethod.GET)
+	public String exam() {
+		
+		return "exam"; 
+	}
 }

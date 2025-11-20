@@ -26,12 +26,12 @@
   .hint-text { color: #333; line-height: 1.9; flex: 1; }
   .map-btn img { display: block; }
 
+  /* ===== 경로 박스 전체 ===== */
   .route-section {
     position: relative;
     background: #f7f7f7;
     border: 1px solid #ccc;
     border-top: 3px solid #228B22;
-    border-radius: 0;
     padding: 20px 10px 18px;
     margin-top: 8px;
   }
@@ -42,6 +42,7 @@
     align-items: center;
   }
 
+  /* 초록탭 */
   .route-label {
     position: relative;
     top: -23px;
@@ -53,7 +54,6 @@
     line-height: 30px;
     text-align: center;
     font-size: 15px;
-    font-weight: 400;
     color: #1f6b1f;
     background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
     background-size: 100% 100%;
@@ -63,6 +63,7 @@
     border-radius: 0 0 6px 0;
   }
 
+  /* 추가하기 링크 */
   .route-add {
     position: relative;
     top: -15px;
@@ -72,74 +73,42 @@
     font-size: 13px;
     color: #7d3fb2;
     text-decoration: none;
+    cursor: pointer;
   }
-  .route-add img { width: 14px; height: 14px; }
+  .route-add img {
+    width: 14px;
+    height: 14px;
+  }
   .route-add:hover { text-decoration: underline; }
 
-  .button_Left {
-    width: 100%;
-    margin: 12px 0 0;
-  }
-  .button_Left_Group {
-    display: flex;
-    justify-content: flex-start; 
-    align-items: center;
-    gap: 14px;
-  }
-  .button_Left_Group img {
-    display: block;
-  }
-
+  /* 경로 한 줄 박스 */
   .keiro-box {
     background: #ffffff;
     border: 1px solid #dcdcdc;
     padding: 10px 14px;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
-  /* ==== 한 줄 정렬 + 줄바꿈 방지 ==== */
   .keiro-row {
     font-size: 13px;
     display: flex;
-    flex-wrap: nowrap;
-    white-space: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     column-gap: 20px;
+    row-gap: 4px;
   }
 
-  .keiro-row label {
-    display: inline-flex;
+  .keiro-row span { white-space: nowrap; }
+
+  /* 하단 버튼 */
+  .button_Left {
+    margin-top: 18px;
+  }
+  .button_Left_Group {
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
-  }
-
-  .keiro-row .field-label {
-    display: inline-block;
-    width: 70px;
-    text-align: right;
-    margin-right: 4px;
-  }
-
-  .keiro-row select {
-    font-size: 13px;
-    padding: 2px 4px;
-    width: 110px;  /* 폭 살짝 줄임 */
-  }
-
-  .keiro-row input[type="text"] {
-    font-size: 13px;
-    padding: 2px 4px;
-    width: 130px;  /* 폭 줄여서 한 줄 유지 */
-  }
-
-  .delete-btn {
-    padding: 0 10px;
-    height: 24px;
-    font-size: 12px;
-    border: 1px solid #b0b0b0;
-    background: #f7f7f7;
-    cursor: pointer;
-    white-space: nowrap;
-    margin-left: 8px;
+    gap: 14px;
   }
 </style>
 </head>
@@ -161,15 +130,29 @@
       <div class="subtitle">日割　通勤経路情報</div>
     </div>
 
+    <%
+      // 経路タブの丸数字表示용 (index 0은 미사용)
+      String[] maruDigits = {"", "①","②","③","④","⑤","⑥","⑦","⑧","⑨"};
+      pageContext.setAttribute("maruDigits", maruDigits);
+    %>
+
     <div class="page-width">
 
-      <!-- 안내문 + 지도 버튼 (원래 디자인) -->
+      <!-- ★ 에러메시지 표시 (디자인 최소 영향, 필요 시에만 표시) -->
+      <c:if test="${not empty errorMsg}">
+        <div style="color:#d00; margin: 4px 0 6px; font-size: 12px;">
+          <c:out value="${errorMsg}"/>
+        </div>
+      </c:if>
+
+      <!-- 안내문 + 지도 버튼 -->
       <div class="hint-row">
         <div class="hint-text">
           自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
           電車・バスは、複数手段の利用（乗り継ぎ）が可能です。<br>
           複数手段を利用する場合、手段ごとに線路を分割して登録してください。
         </div>
+
         <div class="map-btn">
           <br>
           <a href="<c:url value='/hiwariKinmuchi/map'/>">
@@ -177,75 +160,56 @@
           </a>
         </div>
       </div>
+
       <br>
 
+      <!-- form: apply / temp -->
       <form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
 
-        <input type="hidden" id="deleteIndex" name="deleteIndex" value="">
+        <!-- 통근수단 입력화면 이동 URL (追加する용) -->
+        <c:url var="tsukinInputUrl" value="/tsukinInput">
+          <c:param name="mode" value="add"/>
+          <c:param name="shinseiNo" value="${shinseiNo}"/>
+        </c:url>
 
         <div class="route-section">
           <div class="route-head">
-           <span class="route-label">
-			  経路${repRouteNo}
-			</span>
+            <!-- ★ 경로탭: 経路＋丸数字, repRouteNo=0일 때도 ①로 보이도록 컨트롤러에서 1로 세팅 -->
+            <span class="route-label">
+              経路${maruDigits[repRouteNo]}
+            </span>
 
-            <button type="submit" name="action" value="addRow"
-                    class="route-add" style="border:none;background:none;padding:0;cursor:pointer;">
-              <img src="/resources/img/tuika_icon.gif" alt="追加アイコン">
+            <!-- ★ 추가하기 버튼: 통근수단 입력 화면으로 이동 -->
+            <button type="button"
+                    class="route-add"
+                    style="border:none;background:none;padding:0;"
+                    onclick="location.href='${tsukinInputUrl}'">
+              <img src="/resources/img/tuika_icon.gif" alt="追加">
               追加する
             </button>
           </div>
 
-          <c:forEach var="row" items="${keiroList}" varStatus="st">
+          <!-- DB 경로 리스트 -->
+          <c:forEach var="row" items="${keiroList}">
+
+            <c:url var="editUrl" value="/hiwariKinmuchi/keiro/edit">
+              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
+
+            <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
+              <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
+
             <div class="keiro-box">
               <div class="keiro-row">
+                <span>通勤手段：<c:out value="${row.tsukinShudanNm}"/></span>
+                <span>出発地：<c:out value="${row.startPlace}"/></span>
+                <span>到着地：<c:out value="${row.endPlace}"/></span>
 
-                <label>
-                  <span class="field-label">通勤手段：</span>
-                  <select name="tsukinShudanKbn">
-                    <option value="">選択してください</option>
-                    <option value="01" <c:if test="${row.tsukinShudanKbn == '01'}">selected</c:if>>電車</option>
-                    <option value="02" <c:if test="${row.tsukinShudanKbn == '02'}">selected</c:if>>バス</option>
-                    <option value="03" <c:if test="${row.tsukinShudanKbn == '03'}">selected</c:if>>徒歩</option>
-                    <option value="04" <c:if test="${row.tsukinShudanKbn == '04'}">selected</c:if>>自転車</option>
-                    <option value="05" <c:if test="${row.tsukinShudanKbn == '05'}">selected</c:if>>自動車</option>
-                  </select>
-                </label>
-
-                <label>
-                  <span class="field-label">出発地：</span>
-                  <input type="text"
-                         name="startPlace"
-                         value="${row.startPlace}">
-                </label>
-
-                <label>
-                  <span class="field-label">到着地：</span>
-                  <input type="text"
-                         name="endPlace"
-                         value="${row.endPlace}">
-                </label>
-
-                <label>
-                  <span class="field-label">代表経路：</span>
-                  <input type="radio"
-                         name="kekkaSelectIndex"
-                         value="${st.index}"
-                         <c:if test="${row.kekkaSelect == '1'}">checked</c:if> >
-                </label>
-
-                <input type="hidden" name="kigyoCd"   value="${row.kigyoCd}"/>
-                <input type="hidden" name="shinseiNo" value="${row.shinseiNo}"/>
-                <input type="hidden" name="keiroSeq"  value="${row.keiroSeq}"/>
-
-                <button type="submit"
-                        name="action"
-                        value="deleteRow"
-                        class="delete-btn"
-                        onclick="document.getElementById('deleteIndex').value='${st.index}'">
-                  削除
-                </button>
-
+                <span style="margin-left: 20px;">
+                  <a href="${editUrl}">変更する</a>｜
+                  <a href="${deleteUrl}">削除する</a>
+                </span>
               </div>
             </div>
           </c:forEach>
@@ -253,8 +217,11 @@
         </div>
 
         <br><br>
+
+        <!-- 하단 버튼 3개 왼쪽 정렬 -->
         <div class="button_Left">
           <div class="button_Left_Group">
+
             <a href="<c:url value='/hiwariKinmuchi/back'/>">
               <img src="/resources/img/back_btn01.gif" alt="戻る">
             </a>
@@ -268,6 +235,7 @@
                     style="border:none;background:none;padding:0;cursor:pointer;">
               <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
             </button>
+
           </div>
         </div>
 
