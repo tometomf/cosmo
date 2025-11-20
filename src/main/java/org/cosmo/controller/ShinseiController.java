@@ -37,21 +37,70 @@ public class ShinseiController {
 	private JavaMailSender mailSender;
 
 	@GetMapping("/ichiji")
-	public String showIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
+	public String showIchiji(@RequestParam(value = "no", required = false) String shinseiNo,
+			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) throws Exception {
 
-		ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
-		ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
-		ShainVO shinseiUser = null;
+		if (shinseiNo != null && !shinseiNo.trim().isEmpty()) {
 
-		if (ichiji != null && ichiji.getShainUid() != null) {
-			shinseiUser = shinseiService.getShainByUid(ichiji.getShainUid());
+			Long shinseiNoLong = Long.parseLong(shinseiNo);
+
+			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
+			ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNoLong);
+			ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNoLong);
+			String fileName = shinseiService.getFileName(shinseiNoLong);
+
+			if (jyohouVo != null) {
+
+				String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
+
+				ShainVO shinseiUser = null;
+				if (shainUid != null && !shainUid.trim().isEmpty()) {
+					shinseiUser = shinseiService.getShainByUid(shainUid);
+				}
+
+				if (jyohouVo.getShinseiKbn() != null) {
+					jyohouVo.setShinseiName(shinseiService.getShinseiName(jyohouVo.getShinseiKbn()));
+				}
+
+				if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
+					keiroVo.setShudanName(shinseiService.getShudanName(keiroVo.getTsukinShudan()));
+				}
+
+				if (jyohouVo.getShinchokuKbn() != null) {
+					jyohouVo.setCodeNm(shinseiService.getCodeNm(jyohouVo.getShinchokuKbn()));
+				}
+
+				model.addAttribute("jyohou", jyohouVo);
+				model.addAttribute("keiro", keiroVo);
+				model.addAttribute("shorui", shoruiVo);
+				model.addAttribute("fileName", fileName);
+				model.addAttribute("shinseiUser", shinseiUser);
+				model.addAttribute("isIchiji", false);
+
+				return "shinsei/11_shinseiDetail_02";
+			}
 		}
 
-		model.addAttribute("ichiji", ichiji);
-		model.addAttribute("shinseiUser", shinseiUser);
-		model.addAttribute("hozonUid", hozonUid);
-		model.addAttribute("hozon", hozon);
+		if (hozonUid != null && !hozonUid.trim().isEmpty()) {
 
+			ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
+			ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
+
+			ShainVO shinseiUser = null;
+			if (ichiji != null && ichiji.getShainUid() != null) {
+				shinseiUser = shinseiService.getShainByUid(ichiji.getShainUid());
+			}
+
+			model.addAttribute("ichiji", ichiji);
+			model.addAttribute("shinseiUser", shinseiUser);
+			model.addAttribute("hozonUid", hozonUid);
+			model.addAttribute("hozon", hozon);
+			model.addAttribute("isIchiji", true);
+
+			return "shinsei/11_shinseiDetail_02";
+		}
+
+		model.addAttribute("errorMessage", "申請番号または一時保存IDがありません。");
 		return "shinsei/11_shinseiDetail_02";
 	}
 
@@ -86,10 +135,14 @@ public class ShinseiController {
 	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 
-		Long shinseiNoLong = Long.parseLong(shinseiNo);
+
 
 		// 1. 신청번호 ㅇ
 		if (shinseiNo != null) {
+
+
+			Long shinseiNoLong = Long.parseLong(shinseiNo);
+
 
 			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
 
@@ -126,6 +179,7 @@ public class ShinseiController {
 		if (hozonUid != null && !hozonUid.trim().isEmpty()) {
 
 			ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
+			ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
 
 			if (ichiji == null) {
 				model.addAttribute("errorMessage", "一時保存データが見つかりません。");
@@ -141,11 +195,11 @@ public class ShinseiController {
 			}
 
 			model.addAttribute("ichiji", ichiji);
-			model.addAttribute("jyohou", ichiji);
 			model.addAttribute("keiro", ichiji.getKeiro());
 			model.addAttribute("shorui", null);
 			model.addAttribute("isIchiji", true);
 			model.addAttribute("hozonUid", hozonUid);
+			model.addAttribute("hozon", hozon);
 
 			return "shinsei/dummy_11_shinseiDetail_03";
 		}
@@ -164,9 +218,9 @@ public class ShinseiController {
 
 		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
+		boolean hasHozonUid = (hozonUid != null && !hozonUid.trim().isEmpty());
 
-		// 신청구분 1(임시저장) + 신청번호 x : 데이터 삭제
-		if ("1".equals(shinchokuKbn) && !hasShinseiNo) {
+		if (!hasShinseiNo && hasHozonUid) {
 
 			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
 
@@ -174,7 +228,7 @@ public class ShinseiController {
 			return "home";
 		}
 
-		if (hasShinseiNo && ("1".equals(shinchokuKbn) || "3".equals(shinchokuKbn))) {
+		if (hasShinseiNo) {
 
 			String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
 			ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
@@ -184,7 +238,7 @@ public class ShinseiController {
 			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
 			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
 
-			if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+			if (hasHozonUid) {
 				shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
 			}
 
