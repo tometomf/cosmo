@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -280,16 +282,16 @@ p　{
 				<div class="table">
 					<div class="form_Text1">
 						<div class="form_Column1"><p>住所</p></div>
-						<div class="form_Normal"><p>神奈川県川崎市中原区新丸子1-2-3　レオパレス新丸子201</p></div>
+						<div class="form_Normal"><p>${addr.newAddress1}${addr.newAddress2}${addr.newAddress3}</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>勤務地</p></div>
-						<div class="form_Normal"><p>東京都中野区本町3-30-4 KDX中野坂上ビル8F</p></div>
+						<div class="form_Normal"><p>${kinmuAddr.newKinmuAddress1}${kinmuAddr.newKinmuAddress2}${kinmuAddr.newKinmuAddress3}</p></div>
 					</div>
 					<div class="form_Text1">
 						<div class="form_Column1"><p>経由地</p></div>
 						<div style="padding:1rem;">
-							<input style="width:100%;" type>
+							<input id="viaPlace1Input" style="width:100%;" type="text" />
 						</div>
 					</div>
 				</div>
@@ -459,19 +461,63 @@ p　{
 	
 	
 	<script>
-		document.getElementById('btnBack').addEventListener('click',
-				function() {
-					if (document.referrer) {
-						location.href = document.referrer;
-						return;
-					}
-					if (history.length > 1) {
-						history.go(-1);
-						return;
-					}
-					location.href = '/';
-				});
+
+    (function () {
+        var backBtn = document.getElementById('btnBack');
+        if (!backBtn) {
+            return;
+        }
+
+        backBtn.addEventListener('click', function () {
+            if (document.referrer) {
+                location.href = document.referrer;
+                return;
+            }
+            if (history.length > 1) {
+                history.go(-1);
+                return;
+            }
+            location.href = '/';
+        });
+    })();
+
+
+
+    
 	</script>
+	
+	<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('viaPlace1Input');
+    if (!input) {
+      console.log('viaPlace1Input not found');
+      return;
+    }
+
+    input.addEventListener('change', function () {
+      var value = input.value;
+      console.log('sending viaPlace1:', value);
+
+      fetch('${ctx}/keiroinput/saveViaPlace1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: 'viaPlace1=' + encodeURIComponent(value)
+      })
+      .then(function (res) {
+        return res.text();
+      })
+      .then(function (text) {
+        console.log('server response:', text);
+      })
+      .catch(function (e) {
+        console.error('fetch error', e);
+      });
+    });
+  });
+</script>
+
 </body>
 
 </html>
