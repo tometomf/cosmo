@@ -148,11 +148,11 @@
 		AND sk.KEIRO_SEQ = #{keiroSeq}
 	</select>
 
+
 	  <!-- 위치만 매핑하는 ResultMap -->
     <resultMap id="ShainLocationResultMap" type="org.cosmo.domain.ShainLocationVO">
         <id     property="kigyoCd"        column="KIGYO_CD" />
         <id     property="shainUid"       column="SHAIN_UID" />
-
         <result property="zipCd"          column="ZIP_CD" />
         <result property="address1"       column="ADDRESS_1" />
         <result property="address2"       column="ADDRESS_2" />

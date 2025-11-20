@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShainVO;
@@ -38,16 +39,31 @@ public class KeiroInputController {
 	private OshiraseService oshiraseService;
 
 	@GetMapping("/07_keirodtInput")
-	public String densha(Locale locale, Model model) {
+	public String densha(@RequestParam("shinseiNo") Integer shinseiNo,
+	                     @RequestParam("keiroSeq") Integer keiroSeq,
+	                     Locale locale,
+	                     HttpSession session,
+	                     Model model) {
 
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+	    Date date = new Date();
+	    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+	    String formattedDate = dateFormat.format(date);
+	    model.addAttribute("serverTime", formattedDate);
 
-		String formattedDate = dateFormat.format(date);
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+	        return "redirect:/login";
+	    }
 
-		model.addAttribute("serverTime", formattedDate);
+	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
+	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
 
-		return "keiroinput/07_keirodtInput";
+	    KeiroInputDenshaDTO denshaDto =
+	            keiroInputservice.getDenshaKeiroDetail(kigyoCd, shainUid, shinseiNo, keiroSeq);
+
+	    model.addAttribute("densha", denshaDto);
+
+	    return "keiroinput/07_keirodtInput";
 	}
 
 	@GetMapping("/07_keirodtInput_02")
