@@ -40,6 +40,16 @@
 		grid-template-columns: 36px 110px 1fr 120px 120px 120px 120px 50px 1fr;
 	}
 	
+	.link_text {
+    	cursor: pointer; 
+    	text-decoration: underline;
+    	color: #007bff; 
+	}
+	
+	.link_text:hover {
+    	color: #0056b3;
+	}
+	
 </style>
 <body>
 	<div class = "layout">
@@ -115,15 +125,15 @@
 				</div>
 				<c:forEach items = "${list}" var = "board">
 					<div class="form_Text1" id="form_Text2">
-						<div class = "form_Column"></div>
-						<div class = "form_Normal">${board.shain_Uid}</div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
+						<div class = "form_Column">${board.seq}</div>
+						<div class = "form_Normal">${board.shinsei_No}</div>
+						<div class = "form_Normal">${board.shinsei_Naiyou}</div>
+						<div class = "form_Normal">${board.shinsei_Ymd}</div>
+						<div class = "form_Normal">${board.ll_Shonin_Ymd}</div>
+						<div class = "form_Normal">${board.first_Shikyu_Ymd}</div>
+						<div class = "form_Normal">${board.shozoku_Nm}</div>
+						<div class = "form_Normal">${board.jutaku_Kbn}</div>
+						<div class = "form_Normal"><span class = "link_text" onclick="onClick(${board.shinsei_No}, ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
 					</div>
 				</c:forEach>
 			</div>
@@ -146,4 +156,25 @@
 			window.location.href = target + '/hiwariKinmuchi/hiwariKinmuchi'; 
 		} 
 	}
+	
+	function onClick(shinseiNo, shinchokuKbn) {
+		
+		var target = window.location.origin; 
+	    var url = '';
+	    
+		if (shinchokuKbn == '1') {
+			url = target + '/shinsei/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + '';
+		} else if (shinchokuKbn == '2') {
+			url = target + '/shinsei/shinseiDetail' + '?no' + shinseiNo;
+		} else if (shinchokuKbn == '3') {
+			url = target + '/shinsei/shinseiDetail' + '?no' + shinseiNo;
+		} else if (shinchokuKbn == '4') {
+			
+		} else if (shinchokuKbn == '5') {
+			
+		}
+		
+		window.location.href = url;	
+	}
+	
 </script>

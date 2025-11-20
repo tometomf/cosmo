@@ -76,13 +76,9 @@
 
 <div class = "button_Center">
 				<div class = "button_Center_Group">
-					<div><img src="/resources/img/top_btn01.gif" alt="top_btn01"
-					style="cursor:pointer;"
-					onclick="location.href='/'">
-					
-					</div>
+					<div><img src="/resources/img/top_btn01.gif" alt="top_btn01"></div>
 				</div>
-</div>
+			</div>
 			
 			<div></div>
 			<div></div>

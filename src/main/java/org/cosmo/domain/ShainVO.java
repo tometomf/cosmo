@@ -16,7 +16,13 @@ public class ShainVO {
 	private String shozoku_Nm;
 	
 	// 신청정보용
+	private String seq;
 	private String shinsei_No;
+	private String shinsei_Naiyou;
 	private String shinsei_Ymd;
-	private String shinchoku_kbn;
+	private String ll_Shonin_Ymd;
+	private String first_Shikyu_Ymd;
+	private String jutaku_Kbn;	
+	private String shinchoku_Kbn;
+	private String shinchoku_Kbnnm;
 }

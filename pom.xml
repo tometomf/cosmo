@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.cosmo</groupId>
+	
 	<artifactId>controller</artifactId>
 	<name>cosmo</name>
 	<packaging>war</packaging>
@@ -214,6 +215,7 @@
 		    <version>2.7.18</version>
 		</dependency>
 	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>

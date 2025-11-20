@@ -178,9 +178,7 @@
 
 <div class = "button_Center">
 				<div class = "button_Center_Group">
-					<div><img src="/resources/img/back_btn01.gif" alt="back_btn01"
-						 style="cursor:pointer;" 
-						 onclick="location.href='/idoconfirm/kakuninpage';"></div>
+					<div><img src="/resources/img/back_btn01.gif" alt="back_btn01"></div>
 					<div><img src="/resources/img/shinsei_btn01.gif" alt="shinsei_btn01"></div>
 				</div>
 			</div>
@@ -192,6 +190,5 @@
 			<div></div>
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
-	
 </body>
 </html>
