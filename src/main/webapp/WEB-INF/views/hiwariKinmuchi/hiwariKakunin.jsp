@@ -291,7 +291,7 @@
       <!-- 버튼 영역 -->
       <div class="button_Left">
         <div class="button_Left_Group">
-          <a href="<c:url value='/hiwariKinmuchi/back'/>">
+          <a href="<c:url value='/hiwariKinmuchi/hiwariKeiro'/>">
             <img src="/resources/img/back_btn01.gif" alt="戻る">
           </a>
           <a href="<c:url value='/hiwariKakunin/submit'/>">

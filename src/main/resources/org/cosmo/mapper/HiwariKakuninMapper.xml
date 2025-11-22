@@ -119,5 +119,15 @@
         SK.KEIRO_SEQ
 
   </select>
-
+<!-- 申請を承認状態に更新 -->
+<update id="updateShinseiApproval">
+    UPDATE SHINSEI
+    SET 
+        SHINCHOKU_KBN = #{shinchoKbn},
+        KIGYO_SHONIN_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+        UPD_DATE = SYSDATE
+    WHERE 
+        KIGYO_CD = #{kigyoCd}
+        AND SHINSEI_NO = #{shinseiNo}
+</update>
 </mapper>

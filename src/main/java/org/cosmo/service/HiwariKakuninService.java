@@ -20,4 +20,10 @@ public interface HiwariKakuninService {
      *  - 通勤経路①〜②（以降）
      */
     List<HiwariKakuninRouteVO> getRoutes(Integer kigyoCd, Long shinseiNo);
+    /**
+     * 申請を承認する
+     * @param kigyoCd 企業コード
+     * @param shinseiNo 申請番号
+     */
+    void submitApplication(Integer kigyoCd, Long shinseiNo);
 }

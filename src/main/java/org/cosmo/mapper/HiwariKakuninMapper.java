@@ -15,4 +15,9 @@ public interface HiwariKakuninMapper {
     List<HiwariKakuninRouteVO> selectKakuninRoutes(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shinseiNo") Long shinseiNo);
+
+int updateShinseiApproval(
+        @Param("kigyoCd") Integer kigyoCd,
+        @Param("shinseiNo") Long shinseiNo,
+        @Param("shinchoKbn") String shinchoKbn);
 }
