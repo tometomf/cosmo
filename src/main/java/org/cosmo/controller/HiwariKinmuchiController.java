@@ -8,12 +8,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.service.AddressInputService;
 import org.cosmo.service.HiwariKakuninService;
 import org.cosmo.service.HiwariKeiroService;
 import org.cosmo.service.HiwariKinmuchiService;
@@ -46,6 +48,8 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKakuninService hiwariKakuninService;
 
+    @Autowired
+    private AddressInputService addressService;
   
     
     
@@ -294,6 +298,48 @@ public class HiwariKinmuchiController {
         return "keiroinput/06_keiroInput";
     }
 
+    @GetMapping("/map")
+    public String showMapPage(HttpSession session, Model model) {
+        
+        // 세션에서 가져오기 (테스트용 기본값 포함)
+        String kigyoCd = "100";
+        String shainUid = "30000001";
+        
+        // 1. 주소 정보 가져오기
+        AddressViewDto address = addressService.loadCurrentAddress(kigyoCd, shainUid);
+        
+        // 2. 근무지 정보 가져오기
+        HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(100, 30000001L);
+        
+        // 3. 주소 조합
+        String fullAddress = "";
+        if (address != null) {
+            if (address.getCurZip() != null) fullAddress += address.getCurZip() + " ";
+            if (address.getCurPref() != null) fullAddress += address.getCurPref();
+            if (address.getCurCity() != null) fullAddress += address.getCurCity();
+            if (address.getCurStreet() != null) fullAddress += address.getCurStreet();
+            if (address.getCurBuilding() != null) fullAddress += " " + address.getCurBuilding();
+        }
+        
+        // 4. 근무지 정보 조합
+        String kinmuchiName = "";
+        String kinmuchiAddress = "";
+        if (kinmuchi != null) {
+            kinmuchiName = kinmuchi.getGenKinmusakiNm() != null ? kinmuchi.getGenKinmusakiNm() : "";
+            
+            if (kinmuchi.getGenKinmuAddress1() != null) kinmuchiAddress += kinmuchi.getGenKinmuAddress1();
+            if (kinmuchi.getGenKinmuAddress2() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress2();
+            if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
+        }
+        
+        // 5. Model에 담기
+        model.addAttribute("address", fullAddress.trim());
+        model.addAttribute("kinmuchi", kinmuchiName);
+        model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
+        
+        return "hiwariKinmuchi/hiwariMap";
+    }
+ 
     @GetMapping("/riyu")
     public String showRiyuPage() {
         return "hiwariKinmuchi/hiwariRiyu";
