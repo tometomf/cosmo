@@ -105,11 +105,15 @@ public class HiwariKinmuchiController {
 
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
-
+        /*
         if (kigyoCd == null || shinseiNo == null) {
             return "redirect:/hiwariKinmuchi/keiro";
         }
-
+         */
+        // 👇 테스트용 임시 데이터 넣기
+        if (kigyoCd == null) kigyoCd = 1;  // 임시 회사 코드
+        if (shinseiNo == null) shinseiNo = 1L;  // 임시 신청 번호
+        
         // 1) 헤더 정보
         HiwariKakuninVO header = hiwariKakuninService.getHeader(kigyoCd, shinseiNo);
 

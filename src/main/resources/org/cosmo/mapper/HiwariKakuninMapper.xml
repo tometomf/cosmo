@@ -57,7 +57,7 @@
       , (H.ADDRESS_1 || ' ' || H.ADDRESS_2 || ' ' || H.ADDRESS_3) AS EMP_ADDRESS
       , S.SHINSEI_KBN                                AS SHINSEI_KBN
       , CKBN.CODE_NM                                 AS SHINSEI_KBN_NM
-      , S.SHINSEI_RIYU                               AS SHINSEI_RIYU
+      , MAX(DBMS_LOB.SUBSTR(S.SHINSEI_RIYU, 4000, 1)) AS SHINSEI_RIYU
       , MIN(SK.KIKAN_START_YMD)                      AS TAISHO_KIKAN_FROM
       , MAX(SK.KIKAN_END_YMD)                        AS TAISHO_KIKAN_TO
       , SUM(SK.JITSU_KINMU_NISSU)                    AS SHUKKIN_NISSUU
@@ -91,7 +91,6 @@
       , (H.ADDRESS_1 || ' ' || H.ADDRESS_2 || ' ' || H.ADDRESS_3)
       , S.SHINSEI_KBN
       , CKBN.CODE_NM
-      , S.SHINSEI_RIYU
 
   </select>
 
