@@ -242,14 +242,14 @@ public class HiwariKinmuchiController {
                 return "hiwariKinmuchi/hiwariKeiro";
             }
             
-            // ★ 최종 수정: 확인 화면으로 이동
+          
             return "redirect:/hiwariKinmuchi/kakunin";
         }
 
         if ("temp".equals(action)) {
             // kigyoCd 파라미터 추가
             hiwariKeiroService.saveTemp(kigyoCd, shainUid, keiroList);
-            return "redirect:/hiwariKinmuchi/keiro";
+            return "redirect:/shinsei/11_shinseiDetail_02";
         }
         
         model.addAttribute("keiroList", keiroList);
