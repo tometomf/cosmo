@@ -46,50 +46,48 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKakuninService hiwariKakuninService;
 
+  
     
-    private ShainVO ensureDummyShain(HttpSession session) {
-        ShainVO shain = (ShainVO) session.getAttribute("shain");
-
-        if (shain == null) {
-            shain = new ShainVO();
-            shain.setShain_Uid("1");
-            shain.setShozoku_Cd("100");
-            shain.setShinchoku_kbn("01");
-            session.setAttribute("shain", shain);
-
-            System.out.println("🔥 [DEBUG] 더미 shain 세션 자동 생성됨");
-        }
-
-        return shain;
-    }
     
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
+        // 🔥 (1) 로그인 체크 – shain 세션 없으면 홈으로
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
             return "redirect:/";
         }
 
-        Integer kigyoCd = 1001;
-        Long shainUid = 1L;
-        Long shinseiNo = null;
+        // 🔥 (2) 세션에서 값 꺼내기
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
+        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
+        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
 
+        // 🔥 (3) null 방지 기본값 넣기 (지금은 로그인X 상태라 필수)
+        if (kigyoCd == null) kigyoCd = 1001;   // 기본 기업 코드
+        if (shainUid == null) shainUid = 1L;   // 기본 사원 UID
+        // shinseiNo는 신청 전이면 null이 정상. 건드리지 않음.
+
+        // 🔥 (4) 신청 전/후 데이터 가져오기
         HiwariKinmuchiVO data;
-
         if (shinseiNo == null) {
             data = service.getBeforeShinsei(kigyoCd, shainUid);
         } else {
             data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
         }
 
+        // 🔥 (5) 소속 리스트(선택박스)
         List<String> shoList = service.getShozokuNames(kigyoCd);
+
+        // 🔥 (6) JSP로 전달
+        model.addAttribute("initData", data);
         model.addAttribute("shoList", shoList);
-        model.addAttribute("leftData", data);
 
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
 
+
+    
     @GetMapping("/address")
     public String showHiwariAddressPage() {
         return "hiwariKinmuchi/hiwariAddress";
