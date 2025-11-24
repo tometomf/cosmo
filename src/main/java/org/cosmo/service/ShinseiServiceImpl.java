@@ -1,12 +1,15 @@
 package org.cosmo.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.mapper.ShinseiMapper;
@@ -291,13 +294,12 @@ public class ShinseiServiceImpl implements ShinseiService {
 			try {
 				updUserId = Integer.valueOf(loginUserId.trim());
 			} catch (NumberFormatException e) {
-			
+
 			}
 		}
 
 		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2,
 				newAddress3, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, updUserId);
-
 
 		Integer jitsu = null;
 		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
@@ -307,8 +309,17 @@ public class ShinseiServiceImpl implements ShinseiService {
 			}
 		}
 
-		
 		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
 	}
+
+	  @Override
+	    public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
+	        Map<String, Object> param = new HashMap<String, Object>();
+	        param.put("kigyoCd", kigyoCd);
+	        param.put("shinseiNo", shinseiNo);
+	        param.put("keiroSeq", keiroSeq);
+	        return shinseiMapper.getShinseiKeiroDetail(param);
+	    }
+
 
 }

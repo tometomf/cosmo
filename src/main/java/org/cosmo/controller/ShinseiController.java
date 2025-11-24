@@ -10,6 +10,7 @@ import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.service.ShinseiService;
@@ -368,10 +369,9 @@ public class ShinseiController {
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request) {
 
-		// ① 신청 기본 정보 조회
+		// ① 신청 기본 정보
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
-		// 대상 신청이 없을 때만 리다이렉트
 		if (jyohouVo == null) {
 			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
 			String referer = request.getHeader("Referer");
@@ -382,15 +382,47 @@ public class ShinseiController {
 			}
 		}
 
-		// ★ 여기서 더 이상 「3이 아니면 리다이렉트」 하지 않는다
-		// String kbn = jyohouVo.getShinchokuKbn();
-		// if (!"3".equals(kbn)) { ... } ← 이 블록 통째로 삭제
+		// ② 기업코드(Long) 변환 ★여기서 Integer → Long
+		Long kigyoCd = null;
+		if (jyohouVo.getKigyoCd() != null) {
+			kigyoCd = Long.valueOf(jyohouVo.getKigyoCd());
+		}
 
-		// ② 나머지 관련 정보 조회
-		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
+		// ③ 경로 상세 1~4 조회 ★추가
+		ShinseiKeiroDetailVO keiro1 = null;
+		ShinseiKeiroDetailVO keiro2 = null;
+		ShinseiKeiroDetailVO keiro3 = null;
+		ShinseiKeiroDetailVO keiro4 = null;
+
+		if (kigyoCd != null) {
+			keiro1 = shinseiService.getShinseiKeiroDetail(kigyoCd, shinseiNo, 1);
+			keiro2 = shinseiService.getShinseiKeiroDetail(kigyoCd, shinseiNo, 2);
+			keiro3 = shinseiService.getShinseiKeiroDetail(kigyoCd, shinseiNo, 3);
+			keiro4 = shinseiService.getShinseiKeiroDetail(kigyoCd, shinseiNo, 4);
+		}
+
+		// ④ 통근수단 이름 셋팅 ★중요
+		if (keiro1 != null && keiro1.getTsukinShudanKbn() != null) {
+			String nm = shinseiService.getShudanName(keiro1.getTsukinShudanKbn());
+			keiro1.setShudanName(nm);
+		}
+		if (keiro2 != null && keiro2.getTsukinShudanKbn() != null) {
+			String nm = shinseiService.getShudanName(keiro2.getTsukinShudanKbn());
+			keiro2.setShudanName(nm);
+		}
+		if (keiro3 != null && keiro3.getTsukinShudanKbn() != null) {
+			String nm = shinseiService.getShudanName(keiro3.getTsukinShudanKbn());
+			keiro3.setShudanName(nm);
+		}
+		if (keiro4 != null && keiro4.getTsukinShudanKbn() != null) {
+			String nm = shinseiService.getShudanName(keiro4.getTsukinShudanKbn());
+			keiro4.setShudanName(nm);
+		}
+
+		// ⑤ 부속서류 (면허/보험 등)
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 
-		// ③ 코드명 설정
+		// ⑥ 코드명 / 신청구분명 설정 (기존 로직 그대로)
 		if (jyohouVo.getShinchokuKbn() != null) {
 			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 			jyohouVo.setCodeNm(codeNm);
@@ -401,20 +433,18 @@ public class ShinseiController {
 			jyohouVo.setShinseiName(shinseiName);
 		}
 
-		if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-			String shudanName = shinseiService.getShudanName(keiroVo.getTsukinShudan());
-			keiroVo.setShudanName(shudanName);
-		}
-
-		// ④ 차戻し(진척区分 = 3)일 때만 고정 메시지 세팅
+		// ⑦ 차戻し(진척区分 = 3)일 때만 고정 메시지
 		if ("3".equals(jyohouVo.getShinchokuKbn())) {
 			model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
 			model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
 		}
 
-		// ⑤ 모델 설정
-		model.addAttribute("keiro", keiroVo);
+		// ⑧ 모델에 담기 ★이름 주의
 		model.addAttribute("jyohou", jyohouVo);
+		model.addAttribute("keiro", keiro1); // 경로①
+		model.addAttribute("keiro2", keiro2); // 경로②
+		model.addAttribute("keiro3", keiro3); // 경로③
+		model.addAttribute("keiro4", keiro4); // 경로④
 		model.addAttribute("shorui", shoruiVo);
 
 		return "shinsei/11_shinseiDetail_03";

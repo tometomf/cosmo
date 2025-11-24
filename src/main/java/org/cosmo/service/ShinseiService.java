@@ -1,11 +1,11 @@
 package org.cosmo.service;
 
-import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.springframework.ui.Model;
@@ -17,6 +17,9 @@ public interface ShinseiService {
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
+	
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
+
 
 	String getShainUidByShinseiNo(String shinseiNo);
 
@@ -64,5 +67,7 @@ public interface ShinseiService {
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
 			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
 			String userIp);
+	
+	
 
 }

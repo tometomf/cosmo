@@ -206,7 +206,8 @@
 		SHINSEI_RIYU AS riyu,
 		IDO_YMD AS idoYmd,
 		ITEN_YMD AS itenYmd,
-		TENNYU_YMD AS tennyuYmd,
+		TENNYU_YMD
+		AS tennyuYmd,
 		RIYO_START_YMD AS
 		riyoStartYmd,
 		SHINSEI_YMD AS shinseiYmd,
@@ -215,7 +216,8 @@
 		TORIKESHI_YMD AS torikeshiYmd
 		FROM
 		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
 	</select>
 
 
@@ -241,6 +243,38 @@
 		SHINSEI_START_KEIRO
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
+
+	<select id="getShinseiKeiroDetail" parameterType="map"
+		resultType="org.cosmo.domain.ShinseiKeiroDetailVO">
+
+		SELECT
+		sk.KIGYO_CD,
+		sk.SHINSEI_NO,
+		sk.KEIRO_SEQ,
+		sk.TSUKIN_SHUDAN_KBN,
+		c.CODE_NM AS shudanName,
+		sk.START_PLACE AS startPlace,
+		sk.END_PLACE AS endPlace,
+		sk.SHINSEI_KM AS shinseiKm,
+		NVL(sk.YURYO_KATAMICHI_KIN, sk.KATAMICHI_KIN) AS katamichi,
+		sk.TSUKI_SHIKYU_KIN AS tsuki,
+		sk.YURYO_IC_S AS yuryoIcS,
+		sk.YURYO_IC_E AS yuryoIcE,
+		sk.SANSHO_TEIKI_TSUKI_SU_1 AS sanshoTeikiTsukiSu1,
+		sk.SANSHO_TEIKI_TSUKI_SU_2 AS sanshoTeikiTsukiSu2,
+		sk.SANSHO_TEIKI_TSUKI_SU_3 AS sanshoTeikiTsukiSu3,
+		sk.SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
+		sk.SANSHO_TEIKI_KIN_2 AS sanshoTeikiKin2,
+		sk.SANSHO_TEIKI_KIN_3 AS sanshoTeikiKin3
+		FROM SHINSEI_START_KEIRO sk
+		LEFT JOIN CODE c
+		ON c.CODE_SYBTSU = '103'   
+		AND c.CODE = sk.TSUKIN_SHUDAN_KBN
+		WHERE sk.KIGYO_CD = #{kigyoCd}
+		AND sk.SHINSEI_NO = #{shinseiNo}
+		AND sk.KEIRO_SEQ = #{keiroSeq}
+	</select>
+
 
 	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">

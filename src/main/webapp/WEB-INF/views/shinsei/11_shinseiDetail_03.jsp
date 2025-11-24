@@ -634,7 +634,8 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 IC</div>
-					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}</div>
+					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -649,8 +650,8 @@
 					<div class="form_Column">1ヶ月金額</div>
 					<div class="form_Normal">
 						<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                            ${keiro.tsuki}円
-                        </c:if>
+                ${keiro.tsuki}円
+            </c:if>
 					</div>
 				</div>
 
@@ -670,8 +671,8 @@
 						style="display: flex; align-items: center; gap: 10px;">
 						<span> <c:if
 								test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                                ${keiro.tsuki}円
-                            </c:if>
+                    ${keiro.tsuki}円
+                </c:if>
 						</span>
 						<button type="button"
 							style="border: 1px solid #ccc; background: #f3f3f3; font-size: 12px; cursor: pointer; padding: 2px 10px;">
@@ -779,15 +780,12 @@
 						<div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
 					</div>
 				</div>
-
 			</div>
-
 
 			<c:url var="huzuiUrl" value="/idoconfirm/huzuikanri">
 				<c:param name="kigyoCd" value="${shinseiJyohou.kigyoCd}" />
 				<c:param name="shinseiNo" value="${shinseiJyohou.shinseiNo}" />
 			</c:url>
-
 
 			<div class="button_Right">
 				<div class="button_Right_Group">
@@ -797,7 +795,7 @@
 			</div>
 
 
-			<!-- ===== 経路② (dummy) ===== -->
+			<!-- ===== 経路② ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
@@ -805,23 +803,41 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">バス</div>
+					<div class="form_Normal">${empty keiro2.shudanName ? '' : keiro2.shudanName}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Normal">下作延(バス) → 溝峰台駅(バス)</div>
+					<div class="form_Normal">
+						${empty keiro2.startPlace ? '' : keiro2.startPlace}
+						<c:if test="${not empty keiro2.endPlace}">
+				→ ${keiro2.endPlace}
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">金額</div>
-					<div class="form_Normal">13,120円 / 1ヶ月 32,000円 / 3ヶ月 70,000円
-						/ 6ヶ月</div>
+					<div class="form_Column">1ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro2.sanshoTeikiKin1 != null}">
+				${keiro2.sanshoTeikiKin1}円 / ${keiro2.sanshoTeikiTsukiSu1}ヶ月
+			</c:if>
+						<c:if test="${keiro2.sanshoTeikiKin2 != null}">
+				&nbsp; ${keiro2.sanshoTeikiKin2}円 / ${keiro2.sanshoTeikiTsukiSu2}ヶ月
+			</c:if>
+						<c:if test="${keiro2.sanshoTeikiKin3 != null}">
+				&nbsp; ${keiro2.sanshoTeikiKin3}円 / ${keiro2.sanshoTeikiTsukiSu3}ヶ月
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">450円</div>
+					<div class="form_Normal">
+						${empty keiro2.katamichi ? '' : keiro2.katamichi}
+						<c:if test="${not empty keiro2.katamichi}">円</c:if>
+					</div>
 				</div>
 			</div>
 
@@ -845,7 +861,6 @@
 				</div>
 			</div>
 
-
 			<c:url var="keiro2Url" value="/keiroinput/07_keirodtInput_02">
 				<c:param name="kigyoCd" value="${shinseiDetail.kigyoCd}" />
 				<c:param name="shinseiNo" value="${shinseiDetail.shinseiNo}" />
@@ -856,11 +871,11 @@
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
 						style="cursor: pointer;" onclick="location.href='${keiro2Url}'">
-
 				</div>
 			</div>
 
-			<!-- ===== 経路③ (dummy) ===== -->
+
+			<!-- ===== 経路③ ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
@@ -868,23 +883,50 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">電車</div>
+					<div class="form_Normal">${empty keiro3.shudanName ? '' : keiro3.shudanName}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Normal">東京駅 → 金町駅</div>
+					<div class="form_Normal">
+						${empty keiro3.startPlace ? '' : keiro3.startPlace}
+						<c:if test="${not empty keiro3.endPlace}">
+				→ ${keiro3.endPlace}
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">金額</div>
-					<div class="form_Normal">15,000円 / 1ヶ月 45,000円 / 3ヶ月 80,000円
-						/ 6ヶ月</div>
+					<div class="form_Column">1ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro3.sanshoTeikiKin1 != null}">
+				${keiro3.sanshoTeikiKin1}円 / ${keiro3.sanshoTeikiTsukiSu1}ヶ月
+			</c:if>
+						<c:if test="${keiro3.sanshoTeikiKin2 != null}">
+				&nbsp; ${keiro3.sanshoTeikiKin2}円 / ${keiro3.sanshoTeikiTsukiSu2}ヶ月
+			</c:if>
+						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
+				&nbsp; ${keiro3.sanshoTeikiKin3}円 / ${keiro3.sanshoTeikiTsukiSu3}ヶ月
+			</c:if>
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">6ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
+				${keiro3.sanshoTeikiKin3}円
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">18,000円</div>
+					<div class="form_Normal">
+						${empty keiro3.katamichi ? '' : keiro3.katamichi}
+						<c:if test="${not empty keiro3.katamichi}">円</c:if>
+					</div>
 				</div>
 			</div>
 
@@ -920,6 +962,41 @@
 						style="cursor: pointer;" onclick="location.href='${keiro3Url}'">
 				</div>
 			</div>
+
+
+			<!-- ===== 経路④ ===== -->
+			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
+				<div class="form_Title2"
+					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
+					経路④</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">通勤手段</div>
+					<div class="form_Normal">${empty keiro4.shudanName ? '' : keiro4.shudanName}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">住所</div>
+					<div class="form_Normal">${empty keiro4.startPlace ? '' : keiro4.startPlace}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">勤務地</div>
+					<div class="form_Normal">${empty keiro4.endPlace ? '' : keiro4.endPlace}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">距離</div>
+					<div class="form_Normal">
+						${empty keiro4.shinseiKm ? '' : keiro4.shinseiKm}
+						<c:if test="${not empty keiro4.shinseiKm}">km</c:if>
+					</div>
+				</div>
+			</div>
+
 
 			<!-- 기타 테이블 (dummy) -->
 			<div class="content_Form1">
@@ -989,7 +1066,7 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou.shinseiName ? '' : jyohou.shinseiName}</div>
+					<div class="form_Normal">${empty jyohou.shinseiKbn ? '' : jyohou.shinseiKbn}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
