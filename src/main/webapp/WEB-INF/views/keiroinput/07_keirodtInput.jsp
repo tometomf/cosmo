@@ -473,6 +473,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
     const hozonBtn = document.getElementById("denshaHozonBtn");
 
+    const ichijiHozon = ${empty ichijiHozon ? '{}' : ichijiHozon};
+    
     function buildCommuteJson() {
 
         const fromStation = document.querySelector('input[name="From_station"]').value.trim();
@@ -507,44 +509,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
-        const shinseiKin     = total1;
-        const tsukiShikyuKin = total1;
-        const teikiKikan     = "1";
 
-        const shinseiIcData = {
-            kigyoCd:   null,
-            shinseiNo: null,
-            shinseiYmd: null,
-            shinseiKbn: null,
-            shinchokuKbn: null,
-            genAddress: null,
-            newAddress: null,
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
-            
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-            moComment: null,
-            
-            codeNm: null,
-            shinseiName: null,
-
-        	keiro : {
+            const keiro = {
                 tsukinShudan : "1",
                 shudanName :   "電車",
                 startPlace :   fromStation,
                 endPlace :     toStation,
                 tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
-            },
+            }
             
-            startKeiro: {
-            startPlace :   fromStation,
+            const startKeiro = {
+            startPlace :   fromStation, 
             endPlace :     toStation,
             viaPlace1: middleStation01,
             viaPlace2:middleStation02,
@@ -552,9 +527,12 @@ document.addEventListener("DOMContentLoaded", function () {
             viaPlace4:middleStation04,
             viaPlace5:middleStation05
             }
-        };
+        
 
-        return JSON.stringify(shinseiIcData);
+        ichijiHozon.keiro = keiro;
+        ichijiHozon.startKeiro = startKeiro;
+        
+        return JSON.stringify(ichijiHozon);
     }
 
     

@@ -71,13 +71,16 @@ public class KeiroInputController {
 
 	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq);
 
-
+	    String ichijiHozonJson = "{}";
+	    
 	    try {
 	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
 	        if (hozon != null && hozon.getData() != null) {
 
 	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
 
+	            ichijiHozonJson = json;
+	            
 	            ObjectMapper mapper = new ObjectMapper();
 	            JsonNode root = mapper.readTree(json);
 	            JsonNode keiroNode = root.path("startKeiro");
@@ -124,6 +127,8 @@ public class KeiroInputController {
 	    }
 
 	    model.addAttribute("keiro", keiroDto);
+	    
+	    model.addAttribute("ichijiHozon", ichijiHozonJson);
 
 	    return "keiroinput/07_keirodtInput";
 	}
