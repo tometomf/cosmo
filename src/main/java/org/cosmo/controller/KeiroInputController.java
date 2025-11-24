@@ -305,5 +305,23 @@ public class KeiroInputController {
 
 	        return keiroInputservice.getShainLocation(kigyoCd, userUid);
 	    }
+	 
+	    @GetMapping("/keiro/start/detail")
+	    public ShinseiStartKeiroVO getStartKeiroDetail(
+	            @RequestParam("shinseiNo") Integer shinseiNo,
+	            @RequestParam("keiroSeq") Integer keiroSeq,
+	            HttpSession session) {
+
+	        ShainVO shain = (ShainVO) session.getAttribute("shain");
+
+	        if (shain == null) {
+	            return null; // 또는 'throw new RuntimeException("로그인 필요")'
+	        }
+
+	        Integer kigyoCd  = Integer.valueOf(shain.getKigyo_Cd());
+	        Integer shainUid = Integer.valueOf(shain.getShain_Uid());
+
+	        return keiroInputservice.getStartKeiroOne(kigyoCd, shainUid, shinseiNo, keiroSeq);
+	    }
 
 }

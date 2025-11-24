@@ -37,4 +37,11 @@ public interface KeiroInputMapper {
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid
     );
+    
+    ShinseiStartKeiroVO selectStartKeiro(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Integer shainUid,
+            @Param("shinseiNo") Integer shinseiNo,
+            @Param("keiroSeq") Integer keiroSeq
+    );
 }

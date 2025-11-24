@@ -217,5 +217,33 @@
          AND s.KEIRO_SEQ = 1
 
    </select>
+   
+   <select id="selectStartKeiroOne"
+        resultMap="ShinseiStartKeiroMap">
+
+    SELECT
+        KIGYO_CD,
+        SHINSEI_NO,
+        KEIRO_SEQ,
+        SHINSEI_KBN,
+        SHINSEI_YMD,
+        SHAIN_UID,
+        SHAIN_NO,
+        TSUKIN_SHUDAN_KBN,
+        START_PLACE,
+        END_PLACE,
+        KIKAN_START_YMD,
+        KIKAN_END_YMD,
+        SHINSEI_KM,
+        SHINSEI_KIN
+    FROM
+        SHINSEI_START_KEIRO
+    WHERE	
+        KIGYO_CD = #{kigyoCd}
+      AND SHAIN_UID = #{shainUid}
+      AND SHINSEI_NO = #{shinseiNo}
+      AND KEIRO_SEQ = #{keiroSeq}
+
+</select>
 
 </mapper>

@@ -52,5 +52,11 @@ public class KeiroInputServiceImpl implements KeiroInputService {
     public ShinseiStartKeiroVO getViaPlace1(Integer kigyoCd, Long shainUid) {
         return mapper.selectViaPlace1(kigyoCd, shainUid);
     }
+	
+	  @Override
+	    public ShinseiStartKeiroVO getStartKeiroOne(
+	            Integer kigyoCd, Integer shainUid, Integer shinseiNo, Integer keiroSeq) {
 
+	        return mapper.selectStartKeiro(kigyoCd, shainUid, shinseiNo, keiroSeq);
+	    }
 }
