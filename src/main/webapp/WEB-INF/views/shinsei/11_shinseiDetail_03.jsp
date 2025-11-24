@@ -697,7 +697,9 @@
 			</div>
 
 			<!-- Multi Form 예제 (dummy 그대로) -->
+			<!-- 付随書類（自動車） -->
 			<div class="multi_Form">
+				<!-- 면허증 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -707,13 +709,17 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証有効期限</div>
-						<div class="form_Normal">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
+						<div class="form_Normal">${empty shorui.menkyoYukoKigen ? '' : shorui.menkyoYukoKigen}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証番号</div>
-						<div class="form_Normal">${shainHuzuiShorui.menkyo_No}</div>
+						<div class="form_Normal">${empty shorui.menkyoNo ? '' : shorui.menkyoNo}
+						</div>
 					</div>
 				</div>
+
+				<!-- 車検証 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -723,25 +729,35 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車種</div>
-						<div class="form_Normal">${shainHuzuiShorui.shashu}</div>
+						<div class="form_Normal">${empty shorui.shashu ? '' : shorui.shashu}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">ナンバー</div>
-						<div class="form_Normal">${shainHuzuiShorui.toroku_No}</div>
+						<div class="form_Normal">${empty shorui.torokuNo ? '' : shorui.torokuNo}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">排気量</div>
-						<div class="form_Normal">${shainHuzuiShorui.haikiryo}</div>
+						<div class="form_Normal">${empty shorui.haikiryo ? '' : shorui.haikiryo}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車検有効期限</div>
-						<div class="form_Normal">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
+						<div class="form_Normal">${empty shorui.shakenYukoKigen ? '' : shorui.shakenYukoKigen}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">燃費</div>
-						<div class="form_Normal">15km/L</div>
+						<div class="form_Normal">
+							<c:if test="${not empty shorui.nenpi}">
+                    ${shorui.nenpi}km/L
+                </c:if>
+						</div>
 					</div>
 				</div>
+
+				<!-- 保険 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -757,30 +773,37 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">保険満了日</div>
-						<div class="form_Normal">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
+						<div class="form_Normal">${empty shorui.hokenManryoYmd ? '' : shorui.hokenManryoYmd}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対人賠償</div>
-						<div class="form_Normal">${shainHuzuiShorui.taijin_Baisho}</div>
+						<div class="form_Normal">${empty shorui.taijinBaisho ? '' : shorui.taijinBaisho}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対物賠償</div>
-						<div class="form_Normal">${shainHuzuiShorui.taibutsu_Baisho}</div>
+						<div class="form_Normal">${empty shorui.taibutsuBaisho ? '' : shorui.taibutsuBaisho}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">人身障害</div>
-						<div class="form_Normal">${shainHuzuiShorui.jinshin_Shogai}</div>
+						<div class="form_Normal">${empty shorui.jinshinShogai ? '' : shorui.jinshinShogai}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">搭乗者障害</div>
-						<div class="form_Normal">${shainHuzuiShorui.tojosha_Shogai}</div>
+						<div class="form_Normal">${empty shorui.tojoshaShogai ? '' : shorui.tojoshaShogai}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">等級</div>
-						<div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
+						<div class="form_Normal">${empty shorui.tokyu ? '' : shorui.tokyu}
+						</div>
 					</div>
 				</div>
 			</div>
+
 
 			<c:url var="huzuiUrl" value="/idoconfirm/huzuikanri">
 				<c:param name="kigyoCd" value="${shinseiJyohou.kigyoCd}" />

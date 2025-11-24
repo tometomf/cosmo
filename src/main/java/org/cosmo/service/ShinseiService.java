@@ -17,9 +17,8 @@ public interface ShinseiService {
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
-	
-	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
 
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
 
 	String getShainUidByShinseiNo(String shinseiNo);
 
@@ -67,7 +66,5 @@ public interface ShinseiService {
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
 			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
 			String userIp);
-	
-	
 
 }

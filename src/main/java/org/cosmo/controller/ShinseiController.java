@@ -446,6 +446,8 @@ public class ShinseiController {
 		model.addAttribute("keiro3", keiro3); // 경로③
 		model.addAttribute("keiro4", keiro4); // 경로④
 		model.addAttribute("shorui", shoruiVo);
+		
+		
 
 		return "shinsei/11_shinseiDetail_03";
 	}

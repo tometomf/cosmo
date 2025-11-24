@@ -312,14 +312,14 @@ public class ShinseiServiceImpl implements ShinseiService {
 		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
 	}
 
-	  @Override
-	    public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
-	        Map<String, Object> param = new HashMap<String, Object>();
-	        param.put("kigyoCd", kigyoCd);
-	        param.put("shinseiNo", shinseiNo);
-	        param.put("keiroSeq", keiroSeq);
-	        return shinseiMapper.getShinseiKeiroDetail(param);
-	    }
+	@Override
+	public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		param.put("keiroSeq", keiroSeq);
+		return shinseiMapper.getShinseiKeiroDetail(param);
+	}
 
 
 }
