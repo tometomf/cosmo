@@ -48,11 +48,7 @@ public class KeiroInputController {
     private IchijiHozonMapper ichijiHozonMapper;
 
 	@GetMapping("/07_keirodtInput")
-	public String densha(@RequestParam("shinseiNo") Integer shinseiNo,
-	                     @RequestParam("keiroSeq") Integer keiroSeq,
-	                     Locale locale,
-	                     HttpSession session,
-	                     Model model) {
+	public String densha(Locale locale, HttpSession session, Model model) {
 
 
 	    Date date = new Date();
@@ -70,6 +66,8 @@ public class KeiroInputController {
 	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
 	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
 
+	 // 🔹 여기서 keiroSeq를 내부에서 정함 (예: 전차 = 1)
+	    Integer keiroSeq = 1;
 
 	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq);
 
@@ -82,7 +80,7 @@ public class KeiroInputController {
 
 	            ObjectMapper mapper = new ObjectMapper();
 	            JsonNode root = mapper.readTree(json);
-	            JsonNode keiroNode = root.path("keiro");
+	            JsonNode keiroNode = root.path("startKeiro");
 
 	            if (keiroDto == null) {
 	                keiroDto = new ShainKeiroDTO();
