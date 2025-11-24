@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.AddressViewDto;
+import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
@@ -94,10 +95,40 @@ public class HiwariKinmuchiController {
 
     
     @GetMapping("/address")
-    public String showHiwariAddressPage() {
+    public String showHiwariAddressPage(HttpSession session, Model model) {
+    	
+    	ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";
+        }
+        
+        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
+        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
+        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+        
+        if (kigyoCd == null) kigyoCd = 1001;
+        if (shainUid == null) shainUid = 1L;
+        
+        HiwariAddressVO data;
+        
+        if (shinseiNo == null) {
+            data = service.getAddressPageDataBefore(kigyoCd, shainUid);
+        } else {
+            data = service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
+        }
+        
+        model.addAttribute("initData", data);
+        model.addAttribute("addressData", data);
+        
         return "hiwariKinmuchi/hiwariAddress";
     }
+    
+    @GetMapping("/riyu")
+    public String showRiyuPage() {
+        return "hiwariKinmuchi/hiwariRiyu";
+    }
 
+    
     @GetMapping("/kakunin")
     public String showKakuninPage(HttpSession session, Model model) {
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
@@ -398,10 +429,7 @@ public class HiwariKinmuchiController {
         }
     }
     
-    @GetMapping("/riyu")
-    public String showRiyuPage() {
-        return "hiwariKinmuchi/hiwariRiyu";
-    }
+
     
     @PostMapping("/tempSave")
     public String tempSaveKinmu(
