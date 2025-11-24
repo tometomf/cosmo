@@ -4,14 +4,18 @@ import java.util.List;
 
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
+import org.cosmo.domain.AlertType;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IdoCheckForm;
 import org.cosmo.domain.KinmuForm;
+import org.cosmo.domain.NextScreen;
+import org.cosmo.domain.NextStep;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
 import org.cosmo.service.GeoService;
+import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.ShozokuService;
 import org.cosmo.service.TokureiService;
 import org.springframework.stereotype.Controller;
@@ -30,40 +34,241 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IdoConfirmController {
 
+    // ===== �쓽議댁꽦 二쇱엯 =====
     private final AddressInputService addressInputService;
     private final ShozokuService shozokuService;
     private final TokureiService tokureiService;
     private final GeoService geoService;
     private final AddressService addressService;
+    private final IdoConfirmService idoConfirmService;   // �쁾 0200�슜 �꽌鍮꾩뒪
 
+    // =====================================
+    // 0200 �빊�땿�쐣�꽒閻븃첀 (GET 吏꾩엯)
+    // URL: /idoconfirm/idoconfirm?alertType=IDOU_ITEN | SONOTA | JISHIN
+    // =====================================
+    @GetMapping("/idoconfirm")
+    public String idoconfirm(
+            @RequestParam(name = "alertType", required = false) AlertType alertType,
+            Model model) {
 
+        if (alertType == null) {
+            alertType = AlertType.SONOTA;
+        }
+        
+        // 폼 초기화
+        IdoCheckForm form = new IdoCheckForm();
+        
+        // [설계서] IDOU_ITEN인 경우 "근무지는 변한다"가 선택된 상태로 고정
+        if (alertType == AlertType.IDOU_ITEN) {
+            form.setKinmuChange("Y");
+        }
+
+        model.addAttribute("alertType", alertType);
+        model.addAttribute("form", form);
+
+        return "idoconfirm/02_idoConfirm";
+    }
+
+    /**
+     * [다음] 버튼 클릭 시 (POST)
+     */
+    @PostMapping("/next")
+    public String next(
+            @ModelAttribute("form") IdoCheckForm form,
+            @RequestParam(name = "alertType", required = false) AlertType alertType,
+            RedirectAttributes rttr) {
+
+        if (alertType == null) {
+            alertType = AlertType.SONOTA;
+        }
+
+        boolean kinmu = form.isKinmuChanged(); // Y면 true
+        boolean jusho = form.isJushoChanged(); // Y면 true
+
+        // 서비스 로직에 판단 요청
+        NextStep step = idoConfirmService.judge(alertType, kinmu, jusho);
+        NextScreen nextScreen = step.getFirstScreen();
+
+        // ★ 수정 포인트: 다음 화면으로 넘길 때 "form"이라는 이름을 쓰지 않습니다.
+        // 다음 화면(addressinput 등)에서 "form"은 자기 자신만의 Form 클래스를 쓰기 때문입니다.
+        // 대신 "prevForm"이나 "idoCheckForm" 처럼 다른 이름을 씁니다.
+        rttr.addFlashAttribute("idoCheckForm", form); 
+        rttr.addFlashAttribute("alertType", alertType);
+
+        switch (nextScreen) {
+            case WORK_INPUT:
+                return "redirect:/idoconfirm/kinmuInput";
+
+            case ADDRESS_INPUT:
+                return "redirect:/idoconfirm/addressinput";
+
+            case COMMUTE_INFO:
+                rttr.addFlashAttribute("mustChangeRoute", step.isMustChangeRoute());
+                return "redirect:/idoconfirm/keiroInfo";
+
+            case APPLICATION_ERROR:
+            default:
+                String errorMsg = "";
+                if (alertType == AlertType.IDOU_ITEN) {
+                    errorMsg = "異動・移転の場合は「勤務地：変わる」を選択してください。";
+                } else if (alertType == AlertType.JISHIN) {
+                    errorMsg = "「自ら申請を行う」場合は「勤務地：変わる」は選択不可です。";
+                } else {
+                    errorMsg = "選択された組み合わせは無効です。";
+                }
+                rttr.addFlashAttribute("errorMessage", errorMsg);
+                return "redirect:/idoconfirm/idoconfirm?alertType=" + alertType.name();
+        }
+    }
+    // =====================================
+    // �몾 �떎�떃�쑑�뀯�뒟�뵽�씊 (湲곗〈 肄붾뱶 洹몃�濡�)
+    // =====================================
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
         return "idoconfirm/03_kinmuInput";
     }
 
+    // �몾 �솕硫� 理쒖큹 �몴�떆 (�떎瑜� �� 肄붾뱶 �� 洹몃�濡� �몺)
+    @GetMapping("/input")
+    public String showKinmuInput(Model model) {
+
+        KinmuForm form = new KinmuForm();
+
+        // �뀒�뒪�듃�슜 湲곕낯媛� (�굹以묒뿉 �븘�슂 �뾾�쑝硫� 吏��썙�룄 �맖)
+        form.setAddressChange("1"); // 湲곕낯: 鵝뤸��걣鸚됥굩�굥
+
+        model.addAttribute("kinmuForm", form);
+        return "idoconfirm/03_kinmuInput";
+    }
+
+    // �몾 �솕硫� �뚧А�겦�� �겢由� �떆 (�떎瑜� �� 肄붾뱶 �� 洹몃�濡� �몺)
+    @PostMapping("/kinmuNext")
+    public String kinmuNext(@ModelAttribute("kinmuForm") KinmuForm form,
+                            Model model) {
+
+        System.out.println("===== KinmuController.next() �떎�뻾�맖 =====");
+        System.out.println("�엯�젰�븳 �떊洹쒖＜�냼: " + form.getNewAddress());
+        System.out.println("addressChange: " + form.getAddressChange());
+        System.out.println("lat: " + form.getLat());
+        System.out.println("lng: " + form.getLng());
+
+        String address = form.getNewAddress();
+
+        if (address == null || address.trim().isEmpty()) {
+            model.addAttribute("error", "�뼭�떎�떃�쑑鵝뤸��굮�뀯�뒟�걮�겍�걦�걽�걬�걚��");
+            model.addAttribute("kinmuForm", form);
+            return "idoconfirm/03_kinmuInput";
+        }
+
+        GeoPoint geo = geoService.getLatLng(address);
+
+        if (geo == null) {
+            model.addAttribute("error", "鵝뤸��겗渶�佯�永뚦벧�걣�룚孃쀣겎�걤�겲�걵�굯�겎�걮�걼��");
+            model.addAttribute("kinmuForm", form);
+            return "idoconfirm/03_kinmuInput";
+        }
+
+        form.setLat(geo.getLat());
+        form.setLng(geo.getLng());
+
+        System.out.println("=== 醫뚰몴 �꽭�똿 �썑 ===");
+        System.out.println("lat: " + form.getLat());
+        System.out.println("lng: " + form.getLng());
+
+        String addressChange = form.getAddressChange(); // "1" or "0"
+
+        if ("1".equals(addressChange)) {
+            // 鵝뤸��걣鸚됥굩�굥 �넂 4踰� 鵝뤸��뀯�뒟 �솕硫댁쑝濡� �씠�룞
+            return "redirect:/idoconfirm/addressinput";
+        } else {
+            // 鵝뤸��걣鸚됥굩�굢�겒�걚 �넂 5踰� 永뚩러�뀯�뒟 �솕硫�, 洹� �쟾�뿉 4踰덉쓽 �뚧А�겦�겥燁삣뎺�눇�릤��
+            addressService.runPreNextProcess(form);
+            return "redirect:/idoconfirm/keiroInfo";
+        }
+    }
+
+    // =====================================
+    // �몿 鵝뤸��뀯�뒟�뵽�씊 (湲곗〈 肄붾뱶 洹몃�濡�)
+    // =====================================
+    @GetMapping("/addressinput")
+    public String addressinput(Model model) {
+
+        String kigyoCd = "DUMMY"; // 실제 로그인 세션에서 가져와야 함
+        String shainUid = "DUMMY";
+
+        AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
+        
+        // ★ 수정 포인트: 무조건 형변환하지 않고 타입을 체크합니다.
+        Object obj = model.asMap().get("form");
+        AddressInputForm form = null;
+
+        if (obj instanceof AddressInputForm) {
+            // 진짜 주소입력폼이 들어있다면 그걸 씁니다.
+            form = (AddressInputForm) obj;
+        } else {
+            // 없거나, 엉뚱한 객체(IdoCheckForm 등)가 들어있다면 새로 만듭니다.
+            form = addressInputService.initForm();
+        }
+
+        model.addAttribute("view", view);
+        model.addAttribute("form", form);
+
+        return "idoconfirm/04_addressinput";
+    }
+
+    // =====================================
+    // �뫀 永뚩러�깄�젿�뵽�씊 (湲곗〈 肄붾뱶 洹몃�濡�)
+    // =====================================
+    @GetMapping("/keiroInfo")
+    public String keiroInfo() {
+        return "idoconfirm/05_keiroInfo";
+    }
+
+    // �뫃 餓섌쉹嶸←릤�뵽�씊
     @GetMapping("/huzuikanri")
     public String huzuikanri() {
         return "idoconfirm/08_huzuiKanri";
     }
 
+    // �뫅 閻븃첀�뵽�씊
+    @GetMapping("/kakuninpage")
+    public String kakuninpage() {
+        return "idoconfirm/09_kakuninPage";
+    }
+
+    // �뫆 若뚥틙�뵽�씊
     @GetMapping("/kanryoPage")
     public String kanryoPage() {
         return "idoconfirm/10_kanryoPage";
     }
 
+    // =====================================
+    // �냼�냽 寃��깋 �뙘�뾽 (湲곗〈 肄붾뱶 洹몃�濡�)
+    // =====================================
+    @GetMapping("/shozokuSearchPopup")
+    public String shozokuSearchPopup(Model model) {
+
+        int kigyoCd = 100;  // �뜑誘�
+
+        List<ShozokuVO> list = shozokuService.findShozokuList(kigyoCd);
+        model.addAttribute("list", list);
+
+        return "idoconfirm/shozokuSearchPopup";
+    }
+
+    // =====================================
+    // �돶堊뗧뵵獄� (湲곗〈 肄붾뱶 洹몃�濡�)
+    // =====================================
     @GetMapping("/tokureiShinsei")
     public String tokureiShinsei(
-    		@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+            @RequestParam(name = "shinseiNo", required = false) String shinseiNo,
             @RequestParam(name = "type", required = false) String type,
             Model model) {
 
-    	// type 기본값 세팅 (A / B 중 A를 기본)
         if (type == null || type.trim().isEmpty()) {
             type = "A";
         }
-        
-        // shinseiNo 안 넘어오면 기본값 1 사용
+
         if (shinseiNo == null || shinseiNo.trim().isEmpty()) {
             shinseiNo = "1";
         }
@@ -74,192 +279,31 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
-    @GetMapping("/keiroInfo")
-    public String keiroInfo() {
-        return "idoconfirm/05_keiroInfo";
-    }
-
-    @GetMapping("/addressinput")
-    public String addressinput(Model model) {
-
-        String kigyoCd = "DUMMY";
-        String shainUid = "DUMMY";
-
-        AddressViewDto view = addressInputService.loadCurrentAddress(kigyoCd, shainUid);
-        AddressInputForm form = (AddressInputForm) model.asMap().get("form");
-
-        if (form == null) {
-            form = addressInputService.initForm();
-        }
-
-        model.addAttribute("view", view);
-        model.addAttribute("form", form);
-
-        return "idoconfirm/04_addressinput";
-    }
-
-    @GetMapping("/kakuninpage")
-    public String kakuninpage() {
-        return "idoconfirm/09_kakuninPage";
-    }
-
-    @GetMapping("/idoconfirm")
-    public String idoconfirm(Model model) {
-        model.addAttribute("form", new IdoCheckForm());
-        return "idoconfirm/02_idoConfirm";
-    }
-
-    @PostMapping("/next")
-    public String next(@ModelAttribute("form") IdoCheckForm form,
-                       RedirectAttributes redirectAttributes) {
-
-        boolean kinmu = form.isKinmuChange(); // 勤務地
-        boolean jusho = form.isJushoChange(); // 住所
-
-        // ① 둘 다 "変わらない(N)"
-        if (!kinmu && !jusho) {
-            redirectAttributes.addFlashAttribute("errorMessage", "勤務先または住所の変更を選択してください。");
-            return "idoconfirm/05_keiroInfo";
-        }
-
-        // ② 둘 다 "変わる(Y)"
-        if (kinmu && jusho) {
-            return "idoconfirm/03_kinmuInput";
-        }
-
-        // ③ 근무지만 변함(Y,N)
-        if (kinmu && !jusho) {
-            return "idoconfirm/03_kinmuInput";
-        }
-
-        // ④ 주소만 변함(N,Y)
-        return "idoconfirm/04_addressinput";
-    }
-    
-    @GetMapping("/shozokuSearchPopup")
-    public String shozokuSearchPopup(Model model) {
-
-        // 현재 더미데이터는 KIGYO_CD = 100 고정
-        int kigyoCd = 100;
-
-        List<ShozokuVO> list = shozokuService.findShozokuList(kigyoCd);
-
-        model.addAttribute("list", list);
-
-        return "idoconfirm/shozokuSearchPopup";  
-    }
-    
     @PostMapping("/tokureiSubmit")
     public String tokureiSubmit(@ModelAttribute TokureiForm form,
-                         RedirectAttributes rttr) {
+                                RedirectAttributes rttr) {
 
-        // ① 폼에서 값 잘 들어왔는지 콘솔로 일단 확인
         System.out.println("===== TokureiForm =====");
-        System.out.println("신청번호   : " + form.getShinseiNo());
-        System.out.println("특례타입   : " + form.getTokureiType());
-        System.out.println("동의 여부  : " + form.getAgree());
-        System.out.println("특례 사유  : " + form.getTokureiReason());
+        System.out.println("�떊泥�踰덊샇   : " + form.getShinseiNo());
+        System.out.println("�듅濡����엯   : " + form.getTokureiType());
+        System.out.println("�룞�쓽 �뿬遺�  : " + form.getAgree());
+        System.out.println("�듅濡� �궗�쑀  : " + form.getTokureiReason());
         System.out.println("======================");
 
-        // ② (간단 서버쪽 유효성 검사 - 1차 버전)
-        //    화면에서 JS로 막긴 하지만, 혹시 모를 경우 대비
         if (form.getAgree() == null) {
-            rttr.addFlashAttribute("errorMessage", "特例について内容を理解した上で申請にチェックしてください。");
-            // 다시 특례 화면으로 (임시)
+            rttr.addFlashAttribute("errorMessage",
+                    "�돶堊뗣겓�겇�걚�겍�냵若밤굮�릤鰲ｃ걮�걼訝듽겎�뵵獄뗣겓�긽�궒�긿�궚�걮�겍�걦�걽�걬�걚��");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
 
         if (form.getTokureiReason() == null || form.getTokureiReason().trim().isEmpty()) {
-            rttr.addFlashAttribute("errorMessage", "特例申請理由を入力してください。");
+            rttr.addFlashAttribute("errorMessage", "�돶堊뗧뵵獄뗧릤�뵳�굮�뀯�뒟�걮�겍�걦�걽�걬�걚��");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
 
-        // ③ 여기서 DB 저장 (Service 호출)
         tokureiService.saveTokurei(form);
 
-        // ④ 지금은 일단 "완료 페이지"로 보내기만 한다
-        rttr.addFlashAttribute("message", "特例申請を受け付けました。");
+        rttr.addFlashAttribute("message", "�돶堊뗧뵵獄뗣굮�룛�걨餓섅걨�겲�걮�걼��");
         return "redirect:/idoconfirm/kanryoPage";
     }
-    
- // 3번 화면 최초 표시
-    @GetMapping("/input")
-    public String showKinmuInput(Model model) {
-
-        KinmuForm form = new KinmuForm();
-
-        // 테스트용 기본값 (나중에 필요 없으면 지워도 됨)
-        form.setAddressChange("1"); // 기본: 住所が変わる
-
-        model.addAttribute("kinmuForm", form);
-        return "idoconfirm/03_kinmuInput";  // JSP 파일 이름
-    }
-
-    // 3번 화면에서 "次へ" 클릭 시
-    @PostMapping("/kinmuNext")
-    public String next(@ModelAttribute("kinmuForm") KinmuForm form,
-                       Model model) {
-    	
-    	// 🔥 콘솔 로그 확인용
-        System.out.println("===== KinmuController.next() 실행됨 =====");
-        System.out.println("입력한 신규주소: " + form.getNewAddress());
-        System.out.println("addressChange: " + form.getAddressChange());
-       	System.out.println("lat: " + form.getLat());
-        System.out.println("lng: " + form.getLng());
-
-        // ─────────────────────────────
-        // 1) 새 근무지 주소 꺼내기
-        // ─────────────────────────────
-        String address = form.getNewAddress();
-
-        // (간단 검증) 주소가 비어있으면 에러
-        if (address == null || address.trim().isEmpty()) {
-            model.addAttribute("error", "新勤務地住所を入力してください。");
-            // form을 다시 모델에 넣어서 기존 입력값 유지
-            model.addAttribute("kinmuForm", form);
-            return "idoconfirm/03_kinmuInput";
-        }
-
-        // ─────────────────────────────
-        // 2) GeoService로 위도/경도 조회
-        // ─────────────────────────────
-        GeoPoint geo = geoService.getLatLng(address);
-
-        // 조회 실패 → 에러 메시지 + 3번 화면 유지
-        if (geo == null) {
-            model.addAttribute("error", "住所の緯度経度が取得できませんでした。");
-            model.addAttribute("kinmuForm", form);
-            return "idoconfirm/03_kinmuInput";
-        }
-
-        // 조회 성공 → 폼에 좌표 저장 (나중에 DB 저장용)
-        form.setLat(geo.getLat());
-        form.setLng(geo.getLng());
-        
-        System.out.println("=== 좌표 세팅 후 ===");
-        System.out.println("lat: " + form.getLat());
-        System.out.println("lng: " + form.getLng());
-
-        // ─────────────────────────────
-        // 3) 주소 변경 여부에 따라 분기
-        // ─────────────────────────────
-        String addressChange = form.getAddressChange(); // "1" or "0"
-
-        if ("1".equals(addressChange)) {
-            // 住所が変わる → 4번 住所入力 화면으로 이동
-            return "redirect:/idoconfirm/addressinput";
-
-        } else {
-            // 住所が変わらない → 5번 経路入力 화면으로 바로 가는데,
-            // 그 전에 住所入力PG の「次へ遷移前の処理」を 호출
-            addressService.runPreNextProcess(form);
-
-            return "redirect:/idoconfirm/keiroInfo";
-        }
-
-    }
-    
-    
-  
-    
 }
