@@ -108,7 +108,6 @@
                 UPD_DATE    AS updDate
             FROM ICHIJI_HOZON
             WHERE USER_UID  = #{userUid}
-              AND ACTION_NM = #{actionNm}
             ORDER BY UPD_DATE DESC
         )
         WHERE ROWNUM = 1
