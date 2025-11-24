@@ -68,21 +68,19 @@ public class KeiroInputController {
 
 	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
 	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid()); // ICHIJI_HOZON.USER_UID 용
+	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
 
 
 	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq);
 
 
 	    try {
-	        String actionUrl = "/keiroinput/07_keirodtInput"; // tempSave 의 actionUrl 과 동일해야 함
+	        String actionUrl = "/keiroinput/07_keirodtInput";
 
 	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid, actionUrl);
 	        if (hozon != null && hozon.getData() != null) {
 
 	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
-	            System.out.println("=== /07_keirodtInput 일시보존 JSON ===");
-	            System.out.println(json);
 
 	            ObjectMapper mapper = new ObjectMapper();
 	            JsonNode root = mapper.readTree(json);
@@ -129,7 +127,6 @@ public class KeiroInputController {
 	        e.printStackTrace();
 	    }
 
-	    // 5. JSP 에 전달
 	    model.addAttribute("keiro", keiroDto);
 
 	    return "keiroinput/07_keirodtInput";
