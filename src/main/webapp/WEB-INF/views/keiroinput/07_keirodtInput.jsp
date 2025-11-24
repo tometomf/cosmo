@@ -477,14 +477,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const fromStation = document.querySelector('input[name="From_station"]').value.trim();
         const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
-        const middles = [];
+        /* const middles = [];
         middleInputs.forEach(input => {
             const v = input.value.trim();
             if (v !== "") {
                 middles.push(v);
             }
-        });
+        }); */
         const toStation = document.querySelector('input[name="To_station"]').value.trim();
+
+        const middle01El = document.querySelector('input[name="middle_station_01"]');
+        const middle02El = document.querySelector('input[name="middle_station_02"]');
+        const middle03El = document.querySelector('input[name="middle_station_03"]');
+        const middle04El = document.querySelector('input[name="middle_station_04"]');
+        const middle05El = document.querySelector('input[name="middle_station_05"]');
+
+        const middleStation01 = middle01El ? middle01El.value.trim() : "";
+        const middleStation02 = middle02El ? middle02El.value.trim() : "";
+        const middleStation03 = middle03El ? middle03El.value.trim() : "";
+        const middleStation04 = middle04El ? middle04El.value.trim() : "";
+        const middleStation05 = middle05El ? middle05El.value.trim() : "";
+        
+        
+        
         const ikkagetsukingaku    = total1;
         
         if (total1 === 0) {
@@ -524,6 +539,11 @@ document.addEventListener("DOMContentLoaded", function () {
             shudanName :   "電車",
             startPlace :   fromStation,
             endPlace :     toStation,
+             viaPlace1: middleStation01,
+            viaPlace2:middleStation02,
+            viaPlace3:middleStation03,
+            viaPlace4:middleStation04,
+            viaPlace5:middleStation05, 
             tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
         }
         };

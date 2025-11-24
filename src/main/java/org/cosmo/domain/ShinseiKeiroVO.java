@@ -17,6 +17,11 @@ public class ShinseiKeiroVO {
 
 	private String startPlace;
 	private String endPlace;
+    private String viaPlace1;
+    private String viaPlace2;
+    private String viaPlace3;
+    private String viaPlace4;
+    private String viaPlace5;
 
 	private String shudanName;
 

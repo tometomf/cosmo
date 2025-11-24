@@ -54,10 +54,12 @@ public class KeiroInputController {
 	                     HttpSession session,
 	                     Model model) {
 
+
 	    Date date = new Date();
 	    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 	    String formattedDate = dateFormat.format(date);
 	    model.addAttribute("serverTime", formattedDate);
+
 
 	    ShainVO shain = (ShainVO) session.getAttribute("shain");
 	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
@@ -66,11 +68,69 @@ public class KeiroInputController {
 
 	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
 	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
+	    Integer userUid = Integer.parseInt(shain.getShain_Uid()); // ICHIJI_HOZON.USER_UID 용
 
-	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq); // <--- 硫붿꽌�뱶 蹂�寃�
 
-	    	    // keiro�씪�뒗 �씠由꾩쑝濡� 紐⑤뜽�뿉 異붽� (JSP�뿉�꽌 ${keiro...}濡� �젒洹� 媛��뒫)
-	    		model.addAttribute("keiro", keiroDto);
+	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq);
+
+
+	    try {
+	        String actionUrl = "/keiroinput/07_keirodtInput"; // tempSave 의 actionUrl 과 동일해야 함
+
+	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid, actionUrl);
+	        if (hozon != null && hozon.getData() != null) {
+
+	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+	            System.out.println("=== /07_keirodtInput 일시보존 JSON ===");
+	            System.out.println(json);
+
+	            ObjectMapper mapper = new ObjectMapper();
+	            JsonNode root = mapper.readTree(json);
+	            JsonNode keiroNode = root.path("keiro");
+
+	            if (keiroDto == null) {
+	                keiroDto = new ShainKeiroDTO();
+	            }
+
+	            String startPlace = keiroNode.path("startPlace").asText(null);
+	            String endPlace = keiroNode.path("endPlace").asText(null);
+	            String viaPlace1 = keiroNode.path("viaPlace1").asText(null);
+	            String viaPlace2 = keiroNode.path("viaPlace2").asText(null);
+	            String viaPlace3 = keiroNode.path("viaPlace3").asText(null);
+	            String viaPlace4 = keiroNode.path("viaPlace4").asText(null);
+	            String viaPlace5 = keiroNode.path("viaPlace5").asText(null);
+
+	            
+	            if (startPlace != null && !startPlace.isEmpty()) {
+	                keiroDto.setStartPlace(startPlace);
+	            }
+	            if (endPlace != null && !endPlace.isEmpty()) {
+	                keiroDto.setEndPlace(endPlace);
+	            }
+	            if (viaPlace1 != null && !viaPlace1.isEmpty()) {
+	            	keiroDto.setViaPlace1(viaPlace1);
+	            }
+	            if (viaPlace2 != null && !viaPlace2.isEmpty()) {
+	            	keiroDto.setViaPlace2(viaPlace2);
+	            }
+	            if (viaPlace3 != null && !viaPlace3.isEmpty()) {
+	            	keiroDto.setViaPlace3(viaPlace3);
+	            }
+	            if (viaPlace4 != null && !viaPlace4.isEmpty()) {
+	            	keiroDto.setViaPlace4(viaPlace4);
+	            }
+	            if (viaPlace5 != null && !viaPlace5.isEmpty()) {
+	            	keiroDto.setViaPlace5(viaPlace5);
+	            }
+
+	
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    // 5. JSP 에 전달
+	    model.addAttribute("keiro", keiroDto);
 
 	    return "keiroinput/07_keirodtInput";
 	}
