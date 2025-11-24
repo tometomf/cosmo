@@ -135,14 +135,10 @@ public class ShinseiController {
 	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 
-
-
 		// 1. 신청번호 ㅇ
 		if (shinseiNo != null) {
 
-
 			Long shinseiNoLong = Long.parseLong(shinseiNo);
-
 
 			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
 
@@ -267,6 +263,8 @@ public class ShinseiController {
 			@RequestParam(value = "jitsuKinmuNissu", required = false) String jitsuKinmuNissu,
 			@RequestParam(value = "addressIdoKeido", required = false) String addressIdoKeido,
 			@RequestParam(value = "addressChgKbn", required = false) String addressChgKbn,
+			@RequestParam(value = "kinmuAddressIdoKeido", required = false) String kinmuAddressIdoKeido,
+			@RequestParam(value = "kinmuAddressChgKbn", required = false) String kinmuAddressChgKbn,
 
 			HttpSession session, HttpServletRequest request, RedirectAttributes rttr) {
 
@@ -279,12 +277,14 @@ public class ShinseiController {
 		String userIp = request.getRemoteAddr();
 
 		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
-				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, loginUserId, userIp);
+				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, // ★ 추가
+				kinmuAddressChgKbn, 
+				loginUserId, userIp);
 
 		if (loginShain != null && loginShain.getShain_Uid() != null) {
 
 			String loginUidStr = loginShain.getShain_Uid();
-			String email = shinseiService.getEmailByShainUid(loginUidStr); 
+			String email = shinseiService.getEmailByShainUid(loginUidStr);
 
 			if (email != null && !email.trim().isEmpty()) {
 				SimpleMailMessage message = new SimpleMailMessage();
@@ -327,7 +327,7 @@ public class ShinseiController {
 			if (referer != null && !referer.isEmpty()) {
 				return "redirect:" + referer;
 			} else {
-				return "redirect:/"; // 진짜 아무 것도 없을 때 기본 이동
+				return "redirect:/"; 
 			}
 		}
 
@@ -369,10 +369,8 @@ public class ShinseiController {
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request) {
 
-	
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
-		
 		if (jyohouVo == null) {
 			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
 			String referer = request.getHeader("Referer");
@@ -383,9 +381,8 @@ public class ShinseiController {
 			}
 		}
 
-		
 		String kbn = jyohouVo.getShinchokuKbn();
-		if (!"3".equals(kbn)) { 
+		if (!"3".equals(kbn)) {
 			rttr.addFlashAttribute("errorMsg", "この画面は「差戻し」の申請のみ参照できます。");
 
 			String referer = request.getHeader("Referer");
@@ -396,11 +393,9 @@ public class ShinseiController {
 			}
 		}
 
-		
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 
-		
 		if (jyohouVo.getShinchokuKbn() != null) {
 			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 			jyohouVo.setCodeNm(codeNm);
@@ -416,11 +411,9 @@ public class ShinseiController {
 			keiroVo.setShudanName(shudanName);
 		}
 
-		
 		model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
 		model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
 
-	
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);

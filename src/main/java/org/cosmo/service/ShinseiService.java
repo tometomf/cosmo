@@ -17,9 +17,9 @@ public interface ShinseiService {
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
-	
+
 	String getShainUidByShinseiNo(String shinseiNo);
-	
+
 	ShinseiIcHozonVO getIchijiHozon(String hozonUid);
 
 	ShainVO getShainByUid(String shainUid);
@@ -39,7 +39,7 @@ public interface ShinseiService {
 	String getFileName(Long shinseiNo);
 
 	String getShinchokuKbn(String shinseiNo);
-	
+
 	String getEmailByShainUid(String shainUid);
 
 	void updateTorikesu(String shinseiNo, String tkComment, String shainUid);
@@ -62,6 +62,7 @@ public interface ShinseiService {
 
 	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
-			String addressChgKbn, String loginUserId, String userIp);
+			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
+			String userIp);
 
 }

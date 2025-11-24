@@ -12,18 +12,18 @@
 <script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 <!-- ★★★ 여기에 JavaScript 함수들을 먼저 선언 ★★★ -->
 <script type="text/javascript">
-	// 전역 함수로 선언
+
 	function openAddressCheck() {
 		console.log('=== openAddressCheck 함수 시작 ===');
 
-		// ID로 직접 가져오기
+		
 		var zip1Element = document.getElementById("zipCode1");
 		var zip2Element = document.getElementById("zipCode2");
 		var prefElement = document.getElementById("prefectureSelect");
 		var addr1Element = document.getElementById("address1Input");
 		var addr2Element = document.getElementById("address2Input");
 
-		// 요소 존재 확인
+		
 		if (!zip1Element || !zip2Element || !prefElement || !addr1Element
 				|| !addr2Element) {
 			alert("入力項目が見つかりません。");
@@ -31,7 +31,7 @@
 			return;
 		}
 
-		// 값 가져오기
+
 		var zip1 = zip1Element.value.trim();
 		var zip2 = zip2Element.value.trim();
 		var pref = prefElement.value.trim();
@@ -41,7 +41,7 @@
 		console.log('입력값 확인: zip1=' + zip1 + ', zip2=' + zip2 + ', pref='
 				+ pref + ', addr1=' + addr1 + ', addr2=' + addr2);
 
-		// 주소 입력 확인
+	
 		if (!pref && !addr1) {
 			alert("都道府県または住所を入力してください。");
 			return;
@@ -56,7 +56,7 @@
 
 		console.log('팝업 URL: ' + url);
 
-		// 팝업 열기
+		
 		try {
 			var popup = window.open(url, "addressCheckWindow",
 					"width=800,height=600,scrollbars=yes,resizable=yes");
@@ -70,6 +70,46 @@
 			}
 		} catch (error) {
 			console.error('팝업 열기 중 오류:', error);
+			alert("エラーが発生しました: " + error.message);
+		}
+	}
+
+	function openKinmuAddressCheck() {
+		console.log('=== openKinmuAddressCheck 함수 시작 ===');
+
+	
+		var zip = "${empty jyohou.newKinmuZipCd ? '' : jyohou.newKinmuZipCd}";
+		var pref = "${empty jyohou.newKinmuAddress1 ? '' : jyohou.newKinmuAddress1}";
+		var addr1 = "${empty jyohou.newKinmuAddress2 ? '' : jyohou.newKinmuAddress2}";
+		var addr2 = "${empty jyohou.newKinmuAddress3 ? '' : jyohou.newKinmuAddress3}";
+
+		console.log("근무지 주소:", zip, pref, addr1, addr2);
+
+		if (!pref && !addr1) {
+			alert("勤務先住所情報がありません。");
+			return;
+		}
+
+		var params = "zip=" + encodeURIComponent(zip) + "&pref="
+				+ encodeURIComponent(pref) + "&addr1="
+				+ encodeURIComponent(addr1) + "&addr2="
+				+ encodeURIComponent(addr2) + "&mode=kinmu"; // ★ 집/근무지 구분용
+
+		var url = "/shinsei/addressCheck?" + params;
+
+		try {
+			var popup = window.open(url, "kinmuAddressCheckWindow",
+					"width=800,height=600,scrollbars=yes,resizable=yes");
+
+			if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+				alert("ポップアップがブロックされました。\nブラウザの設定でポップアップを許可してください。");
+				console.error('근무지 팝업이 차단되었습니다.');
+			} else {
+				console.log('근무지 팝업이 정상적으로 열렸습니다.');
+				popup.focus();
+			}
+		} catch (error) {
+			console.error('근무지 팝업 열기 중 오류:', error);
 			alert("エラーが発生しました: " + error.message);
 		}
 	}
@@ -139,7 +179,7 @@
 				return;
 			}
 
-			// 여기서 찍어야 함 (이제 flgElement가 존재)
+			
 			console.log("addressChgKbnHidden 최종값 = "
 					+ (flgElement.value || '(未設定)'));
 
@@ -165,6 +205,72 @@
 
 		} catch (e) {
 			console.error('applyAddressFromCheck 에러:', e);
+			alert('エラーが発生しました: ' + e.message);
+		}
+	}
+
+	function applyKinmuAddressFromCheck(pref, addr1, addr2, lat, lng) {
+		console.log('=== applyKinmuAddressFromCheck 호출됨 ===');
+		console.log('받은 값(근무지): pref=' + pref + ', addr1=' + addr1 + ', addr2='
+				+ addr2 + ', lat=' + lat + ', lng=' + lng);
+
+		try {
+			var latNum = Number(lat);
+			var lngNum = Number(lng);
+
+			if (isNaN(latNum) || isNaN(lngNum)) {
+				console.error('근무지 緯度経度가 수치가 아님: lat=' + lat + ', lng=' + lng);
+				alert('勤務先の緯度経度の取得に失敗しました。(数値ではありません)');
+				return;
+			}
+
+			var latStr = latNum.toFixed(3);
+			var lngStr = lngNum.toFixed(3);
+			var newIdoKeido = latStr + "," + lngStr;
+
+			console.log('근무지 잘라낸 緯度経度: ' + newIdoKeido + ' (length='
+					+ newIdoKeido.length + ')');
+
+			var idoKeidoElement = document
+					.getElementById("kinmuAddressIdoKeidoHidden");
+			var oldIdoKeidoElement = document
+					.getElementById("oldKinmuAddressIdoKeido");
+			var flgElement = document
+					.getElementById("kinmuAddressChgKbnHidden");
+
+			if (!idoKeidoElement) {
+				console.error('kinmuAddressIdoKeidoHidden 요소를 찾을 수 없습니다.');
+				alert('勤務先緯度経度の保存領域が見つかりません。');
+				return;
+			}
+			if (!flgElement) {
+				console.error('kinmuAddressChgKbnHidden 요소를 찾을 수 없습니다.');
+				alert('勤務先住所変更フラグの保存領域が見つかりません。');
+				return;
+			}
+
+			idoKeidoElement.value = newIdoKeido;
+			console.log('근무지 새로운緯度経度: ' + newIdoKeido);
+
+			var oldVal = oldIdoKeidoElement ? oldIdoKeidoElement.value : '';
+
+			console.log('근무지 修正前緯度経度: ' + oldVal);
+			console.log('근무지 修正後緯度経度: ' + newIdoKeido);
+
+			if (newIdoKeido && newIdoKeido.trim() !== ''
+					&& oldVal !== newIdoKeido) {
+				flgElement.value = "1";
+				console.log('勤務先変更フラグ: 1 (変更あり)');
+				alert("勤務先緯度経度が更新されました。\n緯度経度: " + newIdoKeido
+						+ "\n\n※ 勤務地が変更されました。");
+			} else {
+				flgElement.value = "0";
+				console.log('勤務先変更フラグ: 0 (変更なし)');
+				alert("勤務先緯度経度が更新されました。\n緯度経度: " + newIdoKeido);
+			}
+
+		} catch (e) {
+			console.error('applyKinmuAddressFromCheck 에러:', e);
 			alert('エラーが発生しました: ' + e.message);
 		}
 	}
@@ -479,7 +585,7 @@
 					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}
 						<button type="button"
 							style="border: none; background: none; cursor: pointer; padding: 5px;"
-							onclick="openAddressCheck()">
+							onclick="openKinmuAddressCheck()">
 							<img src="/resources/img/tn/search_btn02.gif" alt="勤務地確認"
 								style="vertical-align: middle; display: block;">
 						</button>
@@ -937,7 +1043,7 @@
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 
 
-		
+
 
 		<!-- 申請理由 -->
 		<input type="hidden" name="shinseiRiyu" id="shinseiRiyuHidden"
@@ -974,6 +1080,19 @@
 		<!-- ★ 修正前 緯度経度 (比較用, DBに送信しない) -->
 		<input type="hidden" id="oldAddressIdoKeido"
 			value="${jyohou.addressIdoKeido}">
+
+		<!-- ★ 勤務地 緯度経度 (DB: KINMU_ADDRESS_IDO_KEIDO VARCHAR2(19)) -->
+		<input type="hidden" name="kinmuAddressIdoKeido"
+			id="kinmuAddressIdoKeidoHidden" value="">
+
+		<!-- ★ 勤務地 住所変更フラグ (DB: KINMU_ADDRESS_CHG_KBN VARCHAR2(1)) -->
+		<input type="hidden" name="kinmuAddressChgKbn"
+			id="kinmuAddressChgKbnHidden" value="">
+
+		<!-- ★ 修正前 勤務地 緯度経度 (비교용, DB에는 안 보냄) -->
+		<input type="hidden" id="oldKinmuAddressIdoKeido"
+			value="${jyohou.kinmuAddressIdoKeido}">
+
 	</form>
 
 	<script type="text/javascript">
