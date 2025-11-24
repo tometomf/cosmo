@@ -158,6 +158,9 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 	
 	e.preventDefault(); // a 태그 링크 이동 막기
 	
+	const kigyoCd = "<c:out value='${shain.kigyo_Cd}}' />";
+	const shainUid = "<c:out value='${shain.shain_Uid}' />";
+	
  	const file_Uid1 = document.getElementById("file_Uid1") ? document.getElementById("file_Uid1").innerText : null;
 	const file_Uid2 = document.getElementById("file_Uid2") ? document.getElementById("file_Uid2").innerText : null;
 	const file_Uid3= document.getElementById("file_Uid3") ? document.getElementById("file_Uid3").innerText : null;
@@ -181,27 +184,70 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 	const upd_Date= document.getElementById("upd_Date") ? document.getElementById("upd_Date").innerText : null;
 			
 	 const data = {
-			 fileUid1: file_Uid1,
-			 fileUid2: file_Uid2,
-			 fileUid3: file_Uid3,
-			 fileUid4: file_Uid4,
-			 fileUid5: file_Uid5,
-			 menkyoYukoKigen: menkyo_Yuko_Kigen,
-			 menkyoNo: menkyo_No,
-		     shashu: shashu,
-		     torokuNo: toroku_No,
-		     haikiryo: parseInt(haikiryo.trim()),
-		     shakenYukoKigen:shaken_Yuko_Kigen,
-		     hokenManryoYmd: hoken_Manryo_Ymd,
-		     taijinBaisho:taijin_Baisho,
-		     taibutsuBaisho: taibutsu_Baisho,
-		     jinshinShogai:jinshin_Shogai,
-		     tojoshaShogai: tojosha_Shogai,
-		     tokyu: parseInt(tokyu.trim()),
-		     addUserId: add_User_Id,
-		     addDate: add_Date,
-		     updUserId: upd_User_Id,
-		     updDate: upd_Date
+			 shinseiFuzuiShoruiDTO : {
+					 fileUid1: file_Uid1,
+					 fileUid2: file_Uid2,
+					 fileUid3: file_Uid3,
+					 fileUid4: file_Uid4,
+					 fileUid5: file_Uid5,
+					 menkyoYukoKigen: menkyo_Yuko_Kigen,
+					 menkyoNo: menkyo_No,
+				     shashu: shashu,
+				     torokuNo: toroku_No,
+				     haikiryo: parseInt(haikiryo.trim()),
+				     shakenYukoKigen:shaken_Yuko_Kigen,
+				     hokenManryoYmd: hoken_Manryo_Ymd,
+				     taijinBaisho:taijin_Baisho,
+				     taibutsuBaisho: taibutsu_Baisho,
+				     jinshinShogai:jinshin_Shogai,
+				     tojoshaShogai: tojosha_Shogai,
+				     tokyu: parseInt(tokyu.trim()),
+				     addUserId: add_User_Id,
+				     addDate: add_Date,
+				     updUserId: upd_User_Id,
+				     updDate: upd_Date	
+		    },
+		    shinseiDTO : {
+		    		/* etcFileUid1:etc_File_Uid1,
+		    		etcFileUid2:etc_File_Uid2,
+		    		etcFileUid3:etc_File_Uid3,
+		    		etcFileUid4:etc_File_Uid4,
+		    		etcFileUid5:etc_File_Uid5,
+		    		etcComment1:etc_Comment1,
+		    		etcComment2:etc_Comment2,
+		    		etcComment3:etc_Comment3,
+		    		etcComment4:etc_Comment4,
+		    		etcComment5:etc_Comment5, */
+		    		addUserId: add_User_Id,
+				    addDate: add_Date,
+				    updUserId: upd_User_Id,
+				    updDate: upd_Date
+		    		
+		    	},
+		    	oshiraseDTO: {
+		    		tsuchishaKigyoCd:kigyoCd,
+		    		tsuchishaCd:shainUid,
+		    		 addUserId: add_User_Id,
+				     addDate: add_Date,
+				     updUserId: upd_User_Id,
+				     updDate: upd_Date	
+		    	},
+		    	processLogDTO : {
+		    		key5:kigyoCd,
+		    		userUid:shainUid
+		    	},
+		    	uploadFileDTO : {
+		    		/* fileUid : ,
+		    		title : ,
+		    		name : ,
+		    		contentType : ,
+		    		data : , */
+		    		addUserId: add_User_Id,
+					addDate: add_Date,
+					updUserId: upd_User_Id,
+					updDate: upd_Date	
+		    	}
+		    		
 		    };
 		console.log(data);
 
@@ -218,6 +264,7 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 	})
 	.then(data => {
 			console.log("success:" + data)
+			location.href = "/huzuiNewInput/26_huzuiKanryo";
 	})
     .catch((error) => {
     		console.log("error:" + error)

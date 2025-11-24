@@ -2,15 +2,22 @@ package org.cosmo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.FuzuiRequestWrapperDTO;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShainFuzuiShoruiVO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
-import org.cosmo.mapper.HuzuiNewInputMapper;
+import org.cosmo.service.HuzuiNewInputService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value="/huzuiNewInput")
 public class HuzuiNewInputController {
 	
-	@Autowired
-	private HuzuiNewInputMapper huzuiNewInputMapper;
+	  @Autowired
+	  private HuzuiNewInputService huzuiNewInputService;  
 
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model,HttpSession session) {
@@ -40,7 +47,7 @@ public class HuzuiNewInputController {
 			String kigyo_Cd = shain.getKigyo_Cd();
 			String shain_Uid = shain.getShain_Uid();
 			
-			ShainFuzuiShoruiVO data = huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
+			ShainFuzuiShoruiVO data = huzuiNewInputService.getList(kigyo_Cd, shain_Uid);
 			
 			model.addAttribute("shainHuzuiShorui", data);
 		}
@@ -64,7 +71,7 @@ public class HuzuiNewInputController {
 			File destination = new File("/upload/path/" + uniqueId + "-" + file.getOriginalFilename());
 			file.transferTo(destination);
 			
-			huzuiNewInputMapper.fileUpload(kigyo_Cd, shain_Uid, fileNo, uniqueId);
+			huzuiNewInputService.fileUpload(kigyo_Cd, shain_Uid, fileNo, uniqueId);
 			return "uid:" + uniqueId;
 			} else {
 				return "사원 정보가 없습니다.";
@@ -90,7 +97,7 @@ public class HuzuiNewInputController {
 			String kigyo_Cd = shain.getKigyo_Cd();
 			String shain_Uid = shain.getShain_Uid();
 			
-			ShainFuzuiShoruiVO data = huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
+			ShainFuzuiShoruiVO data = huzuiNewInputService.getList(kigyo_Cd, shain_Uid);
 			
 			model.addAttribute("shainHuzuiShorui", data);
 			System.out.println(data);
@@ -106,17 +113,22 @@ public class HuzuiNewInputController {
 	}
 	
 	@PostMapping(value= "/shinseiFuzuiShorui")
-    public ResponseEntity<?> handleSubmit(@RequestBody ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,HttpSession session) {
+    public ResponseEntity<?> handleSubmit(@RequestBody FuzuiRequestWrapperDTO wrapper,HttpSession session) {
         try {
-        	//첫번째 로직
+        	ShinseiFuzuiShoruiDTO shinseiFuzuiShorui = wrapper.getShinseiFuzuiShoruiDTO();
+        	ShinseiDTO shinseiDTO = wrapper.getShinseiDTO();
+        	OshiraseDTO oshiraseDTO = wrapper.getOshiraseDTO();
+        	ProcessLogDTO processLogDTO = wrapper.getProcessLogDTO();
+        	
+        	//1번째 로직
         	ShainVO shain = (ShainVO) session.getAttribute("shain");
-    		
+    		System.out.println(shain);
             LocalDate today = LocalDate.now();
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+            //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-            String toDay = today.format(formatter);
+            String toDay = today.format(format);
             String date = today.format(format);
             
             String shinsei = shain.getKigyo_Cd().substring(0, 3) + date;
@@ -125,8 +137,60 @@ public class HuzuiNewInputController {
             shinseiFuzuiShorui.setShinseiYmd(toDay);
             shinseiFuzuiShorui.setShinseiNo(shinseiNo);
             
-            
- 	        huzuiNewInputMapper.addFuzuiShorui(shinseiFuzuiShorui, shain);
+            System.out.println("1번째 진입");
+            //huzuiNewInputService.addFuzuiShorui(shinseiFuzuiShorui, shain);
+ 	        
+ 	        
+ 	        //2번째 로직
+ 	        shinseiDTO.setShinseiNo(shinseiNo);
+ 	        shinseiDTO.setShinseiYmd(toDay); 	        
+ 	        shinseiDTO.setFirstShinseiYmd(toDay);
+ 	        
+ 	        System.out.println("신청 vo : "+shinseiDTO);
+ 	        
+ 	        System.out.println("2번째 진입");
+ 	       // huzuiNewInputService.addShinsei(shinseiDTO, shain);
+ 	       
+ 	        //3번째 로직
+ 	        System.out.println("3번째 진입");
+ 	       // huzuiNewInputService.updateAlert(shinseiDTO, shain);
+ 	        
+ 	        //4번째 로직
+ 	        System.out.println("4번째 진입");
+ 	       //huzuiNewInputService.addShinseiLog(shinseiDTO, shain);
+ 	        
+ 	        //5번째 로직
+ 	        System.out.println("5번째 진입");
+ 	       //huzuiNewInputService.addFuzuiShoruiLog(shinseiFuzuiShorui, shain);
+ 	        
+ 	        //6번째 로직
+ 	        System.out.println("6번째 진입");
+ 	        oshiraseDTO.setShinseiNo(123);
+ 	        oshiraseDTO.setOshiraseNaiyo("申請");
+ 	        oshiraseDTO.setTsuchiYmd(toDay);
+ 	        
+ 	        LocalTime now = LocalTime.now();
+ 	        String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
+ 	        
+ 	        oshiraseDTO.setTsuchiHm(time);
+ 	        
+ 	      // huzuiNewInputService.addOshirase(oshiraseDTO, shain);
+ 	        
+ 	        //7번째 로직
+ 	       Timestamp timestamp = Timestamp.valueOf(time);
+ 	       processLogDTO.setProcessTimestamp(timestamp);
+ 	       
+ 	       processLogDTO.setSubsystemId("미정");
+ 	       processLogDTO.setProcessCol("shinseiFuzuiShorui");
+ 	      processLogDTO.setKey1(shinsei);
+ 	       
+ 	       
+ 	       //8번째 로직
+ 	      
+ 	      
+ 	      
+ 	      
+ 	     huzuiNewInputService.saveAll(shinseiDTO, shain, shinseiFuzuiShorui, oshiraseDTO,processLogDTO);
             return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
         } catch (Exception e) {
         	e.printStackTrace();
@@ -142,5 +206,38 @@ public class HuzuiNewInputController {
 	}
 	
 	
+	@RequestMapping(value="/hozon", method= RequestMethod.POST)
+	public ResponseEntity<?> hozonSubmit(HttpSession session){
+		try {
+			ShainVO shain = (ShainVO) session.getAttribute("shain");
+			OshiraseDTO oshiraseDTO = new OshiraseDTO();
+        	ProcessLogDTO processLogDTO = new ProcessLogDTO();
+        	IchijiHozonDTO ichijiHozonDTO = new IchijiHozonDTO();
+        	 LocalDate today = LocalDate.now();
+
+             //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+             String toDay = today.format(format);
+             
+             LocalTime now = LocalTime.now();
+             
+             String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
+		
+             oshiraseDTO.setTsuchiYmd(toDay);
+             oshiraseDTO.setTsuchiHm(time);
+             oshiraseDTO.setOshiraseNaiyo("一時保存しました");
+         
+             ichijiHozonDTO.setActionNm("hozon");
+             //ichijiHozonDTO.setData(data);
+             
+             huzuiNewInputService.saveHozon(shain, oshiraseDTO, processLogDTO, ichijiHozonDTO);
+			  return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
+		}
+		catch (Exception e) {
+        	e.printStackTrace();
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리 중 오류가 발생했습니다.");
+	}
 	
+}
 }

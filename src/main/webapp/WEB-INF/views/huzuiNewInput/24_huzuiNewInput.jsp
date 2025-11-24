@@ -291,7 +291,7 @@ input[type="file"] {
 		<div class = "button_Left_Group" style="margin-top:30px; margin:3%;">   
 			<a href="javascript:history.back()"><img src="/resources/img/back_btn01.gif" alt="back_btn01"></a> 
 			<a href="#" id="next"><img src="/resources/img/next_btn01.gif" alt="next_btn01"></a>
-			<a href=""><img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01"></a>
+			<a href="#" id="hozon"><img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01"></a>
 		</div>
 	</div>
 	
@@ -465,6 +465,31 @@ input[type="file"] {
 		    } else {
 		        alert('파일을 선택해주세요');
 		    }
+		});
+		
+		document.getElementById("hozon").addEventListener("click", function(event){
+		        
+			e.preventDefault(); // a 태그 링크 이동 막기
+			
+		        fetch('/huzuiNewInput/upload', {
+		        	method : 'POST',
+					headers :{
+						'Content-Type' : 'application/json'				
+					},
+					body : JSON.stringify({})
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('파일 업로드 실패');
+		            }
+		            return response.json(); // 응답을 JSON으로 파싱
+		        })
+		        .then(data => {
+		            console.log("파일 업로드 성공:", data); // 성공적인 업로드 후 데이터 처리
+		        })
+		        .catch(error => {
+		            console.error("파일 업로드 실패:", error); // 실패 시 오류 처리
+		        });
 		});
 
 

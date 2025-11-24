@@ -105,20 +105,354 @@
 		#{shinseiFuzuiShorui.menkyoNo},
 		#{shinseiFuzuiShorui.shashu},
 		#{shinseiFuzuiShorui.torokuNo},
-		#{shinseiFuzuiShorui.haikiryo},
+		#{shinseiFuzuiShorui.haikiryo, jdbcType=NUMERIC},
 		#{shinseiFuzuiShorui.shakenYukoKigen},
 		#{shinseiFuzuiShorui.hokenManryoYmd},
 		#{shinseiFuzuiShorui.taijinBaisho},
 		#{shinseiFuzuiShorui.taibutsuBaisho},
 		#{shinseiFuzuiShorui.jinshinShogai},
 		#{shinseiFuzuiShorui.tojoshaShogai},
-		#{shinseiFuzuiShorui.tokyu},
+		#{shinseiFuzuiShorui.tokyu, jdbcType=NUMERIC},
 		#{shinseiFuzuiShorui.addUserId, jdbcType=VARCHAR},
 		#{shinseiFuzuiShorui.addDate, jdbcType=TIMESTAMP},
 		#{shinseiFuzuiShorui.updUserId, jdbcType=VARCHAR},
 		#{shinseiFuzuiShorui.updDate, jdbcType=TIMESTAMP})
 	</insert>
 	
+	<insert id="addShinsei">
+		insert into shinsei(
+		KIGYO_CD,
+		SHINSEI_NO,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID,
+		SHAIN_NO,
+		SHINCHOKU_KBN,
+		ETC_FILE_UID_1,
+		ETC_FILE_UID_2,
+		ETC_FILE_UID_3,
+		ETC_FILE_UID_4,
+		ETC_FILE_UID_5,
+		ETC_COMMENT_1,
+		ETC_COMMENT_2,
+		ETC_COMMENT_3,
+		ETC_COMMENT_4,
+		ETC_COMMENT_5,
+		FIRST_SHINSEI_YMD,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		) values(
+		#{shain.kigyo_Cd},
+		#{shinsei.shinseiNo},
+		6,
+		#{shinsei.shinseiYmd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		2,
+		#{shinsei.etcFileUid1, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid2, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid3, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid4, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid5, jdbcType=NUMERIC},
+		#{shinsei.etcComment1, jdbcType=NUMERIC},
+		#{shinsei.etcComment2, jdbcType=NUMERIC},
+		#{shinsei.etcComment3, jdbcType=NUMERIC},
+		#{shinsei.etcComment4, jdbcType=NUMERIC},
+		#{shinsei.etcComment5, jdbcType=NUMERIC},
+		#{shinsei.firstShinseiYmd},
+		#{shinsei.addUserId, jdbcType=VARCHAR},
+		#{shinsei.addDate, jdbcType=TIMESTAMP},
+		#{shinsei.updUserId, jdbcType=VARCHAR},
+		#{shinsei.updDate, jdbcType=TIMESTAMP})
+	</insert>
 	
+	<update id="updateAlert">
+		update alert set 
+		haishin_syuryo_ymd = #{shinsei.shinseiYmd}, 
+		shinsei_no = #{shinsei.shinseiNo}, 
+		shinsei_ymd = #{shinsei.shinseiYmd},
+		upd_user_id = #{shinsei.updUserId, jdbcType=VARCHAR},
+		upd_date = #{shinsei.updDate, jdbcType=TIMESTAMP}
+		where 
+		KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
+	</update>
+	
+	<insert id="addShinseiLog">
+		insert into SHINSEI_LOG(
+		KIGYO_CD,
+		SHINSEI_NO,
+		LOG_SEQ,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID,
+		SHAIN_NO,
+		SHINCHOKU_KBN,
+		ETC_FILE_UID_1,
+		ETC_FILE_UID_2,
+		ETC_FILE_UID_3,
+		ETC_FILE_UID_4,
+		ETC_FILE_UID_5,
+		ETC_COMMENT_1,
+		ETC_COMMENT_2,
+		ETC_COMMENT_3,
+		ETC_COMMENT_4,
+		ETC_COMMENT_5,
+		FIRST_SHINSEI_YMD,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		)values(
+		#{shain.kigyo_Cd},
+		#{shinsei.shinseiNo},
+		SHINSEI_LOG_SEQ.NEXTVAL,
+		6,
+		#{shinsei.shinseiYmd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		2,
+		#{shinsei.etcFileUid1, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid2, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid3, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid4, jdbcType=NUMERIC},
+		#{shinsei.etcFileUid5, jdbcType=NUMERIC},
+		#{shinsei.etcComment1, jdbcType=NUMERIC},
+		#{shinsei.etcComment2, jdbcType=NUMERIC},
+		#{shinsei.etcComment3, jdbcType=NUMERIC},
+		#{shinsei.etcComment4, jdbcType=NUMERIC},
+		#{shinsei.etcComment5, jdbcType=NUMERIC},
+		#{shinsei.firstShinseiYmd},
+		#{shinsei.addUserId, jdbcType=VARCHAR},
+		#{shinsei.addDate, jdbcType=TIMESTAMP},
+		#{shinsei.updUserId, jdbcType=VARCHAR},
+		#{shinsei.updDate, jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+		<insert id="addFuzuiShoruiLog">
+		insert into SHINSEI_FUZUI_SHORUI_LOG(
+		KIGYO_CD,
+		SHINSEI_NO,
+		KEIRO_SEQ,
+		LOG_SEQ,
+		SYORI_KBN,
+		SHINSEI_KBN,
+		SHINSEI_YMD,
+		SHAIN_UID,
+		SHAIN_NO,
+		TSUKIN_SHUDAN_KBN,
+		file_uid_1,
+		file_uid_2,
+		file_uid_3,
+		file_uid_4,
+		file_uid_5,
+		MENKYO_YUKO_KIGEN,
+		MENKYO_NO,
+		SHASHU,
+		TOROKU_NO,
+		HAIKIRYO,
+		SHAKEN_YUKO_KIGEN,
+		HOKEN_MANRYO_YMD,
+		TAIJIN_BAISHO,
+		TAIBUTSU_BAISHO,
+		JINSHIN_SHOGAI,
+		TOJOSHA_SHOGAI,
+		TOKYU,
+		ADD_USER_ID,
+		ADD_DATE ,
+		UPD_USER_ID,
+		UPD_DATE) VALUES (
+		#{shain.kigyo_Cd},
+		#{shinseiFuzuiShorui.shinseiNo},
+		SHINSEI_FUZUI_SHORUI_SEQ.NEXTVAL,
+		SHINSEI_LOG_SEQ.NEXTVAL,
+		1,
+		6,
+		#{shinseiFuzuiShorui.shinseiYmd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		3,
+		#{shinseiFuzuiShorui.fileUid1, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid2, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid3, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid4, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.fileUid5, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.menkyoYukoKigen},
+		#{shinseiFuzuiShorui.menkyoNo},
+		#{shinseiFuzuiShorui.shashu},
+		#{shinseiFuzuiShorui.torokuNo},
+		#{shinseiFuzuiShorui.haikiryo, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.shakenYukoKigen},
+		#{shinseiFuzuiShorui.hokenManryoYmd},
+		#{shinseiFuzuiShorui.taijinBaisho},
+		#{shinseiFuzuiShorui.taibutsuBaisho},
+		#{shinseiFuzuiShorui.jinshinShogai},
+		#{shinseiFuzuiShorui.tojoshaShogai},
+		#{shinseiFuzuiShorui.tokyu, jdbcType=NUMERIC},
+		#{shinseiFuzuiShorui.addUserId, jdbcType=VARCHAR},
+		#{shinseiFuzuiShorui.addDate, jdbcType=TIMESTAMP},
+		#{shinseiFuzuiShorui.updUserId, jdbcType=VARCHAR},
+		#{shinseiFuzuiShorui.updDate, jdbcType=TIMESTAMP})
+	</insert>
+	
+	<insert id="addOshirase">
+		insert into OSHIRASE(
+		KIGYO_CD,
+		SHAIN_UID,
+		SHAIN_NO,
+		TSUCHI_YMD,
+		TSUCHI_HM,
+		TSUCHISHA_KIGYO_CD,
+		TSUCHISHA_CD
+		SHINSEI_NO,
+		OSHIRASE_NAIYO,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		) values(
+		#{shain.kigyo_Cd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		#{oshirase.tsuchiYmd},
+		#{oshirase.tsuchiHm},
+		#{oshirase.tsuchishaKigyoCd},
+		#{oshirase.tsuchishaCd},
+		#{oshirase.shinseiNo},
+		#{oshirase.oshiraseNaiyo},
+		#{shinsei.addUserId, jdbcType=VARCHAR},
+		#{shinsei.addDate, jdbcType=TIMESTAMP},
+		#{shinsei.updUserId, jdbcType=VARCHAR},
+		#{shinsei.updDate, jdbcType=TIMESTAMP})
+	</insert>
+	
+	<insert id="addProcessLog">
+		insert into PROCESS_LOG(
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY4,
+		KEY5,
+		USER_UID 
+		)values(
+		#{processLog.processTimestamp},
+		#{processLog.subsystemId},
+		#{processLog.processCol},
+		#{processLog.key1},
+		6,
+		1,
+		#{processLog.key5},
+		#{processLog.userUid}
+		)
+	</insert>
+	
+	<insert id="">
+		INSERT INTO UPLOAD_FILE
+    (
+      FILE_UID,
+      SEQ,
+      TITLE,
+      NAME,
+      CONTENT_TYPE,
+      DATA,
+      KIGYO_CD,
+      ADD_USER_ID,
+      ADD_DATE
+    )
+    VALUES
+    (
+       #{uploadFile.seq},	
+      SEQ_UPLOAD_FILE.NEXTVAL,
+      #{uploadFile.title},
+      #{uploadFile.name},
+      #{uploadFile.contentType},
+      #{uploadFile.data},
+      #{uploadFile.kigyoCd},
+      #{uploadFile.addUserId},
+      #{uploadFile.addDate},
+      #{uploadFile.updUserId},
+      #{uploadFile.updDate}
+    )
+	</insert>
+	
+	<insert id="addHozonProcessLog">
+			insert into PROCESS_LOG(
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY5,
+		USER_UID 
+		)values(
+		#{processLog.processTimestamp},
+		#{processLog.subsystemId},
+		#{processLog.processCol},
+		0,
+		0,
+		#{shain.kigyo_Cd},
+		#{shain.shain_Uid}
+		)
+	</insert>
+	
+		<insert id="addHozonOshirase">
+		insert into OSHIRASE(
+		KIGYO_CD,
+		SHAIN_UID,
+		SHAIN_NO,
+		TSUCHI_YMD,
+		TSUCHI_HM,
+		TSUCHISHA_KIGYO_CD,
+		TSUCHISHA_CD
+		OSHIRASE_NAIYO,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		) values(
+		#{shain.kigyo_Cd},
+		#{shain.shain_Uid},
+		#{shain.shain_No},
+		#{oshirase.tsuchiYmd},
+		#{oshirase.tsuchiHm},
+		#{shain.kigyo_Cd},
+		#{shain.shain_No},
+		#{oshirase.oshiraseNaiyo},
+		#{oshirase.addUserId, jdbcType=VARCHAR},
+		#{oshirase.addDate, jdbcType=TIMESTAMP},
+		#{oshirase.updUserId, jdbcType=VARCHAR},
+		#{oshirase.updDate, jdbcType=TIMESTAMP})
+	</insert>
+	
+	<insert id="addIchijiHozon">
+		insert into ICHIJI_HOZON(
+		HOZON_UID,
+		USER_UID,
+		SHOZOKU_CD,
+		ACTION_NM,
+		DATA,
+		ADD_USER_ID,
+		ADD_DATE,
+		UPD_USER_ID,
+		UPD_DATE
+		)values(
+		ICHIJI_HOZON_SEQ.NEXTVAL,
+		#{shain.shain_Uid},
+		#{shain.shozoku_Cd},
+		#{ichiji.actionNm},
+		#{ichiji.data, jdbcType=BLOB},
+		#{ichiji.addUserId, jdbcType=VARCHAR},
+		#{ichiji.addDate, jdbcType=TIMESTAMP},
+		#{ichiji.updUserId, jdbcType=VARCHAR},
+		#{ichiji.updDate, jdbcType=TIMESTAMP})
+		
+		)
+		
+	</insert>
 	
 </mapper>
