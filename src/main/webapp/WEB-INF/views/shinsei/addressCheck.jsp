@@ -110,7 +110,7 @@ h2 {
 </style>
 </head>
 <body>
-	<h2>住所確認</h2>
+	<h2 id="pageTitle">住所確認</h2>
 
 	<div id="errorMessage" class="error-message"></div>
 	<div id="successMessage" class="success-message"></div>
@@ -153,16 +153,30 @@ h2 {
         var latitude = null;
         var longitude = null;
 
-        // URLパラメータ取得
+      
         var urlParams = new URLSearchParams(window.location.search);
         var zip = urlParams.get('zip') || '';
         var pref = urlParams.get('pref') || '';
         var addr1 = urlParams.get('addr1') || '';
         var addr2 = urlParams.get('addr2') || '';
-        // ★ 집/근무지 구분용 모드 ( "" 또는 "kinmu" )
+       
         var mode = urlParams.get('mode') || '';
-
-        // 画面に表示
+     
+        var pageTitleElem = document.getElementById('pageTitle');
+        if (mode === 'kinmu') {
+         
+            document.title = '勤務地確認';
+            if (pageTitleElem) {
+                pageTitleElem.textContent = '勤務地確認';
+            }
+        } else {
+    
+            document.title = '住所確認';
+            if (pageTitleElem) {
+                pageTitleElem.textContent = '住所確認';
+            }
+        }
+     
         document.getElementById('displayZip').textContent = zip;
         document.getElementById('displayPref').textContent = pref;
         document.getElementById('displayAddr1').textContent = addr1;
