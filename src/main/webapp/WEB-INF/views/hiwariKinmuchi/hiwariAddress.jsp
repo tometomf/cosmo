@@ -187,8 +187,9 @@ button {
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
 						style="cursor: pointer;" onclick="location.href='hiwariKinmuchi'"> <img
 							src="/resources/img/next_btn01.gif" alt="次へ"
-							 style="cursor: pointer;" onclick="validateRiyu()"> <img
-							src="/resources/img/hozon_btn01.gif" alt="一時保存">
+							 style="cursor: pointer;" onclick="validateRiyu()"> 
+							 <img src="/resources/img/hozon_btn01.gif" alt="一時保存"
+                            style="cursor: pointer;">
 					</div>
 				</div>
 			</div>
@@ -205,8 +206,9 @@ button {
         <input type="hidden" name="redirectUrl" value="">
     </form>
 	
-	<script>
-	
+<script>
+
+    /* ▼ 주소 입력 검증 후 다음 페이지 이동 */
     function validateRiyu() {
         const zip1 = document.querySelector("input[name='zip1']").value.trim();
         const zip2 = document.querySelector("input[name='zip2']").value.trim();
@@ -220,32 +222,39 @@ button {
 
         window.location.href = "/hiwariKinmuchi/riyu";
     }
-    
+
+
+    /* ▼ 임시저장 JSON 생성 — 주소 화면 전용 */
     function buildKinmuTempJson() {
 
-        const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
-        const newShozokuNm = document.querySelector("select[name='newShozokuNm']").value.trim();
         const zip1 = document.querySelector("input[name='zip1']").value.trim();
         const zip2 = document.querySelector("input[name='zip2']").value.trim();
         const prefecture = document.querySelector("input[name='prefecture']").value.trim();
         const city = document.querySelector("input[name='city']").value.trim();
-        const address2 = document.querySelector("input[name='address2']").value.trim();
+        const address2Input = document.querySelector("input[name='address2']");
+        const address2 = address2Input ? address2Input.value.trim() : "";
 
+        // 우편번호 합치기
         let fullZip = "";
-        if (zip1 !== "" && zip2 !== "") fullZip = zip1 + zip2;
+        if (zip1 !== "" && zip2 !== "") {
+            fullZip = zip1 + zip2;
+        }
 
+        // 최종 JSON 객체 (주소 화면은 이것만 있으면 됨)
         const shinseiIcData = {
             kigyoCd: null,
             shinseiNo: null,
 
             genAddress: null,
-            newAddress: prefecture && city ? (prefecture + " " + city + " " + address2) : null,
+            newAddress:
+                (prefecture && city)
+                    ? (prefecture + " " + city + " " + address2)
+                    : null,
 
             genShozoku: null,
-            newShozoku: newShozokuNm || null,
-
+            newShozoku: null,
             genKinmuchi: null,
-            newKinmuchi: newShozokuCd || null,
+            newKinmuchi: null,
 
             riyu: null,
             idoYmd: null,
@@ -257,20 +266,17 @@ button {
             moComment: null,
             codeNm: null,
             shinseiName: null,
-
             keiro: null
         };
 
         return JSON.stringify(shinseiIcData);
     }
 
-    /* ▲ JSON 생성 끝 */
 
-    /* ▼ 임시저장 버튼 이벤트 ⭐⭐⭐ */
+    /* ▼ 임시저장 버튼 이벤트 */
     document.addEventListener("DOMContentLoaded", function () {
 
         const hozonBtn = document.querySelector('img[alt="一時保存"]');
-
         const form = document.getElementById("kinmuTempForm");
         const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
         const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
@@ -281,37 +287,14 @@ button {
                 const jsonString = buildKinmuTempJson();
                 commuteJsonInput.value = jsonString;
 
+                // 임시저장은 redirect 없음 → 빈값
                 redirectUrlInput.value = "";
 
                 form.submit();
             });
         }
     });
-    
-/* この住所を反映  */
-function reflectAddress() {
-    let zip = "${addressData.dbZip}";
-    let addr1 = "${addressData.dbAddress1}";
-    let addr2 = "${addressData.dbAddress2}";
-    let pref = "";
-    let rest = "";
 
-    const markers = ["都","道","府","県"];
-
-    for (let m of markers) {
-        let idx = addr1.indexOf(m);
-        if (idx !== -1) {
-            pref = addr1.substring(0, idx + 1);
-            rest = addr1.substring(idx + 1);
-            break;
-        }
-    }
-
-    document.getElementById("newZip").value = zip;
-    document.getElementById("newAddress1").value = pref;
-    document.getElementById("newAddress2").value = rest;
-    document.getElementById("newAddress3").value = addr2;
-}
 </script>
 
 
