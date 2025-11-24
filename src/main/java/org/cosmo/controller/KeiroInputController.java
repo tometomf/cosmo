@@ -304,7 +304,7 @@ public class KeiroInputController {
 	        return keiroInputservice.getShainLocation(kigyoCd, userUid);
 	    }
 	 
-	    @GetMapping("/keiro/start/detail")
+	    @GetMapping("/start/detail")
 	    public ShinseiStartKeiroVO getStartKeiroDetail(
 	            @RequestParam("shinseiNo") Integer shinseiNo,
 	            @RequestParam("keiroSeq") Integer keiroSeq,
