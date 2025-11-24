@@ -278,8 +278,7 @@ public class ShinseiController {
 
 		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
 				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, // ★ 추가
-				kinmuAddressChgKbn, 
-				loginUserId, userIp);
+				kinmuAddressChgKbn, loginUserId, userIp);
 
 		if (loginShain != null && loginShain.getShain_Uid() != null) {
 
@@ -327,7 +326,7 @@ public class ShinseiController {
 			if (referer != null && !referer.isEmpty()) {
 				return "redirect:" + referer;
 			} else {
-				return "redirect:/"; 
+				return "redirect:/";
 			}
 		}
 
@@ -369,8 +368,10 @@ public class ShinseiController {
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request) {
 
+		// ① 신청 기본 정보 조회
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
+		// 대상 신청이 없을 때만 리다이렉트
 		if (jyohouVo == null) {
 			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
 			String referer = request.getHeader("Referer");
@@ -381,21 +382,15 @@ public class ShinseiController {
 			}
 		}
 
-		String kbn = jyohouVo.getShinchokuKbn();
-		if (!"3".equals(kbn)) {
-			rttr.addFlashAttribute("errorMsg", "この画面は「差戻し」の申請のみ参照できます。");
+		// ★ 여기서 더 이상 「3이 아니면 리다이렉트」 하지 않는다
+		// String kbn = jyohouVo.getShinchokuKbn();
+		// if (!"3".equals(kbn)) { ... } ← 이 블록 통째로 삭제
 
-			String referer = request.getHeader("Referer");
-			if (referer != null && !referer.isEmpty()) {
-				return "redirect:" + referer;
-			} else {
-				return "redirect:/";
-			}
-		}
-
+		// ② 나머지 관련 정보 조회
 		ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNo);
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 
+		// ③ 코드명 설정
 		if (jyohouVo.getShinchokuKbn() != null) {
 			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 			jyohouVo.setCodeNm(codeNm);
@@ -411,9 +406,13 @@ public class ShinseiController {
 			keiroVo.setShudanName(shudanName);
 		}
 
-		model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
-		model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
+		// ④ 차戻し(진척区分 = 3)일 때만 고정 메시지 세팅
+		if ("3".equals(jyohouVo.getShinchokuKbn())) {
+			model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
+			model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
+		}
 
+		// ⑤ 모델 설정
 		model.addAttribute("keiro", keiroVo);
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("shorui", shoruiVo);

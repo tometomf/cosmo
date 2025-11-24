@@ -12,25 +12,21 @@
 <script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 <!-- ★★★ 여기에 JavaScript 함수들을 먼저 선언 ★★★ -->
 <script type="text/javascript">
-
 	function openAddressCheck() {
 		console.log('=== openAddressCheck 함수 시작 ===');
 
-		
 		var zip1Element = document.getElementById("zipCode1");
 		var zip2Element = document.getElementById("zipCode2");
 		var prefElement = document.getElementById("prefectureSelect");
 		var addr1Element = document.getElementById("address1Input");
 		var addr2Element = document.getElementById("address2Input");
 
-		
 		if (!zip1Element || !zip2Element || !prefElement || !addr1Element
 				|| !addr2Element) {
 			alert("入力項目が見つかりません。");
 			console.error("요소를 찾을 수 없습니다.");
 			return;
 		}
-
 
 		var zip1 = zip1Element.value.trim();
 		var zip2 = zip2Element.value.trim();
@@ -41,7 +37,6 @@
 		console.log('입력값 확인: zip1=' + zip1 + ', zip2=' + zip2 + ', pref='
 				+ pref + ', addr1=' + addr1 + ', addr2=' + addr2);
 
-	
 		if (!pref && !addr1) {
 			alert("都道府県または住所を入力してください。");
 			return;
@@ -56,7 +51,6 @@
 
 		console.log('팝업 URL: ' + url);
 
-		
 		try {
 			var popup = window.open(url, "addressCheckWindow",
 					"width=800,height=600,scrollbars=yes,resizable=yes");
@@ -77,7 +71,6 @@
 	function openKinmuAddressCheck() {
 		console.log('=== openKinmuAddressCheck 함수 시작 ===');
 
-	
 		var zip = "${empty jyohou.newKinmuZipCd ? '' : jyohou.newKinmuZipCd}";
 		var pref = "${empty jyohou.newKinmuAddress1 ? '' : jyohou.newKinmuAddress1}";
 		var addr1 = "${empty jyohou.newKinmuAddress2 ? '' : jyohou.newKinmuAddress2}";
@@ -179,7 +172,6 @@
 				return;
 			}
 
-			
 			console.log("addressChgKbnHidden 최종값 = "
 					+ (flgElement.value || '(未設定)'));
 
@@ -413,23 +405,25 @@
 			</div>
 
 			<!-- ===== 경고 영역 ===== -->
-			<div
-				style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
+			<c:if test="${jyohou.shinchokuKbn eq '3'}">
+				<div
+					style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
 
-				<!-- 경고 아이콘 -->
-				<img src="/resources/img/icon_attention.gif" alt="warning"
-					style="width: 35px; height: 35px; flex-shrink: 0; margin-top: 2px;">
+					<!-- 경고 아이콘 -->
+					<img src="/resources/img/icon_attention.gif" alt="warning"
+						style="width: 35px; height: 35px; flex-shrink: 0; margin-top: 2px;">
 
-				<!-- 경고 문장 -->
-				<div style="font-size: 13px; color: #cc0000; line-height: 1.6;">
-					<div>申請内容に不備があったため差戻しされています。</div>
-					<div>不備内容を確認のうえ、再申請を行ってください。</div>
-					<div style="margin-top: 3px; font-weight: bold;">
-						[注意] <span style="font-weight: normal;">
-							申請期限日を過ぎると通勤費申請は行えなくなります。 </span>
+					<!-- 경고 문장 -->
+					<div style="font-size: 13px; color: #cc0000; line-height: 1.6;">
+						<div>申請内容に不備があったため差戻しされています。</div>
+						<div>不備内容を確認のうえ、再申請を行ってください。</div>
+						<div style="margin-top: 3px; font-weight: bold;">
+							[注意] <span style="font-weight: normal;">
+								申請期限日を過ぎると通勤費申請は行えなくなります。 </span>
+						</div>
 					</div>
 				</div>
-			</div>
+			</c:if>
 
 			<!-- ===== 상태 정보 ===== -->
 			<div class="content_Form1" style="margin-top: 25px;">
@@ -448,21 +442,29 @@
 					<div class="form_Normal">${empty jyohou.shinseiYmd ? '' : jyohou.shinseiYmd}</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}</div>
-				</div>
+				<!-- ※ 進捗状況区分 が 「一時保存」 以外のとき만 표시 -->
+				<c:if test="${jyohou.shinchokuKbn ne '1'}">
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">申請解除日</div>
-					<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">差戻し日</div>
+						<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}
+						</div>
 					</div>
-				</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">不備内容</div>
-					<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}</div>
-				</div>
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">申請解除日</div>
+						<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+						</div>
+					</div>
+
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">不備内容</div>
+						<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}
+						</div>
+					</div>
+
+				</c:if>
+
 			</div>
 
 			<!-- ===== 申請前後情報 ===== -->
@@ -1021,9 +1023,11 @@
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						onclick="submitBackForm()"> <img
 						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
-						onclick="submitReapplyForm()"> <img
-						src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-						onclick="goToCancelPage()">
+						onclick="submitReapplyForm()">
+					<c:if test="${jyohou.shinchokuKbn ne '4'}">
+						<img src="/resources/img/shinsei_btn02.gif" alt="この申請を取消する"
+							onclick="goToCancelPage()">
+					</c:if>
 				</div>
 			</div>
 
