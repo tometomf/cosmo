@@ -1,12 +1,17 @@
 package org.cosmo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.GeoPoint;
+import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.IdoCheckForm;
 import org.cosmo.domain.KinmuForm;
+import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.service.AddressInputService;
@@ -35,6 +40,9 @@ public class IdoConfirmController {
     private final TokureiService tokureiService;
     private final GeoService geoService;
     private final AddressService addressService;
+    private final IchijiHozonService ichijiHozonService;
+    private final OshiraseService oshiraseService;
+
 
 
     @GetMapping("/kinmuInput")
@@ -259,7 +267,53 @@ public class IdoConfirmController {
 
     }
     
+    // 勤務地入力 화면의 임시保存(tempSave) 처리
+    @PostMapping("/kinmuTempSave")
+    public String tempSaveKinmu(
+            @RequestParam("kinmuJson") String kinmuJson,
+            HttpSession session,
+            RedirectAttributes rttr) {
+
+        // 1) 세션에서 직원 정보 가져오기
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            throw new RuntimeException("セッションに社員情報がありません。");
+        }
+
+        Integer userUid   = Integer.parseInt(shain.getShain_Uid());
+        String shozokuCd  = shain.getShozoku_Cd();
+        String shinseiKbn = shain.getShinchoku_kbn();
+
+        if (shinseiKbn == null) {
+            shinseiKbn = "01";  // 기본값
+        }
+
+        // 2) JSON → 바이트
+        byte[] dataBytes = kinmuJson.getBytes(StandardCharsets.UTF_8);
+
+        // 3) DTO 생성
+        IchijiHozonDTO dto = new IchijiHozonDTO();
+        dto.setUserUid(userUid);
+        dto.setShozokuCd(shozokuCd);
+        dto.setShinseiKbn(shinseiKbn);
+        dto.setActionNm("KINMU_TEMP_SAVE");     // 구분명은 자유롭게 정하면 됨
+        dto.setData(dataBytes);
+
+        dto.setAddUserId(userUid);
+        dto.setUpdUserId(userUid);
+
+        // 4) 임시저장
+        ichijiHozonService.saveTemp(dto);
+        int newUid = dto.getHozonUid();
+
+        // 5) 임시저장 알림 생성(keiro와 동일 동작)
+        oshiraseService.saveTempOshirase(shain);
+
+        // 6) 임시저장 후 임시저장 확인 페이지로 이동
+        return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+    }
     
+}
   
     
 }
