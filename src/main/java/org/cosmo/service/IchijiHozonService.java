@@ -15,5 +15,5 @@ public interface IchijiHozonService {
     int saveOrUpdateCommuteTemp(IchijiHozonDTO dto);
 
     
-    IchijiHozonDTO getLatestTemp(Integer userUid, String actionNm);
+    IchijiHozonDTO getLatestTemp(Integer userUid);
 }

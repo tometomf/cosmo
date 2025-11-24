@@ -13,6 +13,5 @@ public interface IchijiHozonMapper {
 
     IchijiHozonDTO selectLatestByUserAndAction(Map<String, Object> param);
     
-    IchijiHozonDTO selectLatestTemp(@Param("userUid") Integer userUid,
-            @Param("actionNm") String actionNm);
+    IchijiHozonDTO selectLatestTemp(@Param("userUid") Integer userUid);
 }

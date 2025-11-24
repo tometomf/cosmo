@@ -523,6 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
             newShozoku: null,
             genKinmuchi: null,
             newKinmuchi: null,
+            
             riyu: null,
             idoYmd: null,
             itenYmd: null,
@@ -530,6 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
             riyoStartYmd: null,
             ssmdsYmd: null,
             moComment: null,
+            
             codeNm: null,
             shinseiName: null,
 
@@ -539,11 +541,11 @@ document.addEventListener("DOMContentLoaded", function () {
             shudanName :   "電車",
             startPlace :   fromStation,
             endPlace :     toStation,
-             viaPlace1: middleStation01,
+  /*            viaPlace1: middleStation01,
             viaPlace2:middleStation02,
             viaPlace3:middleStation03,
             viaPlace4:middleStation04,
-            viaPlace5:middleStation05, 
+            viaPlace5:middleStation05,  */
             tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
         }
         };

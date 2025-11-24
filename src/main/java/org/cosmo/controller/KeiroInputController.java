@@ -75,9 +75,7 @@ public class KeiroInputController {
 
 
 	    try {
-	        String actionUrl = "/keiroinput/07_keirodtInput";
-
-	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid, actionUrl);
+	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
 	        if (hozon != null && hozon.getData() != null) {
 
 	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
