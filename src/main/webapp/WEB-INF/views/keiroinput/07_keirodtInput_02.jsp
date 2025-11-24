@@ -396,6 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pass1m       = document.getElementById("pass1m");
     const pass3m       = document.getElementById("pass3m");
     const pass6m       = document.getElementById("pass6m");
+    const otherTransport       = document.getElementById("otherTransport");
 
     /**
      * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
@@ -434,6 +435,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 startPlace: busStopFrom.value,
                 endPlace:  busStopTo.value,
                 tsuki: pass1m.value
+            },
+        
+        	startKeiro:  {
+        		tsukinShudanKbn: kbn,       // 예: "2" (버스), "7" (기타)
+                startPlace: busStopFrom.value,
+                endPlace:  busStopTo.value,
+                sanshoTeikiKin1: pass1m.value,
+                sanshoTeikiKin2: pass3m.value,
+                sanshoTeikiKin3: pass6m.value,
+                busCorpNm: busCompany.value,
+                idoShudanEtcNm: otherTransport.value
             }
         };
 		
@@ -458,7 +470,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* 다음 단계: 임시저장 + 원하는 페이지로 이동 */
     if (keiroBtn) {
+    	
+    	var busCompanyErrorText = "バス会社を入力してください。";
+    	var otherTransportErrorText = "その他移動手段を入力してください。";
+    	var busStopFromErrorText = "出発地を入力してください。";
+    	var busStopToErrorText = "到着地を入力してください。";
+    	var oneWayFareErrorText = "片道運賃を入力してください。";
+    	var pass1mErrorText = "1ヶ月定期の金額を入力してください。";
+    	var pass3mErrorText = "3ヶ月定期の金額を入力してください。";
+    	var pass6mErrorText = "6ヶ月定期の金額を入力してください。";
+
+    	function isEmpty(input) {
+    	    return !input || !input.value || input.value.trim() === "";
+    	}
+    	
         keiroBtn.addEventListener("click", function () {
+			
+			if(shudanType == 2){
+				if (isEmpty(busCompany)) {
+					alert(busCompanyErrorText);
+					return;
+	        	}
+			}else if(shudanType == 7){
+				if (isEmpty(otherTransport)) {
+					alert(otherTransportErrorText);
+					return;
+	        	}
+			}else{
+				
+			}
+
+        	if (isEmpty(busStopFrom)) {
+        		alert(busStopFromErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(busStopTo)) {
+        		alert(busStopToErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(oneWayFare)) {
+        		alert(oneWayFareErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(pass1m)) {
+        		alert(pass1mErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(pass3m)) {
+        		alert(pass3mErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(pass6m)) {
+        		alert(pass6mErrorText);
+        		return;
+        	}
+
+        	if (isEmpty(otherTransport)) {
+        		alert(otherTransportErrorText);
+        		return;
+        	}
+        	
             const jsonString = buildCommuteJson();
             if (!jsonString) return;
 

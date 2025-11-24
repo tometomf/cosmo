@@ -533,6 +533,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 startPlace: homeFullAddress,
                 endPlace:  workFullAddress,
                 shinseiKm: distance 
+            },
+            
+        	startKeiro:  {
+        		tsukinShudanKbn: kbn,   
+                startPlace: homeFullAddress,
+                endPlace:  workFullAddress,
+                shinseiKm: distance
             }
         };
 		
@@ -555,9 +562,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    const distanceNullErrorText = "検索してください。";
+    const distanceZeroErrorText = "0Kmは変更できません。 もう一度検索してください。";
+    
     /* 다음 단계: 임시저장 + 원하는 페이지로 이동 */
     if (keiroBtn) {
+    	
         keiroBtn.addEventListener("click", function () {
+        	
+         	if (distance == null) {
+        		alert(distanceNullErrorText);
+        		return;
+        	}
+         	
+         	if (distance == 0) {
+        		alert(distanceZeroErrorText);
+        		return;
+        	}
+
+
+        	
             const jsonString = buildCommuteJson();
             if (!jsonString) return;
 
