@@ -2,20 +2,21 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-/**
- * 0400 í™”ë©´ì— í‘œì‹œí•  ì£¼ì†Œ ì •ë³´ (í˜„ì¬/ì‹ ì²­í›„)
- */
 @Data
 public class AddressViewDto {
+    // Çö ÁÖ¼Ò (DB¿¡¼­ Á¶È¸)
+    private String currentZip;
+    private String currentPref;
+    private String currentAddr1;
+    private String currentAddr2;
 
-    // ç¾ä½æ‰€ (ì‹ ì²­ ì „: ç¤¾å“¡M ë“±)
-    private String curZip;       // 213-0001
-    private String curPref;      // ç¥å¥ˆå·çœŒ
-    private String curCity;      // å·å´å¸‚ä¸­åŸåŒº
-    private String curStreet;    // ä¸Šå°ç”°ä¸­1-2-3
-    private String curBuilding;  // ãƒ¬ã‚ªãƒ‘ãƒ¬ã‚¹æ¸…ã®103
-
-    // æ–°ä½æ‰€ (ì‹ ì²­ í›„: ç”³è«‹T or ä¸€æ™‚ä¿å­˜)
-    // ì—¬ê¸° ê°’ì€ AddressInputFormìœ¼ë¡œ ì˜®ê²¨ì„œ input valueë¡œ ì“¸ ê±°ë¼
-    // ê¼­ ìˆì–´ì•¼ í•˜ëŠ” ê±´ ì•„ë‹˜. í•„ìš”í•˜ë©´ ì¶”ê°€ë¡œ ì‚¬ìš©.
+    // Áß°£ DB ÁÖ¼Ò (»ó´Ü 'ÀÌ ÁÖ¼Ò¸¦ ¹İ¿µ' ¿ëµµ)
+    private String middleDbAddress; // ÀüÃ¼ ÁÖ¼Ò ¹®ÀÚ¿­
+    
+    // ¹İ¿µ ¹öÆ° Å¬¸¯ ½Ã Ã¤¿ö³ÖÀ» ºĞ¸®µÈ µ¥ÀÌÅÍ (HiddenÀ¸·Î °¡Áö°í ÀÖ°Å³ª ¼­ºñ½º¿¡¼­ Ã³¸®)
+    private String middleZip1;
+    private String middleZip2;
+    private String middlePref;
+    private String middleAddr1;
+    private String middleAddr2;
 }

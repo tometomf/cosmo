@@ -2,23 +2,16 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-/**
- * 0400 ä½æ‰€å…¥åŠ› í™”ë©´ í¼
- */
 @Data
 public class AddressInputForm {
+    // ÀÔ·Â ÇÊµå (ãæñ¬á¶)
+    private String zip1;      // ¿ìÆí¹øÈ£ ¾Õ 3ÀÚ¸®
+    private String zip2;      // ¿ìÆí¹øÈ£ µÚ 4ÀÚ¸®
+    private String pref;      // µµµµºÎÇö
+    private String addr1;     // ½Ã±¸Á¤ÃÌ~¹øÁö
+    private String addr2;     // °Ç¹°¸í~È£½Ç
+    private String tenyuDate; // ÀüÀÔÀÏ (yyyy/MM/dd)
 
-	// í™”ë©´ ì˜¤ë¥¸ìª½ "æ–°ä½æ‰€" ì˜ì—­
-
-	private String newZip1; // éƒµä¾¿ç•ªå·(ì• 3ìë¦¬)
-	private String newZip2; // éƒµä¾¿ç•ªå·(ë’¤ 4ìë¦¬)
-
-	private String newPref; // éƒ½é“åºœçœŒ
-	private String newCity; // å¸‚åŒºç”ºæ‘
-	private String newStreet; // ä¸ç›®ãƒ»ç•ªåœ° ë“±
-	private String newBuilding; // å»ºç‰©å ë“±
-
-	private String moveInDate; // è»¢å…¥æ—¥ (yyyy/MM/dd ë¬¸ìì—´ë¡œ ë°›ê¸°)
-
-	// í™”ë©´ ì™¼ìª½ "ç¾ä½æ‰€"ëŠ” readonlyë¡œ ë³´ì—¬ì¤„ ê±°ë¼ í¼ì—ëŠ” ì•ˆ ë„£ì–´ë„ ë¨.
+    // ¹öÆ° µ¿ÀÛ ±¸ºĞ¿ë (reflect, next, tempsave, back µî)
+    private String action;
 }
