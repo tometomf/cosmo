@@ -175,7 +175,7 @@
 			
 			</form>
 			
-			<form id="kinmuTempForm" method="post" action="/idoconfirm/kinmuTempSave">
+			<form id="kinmuTempForm" method="post" action="/idoconfirm/tempSave">
                 <input type="hidden" name="kinmuJson" value="">
             </form>
 			
