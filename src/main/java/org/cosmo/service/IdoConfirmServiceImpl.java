@@ -9,78 +9,72 @@ import org.springframework.stereotype.Service;
 public class IdoConfirmServiceImpl implements IdoConfirmService {
 
     @Override
-    public NextStep decideNextStep(AlertType alertType,
-                                   boolean workPlaceChange,
-                                   boolean addressChange) {
+    public NextStep judge(AlertType alertType, boolean kinmu, boolean jusho) {
 
-        switch (alertType) {
-            case IDOU_ITEN:
-                return handleIdouIten(workPlaceChange, addressChange);
-            case SONOTA:
-                return handleSonota(workPlaceChange, addressChange);
-            case JISHIN:
-                return handleJishin(workPlaceChange, addressChange);
-            default:
-                // ì•ˆì „ìš©
+        // ============================================================
+        // Case 1: IDOU(ÀÌµ¿) / ITEN(ÀÌÀü)¿¡¼­ ÃµÀÌµÈ °æ¿ì
+        // ¼³°è¼­: ±Ù¹«Áö´Â 'º¯ÇÑ´Ù'°¡ °íÁ¤ »óÅÂ¿©¾ß ÇÔ (º¯ÇÏÁö ¾ÊÀ½ ¼±ÅÃ ½Ã ¿¡·¯)
+        // ============================================================
+        if (alertType == AlertType.IDOU_ITEN) {
+            // ¨ç ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â -> (4) ÁÖ¼Ò -> (5) °æ·Î
+            if (kinmu && jusho) {
+                return new NextStep(NextScreen.WORK_INPUT, false);
+            }
+            // ¨è ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â -> (5) °æ·Î
+            if (kinmu && !jusho) {
+                return new NextStep(NextScreen.WORK_INPUT, false);
+            }
+            // ¨é, ¨ê ±Ù¹«:¾Èº¯ÇÔ => ¼±ÅÃ ºÒ°¡ (¿¡·¯ Ã³¸®)
+            if (!kinmu) {
+                // ¼³°è¼­»ó ¼±ÅÃ ºÒ°¡´ÉÇÑ Á¶ÇÕÀÌ µé¾î¿Â °æ¿ì
+                return new NextStep(NextScreen.APPLICATION_ERROR, false);
+            }
+        }
+
+        // ============================================================
+        // Case 2: SONOTA(±× ¿Ü)¿¡¼­ ÃµÀÌµÈ °æ¿ì
+        // ============================================================
+        if (alertType == AlertType.SONOTA) {
+            // ¨ç ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â
+            // ¨è ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â
+            if (kinmu) {
+                return new NextStep(NextScreen.WORK_INPUT, false);
+            }
+            
+            // ¨é ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (4) ÁÖ¼ÒÀÔ·Â
+            if (!kinmu && jusho) {
+                return new NextStep(NextScreen.ADDRESS_INPUT, false);
+            }
+
+            // ¨ê ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (5) °æ·ÎÁ¤º¸
+            if (!kinmu && !jusho) {
                 return new NextStep(NextScreen.COMMUTE_INFO, false);
-        }
-    }
-
-    /**
-     * ã‚¢ãƒ©ãƒ¼ãƒˆã€Œç•°å‹•ã€ã€Œç§»è»¢ã€ã‹ã‚‰é·ç§»ã—ãŸå ´åˆ
-     *
-     * â‘  å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‹      â†’ (3) â†’ (4) â†’ (5)  â†’ ì²« í™”ë©´ì€ (3)
-     * â‘¡ å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‰ãªã„ â†’ (3) â†’ (5)        â†’ ì²« í™”ë©´ì€ (3)
-     * â‘¢â‘£ëŠ” í™”ë©´ì—ì„œ ì„ íƒ ë¶ˆê°€ì´ë¯€ë¡œ ì—¬ê¸°ì„œ ë“¤ì–´ì˜¤ë©´ ì˜ˆì™¸ë¡œ ì²˜ë¦¬
-     */
-    private NextStep handleIdouIten(boolean workPlaceChange, boolean addressChange) {
-        if (!workPlaceChange) {
-            // ì„¤ê³„ì„œìƒ ë°œìƒí•˜ë©´ ì•ˆë˜ëŠ” íŒ¨í„´ â†’ ë°©ì–´ì½”ë“œ
-            throw new IllegalArgumentException("Invalid pattern for IDOU_ITEN: å‹¤å‹™åœ°ãŒå¤‰ã‚ã‚‰ãªã„");
+            }
         }
 
-        // â‘ , â‘¡ ëª¨ë‘ ì²« í™”ë©´ì€ å‹¤å‹™åœ°å…¥åŠ›ç”»é¢(3)
-        return new NextStep(NextScreen.WORK_INPUT, false);
-    }
+        // ============================================================
+        // Case 3: JISHIN(ÀÚ½Å/ÀÚÀ²½ÅÃ») - Åë±Ù±³Åëºñ½ÅÃ»
+        // ¼³°è¼­: "±Ù¹«Áö=º¯ÇÑ´Ù"¸¦ ¼±ÅÃÇÏ°í ´ÙÀ½ Å¬¸¯ ½Ã (19) ¿¡·¯ È­¸é
+        // ============================================================
+        if (alertType == AlertType.JISHIN) {
+            // ¨ç, ¨è ±Ù¹«:º¯ÇÔ => (19) ½ÅÃ» ¿¡·¯ È­¸é
+            if (kinmu) {
+                return new NextStep(NextScreen.APPLICATION_ERROR, false);
+            }
 
-    /**
-     * ã‚¢ãƒ©ãƒ¼ãƒˆã€Œãã®ä»–ã€ã‹ã‚‰é·ç§»ã—ãŸå ´åˆ
-     *
-     * â‘  å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‹      â†’ (3) â†’ (4) â†’ (5)  â†’ ì²« í™”ë©´ (3)
-     * â‘¡ å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‰ãªã„ â†’ (3) â†’ (5)        â†’ ì²« í™”ë©´ (3)
-     * â‘¢ å‹¤å‹™åœ°:å¤‰ã‚ã‚‰ãªã„ ä½æ‰€:å¤‰ã‚ã‚‹ â†’ (4) â†’ (5)        â†’ ì²« í™”ë©´ (4)
-     * â‘£ å‹¤å‹™åœ°:å¤‰ã‚ã‚‰ãªã„ ä½æ‰€:å¤‰ã‚ã‚‰ãªã„ â†’ (5)          â†’ ì²« í™”ë©´ (5)
-     */
-    private NextStep handleSonota(boolean workPlaceChange, boolean addressChange) {
-        if (workPlaceChange && addressChange) {           // â‘ 
-            return new NextStep(NextScreen.WORK_INPUT, false);
-        } else if (workPlaceChange && !addressChange) {   // â‘¡
-            return new NextStep(NextScreen.WORK_INPUT, false);
-        } else if (!workPlaceChange && addressChange) {   // â‘¢
-            return new NextStep(NextScreen.ADDRESS_INPUT, false);
-        } else {                                          // â‘£
-            return new NextStep(NextScreen.COMMUTE_INFO, false);
-        }
-    }
+            // ¨é ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (4) ÁÖ¼ÒÀÔ·Â
+            if (!kinmu && jusho) {
+                return new NextStep(NextScreen.ADDRESS_INPUT, false);
+            }
 
-    /**
-     * ã‚¢ãƒ©ãƒ¼ãƒˆã€Œè‡ªã‚‰ç”³è«‹ã‚’è¡Œã†ã€ã‹ã‚‰é·ç§»ã—ãŸå ´åˆ
-     *
-     * â‘  å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‹      â†’ (19) ç”³è«‹ã‚¨ãƒ©ãƒ¼
-     * â‘¡ å‹¤å‹™åœ°:å¤‰ã‚ã‚‹ ä½æ‰€:å¤‰ã‚ã‚‰ãªã„ â†’ (19) ç”³è«‹ã‚¨ãƒ©ãƒ¼
-     * â‘¢ å‹¤å‹™åœ°:å¤‰ã‚ã‚‰ãªã„ ä½æ‰€:å¤‰ã‚ã‚‹ â†’ (4) â†’ (5)  â†’ ì²« í™”ë©´ (4)
-     * â‘£ å‹¤å‹™åœ°:å¤‰ã‚ã‚‰ãªã„ ä½æ‰€:å¤‰ã‚ã‚‰ãªã„ â†’ (5) â†’ í†µê·¼ê²½ë¡œëŠ” ë°˜ë“œì‹œ ë³€í•¨
-     *
-     * â‘£ã®å ´åˆã€é€šå‹¤çµŒè·¯ã¯å¿…ãšå¤‰ã‚ã‚‹ã€‚
-     * â‘ ã€œâ‘¢ã®å ´åˆã€é€šå‹¤çµŒè·¯ã¯å¤‰ã‚ã‚‰ãªã„å¯èƒ½æ€§ã‚‚ã‚ã‚‹ãŒã€ç¢ºèªã®ãŸã‚(5)ã¸é·ç§»ã€‚
-     */
-    private NextStep handleJishin(boolean workPlaceChange, boolean addressChange) {
-        if (workPlaceChange) {                            // â‘ , â‘¡
-            return new NextStep(NextScreen.APPLICATION_ERROR, false);
-        } else if (!workPlaceChange && addressChange) {   // â‘¢
-            return new NextStep(NextScreen.ADDRESS_INPUT, false);
-        } else {                                          // â‘£
-            return new NextStep(NextScreen.COMMUTE_INFO, true); // mustChangeRoute = true
+            // ¨ê ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (5) °æ·ÎÁ¤º¸
+            // *´Ü, ÀÌ °æ¿ì Åë±Ù°æ·Î´Â ¹Ýµå½Ã º¯ÇÔ (mustChangeRoute = true)
+            if (!kinmu && !jusho) {
+                return new NextStep(NextScreen.COMMUTE_INFO, true);
+            }
         }
+
+        // ±× ¿Ü ¿¹±âÄ¡ ¸øÇÑ ÄÉÀÌ½º´Â ¿¡·¯ Ã³¸®
+        return new NextStep(NextScreen.APPLICATION_ERROR, false);
     }
 }

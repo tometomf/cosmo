@@ -88,6 +88,21 @@
             <!-- ★★ 폼 영역: 라디오 + 버튼 ★★ -->
             <!-- form action: POST /idoconfirm/next -->
             <form id="idoConfirmForm" action="<c:url value='/idoconfirm/next'/>" method="post">
+
+                <%-- alertType 전달 (enum: IDOU_ITEN / SONOTA / JISHIN) --%>
+                <input type="hidden" name="alertType"
+                       value="<c:choose>
+                                <c:when test='${not empty param.alertType}'>
+                                    ${param.alertType}
+                                </c:when>
+                                <c:when test='${not empty alertType}'>
+                                    ${alertType}
+                                </c:when>
+                                <c:otherwise>
+                                    SONOTA
+                                </c:otherwise>
+                             </c:choose>"/>
+
                 <div class="content_Form1" style="width: 580px; margin-left: 3.1%;">
 
                     <!-- 勤務地が -->
@@ -152,7 +167,7 @@
         <%@ include file="/WEB-INF/views/common/footer.jsp"%>
     </div>
 
-    <!-- ★★ 여기서부터 자바스크립트: 조합 체크 + 경고창 ★★ -->
+    <!-- ★★ 여기서부터 자바스크립트: "둘 다 선택했는지"만 체크 ★★ -->
     <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -164,31 +179,16 @@
             const kinmu = document.querySelector('input[name="kinmuChange"]:checked');
             const jusho = document.querySelector('input[name="jushoChange"]:checked');
 
-            // 아무 것도 안 고른 경우
+            // 아무 것도 안 고른 경우만 막기
             if (!kinmu || !jusho) {
-                alert("「勤務地が」「住所が」をそれぞれ選択してください。");
+                alert("「勤務地が」「住所が」をそれぞれ選択してください.");
                 e.preventDefault();
                 return;
             }
 
-            const k = kinmu.value;  // "Y" or "N"
-            const j = jusho.value;  // "Y" or "N"
-
-            // ③ 勤務地:変わらない, 住所:変わる → 선택 불가능
-            if (k === 'N' && j === 'Y') {
-                alert("勤務先：変わらない、住所：変わる の組み合わせは選択できません。");
-                e.preventDefault();
-                return;
-            }
-
-            // ④ 勤務地:変わらない, 住所:変わらない → 선택 불가능
-            if (k === 'N' && j === 'N') {
-                alert("勤務先：変わらない、住所：変わらない の組み合わせは選択できません。");
-                e.preventDefault();
-                return;
-            }
-
-            // 나머지 조합(Y,Y / Y,N)은 그대로 submit → 컨트롤러에서 분기
+            // ★ 조합(k, j)은 절대 여기서 막지 않는다.
+            //   모든 조합(Y,Y / Y,N / N,Y / N,N)을 서버로 그대로 전송.
+            //   설계서에 따른 조합 체크는 IdoConfirmController + IdoConfirmJudge에서 수행.
         });
     });
     </script>
