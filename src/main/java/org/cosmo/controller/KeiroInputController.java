@@ -59,10 +59,10 @@ public class KeiroInputController {
 	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
 	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
 
-	    KeiroInputDenshaDTO denshaDto =
-	            keiroInputservice.getDenshaKeiroDetail(kigyoCd, shainUid, shinseiNo, keiroSeq);
+	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq); // <--- 메서드 변경
 
-	    model.addAttribute("densha", denshaDto);
+	    	    // keiro라는 이름으로 모델에 추가 (JSP에서 ${keiro...}로 접근 가능)
+	    		model.addAttribute("keiro", keiroDto);
 
 	    return "keiroinput/07_keirodtInput";
 	}

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -300,24 +301,71 @@
 						<div class="grid">
 							<div class="background">出発地</div>
 							<div>
-								<input type="text" name="From_station">
+								<input type="text" name="From_station"
+									value="${keiro.startPlace}">
 							</div>
 							<div class="swapbutton">
 								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton">
 							</div>
 							<div class="background">到着地</div>
 							<div>
-								<input type="text" name="To_station" value="新宿">
+								<input type="text" name="To_station" value="${keiro.endPlace}">
 							</div>
 						</div>
 						<div></div>
 						<!-- 경유역 그리드 -->
-						<div class="grid2" id="stationContainer">
+						<!-- <div class="grid2" id="stationContainer">
 							<div class="background">経由地1</div>
 							<div>
 								<input type="text" name="middle_station_01">
 							</div>
+						</div> -->
+
+						<div class="grid2" id="stationContainer">
+							<!-- 항상 1개는 보여주기 -->
+							<div class="background">経由地1</div>
+							<div>
+								<input type="text" name="middle_station_01"
+									value="${keiro.viaPlace1}">
+							</div>
+
+							<!-- 2번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace2}">
+								<div class="background">経由地2</div>
+								<div>
+									<input type="text" name="middle_station_02"
+										value="${keiro.viaPlace2}">
+								</div>
+							</c:if>
+
+							<!-- 3번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace3}">
+								<div class="background">経由地3</div>
+								<div>
+									<input type="text" name="middle_station_03"
+										value="${keiro.viaPlace3}">
+								</div>
+							</c:if>
+
+							<!-- 4번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace4}">
+								<div class="background">経由地4</div>
+								<div>
+									<input type="text" name="middle_station_04"
+										value="${keiro.viaPlace4}">
+								</div>
+							</c:if>
+
+							<!-- 5번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace5}">
+								<div class="background">経由地5</div>
+								<div>
+									<input type="text" name="middle_station_05"
+										value="${keiro.viaPlace5}">
+								</div>
+							</c:if>
 						</div>
+
 
 						<div class="button_layout">
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
@@ -389,9 +437,24 @@
 			<div class="menu_button">
 				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
 					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
-					src="/resources/img/hozon_btn01.gif">
+					src="/resources/img/hozon_btn01.gif" id="denshaHozonBtn"
+					style="cursor: pointer;">
 			</div>
 		</div>
+
+		<!-- 임시저장용 폼 -->
+		<form id="denshaTempForm" method="post"
+			action="<c:url value='/keiroinput/tempSave'/>">
+			<input type="hidden" name="commuteJson" value="">
+
+			<!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+			<input type="hidden" name="actionUrl"
+				value="/keiroinput/07_keirodtInput">
+
+			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+			<input type="hidden" name="redirectUrl" value="">
+		</form>
+
 
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -403,7 +466,91 @@
 
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("denshaTempForm");
+    const commuteJsonInput = document.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
+    const hozonBtn = document.getElementById("denshaHozonBtn");
+
+    function buildCommuteJson() {
+
+        const fromStation = document.querySelector('input[name="From_station"]').value.trim();
+        const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+        const middles = [];
+        middleInputs.forEach(input => {
+            const v = input.value.trim();
+            if (v !== "") {
+                middles.push(v);
+            }
+        });
+        const toStation = document.querySelector('input[name="To_station"]').value.trim();
+        const ikkagetsukingaku    = total1;
+        
+        if (total1 === 0) {
+            alert("定期券情報がありません。");
+            return null;
+        }
+
+        const shinseiKin     = total1;
+        const tsukiShikyuKin = total1;
+        const teikiKikan     = "1";
+
+        const shinseiIcData = {
+            kigyoCd:   null,
+            shinseiNo: null,
+            shinseiYmd: null,
+            shinseiKbn: null,
+            shinchokuKbn: null,
+            genAddress: null,
+            newAddress: null,
+            genShozoku: null,
+            newShozoku: null,
+            genKinmuchi: null,
+            newKinmuchi: null,
+            riyu: null,
+            idoYmd: null,
+            itenYmd: null,
+            tennyuYmd: null,
+            riyoStartYmd: null,
+            ssmdsYmd: null,
+            moComment: null,
+            codeNm: null,
+            shinseiName: null,
+
+            
+             keiro: {
+            tsukinShudan : "1",
+            shudanName :   "電車",
+            startPlace :   fromStation,
+            endPlace :     toStation,
+            tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
+        }
+        };
+
+        return JSON.stringify(shinseiIcData);
+    }
+
+    
+    if (hozonBtn) {
+        hozonBtn.addEventListener("click", function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+            commuteJsonInput.value = jsonString;
+            redirectUrlInput.value = "";
+
+            form.submit();
+        });
+    }
+
+});
+</script>
+
+
+
+<script>
 		document.addEventListener("DOMContentLoaded", function() {
+
 			const container = document.getElementById("stationContainer");
 			const addBtn = document.getElementById("addStationBtn");
 			const returnToTop = document.getElementById("returnToTop");
@@ -414,7 +561,38 @@
 			
 			const Kakutei = document.getElementById("keiroKakutei");
 			let searchedRoute = null;
+
+	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
+
+	    	
+	    	
+	    	function addMiddleRow(initialValue) {
+	    	    const container = document.getElementById("stationContainer");
+	    	    const count = container.querySelectorAll(".background").length;
+	    	    const newIndex = count + 1;
+
+	    	    const newLabel = document.createElement("div");
+	    	    newLabel.className = "background";
+	    	    newLabel.textContent = "経由地" + newIndex;
+
+	    	    const newInputDiv = document.createElement("div");
+	    	    const newInput = document.createElement("input");
+	    	    newInput.type = "text";
+	    	    newInput.name = "middle_station_" + String(newIndex).padStart(2, "0");
+
+	    	    if (initialValue) {
+	    	        newInput.value = initialValue;
+	    	    }
+
+	    	    newInputDiv.appendChild(newInput);
+	    	    container.appendChild(newLabel);
+	    	    container.appendChild(newInputDiv);
+	    	}
 			
+	    	
+	    	
+	    	
+	    	
 			addBtn.addEventListener("click", function() {
 				const count = container.querySelectorAll(".background").length;
 				const newIndex = count + 1;
@@ -435,7 +613,6 @@
 				
 				if(newIndex > 4){
 					disableBtn = document.getElementById("addStationBtn");
-					/* disableBtn.remove(); */ /*/ 스타일 떄문에 remove하니까 버튼이 당겨져버림 */
 					disableBtn.style.visibility = "hidden";
 					disableBtn.style.pointerEvents = "none";
 					
@@ -587,6 +764,8 @@
 			    
 			    
 			});
+			
+			
 			
 			
 		});
