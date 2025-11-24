@@ -132,12 +132,34 @@ public class KeiroInputController {
 
 	@GetMapping("/07_keirodtInput_02")
 	public String bus(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale,
-			Model model) {
+			Model model,  HttpSession session) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 
 		String formattedDate = dateFormat.format(date);
+		
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+	        return "redirect:/login";
+	    }
+
+	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
+
+		   try {
+		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+		        if (hozon != null && hozon.getData() != null) {
+
+		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+
+		            ObjectMapper mapper = new ObjectMapper();
+		            JsonNode root = mapper.readTree(json);
+		            System.out.println(root);
+		            model.addAttribute("ichijiHozon", root);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
 
 		model.addAttribute("serverTime", formattedDate);
 	    model.addAttribute("shudanType", shudanType);
@@ -146,13 +168,35 @@ public class KeiroInputController {
 	}
 	
 	@GetMapping("/07_keirodtInput_04")
-	public String toho(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale, Model model) {
+	public String toho(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale, Model model, HttpSession session) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 
 		String formattedDate = dateFormat.format(date);
+		
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+	        return "redirect:/login";
+	    }
 
+	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
+
+		   try {
+		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+		        if (hozon != null && hozon.getData() != null) {
+
+		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+
+		            ObjectMapper mapper = new ObjectMapper();
+		            JsonNode root = mapper.readTree(json);
+		            System.out.println(root);
+		            model.addAttribute("ichijiHozon", root);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		   
 		model.addAttribute("serverTime", formattedDate);
 		model.addAttribute("shudanType", shudanType);
 		
@@ -164,11 +208,26 @@ public class KeiroInputController {
 		Integer keiroSeq = 1;
 
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+	        return "redirect:/login";
+	    }
 
-		System.out.println(shain);
-		if (shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
-			return "redirect:/login";
-		}
+	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
+
+		   try {
+		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+		        if (hozon != null && hozon.getData() != null) {
+
+		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+
+		            ObjectMapper mapper = new ObjectMapper();
+		            JsonNode root = mapper.readTree(json);
+		            System.out.println(root);
+		            model.addAttribute("ichijiHozon", root);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
 
 		/*
 		 * ShainKeiroDTO dto =
