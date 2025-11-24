@@ -264,7 +264,10 @@ document.addEventListener("DOMContentLoaded", function() {
         toho:   "6",   // 徒歩
         other:  "7"    // その他
     };
-
+	
+    const ichijiHozon = ${ichijiHozon};
+	console.log("임시저장 데이터:", ichijiHozon);
+    
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
     const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
@@ -291,39 +294,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const labelText = selected.parentElement.textContent.trim();  // "電車" 등
 
-        // 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식 가정)
-        const shinseiIcData = {
-            // 공통 정보 (이 화면에는 값이 없어서 일단 null로)
-            kigyoCd:   keiro.kigyoCd || null,
-            shinseiNo: null,
-            shinseiYmd: null,
-            shinseiKbn: null,
-            shinchokuKbn: null,
-            genAddress: null,
-            newAddress: null,
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-
-            // 통근 경로 정보
-            keiro: {
-                tsukinShudan: kbn,       // 예: "1"
-                shudanName:   labelText  // 예: "電車"
-                // 필요하면 여기서 startPlace/endPlace 등도 같이 넣을 수 있음
-            }
+        // 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식) 
+        const keiro = {
+            tsukinShudan: kbn,       // 예: "1"
+            shudanName:   labelText  // 예: "電車"
         };
+        
+        ichijiHozon.keiro = keiro;
 
-        return JSON.stringify(shinseiIcData);
+        return JSON.stringify(ichijiHozon);
     }
 
     //  hozonBtn: 임시저장 → 컨트롤러가 기본 redirect(/shinsei/ichiji) 사용
