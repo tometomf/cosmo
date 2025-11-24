@@ -5,55 +5,217 @@
 
 <mapper namespace="org.cosmo.mapper.KeiroInputMapper">
 
-    <resultMap id="ShainKeiroResultMap" type="org.cosmo.domain.ShainKeiroDTO">
-        <result property="kigyoCd"         column="KIGYO_CD"/>
-        <result property="shainUid"        column="SHAIN_UID"/>
-        <result property="keiroSeq"        column="KEIRO_SEQ"/>
+	<resultMap id="ShainKeiroResultMap"
+		type="org.cosmo.domain.ShainKeiroDTO">
+		<result property="kigyoCd" column="KIGYO_CD" />
+		<result property="shainUid" column="SHAIN_UID" />
+		<result property="keiroSeq" column="KEIRO_SEQ" />
 
-        <result property="tsukinShudanKbn" column="TSUKIN_SHUDAN_KBN"/>
-        <result property="tsukinShudanNm"  column="TSUKIN_SHUDAN_NM"/>
+		<result property="tsukinShudanKbn" column="TSUKIN_SHUDAN_KBN" />
+		<result property="tsukinShudanNm" column="TSUKIN_SHUDAN_NM" />
 
-        <result property="startPlace"      column="START_PLACE"/>
-        <result property="endPlace"        column="END_PLACE"/>
-        <result property="viaPlace1"       column="VIA_PLACE_1"/>
-        <result property="viaPlace2"       column="VIA_PLACE_2"/>
-        <result property="viaPlace3"       column="VIA_PLACE_3"/>
-        <result property="viaPlace4"       column="VIA_PLACE_4"/>
-        <result property="viaPlace5"       column="VIA_PLACE_5"/>
+		<result property="startPlace" column="START_PLACE" />
+		<result property="endPlace" column="END_PLACE" />
+		<result property="viaPlace1" column="VIA_PLACE_1" />
+		<result property="viaPlace2" column="VIA_PLACE_2" />
+		<result property="viaPlace3" column="VIA_PLACE_3" />
+		<result property="viaPlace4" column="VIA_PLACE_4" />
+		<result property="viaPlace5" column="VIA_PLACE_5" />
 
-        <result property="shinseiKm"       column="SHINSEI_KM"/>
-        <result property="shikyuKin"       column="SHIKYU_KIN"/>
+		<result property="shinseiKm" column="SHINSEI_KM" />
+		<result property="shikyuKin" column="SHIKYU_KIN" />
+	</resultMap>
+
+	<select id="selectShainKeiroWithCode" parameterType="map"
+		resultMap="ShainKeiroResultMap">
+
+		SELECT
+		sk.KIGYO_CD
+		, sk.SHAIN_UID
+		, sk.KEIRO_SEQ
+		, sk.TSUKIN_SHUDAN_KBN
+		, cd.CODE_NM AS TSUKIN_SHUDAN_NM
+		, sk.START_PLACE
+		, sk.END_PLACE
+		, sk.VIA_PLACE_1
+		, sk.VIA_PLACE_2
+		, sk.VIA_PLACE_3
+		, sk.VIA_PLACE_4
+		, sk.VIA_PLACE_5
+		, sk.SHINSEI_KM
+		, sk.SHIKYU_KIN
+		FROM
+		SHAIN_KEIRO sk
+		LEFT JOIN CODE cd
+		ON cd.CODE_SYBTSU = '103'
+		AND cd.CODE = sk.TSUKIN_SHUDAN_KBN
+		WHERE
+		sk.KIGYO_CD = #{kigyoCd}
+		AND sk.SHAIN_UID = #{shainUid}
+		AND sk.KEIRO_SEQ = #{keiroSeq}
+
+	</select>
+
+	<resultMap id="ShinseiAddressResultMap"
+		type="org.cosmo.domain.ShinseiDTO">
+		<result property="kigyoCd" column="KIGYO_CD" />
+		<result property="shainUid" column="SHAIN_UID" />
+		<result property="newAddress1" column="NEW_ADDRESS_1" />
+		<result property="newAddress2" column="NEW_ADDRESS_2" />
+		<result property="newAddress3" column="NEW_ADDRESS_3" />
+	</resultMap>
+
+	<select id="selectAddressWithFallback" parameterType="map"
+		resultMap="ShinseiAddressResultMap">
+
+		SELECT
+		h.KIGYO_CD
+		, h.SHAIN_UID
+		, NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1
+		, NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2
+		, NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
+		FROM SHAIN h
+		LEFT JOIN SHINSEI s
+		ON s.KIGYO_CD = h.KIGYO_CD
+		AND s.SHAIN_UID = h.SHAIN_UID
+		WHERE h.KIGYO_CD = #{kigyoCd}
+		AND h.SHAIN_UID = #{shainUid}
+
+	</select>
+
+	<resultMap id="ShinseiKinmuAddressResultMap"
+		type="org.cosmo.domain.ShinseiDTO">
+		<result property="kigyoCd" column="KIGYO_CD" />
+		<result property="shainUid" column="SHAIN_UID" />
+		<result property="newKinmuAddress1"
+			column="NEW_KINMU_ADDRESS_1" />
+		<result property="newKinmuAddress2"
+			column="NEW_KINMU_ADDRESS_2" />
+		<result property="newKinmuAddress3"
+			column="NEW_KINMU_ADDRESS_3" />
+	</resultMap>
+
+	<select id="selectKinmuAddressWithFallback" parameterType="map"
+		resultMap="ShinseiKinmuAddressResultMap">
+
+		SELECT
+		h.KIGYO_CD
+		, h.SHAIN_UID
+		, NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1
+		, NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2
+		, NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+		FROM SHAIN h
+		LEFT JOIN SHINSEI s
+		ON s.KIGYO_CD = h.KIGYO_CD
+		AND s.SHAIN_UID = h.SHAIN_UID
+		WHERE h.KIGYO_CD = #{kigyoCd}
+		AND h.SHAIN_UID = #{shainUid}
+
+	</select>
+
+
+	<update id="updateViaPlace1">
+		UPDATE SHINSEI_START_KEIRO
+		SET VIA_PLACE_1 = #{viaPlace1, jdbcType=VARCHAR}
+		WHERE KIGYO_CD = #{kigyoCd, jdbcType=NUMERIC}
+		AND SHINSEI_NO = #{shinseiNo, jdbcType=NUMERIC}
+		AND KEIRO_SEQ = #{keiroSeq, jdbcType=NUMERIC}
+	</update>
+
+	<select id="selectDenshaKeiroDetail" parameterType="map"
+		resultType="org.cosmo.domain.KeiroInputDenshaDTO">
+
+		SELECT
+		sk.KIGYO_CD AS kigyoCd
+		, sk.SHINSEI_NO AS shinseiNo
+		, sk.KEIRO_SEQ AS keiroSeq
+		, sk.SHAIN_UID AS shainUid
+		, s.SHAIN_NO AS shainNo
+		, sk.START_PLACE AS startPlace
+		, sk.END_PLACE AS endPlace
+		, sk.SHINSEI_KIN AS shinseiKin
+		, sk.TSUKI_SHIKYU_KIN AS tsukiShikyuKin
+		
+		FROM
+		SHINSEI_START_KEIRO sk
+		JOIN SHAIN s
+		ON s.KIGYO_CD = sk.KIGYO_CD
+		AND s.SHAIN_UID = sk.SHAIN_UID
+		WHERE
+		sk.KIGYO_CD = #{kigyoCd}
+		AND sk.SHAIN_UID = #{shainUid}
+		AND sk.SHINSEI_NO = #{shinseiNo}
+		AND sk.KEIRO_SEQ = #{keiroSeq}
+	</select>
+
+
+	  <!-- 위치만 매핑하는 ResultMap -->
+    <resultMap id="ShainLocationResultMap" type="org.cosmo.domain.ShainLocationVO">
+        <id     property="kigyoCd"        column="KIGYO_CD" />
+        <id     property="shainUid"       column="SHAIN_UID" />
+        <result property="zipCd"          column="ZIP_CD" />
+        <result property="address1"       column="ADDRESS_1" />
+        <result property="address2"       column="ADDRESS_2" />
+        <result property="address3"       column="ADDRESS_3" />
+        <result property="addressIdoKeido" column="ADDRESS_IDO_KEIDO" />
+
+        <result property="kinmuZipCd"         column="KINMU_ZIP_CD" />
+        <result property="kinmuAddress1"      column="KINMU_ADDRESS_1" />
+        <result property="kinmuAddress2"      column="KINMU_ADDRESS_2" />
+        <result property="kinmuAddress3"      column="KINMU_ADDRESS_3" />
+        <result property="kinmuAddressIdoKeido" column="KINMU_ADDRESS_IDO_KEIDO" />
     </resultMap>
 
-    <select id="selectShainKeiroWithCode"
-            parameterType="map"
-            resultMap="ShainKeiroResultMap">
-
+    <!-- PK로 주소/위치만 조회 -->
+    <select id="selectShainLocationByUid" parameterType="map" resultMap="ShainLocationResultMap">
         SELECT
-              sk.KIGYO_CD
-            , sk.SHAIN_UID
-            , sk.KEIRO_SEQ
-            , sk.TSUKIN_SHUDAN_KBN
-            , cd.CODE_NM AS TSUKIN_SHUDAN_NM
-            , sk.START_PLACE
-            , sk.END_PLACE
-            , sk.VIA_PLACE_1
-            , sk.VIA_PLACE_2
-            , sk.VIA_PLACE_3
-            , sk.VIA_PLACE_4
-            , sk.VIA_PLACE_5
-            , sk.SHINSEI_KM
-            , sk.SHIKYU_KIN
-        FROM
-            SHAIN_KEIRO sk
-            LEFT JOIN CODE cd
-              ON cd.CODE_SYBTSU = '103'
-             AND cd.CODE = sk.TSUKIN_SHUDAN_KBN
-        WHERE
-              sk.KIGYO_CD  = #{kigyoCd}
-          AND sk.SHAIN_UID = #{shainUid}
-          AND sk.KEIRO_SEQ = #{keiroSeq}
-
+            KIGYO_CD,
+            SHAIN_UID,
+            ZIP_CD,
+            ADDRESS_1,
+            ADDRESS_2,
+            ADDRESS_3,
+            ADDRESS_IDO_KEIDO,
+            KINMU_ZIP_CD,
+            KINMU_ADDRESS_1,
+            KINMU_ADDRESS_2,
+            KINMU_ADDRESS_3,
+            KINMU_ADDRESS_IDO_KEIDO
+        FROM SHAIN
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND SHAIN_UID = #{shainUid}
     </select>
+    
+    <resultMap id="ShinseiStartKeiroResultMap"
+       type="org.cosmo.domain.ShinseiStartKeiroVO">
+       <result property="kigyoCd"    column="KIGYO_CD" />
+       <result property="shinseiNo"  column="SHINSEI_NO" />
+         <result property="keiroSeq"   column="KEIRO_SEQ" />
+       <result property="shainUid"   column="SHAIN_UID" />
+       <result property="viaPlace1"  column="VIA_PLACE_1" />
+   </resultMap>
+   
+   <select id="selectViaPlace1"
+        parameterType="map"
+        resultMap="ShinseiStartKeiroResultMap">
+
+       SELECT
+           s.KIGYO_CD
+         , s.SHINSEI_NO
+         , s.KEIRO_SEQ
+         , s.SHAIN_UID
+         , s.VIA_PLACE_1
+       FROM SHINSEI_START_KEIRO s
+       WHERE s.KIGYO_CD = #{kigyoCd}
+         AND s.SHAIN_UID = #{shainUid}
+         AND s.SHINSEI_NO = (
+            SELECT MAX(s2.SHINSEI_NO)
+            FROM SHINSEI_START_KEIRO s2
+            WHERE s2.KIGYO_CD = #{kigyoCd}
+              AND s2.SHAIN_UID = #{shainUid}
+           )
+         AND s.KEIRO_SEQ = 1
+
+   </select>
 
 </mapper>

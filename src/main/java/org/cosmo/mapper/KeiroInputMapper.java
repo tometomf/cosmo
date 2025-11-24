@@ -1,7 +1,11 @@
 package org.cosmo.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
+import org.cosmo.domain.ShainLocationVO;
+import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface KeiroInputMapper {
 
@@ -10,4 +14,27 @@ public interface KeiroInputMapper {
             @Param("shainUid") Long shainUid,
             @Param("keiroSeq") Integer keiroSeq);
 
+    ShinseiDTO selectAddressWithFallback(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid);
+    
+    ShinseiDTO selectKinmuAddressWithFallback(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid);
+    
+    ShainLocationVO selectShainLocationByUid(
+        @Param("kigyoCd") Long kigyoCd,
+        @Param("shainUid") Long shainUid
+    );
+    
+    KeiroInputDenshaDTO selectDenshaKeiroDetail(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid,
+            @Param("shinseiNo") Integer shinseiNo,
+            @Param("keiroSeq") Integer keiroSeq);
+    
+    ShinseiStartKeiroVO selectViaPlace1(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid
+    );
 }
