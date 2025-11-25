@@ -173,7 +173,6 @@ public class HuzuiNewInputController {
  	       
  	       processLogDTO.setSubsystemId("111");
  	       processLogDTO.setProcessCol("shinseiFuzuiShorui");
- 	       processLogDTO.setKey1(shinsei);
  	      oshiraseDTO.setAddDate(timestamp);
           oshiraseDTO.setUpdDate(timestamp);
  	       

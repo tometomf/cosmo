@@ -180,7 +180,15 @@
 	<update id="updateAlert">
 		update alert set 
 		haishin_syuryo_ymd = #{shinsei.shinseiYmd}, 
-		shinsei_no = #{shinsei.shinseiNo}, 
+		shinsei_no =  (
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ), 
 		shinsei_ymd = #{shinsei.shinseiYmd},
 		upd_user_id = #{shinsei.updUserId, jdbcType=VARCHAR},
 		upd_date = #{shinsei.updDate, jdbcType=TIMESTAMP}
@@ -216,7 +224,15 @@
 		UPD_DATE
 		)values(
 		#{shain.kigyo_Cd},
-		#{shinsei.shinseiNo},
+		 (
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ),
 		SHINSEI_LOG_SEQ.NEXTVAL,
 		6,
 		#{shinsei.shinseiYmd},
@@ -275,7 +291,15 @@
 		UPD_USER_ID,
 		UPD_DATE) VALUES (
 		#{shain.kigyo_Cd},
-		#{shinseiFuzuiShorui.shinseiNo},
+		 (
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ),
 		SHINSEI_FUZUI_SHORUI_SEQ.NEXTVAL,
 		SHINSEI_LOG_SEQ.NEXTVAL,
 		1,
@@ -330,7 +354,15 @@
 		#{oshirase.tsuchiHm},
 		#{oshirase.tsuchishaKigyoCd},
 		#{oshirase.tsuchishaCd},
-		#{oshirase.shinseiNo},
+		 (
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ),
 		#{oshirase.oshiraseNaiyo},
 		#{oshirase.addUserId, jdbcType=VARCHAR},
 		#{oshirase.addDate, jdbcType=TIMESTAMP},
@@ -352,7 +384,15 @@
 		#{processLog.processTimestamp},
 		#{processLog.subsystemId},
 		#{processLog.processCol},
-		#{processLog.key1},
+		(
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ),
 		6,
 		1,
 		#{processLog.key5},

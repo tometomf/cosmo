@@ -498,13 +498,14 @@ input[type="file"] {
 		            if (!response.ok) {
 		                throw new Error('파일 업로드 실패');
 		            }
-		            return response.json(); // 응답을 JSON으로 파싱
+		            return response.text(); // 응답을 JSON으로 파싱
 		        })
 		        .then(data => {
-		            console.log("파일 업로드 성공:", data); // 성공적인 업로드 후 데이터 처리
+		            console.log("success", data); // 성공적인 업로드 후 데이터 처리
+		            alert("保存しました");
 		        })
 		        .catch(error => {
-		            console.error("파일 업로드 실패:", error); // 실패 시 오류 처리
+		            console.error("error", error); // 실패 시 오류 처리
 		        });
 		});
 
