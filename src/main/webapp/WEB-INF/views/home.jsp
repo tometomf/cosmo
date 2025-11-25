@@ -108,6 +108,7 @@
 </html>
 
 <script>
+
 	function buttonClick(gubun) { 
 		
 		const target = window.location.origin; 
