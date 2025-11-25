@@ -199,6 +199,7 @@ public class IdoConfirmController {
         return "idoconfirm/03_kinmuInput";
     }
 
+    // 作成者 : 권예성
     // 3번 화면에서 "次へ" 클릭 시
     @PostMapping("/kinmuNext")
     public String kinmuNext(@ModelAttribute("kinmuForm") KinmuForm form,
