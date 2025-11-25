@@ -212,7 +212,6 @@
 				<c:choose>
 
 					<c:when test="${empty keiroList}">
-						<!-- DB가 비어있을 때: 경로① 박스와 추가 버튼 표시 -->
 						<div class="route-section">
 							<div class="route-head">
 								<span class="route-label">経路${maruDigits[repRouteNo]}</span>
@@ -228,7 +227,6 @@
 					</c:when>
 
 					<c:otherwise>
-						<!-- DB에 데이터가 있을 때: 경로 목록만 표시 (추가 버튼 제거) -->
 
 						<c:forEach var="row" items="${keiroList}" varStatus="st">
 
@@ -284,6 +282,14 @@
 							</div>
 
 						</c:forEach>
+
+						<div style="margin-top:10px; text-align:right;">
+							<a href="${keiroInputUrl}" class="route-add">
+								<img src="/resources/img/tuika_icon.gif" alt="追加">
+								追加する
+							</a>
+						</div>
+
 					</c:otherwise>
 
 				</c:choose>
@@ -293,7 +299,7 @@
 				<div class="button_Left">
 					<div class="button_Left_Group">
 
-						<a href="<c:url value='/hiwariKinmuchi/hiwariRiyu'/>">
+						<a href="<c:url value='/hiwariKinmuchi/riyu'/>">
 							<img src="/resources/img/back_btn01.gif" alt="戻る">
 						</a>
 
