@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.util.List;
 
+import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.mapper.HiwariKinmuchiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,15 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     @Override
     public List<String> getShozokuNames(Integer kigyoCd) {
         return mapper.getShozokuNames(kigyoCd);
+    }
+    
+    @Override
+    public HiwariAddressVO getAddressPageData(Integer kigyoCd, Long shainUid, Long shinseiNo) {
+        return mapper.getAddressPageData(kigyoCd, shainUid, shinseiNo);
+    }
+    
+    @Override
+    public HiwariAddressVO getAddressPageDataBefore(Integer kigyoCd, Long shainUid) {
+        return mapper.getAddressPageDataBefore(kigyoCd, shainUid);
     }
 }
