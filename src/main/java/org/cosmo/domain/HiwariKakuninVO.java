@@ -2,7 +2,7 @@ package org.cosmo.domain;
 import java.util.List;
 import org.apache.ibatis.type.Alias;
 import lombok.Data;
-
+//유지희
 @Data
 @Alias("HiwariKakuninVO")
 public class HiwariKakuninVO {

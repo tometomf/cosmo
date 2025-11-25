@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 @Alias("HiwariKakuninRouteVO")
+//유지희
 public class HiwariKakuninRouteVO {
     // 경로 순번
     private Integer keiroSeq;          // 경로순번 (1, 2)

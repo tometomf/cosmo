@@ -6,7 +6,9 @@ import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 
 public interface HiwariKakuninService {
-
+	/**
+     * 유지희
+     */
     /**
      * 確認画面用 ヘッダー情報取得
      *  - 社員情報
