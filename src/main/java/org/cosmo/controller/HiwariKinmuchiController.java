@@ -17,8 +17,6 @@ import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.AddressInputService;
-import org.cosmo.service.HiwariKakuninService;
-import org.cosmo.service.HiwariKeiroService;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.OshiraseService;
@@ -42,13 +40,8 @@ public class HiwariKinmuchiController {
 	private OshiraseService oshiraseService;
 
     @Autowired
-    private HiwariKeiroService hiwariKeiroService;
-
-    @Autowired
     private HiwariKinmuchiService service;
     
-    @Autowired
-    private HiwariKakuninService hiwariKakuninService;
 
     @Autowired
     private AddressInputService addressService;
@@ -138,9 +131,9 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 1;
         if (shinseiNo == null) shinseiNo = 1L;
         
-        HiwariKakuninVO header = hiwariKakuninService.getHeader(kigyoCd, shinseiNo);
+        HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
       
-        List<HiwariKakuninRouteVO> routes = hiwariKakuninService.getRoutes(kigyoCd, shinseiNo);
+        List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
         if (routes == null) {
             routes = new ArrayList<HiwariKakuninRouteVO>();
         }
@@ -215,7 +208,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
+        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -243,7 +236,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
+        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -266,7 +259,7 @@ public class HiwariKinmuchiController {
 
         if ("temp".equals(action)) {
             
-            hiwariKeiroService.saveTemp(kigyoCd, shainUid, keiroList);
+            service.saveTemp(kigyoCd, shainUid, keiroList);
             return "redirect:/shinsei/11_shinseiDetail_02";
         }
         
@@ -287,7 +280,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        hiwariKeiroService.deleteOne(kigyoCd, shainUid, keiroSeq);
+        service.deleteOne(kigyoCd, shainUid, keiroSeq);
         return "redirect:/hiwariKinmuchi/keiro";
     }
     //유지희
@@ -355,7 +348,7 @@ public class HiwariKinmuchiController {
         
         try {
             
-            hiwariKakuninService.submitApplication(kigyoCd, shinseiNo);
+            service.submitApplication(kigyoCd, shinseiNo);
             
             ra.addFlashAttribute("message", "申請が完了しました");
             
