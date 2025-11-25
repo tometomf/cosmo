@@ -295,10 +295,14 @@
         <div class="button_Left_Group">
           <a href="<c:url value='/hiwariKinmuchi/keiro'/>">
 			 <img src="/resources/img/back_btn01.gif" alt="戻る">
-          </a>
-          <a href="<c:url value='/hiwariKakunin/submit'/>">
-            <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
-             </a>
+			 </a>
+       
+    <form id="submitForm" method="post" action="<c:url value='/hiwariKakunin/submit'/>" style="display:inline;">
+      <a href="javascript:void(0);" onclick="document.getElementById('submitForm').submit();">
+        <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
+      </a>
+    </form>
+
            <!-- 一時保存: JS 호출 -->
           <a href="javascript:void(0);" onclick="saveTempFromKakunin();">
             <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
@@ -313,7 +317,6 @@
   </div>
 </div>
 
-<!-- ★ 스크립트는 여기 (body 끝) 에 배치 -->
 <script type="text/javascript">
   /**
    * Kakunin 화면에서 보여지는 값을 JSON으로 묶어서
