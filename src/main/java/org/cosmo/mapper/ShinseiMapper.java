@@ -12,11 +12,10 @@ import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 
-
 @Mapper
 public interface ShinseiMapper {
 
-	//하나
+	// 하나
 	ShinseiJyohouVO getShinseiJyohou(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinseiNo);
@@ -83,8 +82,8 @@ public interface ShinseiMapper {
 	void deleteShinseiByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
 	String getEmailByShainUid(@Param("shainUid") String shainUid);
-	
-	//제교
+
+	// 제교
 
 	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
@@ -100,7 +99,7 @@ public interface ShinseiMapper {
 
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
-	
+
 	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
 	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
@@ -110,5 +109,8 @@ public interface ShinseiMapper {
 
 	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("loginUserId") String loginUserId);
+
+	void insertOshiraseHikimodosu(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
+			@Param("shinseiNo") String shinseiNo);
 
 }

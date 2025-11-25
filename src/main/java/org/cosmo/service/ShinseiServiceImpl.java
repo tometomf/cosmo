@@ -26,7 +26,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Autowired
 	private ShinseiMapper shinseiMapper;
 
-	//하나
+	// 하나
 	@Override
 	public ShinseiJyohouVO getShinseiJyohou(Long shinseiNo) {
 		return shinseiMapper.getShinseiJyohou(shinseiNo);
@@ -220,8 +220,8 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public void deleteShinseiByShinseiNo(String shinseiNo) {
 		shinseiMapper.deleteShinseiByShinseiNo(shinseiNo);
 	}
-	
-	//제교
+
+	// 제교
 
 	@Override
 	public void clearHenkoFlags(Long kigyoCd, Long shinseiNo) {
@@ -271,12 +271,12 @@ public class ShinseiServiceImpl implements ShinseiService {
 		param.put("keiroSeq", keiroSeq);
 		return shinseiMapper.getShinseiKeiroDetail(param);
 	}
-	
+
 	@Override
 	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
 		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
 	}
-	
+
 	@Override
 	@Transactional
 	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
@@ -324,6 +324,9 @@ public class ShinseiServiceImpl implements ShinseiService {
 		shinseiMapper.insertProcessLog(shinseiNoStr, loginUserId, "HIKIMODOSHI");
 	}
 
-
+	@Override
+	public void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshiraseHikimodosu(loginUser, shinseiUser, shinseiNo);
+	}
 
 }

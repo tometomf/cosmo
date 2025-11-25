@@ -382,6 +382,11 @@ public class ShinseiController {
 
 		shinseiService.hikimodosu(kigyoCd, shinseiNo, loginUserId, userIp);
 
+		ShainVO loginUser = shain;
+		ShainVO shinseiUser = shain;
+
+		shinseiService.insertOshiraseHikimodosu(loginUser, shinseiUser, String.valueOf(shinseiNo));
+
 		redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
 
 		return "home";
