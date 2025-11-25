@@ -72,12 +72,12 @@
 		background:#ededed;
 		gap:20px;
 	}
-/* .henkou1 > *,
-.henkou2 > *,
-.henkou3 > *
- {
-	opacity: 0; 
-} */
+	
+input[type="file"] {
+    display: none; /* 기본 파일 입력 요소를 숨깁니다 */
+}
+
+
 
  </style>
 <body>
@@ -96,7 +96,7 @@
 		</div>	
 
 
-	<form action="./updateForm" method="post" id="shainForm">	
+	<form action="/huzuiNewInput/updateForm" method="post" id="shainForm">	
 		<div class="content_container">
 			<div class="content_Form2">
 				<div class="form_Title2">
@@ -108,15 +108,16 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
-					<div class = "form_Normal"><a href="">表示</a></div>
-					<div class = "form_Normal henkou1"><input type="text" name="">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
+					<div class = "form_Normal henkou1"><input type="text" name="" id="file-name-display">　<input type="file" id="file" class="custom-file-upload"><input type="button" value="参照" id="file-select-button">　<input type="button" value="アップロード" id="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証有効期限</div>
 					<div class = "form_Normal" style="display:grid" id="menkyoKigen">
 							<div class="newInput1">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
 					</div>
-					<div class = "form_Normal henkou1"><input type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img src="/resources/img/cal_icon.gif"></div>
+					<div class = "form_Normal henkou1"><input id="dateInputText" type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img id="dateIcon" src="/resources/img/cal_icon.gif"> <input id="hiddenDateInput" type="date" style="display:none;">
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証番号</div>
@@ -137,7 +138,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">車検証コピー</div>
-					<div class = "form_Normal"><a href="">表示</a></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_5}"><a href="#">表示</a></c:if></div>
 					<div class = "form_Normal henkou2"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -187,12 +188,12 @@
 					</div>
 					<div class="form_Text1" id="form_Text1" style="border:solid 1px #a0a0a0; border-bottom:none;">
 						<div class="form_Column">保険証券コピー（期間）</div>
-						<div class = "form_Normal"><a href="">表示</a></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_6}"><a href="#">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column">保険証券コピー（賠償内容）</div>
-						<div class = "form_Normal"><a href="">表示</a></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_7}"><a href="#">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
@@ -291,7 +292,7 @@
 		<div class = "button_Left_Group" style="margin-top:30px; margin:3%;">   
 			<a href="javascript:history.back()"><img src="/resources/img/back_btn01.gif" alt="back_btn01"></a> 
 			<a href="#" id="next"><img src="/resources/img/next_btn01.gif" alt="next_btn01"></a>
-			<a href=""><img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01"></a>
+			<a href="#" id="hozon"><img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01"></a>
 		</div>
 	</div>
 	
@@ -309,6 +310,21 @@
 	
 	const hokenKigen = "<c:out value='${shainHuzuiShorui.hoken_Manryo_Ymd}' />";
 	const hokenKigenBox = document.getElementById("hokenKigen");
+	
+	const textInput = document.getElementById('dateInputText');
+	const icon = document.getElementById('dateIcon');
+	const hiddenDate = document.getElementById('hiddenDateInput');
+
+	icon.addEventListener('click', () => {
+	    // 숨겨진 date input 클릭
+	    hiddenDate.click();
+	});
+
+	// date input 값이 바뀌면 기존 텍스트 인풋에 값 넣기
+	hiddenDate.addEventListener('change', () => {
+	    textInput.value = hiddenDate.value; // YYYY-MM-DD 형식
+	});
+	
 	
 	// 페이지 로딩 시 함수 호출
 	function kigen(value,boxValue){
@@ -416,6 +432,84 @@
 		});
 		
 		
+
+		// DOM이 완전히 로드된 후 실행
+		document.addEventListener("DOMContentLoaded", function() {
+		    // 파일 선택 버튼 클릭 시, 숨겨진 파일 입력 필드를 클릭하도록 합니다.
+		    document.getElementById("file-select-button").addEventListener("click", function(event) {
+		        event.preventDefault(); // 기본 동작 막기 (필요 시)
+		        document.getElementById("file").click(); // 숨겨진 파일 입력 필드를 클릭
+		    });
+
+		    // 파일이 선택되면 선택된 파일 이름을 입력 텍스트 필드에 표시
+		    document.getElementById("file").addEventListener("change", function(event) {
+		        var selectedFile = event.target.files[0];
+		        if (selectedFile) {
+		            // 인풋 텍스트 필드에 선택된 파일의 이름을 표시
+		            document.getElementById("file-name-display").value = "選択されたファイル: " + selectedFile.name;
+		        } else {
+		            // 파일이 선택되지 않았을 경우
+		            document.getElementById("file-name-display").value = "ファイルが選択されていません。";
+		        }
+		    });
+		});
+
+		document.getElementById("upload-btn").addEventListener("click", function(event){
+		    var fileInput = document.getElementById("file");
+		    var file = fileInput.files[0];
+		    
+		    if(file){
+		        var formData = new FormData();
+		        formData.append("file", file);
+		        
+		        fetch('/huzuiNewInput/upload', {
+		            method : 'POST',
+		            body : formData
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('파일 업로드 실패');
+		            }
+		            return response.json(); // 응답을 JSON으로 파싱
+		        })
+		        .then(data => {
+		            console.log("파일 업로드 성공:", data); // 성공적인 업로드 후 데이터 처리
+		        })
+		        .catch(error => {
+		            console.error("파일 업로드 실패:", error); // 실패 시 오류 처리
+		        });
+		    } else {
+		        alert('파일을 선택해주세요');
+		    }
+		});
+		
+		document.getElementById("hozon").addEventListener("click", function(e){
+		        
+			e.preventDefault(); // a 태그 링크 이동 막기
+			
+		        fetch('/huzuiNewInput/hozon', {
+		        	method : 'POST',
+					headers :{
+						'Content-Type' : 'application/json'				
+					},
+					body : JSON.stringify({})
+		        })
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('파일 업로드 실패');
+		            }
+		            return response.text(); // 응답을 JSON으로 파싱
+		        })
+		        .then(data => {
+		            console.log("success", data); // 성공적인 업로드 후 데이터 처리
+		            alert("保存しました");
+		        })
+		        .catch(error => {
+		            console.error("error", error); // 실패 시 오류 처리
+		        });
+		});
+
+
 		
 </script>
 </html>
