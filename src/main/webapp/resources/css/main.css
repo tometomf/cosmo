@@ -207,8 +207,6 @@ body {
 .form_Normal {
 	border-right: solid 1px #a0a0a0;
 	border-bottom: solid 1px #a0a0a0;
-	display: flex;
-	gap: 5px;
 	background: white;
 }
 
