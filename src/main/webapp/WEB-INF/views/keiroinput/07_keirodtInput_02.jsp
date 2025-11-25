@@ -523,11 +523,6 @@ document.addEventListener("DOMContentLoaded", function () {
         		alert(pass6mErrorText);
         		return;
         	}
-
-        	if (isEmpty(otherTransport)) {
-        		alert(otherTransportErrorText);
-        		return;
-        	}
         	
             const jsonString = buildCommuteJson();
             if (!jsonString) return;
