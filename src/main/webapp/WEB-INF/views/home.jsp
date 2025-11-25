@@ -97,7 +97,8 @@
 						<div class = "form_Normal" style = "text-align: center;">${board.first_Shikyu_Ymd}</div>
 						<div class = "form_Normal">${board.shozoku_Nm}</div>
 						<div class = "form_Normal" style = "text-align: center;">${board.jutaku_Kbn}</div>
-						<div class = "form_Normal" style = "text-align: center;"><span class = "link_text" onclick="onClick(${board.shinsei_No}, ${board.hozon_Uid}, ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
+						<div class = "form_Normal" style = "text-align: center;"><span class = "link_text" 
+							onclick="onClick('<c:out value="${board.shinsei_No}" default=""/>', '<c:out value="${board.hozon_Uid}" default=""/>', ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
 					</div>
 				</c:forEach>
 			</div>
