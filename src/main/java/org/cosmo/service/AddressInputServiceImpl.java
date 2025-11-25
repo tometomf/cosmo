@@ -155,19 +155,19 @@ public class AddressInputServiceImpl implements AddressInputService {
         // 3. DB 조회 (Mapper 호출)
         // DB에서 '도도부현'과 '시구정촌' 정보를 가져옵니다.
         // 결과는 Map이나 별도의 DTO로 받습니다. 여기서는 Map으로 예시를 듭니다.
-        Map<String, String> addressData = addressInputMapper.selectZipCode(zip1, zip2);
+//        Map<String, String> addressData = addressInputMapper.selectZipCode(zip1, zip2);
 
         // 4. 조회된 결과가 있으면 Form에 세팅
-        if (addressData != null) {
-            // DB 컬럼명에 맞춰서 가져옵니다 (예: PREF_NAME, ADDR_NAME)
-            form.setPref(addressData.get("PREF_NAME")); 
-            form.setAddr1(addressData.get("ADDR_NAME"));
-        } else {
+//        if (addressData != null) {
+//            // DB 컬럼명에 맞춰서 가져옵니다 (예: PREF_NAME, ADDR_NAME)
+//            form.setPref(addressData.get("PREF_NAME")); 
+//            form.setAddr1(addressData.get("ADDR_NAME"));
+//        } else {
             // (선택) 조회 결과가 없을 때 처리. 예: 에러 메시지 등
             // form.setPref(""); 
             // form.setAddr1("");
         }
-    }
+//    }
 
     @Override
     public boolean validateAndCheckRoute(AddressInputForm form) {
