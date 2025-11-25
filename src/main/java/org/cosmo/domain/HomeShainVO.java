@@ -15,7 +15,6 @@ public class HomeShainVO {
 	private String shozoku_Cd;
 	private String shozoku_Nm;
 	
-	// 신청정보용
 	private String seq;
 	private String shinsei_No;
 	private String shinsei_Naiyou;
@@ -25,4 +24,5 @@ public class HomeShainVO {
 	private String jutaku_Kbn;	
 	private String shinchoku_Kbn;
 	private String shinchoku_Kbnnm;
+	private String hozon_Uid;
 }
