@@ -1,3 +1,5 @@
+// 作成者 : 권예성
+
 package org.cosmo.service;
 
 import org.cosmo.domain.TokureiForm;
@@ -15,11 +17,11 @@ public class TokureiServiceImpl implements TokureiService {
     @Override
     public void saveTokurei(TokureiForm form) {
 
-    	int kigyoCd = 100; // 임시 (로그인 후 session 값으로 대체 예정)
+    	int kigyoCd = 100; // 임시
     	
     	 int shinseiNo;
     	    if (form.getShinseiNo() == null || form.getShinseiNo().trim().isEmpty()) {
-    	        shinseiNo = 1; // ← 테스트용 기본값
+    	        shinseiNo = 1; // 테스트용 기본값
     	    } else {
     	        shinseiNo = Integer.parseInt(form.getShinseiNo());
     	    }

@@ -1,80 +1,105 @@
 package org.cosmo.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.KeiroDetailDto;
+import org.cosmo.domain.KeiroInfoForm;
+import org.cosmo.domain.KeiroRouteDto;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
+import org.cosmo.mapper.IdoConfirmMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
-public class IdoConfirmServiceImpl implements IdoConfirmService {
+@RequiredArgsConstructor
+public class IdoConfirmServiceImpl implements IdoConfirmService {	 //ì¡°ìš°ì§„
 
+    private final IdoConfirmMapper idoConfirmMapper;	
+    
     @Override
     public NextStep judge(AlertType alertType, boolean kinmu, boolean jusho) {
 
-        // ============================================================
-        // Case 1: IDOU(ÀÌµ¿) / ITEN(ÀÌÀü)¿¡¼­ ÃµÀÌµÈ °æ¿ì
-        // ¼³°è¼­: ±Ù¹«Áö´Â 'º¯ÇÑ´Ù'°¡ °íÁ¤ »óÅÂ¿©¾ß ÇÔ (º¯ÇÏÁö ¾ÊÀ½ ¼±ÅÃ ½Ã ¿¡·¯)
-        // ============================================================
         if (alertType == AlertType.IDOU_ITEN) {
-            // ¨ç ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â -> (4) ÁÖ¼Ò -> (5) °æ·Î
             if (kinmu && jusho) {
-                return new NextStep(NextScreen.WORK_INPUT, false);
+                return new NextStep(NextScreen.WORK_INPUT, false);	
             }
-            // ¨è ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â -> (5) °æ·Î
             if (kinmu && !jusho) {
                 return new NextStep(NextScreen.WORK_INPUT, false);
             }
-            // ¨é, ¨ê ±Ù¹«:¾Èº¯ÇÔ => ¼±ÅÃ ºÒ°¡ (¿¡·¯ Ã³¸®)
             if (!kinmu) {
-                // ¼³°è¼­»ó ¼±ÅÃ ºÒ°¡´ÉÇÑ Á¶ÇÕÀÌ µé¾î¿Â °æ¿ì
                 return new NextStep(NextScreen.APPLICATION_ERROR, false);
             }
         }
 
-        // ============================================================
-        // Case 2: SONOTA(±× ¿Ü)¿¡¼­ ÃµÀÌµÈ °æ¿ì
-        // ============================================================
-        if (alertType == AlertType.SONOTA) {
-            // ¨ç ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â
-            // ¨è ±Ù¹«:º¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (3) ±Ù¹«ÁöÀÔ·Â
+        if (alertType == AlertType.SONOHOKA) {
             if (kinmu) {
                 return new NextStep(NextScreen.WORK_INPUT, false);
             }
             
-            // ¨é ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (4) ÁÖ¼ÒÀÔ·Â
             if (!kinmu && jusho) {
                 return new NextStep(NextScreen.ADDRESS_INPUT, false);
             }
 
-            // ¨ê ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (5) °æ·ÎÁ¤º¸
             if (!kinmu && !jusho) {
                 return new NextStep(NextScreen.COMMUTE_INFO, false);
             }
         }
 
-        // ============================================================
-        // Case 3: JISHIN(ÀÚ½Å/ÀÚÀ²½ÅÃ») - Åë±Ù±³Åëºñ½ÅÃ»
-        // ¼³°è¼­: "±Ù¹«Áö=º¯ÇÑ´Ù"¸¦ ¼±ÅÃÇÏ°í ´ÙÀ½ Å¬¸¯ ½Ã (19) ¿¡·¯ È­¸é
-        // ============================================================
         if (alertType == AlertType.JISHIN) {
-            // ¨ç, ¨è ±Ù¹«:º¯ÇÔ => (19) ½ÅÃ» ¿¡·¯ È­¸é
             if (kinmu) {
                 return new NextStep(NextScreen.APPLICATION_ERROR, false);
             }
 
-            // ¨é ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:º¯ÇÔ => (4) ÁÖ¼ÒÀÔ·Â
             if (!kinmu && jusho) {
                 return new NextStep(NextScreen.ADDRESS_INPUT, false);
             }
 
-            // ¨ê ±Ù¹«:¾Èº¯ÇÔ / ÁÖ¼Ò:¾Èº¯ÇÔ => (5) °æ·ÎÁ¤º¸
-            // *´Ü, ÀÌ °æ¿ì Åë±Ù°æ·Î´Â ¹İµå½Ã º¯ÇÔ (mustChangeRoute = true)
             if (!kinmu && !jusho) {
                 return new NextStep(NextScreen.COMMUTE_INFO, true);
             }
         }
+        return new NextStep(NextScreen.APPLICATION_ERROR, false);//ì—ëŸ¬
+    }
+    
+    @Override
+    public KeiroInfoForm loadKeiroInfo(String shainUid) {
+        KeiroInfoForm form = new KeiroInfoForm();
+        form.setShainUid(shainUid);
 
-        // ±× ¿Ü ¿¹±âÄ¡ ¸øÇÑ ÄÉÀÌ½º´Â ¿¡·¯ Ã³¸®
-        return new NextStep(NextScreen.APPLICATION_ERROR, false);
+        List<KeiroRouteDto> list = new ArrayList<KeiroRouteDto>();
+        
+        KeiroRouteDto route1 = new KeiroRouteDto();
+        route1.setRouteNo(1);
+        route1.setTransportType("è‡ªå‹•è»Š");
+        route1.setStartPoint("ç¥å¥ˆå·çœŒå·å´å¸‚ä¸­åŸåŒºæ–°ä¸¸å­ 1-2-3");
+        route1.setEndPoint("æ±äº¬éƒ½ä¸­é‡åŒºæœ¬ç”º 3-30-4");
+        list.add(route1);
+
+        KeiroRouteDto route2 = new KeiroRouteDto();
+        route2.setRouteNo(2);
+        route2.setTransportType("é›»è»Š");
+        
+        List<KeiroDetailDto> details = new ArrayList<KeiroDetailDto>();
+        
+        KeiroDetailDto d1 = new KeiroDetailDto(); d1.setStationName("å®®å´å°é§…"); d1.setLineName("æ±æ€¥ç”°åœ’éƒ½å¸‚ç·š"); details.add(d1);
+        KeiroDetailDto d2 = new KeiroDetailDto(); d2.setStationName("æ¸‹è°·é§…"); d2.setLineName("æ±äº¬ãƒ¡ãƒˆãƒ­åŠè”µé–€ç·š"); details.add(d2);
+        KeiroDetailDto d3 = new KeiroDetailDto(); d3.setStationName("å¤§æ‰‹ç”º"); d3.setLineName("æ±äº¬ãƒ¡ãƒˆãƒ­ä¸¸ã®å†…ç·š"); details.add(d3);
+        KeiroDetailDto d4 = new KeiroDetailDto(); d4.setStationName("æ±äº¬é§…"); details.add(d4); // ë§ˆì§€ë§‰ ì—­
+        
+        route2.setDetailList(details);
+        list.add(route2);
+
+        form.setRouteList(list);
+        return form;
+    }
+
+    @Override
+    @Transactional
+    public void saveKeiroInfo(KeiroInfoForm form) {
     }
 }

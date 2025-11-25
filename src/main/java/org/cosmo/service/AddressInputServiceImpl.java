@@ -91,13 +91,13 @@ public class AddressInputServiceImpl implements AddressInputService {
     @Override
     public void tempSave(AddressInputForm form, String shainUid) {
         try {
-            System.out.println("===== 일시보존 시작 =====");
-            System.out.println("사용자: " + shainUid);
+            System.out.println("===== test save=== ");
+            System.out.println("user: " + shainUid);
             
             // 1. JSON 변환
             ObjectMapper om = new ObjectMapper();
             String json = om.writeValueAsString(form);
-            System.out.println("저장할 데이터: " + json);
+            System.out.println("date: " + json);
 
             // 2. VO 생성
             IchijiHozonVO vo = new IchijiHozonVO();
@@ -107,17 +107,17 @@ public class AddressInputServiceImpl implements AddressInputService {
             
             // 3. Mapper 호출
             mapper.saveIchijiHozon(vo);
-            System.out.println(">> ICHIJI_HOZON 저장 성공");
+            System.out.println(">> ICHIJI_HOZON save");
 
             // 4. 알림 등록
             mapper.insertOshirase(shainUid, "一時保存しました。");
-            System.out.println(">> 알림 등록 성공");
+            System.out.println(">> ar");
             
         } catch (Exception e) {
-            System.err.println("!!!!! 일시보존 중 에러 발생 !!!!!");
+            System.err.println("!!!!!errr!!!!!");
             e.printStackTrace();
             // 에러를 던져서 트랜잭션이 롤백되게 함 (중요)
-            throw new RuntimeException("일시보존 실패", e);
+            throw new RuntimeException("fffff", e);
         }
     }
 }

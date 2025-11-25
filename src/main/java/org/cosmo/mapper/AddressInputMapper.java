@@ -5,16 +5,12 @@ import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.IchijiHozonVO;
 
 @Mapper
-public interface AddressInputMapper {
-    // »ç¿øÀÇ ÇöÀç ÁÖ¼Ò Á¶È¸
+public interface AddressInputMapper {	//ì¡°ìš°ì§„
     AddressViewDto selectCurrentAddress(String shainUid);
 
-    // »ç¿øÀÇ Áß°£ DB ÁÖ¼Ò(»çÅÃ µî) Á¶È¸
     AddressViewDto selectMiddleAddress(String shainUid);
 
-    // ÀÓ½Ã ÀúÀå (Merge: ÀÖÀ¸¸é Update, ¾øÀ¸¸é Insert)
     void saveIchijiHozon(IchijiHozonVO vo);
     
-    // ¾Ë¸² Å×ÀÌºí ÀúÀå (¼³°è¼­ 16¹ø Å×ÀÌºí)
     void insertOshirase(String shainUid, String message);
 }

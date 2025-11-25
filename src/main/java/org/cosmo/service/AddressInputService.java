@@ -1,21 +1,18 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.AddressInputForm;
+//ì¡°ìš°ì§„
 import org.cosmo.domain.AddressViewDto;
 
 public interface AddressInputService {
     AddressInputForm initForm();
     AddressViewDto loadViewData(String shainUid);
     
-    // ¹İ¿µ ¹öÆ° ·ÎÁ÷
     void reflectMiddleAddress(AddressInputForm form, String shainUid);
     
-    // ¿ìÆí¹øÈ£ °Ë»ö ·ÎÁ÷
     void searchZipCode(AddressInputForm form);
     
-    // À¯È¿¼º °Ë»ç ¹× ³×ºñÅ¸ÀÓ Ã¼Å© (Next ¹öÆ°¿ë)
     boolean validateAndCheckRoute(AddressInputForm form);
     
-    // ÀÓ½Ã ÀúÀå
     void tempSave(AddressInputForm form, String shainUid);
 }
