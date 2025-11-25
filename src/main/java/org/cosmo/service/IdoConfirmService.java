@@ -1,18 +1,20 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.KeiroInfoForm;
 import org.cosmo.domain.NextStep;
 
 public interface IdoConfirmService {
 
     /**
-     * ì„¤ê³„ì„œ 3.ã€Œæ¬¡ã¸ã€ãƒœã‚¿ãƒ³ã‚’ã‚¯ãƒªãƒƒã‚¯ ë¶„ê¸° ë¡œì§
-     *
-     * @param alertType      ã‚¢ãƒ©ãƒ¼ãƒˆç¨®é¡
-     * @param workPlaceChange å‹¤å‹™åœ°ãŒ å¤‰ã‚ã‚‹(true) / å¤‰ã‚ã‚‰ãªã„(false)
-     * @param addressChange   ä½æ‰€ãŒ   å¤‰ã‚ã‚‹(true) / å¤‰ã‚ã‚‰ãªã„(false)
+     * 0200
      */
-    NextStep decideNextStep(AlertType alertType,
-                            boolean workPlaceChange,
-                            boolean addressChange);
+    NextStep judge(AlertType alertType, boolean kinmu, boolean jusho);
+    
+ // [Ãß°¡] °æ·Î Á¤º¸ È­¸é µ¥ÀÌÅÍ ·Îµå
+    KeiroInfoForm loadKeiroInfo(String shainUid);
+    
+    // [Ãß°¡] °æ·Î Á¤º¸ ÀúÀå (´ÙÀ½ ¹öÆ° ´©¸¦ ¶§ µî)
+    void saveKeiroInfo(KeiroInfoForm form);
+
 }
