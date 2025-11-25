@@ -327,7 +327,7 @@
 			 <img src="/resources/img/back_btn01.gif" alt="戻る">
 			 </a>
        
-    <form id="submitForm" method="post" action="<c:url value='/hiwariKakunin/submit'/>" style="display:inline;">
+    <form id="submitForm" method="post" action="<c:url value='/hiwariKinmuchi/submit'/>" style="display:inline;">
       <a href="javascript:void(0);" onclick="document.getElementById('submitForm').submit();">
         <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
       </a>
