@@ -346,13 +346,10 @@
     </div>
   </div>
 </div>
-
 <script type="text/javascript">
-  /**
-   * Kakunin 화면에서 보여지는 값을 JSON으로 묶어서
-   * /hiwariKinmuchi/tempSave (POST)로 보내는 함수
-   */
+ 
   function saveTempFromKakunin() {
+   
     var data = {
       emp: {
         no:        "${emp.no}",
@@ -390,21 +387,25 @@
     form.action = "<c:url value='/hiwariKinmuchi/tempSave'/>";
 
     var jsonInput = document.createElement("input");
-    jsonInput.type = "hidden";
-    jsonInput.name = "commuteJson";
+    jsonInput.type  = "hidden";
+    jsonInput.name  = "commuteJson";
     jsonInput.value = JSON.stringify(data);
     form.appendChild(jsonInput);
 
     var actionInput = document.createElement("input");
-    actionInput.type = "hidden";
-    actionInput.name = "actionUrl";
-    actionInput.value = "/hiwariKakunin/kakunin";
+    actionInput.type  = "hidden";
+    actionInput.name  = "actionUrl";
+    actionInput.value = "/hiwariKakunin/kakunin";  
     form.appendChild(actionInput);
+
+    
+    var redirectInput = document.createElement("input");
+    redirectInput.type  = "hidden";
+    redirectInput.name  = "redirectUrl";
+    redirectInput.value = "";
+    form.appendChild(redirectInput);
 
     document.body.appendChild(form);
     form.submit();
   }
 </script>
-
-</body>
-</html>
