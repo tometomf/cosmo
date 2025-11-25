@@ -11,9 +11,7 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
-  html { overflow-y: scroll; }  
-
-  
+ 
   .finish-wrap { display:flex; justify-content:center; }
   .finish-box {
     width:520px;            
