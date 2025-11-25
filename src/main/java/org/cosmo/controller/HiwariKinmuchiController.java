@@ -373,30 +373,32 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariMap";
     }
 
-   //유지희
-    @GetMapping("/submit")
-    public String submitApplication(HttpSession session, RedirectAttributes ra) {
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shinseiNo = (Long) session.getAttribute("SHINSEI_NO");
-        
-        if (kigyoCd == null) kigyoCd = 1;
-        if (shinseiNo == null) shinseiNo = 1L;
-        
-        try {
-            
-            service.submitApplication(kigyoCd, shinseiNo);
-            
-            ra.addFlashAttribute("message", "申請が完了しました");
-            
-            return "redirect:/hiwariKinmuchi/hiwariKanryo";
-            
-        } catch (Exception e) {
-           
-            ra.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
-            
-            return "redirect:/hiwariKinmuchi/kakunin";
-        }
-    }
+ @PostMapping("/submit")
+ public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
+
+     Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
+     Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+
+     // 세션 값 비어 있으면 기본값 세팅
+     if (kigyoCd == null) kigyoCd = 100;
+     if (shinseiNo == null) shinseiNo = 1L;
+
+     try {
+         // ★ DB 업데이트 (header + route + 금액 등)
+         service.submitApplication(kigyoCd, shinseiNo);
+
+         // 완료화면 파라미터 전달
+         rttr.addAttribute("shinseiNo", shinseiNo);
+
+         // 완료 화면으로 이동
+         return "redirect:/hiwariKinmuchi/kanryo";
+
+     } catch (Exception e) {
+         rttr.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
+         return "redirect:/hiwariKinmuchi/kakunin";
+     }
+ }
+
     //유지희 끝
 
     //서혜원
