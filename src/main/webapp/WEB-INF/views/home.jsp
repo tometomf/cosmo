@@ -97,7 +97,7 @@
 						<div class = "form_Normal" style = "text-align: center;">${board.first_Shikyu_Ymd}</div>
 						<div class = "form_Normal">${board.shozoku_Nm}</div>
 						<div class = "form_Normal" style = "text-align: center;">${board.jutaku_Kbn}</div>
-						<div class = "form_Normal" style = "text-align: center;"><span class = "link_text" onclick="onClick(${board.shinsei_No}, ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
+						<div class = "form_Normal" style = "text-align: center;"><span class = "link_text" onclick="onClick(${board.shinsei_No}, ${board.hozon_Uid}, ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
 					</div>
 				</c:forEach>
 			</div>
@@ -122,16 +122,18 @@
 		} 
 	}
 	
-	function onClick(shinseiNo, shinchokuKbn) {
+	function onClick(shinseiNo, hozon_Uid, shinchokuKbn) {
 		
 		var target = window.location.origin + '/shinsei'; 
 	    
 		if (shinchokuKbn == '1') {
-			window.location.href = target + '/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + '';
+			window.location.href = target + '/ichiji' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
 		} else if (shinchokuKbn == '2') {
 			window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
 		} else if (shinchokuKbn == '3') {
 			// window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
+		} else if (shinchokuKbn == '5') {
+			window.location.href = target + '/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
 		}
 	}
 	
