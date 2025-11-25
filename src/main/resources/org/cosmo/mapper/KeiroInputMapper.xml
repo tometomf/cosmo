@@ -329,7 +329,7 @@
     </resultMap>
    
    	<!-- 하정 -->
-       <select id="selectStartKeiroOne"
+       <select id="selectStartKeiro"
             resultMap="ShinseiStartKeiroMap">
 
         SELECT

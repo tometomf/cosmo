@@ -176,22 +176,25 @@ public class KeiroInputController {
 		 if(keiroSeq != null && keiroSeq != null) {			 
 			 ShinseiStartKeiroVO shinseiStartKeiro= keiroInputservice.getStartKeiroOne(Integer.valueOf(shain.getKigyo_Cd()), Integer.valueOf(shain.getShain_Uid()), Integer.valueOf(shinseiNo), Integer.valueOf(keiroSeq));   
 			 
-			 String busCompany = shinseiStartKeiro.getBusCorpNm();
-			 String startPlace = shinseiStartKeiro.getStartPlace();
-			 String endPlace = shinseiStartKeiro.getEndPlace();
-			 Integer KatamichiKin = shinseiStartKeiro.getKatamichiKin();
-			 Integer SanshoTeikiKin1 = shinseiStartKeiro.getSanshoTeikiKin1();
-			 Integer SanshoTeikiKin2 = shinseiStartKeiro.getSanshoTeikiKin2();
-			 Integer SanshoTeikiKin3 = shinseiStartKeiro.getSanshoTeikiKin3();
-		 
-		 
-			 model.addAttribute("busCompany", busCompany);
-			 model.addAttribute("startPlace", startPlace);
-			 model.addAttribute("endPlace", endPlace);
-			 model.addAttribute("KatamichiKin", KatamichiKin);   
-			 model.addAttribute("SanshoTeikiKin1", SanshoTeikiKin1);   
-			 model.addAttribute("SanshoTeikiKin2", SanshoTeikiKin2);   
-			 model.addAttribute("SanshoTeikiKin3", SanshoTeikiKin3);    
+			 if(shinseiStartKeiro != null) {				 
+				 String busCompany = shinseiStartKeiro.getBusCorpNm();
+				 String startPlace = shinseiStartKeiro.getStartPlace();
+				 String endPlace = shinseiStartKeiro.getEndPlace();
+				 Integer KatamichiKin = shinseiStartKeiro.getKatamichiKin();
+				 Integer SanshoTeikiKin1 = shinseiStartKeiro.getSanshoTeikiKin1();
+				 Integer SanshoTeikiKin2 = shinseiStartKeiro.getSanshoTeikiKin2();
+				 Integer SanshoTeikiKin3 = shinseiStartKeiro.getSanshoTeikiKin3();
+				 
+				 
+				 model.addAttribute("busCompany", busCompany);
+				 model.addAttribute("startPlace", startPlace);
+				 model.addAttribute("endPlace", endPlace);
+				 model.addAttribute("KatamichiKin", KatamichiKin);   
+				 model.addAttribute("SanshoTeikiKin1", SanshoTeikiKin1);   
+				 model.addAttribute("SanshoTeikiKin2", SanshoTeikiKin2);   
+				 model.addAttribute("SanshoTeikiKin3", SanshoTeikiKin3);    
+			 }
+			 
 		 }
 		   
 		   
