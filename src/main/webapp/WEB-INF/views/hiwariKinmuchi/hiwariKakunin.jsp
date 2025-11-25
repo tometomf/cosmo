@@ -296,8 +296,8 @@
           </a>
           <a href="<c:url value='/hiwariKakunin/submit'/>">
             <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
-          </a>
-          <a href="<c:url value='/hiwariKinmuchi/saveTemp'/>">
+           <!-- 一時保存: JS 호출 -->
+          <a href="javascript:void(0);" onclick="saveTempFromKakunin();">
             <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
           </a>
         </div>
@@ -309,5 +309,66 @@
     </div>
   </div>
 </div>
+
+<!-- ★ 스크립트는 여기 (body 끝) 에 배치 -->
+<script type="text/javascript">
+  /**
+   * Kakunin 화면에서 보여지는 값을 JSON으로 묶어서
+   * /hiwariKinmuchi/tempSave (POST)로 보내는 함수
+   */
+  function saveTempFromKakunin() {
+    var data = {
+      emp: {
+        no:        "${emp.no}",
+        name:      "${emp.name}",
+        workplace: "${emp.workplace}",
+        address:   "${emp.address}"
+      },
+      route1: {
+        transport:     "${route1.transport}",
+        route:         "${route1.route}",
+        workDays:      "${route1.workDays}",
+        oneWayFee:     "${route1.oneWayFee}",
+        amount:        "${route1.amount}",
+        amountMonthly: "${route1.amountMonthly}"
+      },
+      route2: {
+        transport:     "${route2.transport}",
+        route:         "${route2.route}",
+        workDays:      "${route2.workDays}",
+        oneWayFee:     "${route2.oneWayFee}",
+        amount:        "${route2.amount}",
+        amountMonthly: "${route2.amountMonthly}"
+      },
+      apply: {
+        kind:        "${apply.kind}",
+        reason:      "${apply.reason}",
+        periodText:  "${apply.periodText}",
+        workDays:    "${apply.workDays}",
+        totalAmount: "${apply.totalAmount}"
+      }
+    };
+
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "<c:url value='/hiwariKinmuchi/tempSave'/>";
+
+    var jsonInput = document.createElement("input");
+    jsonInput.type = "hidden";
+    jsonInput.name = "commuteJson";
+    jsonInput.value = JSON.stringify(data);
+    form.appendChild(jsonInput);
+
+    var actionInput = document.createElement("input");
+    actionInput.type = "hidden";
+    actionInput.name = "actionUrl";
+    actionInput.value = "/hiwariKakunin/kakunin";
+    form.appendChild(actionInput);
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>
+
 </body>
 </html>

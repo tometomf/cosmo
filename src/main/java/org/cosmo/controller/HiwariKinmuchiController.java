@@ -172,29 +172,7 @@ public class HiwariKinmuchiController {
         return String.format("%,d円", amount);
     }
     
-    /**
-     * 4. 「一時保存」ボタン押下時（確認画面用）
-     */
-    @GetMapping("/saveTemp")
-    public String saveTempKakunin(HttpSession session, Model model) {
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shinseiNo = (Long) session.getAttribute("SHINSEI_NO");
-        
-        // 테스트용 임시 데이터
-        if (kigyoCd == null) kigyoCd = 1;
-        if (shinseiNo == null) shinseiNo = 1L;
-        
-        // 세션에 임시저장 플래그 설정
-        session.setAttribute("TEMP_SAVED", true);
-        session.setAttribute("TEMP_SAVE_KIGYO_CD", kigyoCd);
-        session.setAttribute("TEMP_SAVE_SHINSEI_NO", shinseiNo);
-        
-        // 필요한 데이터를 model에 추가
-        model.addAttribute("kigyoCd", kigyoCd);
-        model.addAttribute("shinseiNo", shinseiNo);
-        
-        return "shinsei/11_shinseiDetail_02";
-    }
+  
     // =========================
     // 完了画面
     // =========================
