@@ -5,8 +5,8 @@
 <mapper namespace="org.cosmo.mapper.HiwariKinmuchiMapper">
 
 
-
-	<!-- 여기부터 킨무지 -->
+	<!-- 서혜원 -->
+	<!-- 여기부터 킨무지 --> 
 	<!-- 申請前：SHAIN + SHOZOKU -->
 	<select id="getBeforeShinsei"
 		resultType="org.cosmo.domain.HiwariKinmuchiVO">
@@ -115,7 +115,7 @@
 
 	<!-- 여기까지 킨무지 -->
 
-
+	<!-- 서혜원 -->
 	<!-- 여기부터 어드레스 -->
 	<!-- 日割住所 페이지 데이터 조회 -->
 <select id="getAddressPageDataBefore" resultType="org.cosmo.domain.HiwariAddressVO">
@@ -133,7 +133,12 @@
         NULL AS newZip,
         NULL AS newAddress1,
         NULL AS newAddress2,
-        NULL AS newAddress3
+        NULL AS newAddress3,
+        
+        -- この住所を反映 用(중간DB)
+        s.DB_ZIP_CD     AS dbZip,
+        s.DB_ADDRESS_1  AS dbAddress1,
+        s.DB_ADDRESS_2  AS dbAddress2
 
     FROM SHAIN s
     LEFT JOIN SHOZOKU z
@@ -159,7 +164,12 @@
         sh.NEW_KINMU_ZIP_CD     AS newZip,
         sh.NEW_KINMU_ADDRESS_1  AS newAddress1,
         sh.NEW_KINMU_ADDRESS_2  AS newAddress2,
-        sh.NEW_KINMU_ADDRESS_3  AS newAddress3
+        sh.NEW_KINMU_ADDRESS_3  AS newAddress3,
+        
+        -- この住所を反映 用
+        s.DB_ZIP_CD     AS dbZip,
+        s.DB_ADDRESS_1  AS dbAddress1,
+        s.DB_ADDRESS_2  AS dbAddress2
 
     FROM SHAIN s
     LEFT JOIN SHINSEI sh

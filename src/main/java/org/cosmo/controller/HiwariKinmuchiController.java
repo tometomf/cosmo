@@ -54,27 +54,27 @@ public class HiwariKinmuchiController {
     private AddressInputService addressService;
   
     
-    
+    //서혜원
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
-        // 🔥 (1) 로그인 체크 – shain 세션 없으면 홈으로
+        // (1) ログインチェック - shainセッションがなければホームに
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
             return "redirect:/";
         }
 
-        // 🔥 (2) 세션에서 값 꺼내기
+        // (2) セッションから値を取り出す
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
         Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
 
-        // 🔥 (3) null 방지 기본값 넣기 (지금은 로그인X 상태라 필수)
+        // (3) null防止のデフォルト値を入れる(今はログインX状態なので必須)
         if (kigyoCd == null) kigyoCd = 1001;   // 기본 기업 코드
         if (shainUid == null) shainUid = 1L;   // 기본 사원 UID
-        // shinseiNo는 신청 전이면 null이 정상. 건드리지 않음.
+        // shinseiNoは申請前ならnullが正常。 手付かず。
 
-        // 🔥 (4) 신청 전/후 데이터 가져오기
+        // (4) 申請前/後のデータのインポート
         HiwariKinmuchiVO data;
         if (shinseiNo == null) {
             data = service.getBeforeShinsei(kigyoCd, shainUid);
@@ -82,10 +82,10 @@ public class HiwariKinmuchiController {
             data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
         }
 
-        // 🔥 (5) 소속 리스트(선택박스)
+        // (5) 所属リスト(選択ボックス)
         List<String> shoList = service.getShozokuNames(kigyoCd);
 
-        // 🔥 (6) JSP로 전달
+        // (6) JSPで配信
         model.addAttribute("initData", data);
         model.addAttribute("shoList", shoList);
 
@@ -93,7 +93,7 @@ public class HiwariKinmuchiController {
     }
 
 
-    
+  //서혜원
     @GetMapping("/address")
     public String showHiwariAddressPage(HttpSession session, Model model) {
     	
@@ -123,6 +123,7 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariAddress";
     }
     
+    //서혜원
     @GetMapping("/riyu")
     public String showRiyuPage() {
         return "hiwariKinmuchi/hiwariRiyu";
@@ -369,7 +370,7 @@ public class HiwariKinmuchiController {
     }
     
 
-    
+    //서혜원
     @PostMapping("/tempSave")
     public String tempSaveKinmu(
             @RequestParam("commuteJson") String commuteJson,

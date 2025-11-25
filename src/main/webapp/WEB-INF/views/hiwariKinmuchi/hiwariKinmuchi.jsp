@@ -3,6 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+
+
+<!-- 서혜원 -->
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -166,7 +171,7 @@ p {
         <%@ include file="/WEB-INF/views/common/footer.jsp"%>
     </div>
 
-    <!-- ▼ 임시저장용 폼 -->
+    <!-- ▼ 一時保存用フォーム-->
     <form id="kinmuTempForm" method="post" action="<c:url value='/hiwariKinmuchi/tempSave'/>">
         <input type="hidden" name="commuteJson" value="">
         <input type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE">
@@ -232,7 +237,6 @@ p {
         return JSON.stringify(shinseiIcData);
     }
 
-    /* ▲ JSON 생성 끝 */
 
     /* ▼ 임시저장 버튼 이벤트 ⭐⭐⭐ */
     document.addEventListener("DOMContentLoaded", function () {

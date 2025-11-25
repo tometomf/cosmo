@@ -4,7 +4,7 @@ import org.apache.ibatis.type.Alias;
 import lombok.Data;
 
 @Data
-@Alias("HiwariKinmuchiVO")
+@Alias("HiwariKinmuchiVO") //서혜원
 public class HiwariKinmuchiVO {
 
     // ===== 現勤務地 쪽 =====

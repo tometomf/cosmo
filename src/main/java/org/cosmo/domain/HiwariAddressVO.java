@@ -4,7 +4,7 @@ import org.apache.ibatis.type.Alias;
 import lombok.Data;
 
 @Data
-@Alias("HiwariAddressVO")
+@Alias("HiwariAddressVO") //서혜원
 public class HiwariAddressVO {
 
     // ===== 上部 주소 바 (社宅住所 → 이 화면으로 복사되는 주소) =====
@@ -26,4 +26,6 @@ public class HiwariAddressVO {
     private String dbZip;
     private String dbAddress1;
     private String dbAddress2;
+    
+    
 }

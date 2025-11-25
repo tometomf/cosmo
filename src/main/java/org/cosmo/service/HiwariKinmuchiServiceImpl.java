@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
 
+	
+	//서혜원 시작
     @Autowired
     private HiwariKinmuchiMapper mapper;
 
@@ -38,4 +40,5 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     public HiwariAddressVO getAddressPageDataBefore(Integer kigyoCd, Long shainUid) {
         return mapper.getAddressPageDataBefore(kigyoCd, shainUid);
     }
+    //서혜원 끝
 }
