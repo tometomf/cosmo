@@ -17,16 +17,16 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class IdoConfirmServiceImpl implements IdoConfirmService {
+public class IdoConfirmServiceImpl implements IdoConfirmService {	 //조우진
 
-    private final IdoConfirmMapper idoConfirmMapper;
-
+    private final IdoConfirmMapper idoConfirmMapper;	
+    
     @Override
     public NextStep judge(AlertType alertType, boolean kinmu, boolean jusho) {
 
         if (alertType == AlertType.IDOU_ITEN) {
             if (kinmu && jusho) {
-                return new NextStep(NextScreen.WORK_INPUT, false);
+                return new NextStep(NextScreen.WORK_INPUT, false);	
             }
             if (kinmu && !jusho) {
                 return new NextStep(NextScreen.WORK_INPUT, false);
@@ -65,6 +65,7 @@ public class IdoConfirmServiceImpl implements IdoConfirmService {
         }
         return new NextStep(NextScreen.APPLICATION_ERROR, false);//에러
     }
+    
     @Override
     public KeiroInfoForm loadKeiroInfo(String shainUid) {
         KeiroInfoForm form = new KeiroInfoForm();

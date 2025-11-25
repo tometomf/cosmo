@@ -4,20 +4,14 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.cosmo.domain.KeiroInfoForm;
 import org.cosmo.domain.KeiroRouteDto;
-
+					//ì¡°ìš°ì§„
 @Mapper
 public interface IdoConfirmMapper {
     
-    // »ç¿øÀÇ °æ·Î º¯°æÀÏ Á¤º¸ Á¶È¸
     KeiroInfoForm selectKeiroHeader(String shainUid);
 
-    // »ç¿øÀÇ ¸ğµç °æ·Î ¸®½ºÆ® Á¶È¸
     List<KeiroRouteDto> selectRouteList(String shainUid);
     
-    // (ÇÊ¿ä½Ã) ÀüÃ¶ »ó¼¼ °æ·Î Á¶È¸ - MyBatis ResultMapÀ¸·Î ÇÑ ¹ø¿¡ °¡Á®¿À´Â °ÍÀ» ÃßÃµÇÏÁö¸¸ º°µµ ¸Ş¼­µå ¿¹½Ã
-    // List<KeiroDetailDto> selectRouteDetails(int routeId);
-    
-    // ÀúÀå °ü·Ã (Âü°í¿ë)
     void insertKeiroHeader(KeiroInfoForm form);
     void insertRoute(KeiroRouteDto route);
 }

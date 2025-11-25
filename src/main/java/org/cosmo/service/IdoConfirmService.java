@@ -7,14 +7,12 @@ import org.cosmo.domain.NextStep;
 public interface IdoConfirmService {
 
     /**
-     * 0200
+     * 0200 Ï°∞Ïö∞ÏßÑ
      */
     NextStep judge(AlertType alertType, boolean kinmu, boolean jusho);
     
- // [√ﬂ∞°] ∞Ê∑Œ ¡§∫∏ »≠∏È µ•¿Ã≈Õ ∑ŒµÂ
     KeiroInfoForm loadKeiroInfo(String shainUid);
     
-    // [√ﬂ∞°] ∞Ê∑Œ ¡§∫∏ ¿˙¿Â (¥Ÿ¿Ω πˆ∆∞ ¥©∏¶ ∂ß µÓ)
     void saveKeiroInfo(KeiroInfoForm form);
 
 }

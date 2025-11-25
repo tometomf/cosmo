@@ -8,17 +8,20 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.IdoCheckForm;
 import org.cosmo.domain.KinmuForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
+import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
+import org.cosmo.service.FuzuiShoruiService;
 import org.cosmo.service.GeoService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.IdoConfirmService;
@@ -42,45 +45,41 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IdoConfirmController {
 
-    // ===== 의존성 주입 (Service) =====
-    // 0200 / 0400 공통
     private final AddressInputService addressInputService; // 0400 화면용
     private final IdoConfirmService idoConfirmService;     // 0200 화면 판정용
+    
     private final ShozokuService shozokuService;
     private final TokureiService tokureiService;
 
-    // 03_근무지 입력 + 임시보존용
     private final GeoService geoService;
     private final AddressService addressService;
+    
     private final IchijiHozonService ichijiHozonService;
     private final OshiraseService oshiraseService;
+    private final FuzuiShoruiService fuzuiShoruiService;
 
-    // 0200 화면: 이동/이전 확인 (GET)
-    @GetMapping("/idoconfirm")
+    
+    @GetMapping("/idoconfirm")	//02조우진
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
             Model model) {
 
         if (alertType == null) {
-            alertType = AlertType.SONOHOKA;
+            alertType = AlertType.JISHIN;
         }
-
-        // 폼 초기화
+      
         IdoCheckForm form = new IdoCheckForm();
 
-        // [설계서] IDOU_ITEN인 경우 "근무지는 변한다"가 선택된 상태로 고정
         if (alertType == AlertType.IDOU_ITEN) {
             form.setKinmuChange("Y");
         }
-
         model.addAttribute("alertType", alertType);
         model.addAttribute("form", form);
 
         return "idoconfirm/02_idoConfirm";
     }
-
-    // 0200 화면: [다음] 버튼 클릭 시 (POST)
-    @PostMapping("/next")
+    
+    @PostMapping("/next") //02조우진
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
             @RequestParam(name = "alertType", required = false) AlertType alertType,
@@ -89,15 +88,12 @@ public class IdoConfirmController {
         if (alertType == null) {
             alertType = AlertType.SONOHOKA;
         }
-
         boolean kinmu = form.isKinmuChanged();
         boolean jusho = form.isJushoChanged();
 
-        // Service 로직 수행
         NextStep step = idoConfirmService.judge(alertType, kinmu, jusho);
         NextScreen nextScreen = step.getFirstScreen();
 
-        // 폼 데이터 유지 (이름 충돌 방지를 위해 idoCheckForm으로 변경)
         rttr.addFlashAttribute("idoCheckForm", form);
         rttr.addFlashAttribute("alertType", alertType);
 
@@ -118,35 +114,31 @@ public class IdoConfirmController {
                 if (alertType == AlertType.IDOU_ITEN) {
                     errorMsg = "異動・移転の場合は「勤務地：変わる」を選択してください。";
                 } else if (alertType == AlertType.JISHIN) {
-                    errorMsg = "「自ら申請を行う」場合は「勤務地：変わる」は選択不可です。";
+                	throw new RuntimeException();
                 } else {
                     errorMsg = "選択された組み合わせは無効です。";
                 }
-
                 rttr.addFlashAttribute("errorMessage", errorMsg);
                 return "redirect:/idoconfirm/idoconfirm?alertType=" + alertType.name();
         }
     }
 
-    // 0400 화면: 주소 입력 (GET)
+    // 04조우진
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
-        String shainUid = "testUser"; // TODO: 실제로는 세션에서 가져와야 함
+        String shainUid = "INSERT INTO SHAIN (SHAIN_UID, SHAIN_NAME, ZIP_CD, PREF_NAME, ADDR1, ADDR2)"; 
 
-        // 화면 표시 데이터 로드 (현주소, 반영할 주소)
         AddressViewDto view = addressInputService.loadViewData(shainUid);
 
-        // 폼이 RedirectAttributes로 넘어왔는지 확인 (없으면 초기화)
         if (!model.containsAttribute("addressInputForm")) {
             model.addAttribute("addressInputForm", addressInputService.initForm());
         }
-
         model.addAttribute("view", view);
 
         return "idoconfirm/04_addressinput";
     }
 
-    // 0400 화면: 주소 입력 액션 처리 (POST)
+    // 04조우진
     @PostMapping("/addressinput")
     public String addressInputPost(
             @ModelAttribute("addressInputForm") AddressInputForm form,
@@ -154,24 +146,24 @@ public class IdoConfirmController {
             Model model,
             RedirectAttributes rttr) {
 
-        String shainUid = "testUser"; // TODO: 실제로는 세션에서 가져와야 함
-        String action = form.getAction(); // 버튼에서 설정한 값 (reflect, search, tempsave, next)
+        String shainUid = "testUser"; // 
+        String action = form.getAction(); 
 
-        // 1. [반영] 버튼
+        // 반영 버튼
         if ("reflect".equals(action)) {
             addressInputService.reflectMiddleAddress(form, shainUid);
             model.addAttribute("view", addressInputService.loadViewData(shainUid));
             return "idoconfirm/04_addressinput";
         }
 
-        // 2. [검색] 버튼
+        // 검색 버튼
         if ("search".equals(action)) {
             addressInputService.searchZipCode(form);
             model.addAttribute("view", addressInputService.loadViewData(shainUid));
             return "idoconfirm/04_addressinput";
         }
 
-        // 3. [일시보존] 버튼
+        // 일시보존 버튼
         if ("tempsave".equals(action)) {
             addressInputService.tempSave(form, shainUid);
             rttr.addFlashAttribute("message", "一時保存しました。");
@@ -179,7 +171,7 @@ public class IdoConfirmController {
             return "redirect:/idoconfirm/addressinput";
         }
 
-        // 4. [다음] 버튼
+        // 다음 버튼
         if ("next".equals(action)) {
             boolean isValid = addressInputService.validateAndCheckRoute(form);
             if (!isValid) {
@@ -187,20 +179,21 @@ public class IdoConfirmController {
                 model.addAttribute("view", addressInputService.loadViewData(shainUid));
                 return "idoconfirm/04_addressinput";
             }
-            // 성공 시 다음 화면으로
+            // 다음 화면
             return "redirect:/idoconfirm/keiroInfo";
         }
 
         return "redirect:/idoconfirm/addressinput";
     }
 
-    // 근무지 입력 (기존 유지)
+    // 作成者 : 권예성
+    // 근무지 입력
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
         return "idoconfirm/03_kinmuInput";
     }
 
-    
+    // 作成者 : 권예성
     @GetMapping("/input")
     public String showKinmuInput(Model model) {
         KinmuForm form = new KinmuForm();
@@ -209,6 +202,7 @@ public class IdoConfirmController {
         return "idoconfirm/03_kinmuInput";
     }
 
+    // 作成者 : 권예성
     // 3번 화면에서 "次へ" 클릭 시
     @PostMapping("/kinmuNext")
     public String kinmuNext(@ModelAttribute("kinmuForm") KinmuForm form,
@@ -259,6 +253,7 @@ public class IdoConfirmController {
         }
     }
 
+    // 作成者 : 권예성
     // 勤務地入力 화면의 임시보존(tempSave) 처리
     @PostMapping("/tempSave")
     public String tempSaveKinmu(
@@ -267,7 +262,7 @@ public class IdoConfirmController {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
-            // 로그인 안 거치고 직접 URL 접근하면 여기서 터짐 (원래 그 설계 그대로 유지)
+            
             throw new RuntimeException("セッションに社員情報がありません。");
         }
 
@@ -303,22 +298,112 @@ public class IdoConfirmController {
         return "idoconfirm/05_keiroInfo";
     }
 
-    // 기타 화면들
-    @GetMapping("/huzuikanri")
-    public String huzuikanri() {
-        return "idoconfirm/08_huzuiKanri";
-    }
+    // =====================================
+    // 기타 화면들 (기존 유지)
+    // =====================================
+    
+    // 윤종운
+	@GetMapping("/huzuikanri")
+	public String huzuikanri(@ModelAttribute SearchCriteriaDTO criteria, Model model, HttpSession session) {
+		
+		if (criteria == null) {
+			return "redirect:/fatalError";
+		}
+		
+		// --- 0. 임시 더미데이터 주입
+		
+		// 0-1. 세션 데이터 시뮬레이션
+		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
+		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		
+		// kigyoCd 처리 (int)
+		int kigyoCdValue = (kigyoCd == null) ? 0 : kigyoCd.intValue();
+		if (kigyoCdValue == 0) {
+			kigyoCdValue = 100;
+			kigyoCd = kigyoCdValue; // Integer 객체 업데이트
+			session.setAttribute("kigyoCd", kigyoCd);
+		}
+		
+		// shainUid 처리 (Integer)
+		Integer shainUidValue = (shainUid == null) ? 0 : shainUid.intValue();
+		if (shainUidValue == 0) {
+			shainUidValue = 30000001; //
+			shainUid = shainUidValue;
+			session.setAttribute("shainUid", shainUid);
+		}
+		
+		// 0-2. 요청 파라미터(criteria) 시뮬레이션
+		if (criteria.getShinseiNo() == 0) {
+			criteria.setShinseiNo(1);
+		}
+		if (criteria.getKeiroSeq() == 0) {
+			criteria.setKeiroSeq(1);
+		}
+		
+		// --- 더미 데이터 주입 끝
+		
+		// 필수 키 값 criteria에 반영
+		
+		Integer currentKigyoCd = criteria.getKigyoCd();
+		if (currentKigyoCd == null || currentKigyoCd.intValue() == 0) {
+			criteria.setKigyoCd(kigyoCdValue);
+		}
+		
+		Integer currentShainUid = criteria.getShainUid(); // NPE 방지를 위해 변수에 담기
+		if (currentShainUid == null || currentShainUid.intValue() == 0) {
+			criteria.setShainUid(shainUidValue);
+		}
+		
+		// 필수 키 값 criteria 반영 끝
+		
+		// --- 디버그 코드 추가 ---
+		System.out.println("DEBUG: Final kigyoCd = " + criteria.getKigyoCd());
+		System.out.println("DEBUG: Final shinseiNo = " + criteria.getShinseiNo());
+		// -----------------
 
+		// 1. 조회 조건 검증 (필수 키 값 확인)
+		if (criteria.getKigyoCd() == 0 || criteria.getShinseiNo() == 0) {
+			// 필수 값이 없으면 오류 처리 또는 리다이렉트
+			System.err.println("조회 조건 검증 중 오류 발생");
+			return "redirect:/error";
+		}
+
+		try {
+			// 2. 서비스 호출: 화면에 필요한 모든 데이터(신청 정보, 경로 목록, 마스터)를 가져옵니다.
+			FuzuiShoruiFormDTO formData = fuzuiShoruiService.getInitialData(criteria);
+			
+			// --- 서비스 호출 확인 디버그 코드 추가
+			System.out.println("DEBUG: Service call succeeded. Processing to rendering.");
+			// --------------
+
+			// 3. JSP에 데이터 전달
+			model.addAttribute("formData", formData);
+
+			// 4. 기존 JSP 반환
+			return "idoconfirm/08_huzuiKanri";
+
+		} catch (Exception e) {
+			System.err.println("부수 서류 조회 중 오류 발생: " + e.getMessage());
+			// 로그 기록 (PROCESS_LOG 테이블에 실패 기록)
+			// logService.logError(e, "08_huzuiKanri 초기 로딩");
+			e.printStackTrace();
+			return "redirect:/error";
+		}
+	}
+	
+	// 윤종운
     @GetMapping("/kakuninpage")
     public String kakuninpage() {
         return "idoconfirm/09_kakuninPage";
     }
 
+    // 作成者 : 권예성
     @GetMapping("/kanryoPage")
     public String kanryoPage() {
         return "idoconfirm/10_kanryoPage";
     }
 
+    // 作成者 : 권예성
     // 팝업 및 특례 신청
     @GetMapping("/shozokuSearchPopup")
     public String shozokuSearchPopup(Model model) {
@@ -328,6 +413,7 @@ public class IdoConfirmController {
         return "idoconfirm/shozokuSearchPopup";
     }
 
+    // 作成者 : 권예성
     // 특례 신청 화면
     @GetMapping("/tokureiShinsei")
     public String tokureiShinsei(
@@ -348,6 +434,7 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
+    // 作成者 : 권예성
     // 특례 신청 Submit
     @PostMapping("/tokureiSubmit")
     public String tokureiSubmit(@ModelAttribute TokureiForm form,

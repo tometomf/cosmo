@@ -1,16 +1,13 @@
 package org.cosmo.domain;
 
-import lombok.Data;
+import lombok.Data;		//ì¡°ìš°ì§„
 
 @Data
 public class IdoCheckForm {
-    // JSPÀÇ name="kinmuChange" (°ª: "Y" or "N")
     private String kinmuChange;
     
-    // JSPÀÇ name="jushoChange" (°ª: "Y" or "N")
     private String jushoChange;
 
-    // ÆíÀÇ ¸Þ¼­µå: Controller/Service¿¡¼­ ·ÎÁ÷ ÆÇ´Ü¿ë
     public boolean isKinmuChanged() {
         return "Y".equals(this.kinmuChange);
     }

@@ -1,62 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 조우진 -->
 <mapper namespace="org.cosmo.mapper.AddressInputMapper">
 
     <select id="selectCurrentAddress" resultType="org.cosmo.domain.AddressViewDto">
         SELECT 
-            ZIP_CD AS currentZip,
-            PREF_NAME AS currentPref,
-            ADDR1 AS currentAddr1,
-            ADDR2 AS currentAddr2
-        FROM SHAIN_MST
+            ZIP_CD      AS currentZip,
+            PREF_NAME   AS currentPref,
+            ADDR1       AS currentAddr1,
+            ADDR2       AS currentAddr2
+        FROM SHAIN
         WHERE SHAIN_UID = #{shainUid}
     </select>
-    
-   <select id="selectMiddleAddress" resultType="org.cosmo.domain.AddressViewDto">
-    SELECT 
-        /* 오라클 문자열 연결 연산자 || 사용 */
-        PREF || ADDR1 || ADDR2 AS middleDbAddress,
-        ZIP1 AS middleZip1,
-        ZIP2 AS middleZip2,
-        PREF AS middlePref,
-        ADDR1 AS middleAddr1,
-        ADDR2 AS middleAddr2
-    FROM MIDDLE_DB_TABLE
-    WHERE SHAIN_UID = #{shainUid}
-</select>
 
-   <update id="saveIchijiHozon">
-        MERGE INTO ICHIJI_HOZON T
-        USING DUAL
-        ON (T.USER_UID = #{userUid} AND T.ACTION_NM = #{actionNm})
-        
-        WHEN MATCHED THEN
-            UPDATE SET 
-                DATA = #{data}, 
-                UPD_DATE = SYSDATE
-                
-        WHEN NOT MATCHED THEN
-            INSERT (
-                HOZON_ID,      USER_UID, 
-                ACTION_NM, 
-                DATA, 
-                ADD_DATE,
-                UPD_DATE
-            )
-            VALUES (
-                SEQ_ICHIJI.NEXTVAL,  #{userUid}, 
-                #{actionNm}, 
-                #{data}, 
-                SYSDATE,
-                SYSDATE
-            )
-    </update>
-    
+    <select id="selectMiddleAddress" resultType="org.cosmo.domain.AddressViewDto">
+        SELECT 
+            ZIP_CD      AS middleZip1,
+            ''          AS middleZip2,
+            PREF_NAME   AS middlePref,
+            ADDR1       AS middleAddr1,
+            ADDR2       AS middleAddr2
+        FROM SHAIN
+        WHERE SHAIN_UID = #{shainUid}
+    </select>
+
+    <insert id="saveIchijiHozon">
+        INSERT INTO ICHIJI_HOZON (
+            UID_PK,
+            USER_UID,
+            SHINSEI_KBN,
+            SHOZOKU_CD,
+            ACTION_NM,
+            DATA,
+            ADD_USER_ID,
+            ADD_DATE
+        ) VALUES (
+            SEQ_ICHIJI_HOZON.NEXTVAL,  /* 시퀀스 사용 */
+            #{userUid},
+            #{shinseiKbn},
+            #{shozokuCd},
+            #{actionNm},
+            #{data},
+            #{addUserId},
+            SYSDATE
+        )
+    </insert>
+
     <insert id="insertOshirase">
-        INSERT INTO OSHIRASE_TBL (SHAIN_UID, MSG, ADD_DATE)
-        VALUES (#{shainUid}, #{message}, SYSDATE)
+        INSERT INTO OSHIRASE (
+            KIGYO_CD,
+            SHAIN_UID,
+            TSUCHI_YMD,
+            TSUCHI_HM,
+            OSHIRASE_NAIYO,
+            ADD_USER_ID,
+            ADD_DATE
+        ) VALUES (
+            '100',              /* 기업코드 (더미) */
+            #{shainUid},
+            TO_CHAR(SYSDATE, 'YYYYMMDD'),
+            TO_CHAR(SYSDATE, 'HH24MISS'),
+            #{message},
+            #{shainUid},
+            SYSDATE
+        )
     </insert>
 
 </mapper>

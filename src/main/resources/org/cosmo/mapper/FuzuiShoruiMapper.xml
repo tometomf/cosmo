@@ -1,38 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- 윤종운 -->
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.cosmo.mapper.FuzuiShoruiMapper">
-    
-    <resultMap id="fuzuiShoruiResultMap" type="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
-        <id column="KIGYO_CD" property="kigyoCd"/>
-        <id column="SHINSEI_NO" property="shinseiNo"/>
-        <id column="KEIRO_SEQ" property="keiroSeq"/>
-    </resultMap>
 
-    <select id="selectFuzuiShoruiList" resultMap="fuzuiShoruiResultMap">
-        SELECT *
-        FROM SHINSEI_FUZUI_SHORUI
-        WHERE KIGYO_CD = #{kigyoCd}
-        AND SHINSEI_NO = #{shinseiNo}
-        ORDER BY KEIRO_SEQ
-    </select>
-    
-    <insert id="insertFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
-        INSERT INTO SHINSEI_FUZUI_SHORUI (
-            KIGYO_CD, SHINSEI_NO, KEIRO_SEQ, SHINSEI_KBN, SHINSEI_YMD, ...
-        ) VALUES (
-            #{kigyoCd}, #{shinseiNo}, #{keiroSeq}, #{shinseiKbn}, #{shinseiYmd}, ...
-        )
-    </insert>
+	<select id="selectShinseiList" resultType="org.cosmo.domain.SearchCriteriaDTO"> 
+		SELECT
+			*
+		FROM
+			SHINSEI
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
+	</select>
+	
+	<select id="selectShinseiFuzuiShoruiList" resultType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+		SELECT
+			*
+		FROM
+			SHINSEI_FUZUI_SHORUI
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
+		ORDER BY
+			KEIRO_SEQ
+	</select>
+	
+	<select id="selectKigyoKiteiList" parameterType="org.cosmo.domain.SearchCriteriaDTO" resultType="org.cosmo.domain.KigyoKiteiDTO">
+		SELECT
+			KIGYO_CD, KOMOKU_SYBTSU, CODE, NENGETSU, DISP_NUM,
+			WRITABLE_FLG, SET_NAIYO, MEISYO, SET_SU, KITEI1, 
+			KITEI2, KITEI3, KITEI4, KITEI5, KITEI6, KITEI7, 
+			KITEI8, KITEI9, KITEI10, BIKO, 
+			ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+		FROM
+			KIGYO_KITEI
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			-- DTO의 shinseiYmd(YYYYMMDD)에서 YYYYMM(연월) 부분을 추출하여 사용
+			AND
+				NENGETSU = (
+					SELECT
+						MAX(NENGETSU)
+					FROM
+						KIGYO_KITEI
+					WHERE
+						KIGYO_CD = #{kigyoCd}
+						AND
+							NENGETSU <![CDATA[ <= ]]> SUBSTR(#{shinseiYmd}, 1, 6)
+				)
+		ORDER BY
+			KOMOKU_SYBTSU, DISP_NUM
+	</select>
+	
+	<select id="insertShainFuzuiShoruiList" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
+		INSERT INTO
+			SHAIN_FUZUI_SHORUI (
+				FILE_UID_4, MENKYO_YUKO_KIGEN, MENKYO_NO, FILE_UID_5, SHASHU, TOROKU_NO, HAIKIRYO, SHAKEN_YUKO_KIGEN,
+				FILE_UID_6, FILE_UID_7, HOKEN_MANRYO_YMD, TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOJOSHA_SHOGAI,
+				TOKYU
+			)
+		VALUES (
+				#{fileUid4}, #{menkyoYukoKigen}, #{menkyoNo}, #{fileUid5}, #{shashu}, #{torokuNo}, #{haikiryo},
+				#{shakenYukoKigen}, #{fileUid6}, #{fileUid7}, #{hokenManryoYmd}, #{taijinBaisho}, #{taibutsuBaisho},
+				#{jinshinShogai}, #{tokyu} 
+			)
+	</select>
 
-    <insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
-        INSERT INTO ICHIJI_HOZON (
-            HOZON_UID, USER_UID, SHINSEI_KBN, SHOZOKU_CD, DATA, 
-            ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
-        ) VALUES (
-            #{hozonUid}, #{userUid}, #{shinseiKbn}, #{shozokuCd}, #{data}, 
-            #{addUserId}, NOW(), #{updUserId}, NOW()
-        )
-    </insert>
+	<update id="updateShinsei" parameterType="org.cosmo.domain.ShinseiDTO">
+		UPDATE
+			SHINSEI
+		SET
+			ETC_COMMENT_1 = #{etcComment1},
+			ETC_COMMENT_2 = #{etcComment2},
+			UPD_DATE = NOW()
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
+	</update>
+
+	<insert id="insertShinseiFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+		INSERT INTO
+			SHINSEI_FUZUI_SHORUI (
+				FILE_UID_1, FIRST_TEIKI_KIKAN, NEXT_TEIKI_KIKAN
+			)
+		VALUES (
+				#{fileUid1}, #{firstTeikiKikan}, #{nextTeikiKikan}
+			)
+	</insert>
+	
+	<insert id="updateShinseiFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+		UPDATE
+			SHINSEI_FUZUI_SHORUI
+		SET
+			FILE_UID_1 = #{fileUid1},
+			FIRST_TEIKI_KIKAN = #{firstTeikiKikan},
+			NEXT_TEIKI_KIKAN = #{nextTeikiKikan}
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
+			AND
+				KEIRO_SEQ = #{keiroSeq}
+	</insert>
+	
+	<insert id="insertShainFuzuiShorui" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
+		INSERT INTO
+			SHAIN_FUZUI_SHORUI (
+				FILE_UID_4, MENKYO_YUKO_KIGEN, MENKYO_NO, FILE_UID_5, SHASHU, TOROKU_NO,
+				HAIKIRYO, SHAKEN_YUKO_KIGEN, FILE_UID_6, FILE_UID_7, HOKEN_MANRYO_YMD,
+				TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOKYU
+			)
+		VALUES (
+				#{fileUid4}, #{menkyoYukoKigen}, #{menkyoNo}, #{fileUid5}, #{shashu}, #{torokuNo},
+				#{haikiryo}, #{shakenYukoKigen}, #{fileUid6}, #{fileUid7}, #{hokenManryoYmd},
+				#{taijinBaisho}, #{taibutsuBaisho}, #{jinshinShogai}, #{tokyu}
+			)
+	</insert>
+	
+	<insert id="updateShainFuzuiShorui" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
+		UPDATE
+			SHAIN_FUZUI_SHORUI
+		SET
+			FILE_UID_4 = #{fileUid4},
+			MENKYO_YUKO_KIGEN = #{menkyoYukoKigen},
+			MENKYO_NO = #{menkyoNo},
+			FILE_UID_5 = #{fileUid5},
+			SHASHU = #{shashu},
+			TOROKU_NO = #{torokuNo},
+			HAIKIRYO = #{haikiryo},
+			SHAKEN_YUKO_KIGEN = #{shakenYukoKigen},
+			FILE_UID_6 = #{fileUid6},
+			FILE_UID_7 = #{fileUid7},
+			HOKEN_MANRYO_YMD = #{hokenManryoYmd},
+			TAIJIN_BAISHO = #{taijinBaisho},
+			TAIBUTSU_BAISHO = #{taibutsuBaisho},
+			JINSHIN_SHOGAI = #{jinshinShogai},
+			TOKYU = #{tokyu}
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHAIN_UID = #{shainUid}
+	</insert>
+	
+	<insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
+		INSERT INTO
+			ICHIJI_HOZON (
+				HOZON_UID, USER_UID, SHINSEI_KBN, SHOZOKU_CD, DATA, 
+				ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+			)
+			VALUES (
+				SEQ_HOZON_UID.NEXTVAL, #{userUid}, #{shinseiKbn}, #{shozokuCd}, #{data}, 
+				#{addUserId}, NOW(), #{updUserId}, SYSDATE
+			)
+	</insert>
+	
+	<insert id="insertProcessLog" parameterType="org.cosmo.domain.ProcessLogDTO">
+		INSERT INTO
+			PROCESS_LOG (
+				PROCESS_TIMESTAMP,  SUBSYSTEM_ID,
+				PROCESS_COL,
+				KEY1, KEY2, KEY3, KEY4, KEY5,
+				DATA,
+				USER_UID,
+				USER_TRACK
+			)
+		VALUES (
+			SYSDATE, #{subsystemId},
+			#{processCol},
+			#{key1}, #{key2}, #{key3}, #{key4}, #{key5},
+			#{data, jdbcType=CLOB},
+			#{userUid},
+			#{userTrack}
+		)
+	</insert>
+	
 </mapper>
