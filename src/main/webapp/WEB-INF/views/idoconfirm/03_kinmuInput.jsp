@@ -165,7 +165,7 @@
 
      
 					<!-- 일시보존 버튼 -->
-        <button type="submit"
+        <button type="button" onclick="tempSaveKinmu();"
                 style="border:none; background:none; padding:0; cursor:pointer;">
             <img src="/resources/img/hozon_btn02.gif" alt="hozon">
         </button>
@@ -174,6 +174,10 @@
 			</div>	
 			
 			</form>
+			
+			<form id="kinmuTempForm" method="post" action="/idoconfirm/tempSave">
+                <input type="hidden" name="kinmuJson" value="">
+            </form>
 			
 		</div>
 		
@@ -198,6 +202,27 @@ function beforeSubmitNext() {
     document.getElementById("newAddress").value = full;
 
     document.getElementById("kinmuForm").submit();
+}
+</script>
+
+<script>
+function tempSaveKinmu() {
+    const data = {
+        shozokuCd: document.querySelector('#newShozokuCd').value || null,
+        zip1:      document.querySelector('input[name="newZip1"]').value || null,
+        zip2:      document.querySelector('input[name="newZip2"]').value || null,
+        pref:      document.querySelector('input[name="newPref"]').value || null,
+        address1:  document.querySelector('input[name="newAddress1"]').value || null,
+        address2:  document.querySelector('input[name="newAddress2"]').value || null,
+        diff:      document.querySelector('input[name="diff"]:checked').value || null
+    };
+
+    const json = JSON.stringify(data);
+
+    const form = document.getElementById("kinmuTempForm");
+    form.querySelector('input[name="kinmuJson"]').value = json;
+
+    form.submit();   // → /idoconfirm/kinmuTempSave POST
 }
 </script>
 

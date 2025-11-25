@@ -55,9 +55,7 @@ public class IdoConfirmController {
     private final IchijiHozonService ichijiHozonService;
     private final OshiraseService oshiraseService;
 
-    // =====================================
     // 0200 화면: 이동/이전 확인 (GET)
-    // =====================================
     @GetMapping("/idoconfirm")
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
@@ -81,6 +79,7 @@ public class IdoConfirmController {
         return "idoconfirm/02_idoConfirm";
     }
 
+    // 0200 화면: [다음] 버튼 클릭 시 (POST)
     @PostMapping("/next")
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
@@ -129,10 +128,7 @@ public class IdoConfirmController {
         }
     }
 
-    // =====================================
     // 0400 화면: 주소 입력 (GET)
-    // (팀원 버전: loadViewData / addressInputForm 사용)
-    // =====================================
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
         String shainUid = "testUser"; // TODO: 실제로는 세션에서 가져와야 함
@@ -150,9 +146,7 @@ public class IdoConfirmController {
         return "idoconfirm/04_addressinput";
     }
 
-    // =====================================
     // 0400 화면: 주소 입력 액션 처리 (POST)
-    // =====================================
     @PostMapping("/addressinput")
     public String addressInputPost(
             @ModelAttribute("addressInputForm") AddressInputForm form,
@@ -200,9 +194,7 @@ public class IdoConfirmController {
         return "redirect:/idoconfirm/addressinput";
     }
 
-    // =====================================
     // 근무지 입력 (기존 유지)
-    // =====================================
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
         return "idoconfirm/03_kinmuInput";
@@ -267,9 +259,7 @@ public class IdoConfirmController {
         }
     }
 
-    // =====================================
     // 勤務地入力 화면의 임시보존(tempSave) 처리
-    // =====================================
     @PostMapping("/tempSave")
     public String tempSaveKinmu(
             @RequestParam("kinmuJson") String kinmuJson,
@@ -307,17 +297,13 @@ public class IdoConfirmController {
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
 
-    // =====================================
-    // 경로 정보 (기존 유지)
-    // =====================================
+    // 경로 정보
     @GetMapping("/keiroInfo")
     public String keiroInfo() {
         return "idoconfirm/05_keiroInfo";
     }
 
-    // =====================================
-    // 기타 화면들 (기존 유지)
-    // =====================================
+    // 기타 화면들
     @GetMapping("/huzuikanri")
     public String huzuikanri() {
         return "idoconfirm/08_huzuiKanri";
@@ -333,9 +319,7 @@ public class IdoConfirmController {
         return "idoconfirm/10_kanryoPage";
     }
 
-    // =====================================
-    // 팝업 및 특례 신청 (기존 유지)
-    // =====================================
+    // 팝업 및 특례 신청
     @GetMapping("/shozokuSearchPopup")
     public String shozokuSearchPopup(Model model) {
         int kigyoCd = 100; // 더미 데이터 기준
@@ -344,9 +328,7 @@ public class IdoConfirmController {
         return "idoconfirm/shozokuSearchPopup";
     }
 
-    // =====================================
     // 특례 신청 화면
-    // =====================================
     @GetMapping("/tokureiShinsei")
     public String tokureiShinsei(
             @RequestParam(name = "shinseiNo", required = false) String shinseiNo,
@@ -366,9 +348,7 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
-    // =====================================
     // 특례 신청 Submit
-    // =====================================
     @PostMapping("/tokureiSubmit")
     public String tokureiSubmit(@ModelAttribute TokureiForm form,
                                 RedirectAttributes rttr) {
