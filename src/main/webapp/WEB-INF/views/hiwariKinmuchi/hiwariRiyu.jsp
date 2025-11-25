@@ -281,14 +281,6 @@ button {
 		function buildKinmuTempJson() {
 
 		    const reason = document.querySelector("textarea[name='reason']").value.trim();
-		    const periodFrom = document.querySelector("input[name='periodFrom']").value.trim();
-		    const periodTo = document.querySelector("input[name='periodTo']").value.trim();
-		    const workDays = document.querySelector("input[name='workDays']").value.trim();
-
-		    const fullRiyu =
-		        `【期間】${periodFrom}〜${periodTo} ` +
-		        `【出勤日数】${workDays}日間 ` +
-		        `【理由】${reason}`;
 
 		    return JSON.stringify({
 
@@ -305,7 +297,7 @@ button {
 		        genKinmuchi: null,
 		        newKinmuchi: null,
 
-		        riyu: fullRiyu,
+		        riyu: reason,   
 
 		        idoYmd: null,
 		        itenYmd: null,
@@ -319,6 +311,7 @@ button {
 		        keiro: null
 		    });
 		}
+
 		
 		document.addEventListener("DOMContentLoaded", function () {
 
@@ -327,7 +320,7 @@ button {
 
 		    hozonBtn.addEventListener("click", function() {
 
-		        const jsonString = buildKinmuTempJson();  // ← 함수 그대로 사용
+		        const jsonString = buildKinmuTempJson();
 		        form.querySelector('input[name="commuteJson"]').value = jsonString;
 
 		        form.querySelector('input[name="redirectUrl"]').value = "";
