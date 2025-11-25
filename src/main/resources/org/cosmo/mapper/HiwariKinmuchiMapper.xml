@@ -4,73 +4,183 @@
 
 <mapper namespace="org.cosmo.mapper.HiwariKinmuchiMapper">
 
-    <!-- ============================================================
-         日割勤務地 初期表示（申請前）
-         SHAIN + SHOZOKU からデータ取得
-         ============================================================ -->
-    <select id="selectBeforeShinsei"
-            parameterType="map"
-            resultType="org.cosmo.domain.HiwariKinmuchiVO">
 
-        SELECT
-              s.SHOZOKU_CD      AS shozokuCd        <!-- 所属コード -->
-            , z.SHOZOKU_NM      AS shozokuNm        <!-- 所属名 -->
+	<!-- 서혜원 -->
+	<!-- 여기부터 킨무지 --> 
+	<!-- 申請前：SHAIN + SHOZOKU -->
+	<select id="getBeforeShinsei"
+		resultType="org.cosmo.domain.HiwariKinmuchiVO">
+		SELECT
+		-- 勤務先コード（現勤務地）
+		s.SHOZOKU_CD AS genKinmusakiCd,
 
-            , s.KINMU_ZIP_CD    AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
-            , s.KINMU_PREF_CD   AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
-            , s.KINMU_ADDRESS_1 AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
-            , s.KINMU_ADDRESS_2 AS kinmuAddress2    <!-- 現勤務地 建物 -->
+		-- 勤務先名（現勤務地）
+		z.SHOZOKU_NM AS genKinmusakiNm,
 
-            , NULL AS newKinmuAddress1              <!-- 新勤務地（申請前なのでNULL） -->
-            , NULL AS newKinmuAddress2
+		-- 郵便番号（現勤務地）
+		s.KINMU_ZIP_CD AS genKinmuZip,
 
-            , NULL AS shinseiNo                     <!-- 申請番号（申請前なのでNULL） -->
+		-- 都道府県（現勤務地）
+		s.KINMU_ADDRESS_1 AS genKinmuAddress1,
 
-        FROM SHAIN s
-        JOIN SHOZOKU z
-          ON s.KIGYO_CD   = z.KIGYO_CD
-         AND s.SHOZOKU_CD = z.SHOZOKU_CD
+		-- 所在地１（現勤務地）
+		s.KINMU_ADDRESS_2 AS genKinmuAddress2,
 
-        WHERE s.KIGYO_CD  = #{kigyoCd}
-          AND s.SHAIN_UID = #{shainUid}
+		-- 所在地２（現勤務地）
+		s.KINMU_ADDRESS_3 AS genKinmuAddress3,
 
-    </select>
 
-    <!-- ============================================================
-         日割勤務地 初期表示（申請後）
-         SHAIN + SHOZOKU + SHINSEI からデータ取得
-         ============================================================ -->
-    <select id="selectAfterShinsei"
-            parameterType="map"
-            resultType="org.cosmo.domain.HiwariKinmuchiVO">
+		-- 日割期間 勤務地 쪽은 신청 전에는 없음 → NULL
+		NULL AS hiwariKinmusakiCd,
+		NULL AS hiwariKinmusakiNm,
+		NULL AS hiwariKinmuZip,
+		NULL AS hiwariKinmuAddress1,
+		NULL AS hiwariKinmuAddress2,
+		NULL AS hiwariKinmuAddress3
 
-        SELECT
-              s.SHOZOKU_CD           AS shozokuCd        <!-- 所属コード -->
-            , z.SHOZOKU_NM           AS shozokuNm        <!-- 所属名 -->
+		FROM SHAIN s
+		LEFT JOIN SHOZOKU z
+		ON z.KIGYO_CD = s.KIGYO_CD
+		AND z.SHOZOKU_CD = s.SHOZOKU_CD
 
-            , s.KINMU_ZIP_CD         AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
-            , s.KINMU_PREF_CD        AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
-            , s.KINMU_ADDRESS_1      AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
-            , s.KINMU_ADDRESS_2      AS kinmuAddress2    <!-- 現勤務地 建物 -->
+		WHERE s.KIGYO_CD = #{kigyoCd}
+		AND s.SHAIN_UID = #{shainUid}
+	</select>
 
-            , si.NEW_KINMU_ADDRESS_2 AS newKinmuAddress1 <!-- 新勤務地 市区町村・番地 -->
-            , si.NEW_KINMU_ADDRESS_3 AS newKinmuAddress2 <!-- 新勤務地 建物 -->
+	<!-- 申請後：SHINSEI + SHOZOKU -->
+	<select id="getAfterShinsei"
+		resultType="org.cosmo.domain.HiwariKinmuchiVO">
+		SELECT
+		-- ===== 現勤務地 쪽 =====
+		-- 勤務先コード（現在の勤務先）
+		sh.GEN_SHOZOKU_CD AS genKinmusakiCd,
 
-            , si.SHINSEI_NO          AS shinseiNo        <!-- 申請番号 -->
+		-- 勤務先名（GEN_SHOZOKU_CD 기준）
+		z1.SHOZOKU_NM AS genKinmusakiNm,
 
-        FROM SHINSEI si
-        JOIN SHAIN s
-          ON si.KIGYO_CD  = s.KIGYO_CD
-         AND si.SHAIN_UID = s.SHAIN_UID
+		-- 郵便番号（現勤務地）
+		sh.GEN_KINMU_ZIP_CD AS genKinmuZip,
 
-        JOIN SHOZOKU z
-          ON s.KIGYO_CD   = z.KIGYO_CD
-         AND s.SHOZOKU_CD = z.SHOZOKU_CD
+		-- 都道府県（現勤務地）
+		sh.GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
 
-        WHERE si.KIGYO_CD  = #{kigyoCd}
-          AND si.SHAIN_UID = #{shainUid}
-          AND si.SHINSEI_NO = #{shinseiNo}
+		-- 所在地１（現勤務地）
+		sh.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
 
-    </select>
+		-- 所在地２（現勤務地）
+		sh.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
+
+
+		-- ===== 日割期間 勤務地 쪽 =====
+		-- 勤務先コード（日割期間）
+		sh.NEW_SHOZOKU_CD AS hiwariKinmusakiCd,
+
+		-- 勤務先名（日割期間）
+		z2.SHOZOKU_NM AS hiwariKinmusakiNm,
+
+		-- 郵便番号（日割期間 勤務地）
+		sh.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
+
+		-- 都道府県（日割期間 勤務地）
+		sh.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+
+		-- 所在地１（日割기간 勤務地）
+		sh.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+
+		-- 所在地２（日割기간 勤務地）
+		sh.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
+
+		FROM SHINSEI sh
+		LEFT JOIN SHOZOKU z1
+		ON z1.KIGYO_CD = sh.KIGYO_CD
+		AND z1.SHOZOKU_CD = sh.GEN_SHOZOKU_CD -- 現勤務地용
+
+		LEFT JOIN SHOZOKU z2
+		ON z2.KIGYO_CD = sh.KIGYO_CD
+		AND z2.SHOZOKU_CD = sh.NEW_SHOZOKU_CD -- 日割기간용
+
+		WHERE sh.KIGYO_CD = #{kigyoCd}
+		AND sh.SHAIN_UID = #{shainUid}
+		AND sh.SHINSEI_NO = #{shinseiNo}
+	</select>
+
+
+	<!-- 所属 리스트 -->
+	<select id="getShozokuNames" resultType="string">
+		SELECT SHOZOKU_NM
+		FROM SHOZOKU
+		WHERE KIGYO_CD = #{kigyoCd}
+		ORDER BY SHOZOKU_NM
+	</select>
+
+	<!-- 여기까지 킨무지 -->
+
+	<!-- 서혜원 -->
+	<!-- 여기부터 어드레스 -->
+	<!-- 日割住所 페이지 데이터 조회 -->
+<select id="getAddressPageDataBefore" resultType="org.cosmo.domain.HiwariAddressVO">
+    SELECT
+        -- 상단 社宅住所 바
+        TRIM(s.DB_ADDRESS_1) || ' ' || TRIM(s.DB_ADDRESS_2)  AS fullAddress,
+
+        -- 現住所 (신청 전 → SHAIN)
+        s.ZIP_CD         AS genZip,
+        s.ADDRESS_1      AS genAddress1,
+        s.ADDRESS_2      AS genAddress2,
+        s.ADDRESS_3      AS genAddress3,
+
+        -- 日割期間住所 없음
+        NULL AS newZip,
+        NULL AS newAddress1,
+        NULL AS newAddress2,
+        NULL AS newAddress3,
+        
+        -- この住所を反映 用(중간DB)
+        s.DB_ZIP_CD     AS dbZip,
+        s.DB_ADDRESS_1  AS dbAddress1,
+        s.DB_ADDRESS_2  AS dbAddress2
+
+    FROM SHAIN s
+    LEFT JOIN SHOZOKU z
+           ON z.KIGYO_CD = s.KIGYO_CD
+          AND z.SHOZOKU_CD = s.SHOZOKU_CD
+
+    WHERE s.KIGYO_CD = #{kigyoCd}
+      AND s.SHAIN_UID = #{shainUid}
+</select>
+
+<select id="getAddressPageData" resultType="org.cosmo.domain.HiwariAddressVO">
+    SELECT
+        -- 상단 社宅住所 바
+        TRIM(s.DB_ADDRESS_1) || ' ' || TRIM(s.DB_ADDRESS_2) AS fullAddress,
+
+        -- 現住所 (신청 후 → SHINSEI.GEN_*)
+        sh.GEN_ZIP_CD        AS genZip,
+        sh.GEN_ADDRESS_1     AS genAddress1,
+        sh.GEN_ADDRESS_2     AS genAddress2,
+        sh.GEN_ADDRESS_3     AS genAddress3,
+
+        -- 日割期間住所 (신청 후 → SHINSEI.NEW_KINMU_*)
+        sh.NEW_KINMU_ZIP_CD     AS newZip,
+        sh.NEW_KINMU_ADDRESS_1  AS newAddress1,
+        sh.NEW_KINMU_ADDRESS_2  AS newAddress2,
+        sh.NEW_KINMU_ADDRESS_3  AS newAddress3,
+        
+        -- この住所を反映 用
+        s.DB_ZIP_CD     AS dbZip,
+        s.DB_ADDRESS_1  AS dbAddress1,
+        s.DB_ADDRESS_2  AS dbAddress2
+
+    FROM SHAIN s
+    LEFT JOIN SHINSEI sh
+           ON sh.KIGYO_CD = s.KIGYO_CD
+          AND sh.SHAIN_UID = s.SHAIN_UID
+          AND sh.SHINSEI_NO = #{shinseiNo}
+
+    WHERE s.KIGYO_CD = #{kigyoCd}
+      AND s.SHAIN_UID = #{shainUid}
+</select>
+
+	<!-- 여기까지 어드레스 -->
 
 </mapper>
