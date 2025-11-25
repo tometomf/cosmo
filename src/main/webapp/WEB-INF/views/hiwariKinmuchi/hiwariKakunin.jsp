@@ -10,6 +10,22 @@
 <title>通勤マネージャー｜確認</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 <style>
+/* 오른쪽 칸 전체를 세로정렬 박스로 강제 */
+.form_Text1.twoCol .form_Normal {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.upload-top {
+  display: flex;
+  align-items: left;
+  gap: 4px;
+}
+.upload-note {
+  margin-top: 4px;
+  white-space: normal;
+}
+
   /* 화면 폭 고정 (가운데 정렬) */
   .page-width {
     width: 950px;
@@ -28,7 +44,7 @@
   .content_Form1 + .content_Form1,
   .content_Form1 + .content_Form2,
   .content_Form2 + .content_Form1,
-  .content_Form2 +ㄴ .content_Form2 {
+  .content_Form2 + .content_Form2 {
     margin-top: 24px !important;
   }
 
@@ -84,6 +100,13 @@
   .button_Left {
     margin-top: 20px;
   }
+  .form_Text1.twoCol .form_Normal {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;   /* ← 이거 추가 */
+}
+  
 </style>
 </head>
 <body>
@@ -183,7 +206,7 @@
           </div>
         </div>
       </div>
-
+<br>
       <!-- 通勤経路② -->
       <div class="content_Form2">
         <div class="form_Title2">
@@ -267,29 +290,36 @@
       </div>
 
       <!-- アップロード 영역 -->
-      <div class="content_Form1">
-        <div class="form_Text1 twoCol">
-          <div class="form_Column" style="display:flex; align-items:center; justify-content:flex-start;">
-            アップロード
-          </div>
-          <div class="form_Normal">
-            <input type="text" id="uploadName" readonly style="width:180px;">
-            <button type="button" onclick="document.getElementById('uploadFile').click();">参照</button>
-            <button type="button">アップロード</button>
-            <input type="file" id="uploadFile" name="evidence" style="display:none"
-                   onchange="document.getElementById('uploadName').value=this.files[0].name;">
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column"></div>
-          <div class="form_Normal">
-            <span class="note-sm">
-              ※定期券を購入している場合は、定期券のコピーをアップロードしてください。
-            </span>
-          </div>
-        </div>
+<div class="content_Form1">
+
+  <div class="form_Text1 twoCol">
+    <!-- 왼쪽: 라벨 -->
+    <div class="form_Column" style="display:flex; align-items:center;">
+      アップロード
+    </div>
+
+    <!-- 오른쪽: 업로드 + 안내문 한 박스 안에 -->
+    <div class="form_Normal">
+      <!-- 위: 업로드줄 -->
+      <div class="upload-top">
+        <input type="text" id="uploadName" readonly style="width:180px;">
+        <button type="button"
+                onclick="document.getElementById('uploadFile').click();">参照</button>
+        <button type="button">アップロード</button>
+        <input type="file" id="uploadFile" name="evidence" style="display:none"
+               onchange="document.getElementById('uploadName').value=this.files[0].name;">
       </div>
-	<br>
+
+      <!-- 아래: 안내문 -->
+      <div class="upload-note">
+        ※定期券を購入している場合は、定期券コピーをアップロードしてください。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+      <br>
       <!-- 버튼 영역 -->
       <div class="button_Left">
         <div class="button_Left_Group">
