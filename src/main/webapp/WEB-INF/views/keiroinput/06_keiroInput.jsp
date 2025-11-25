@@ -1,3 +1,4 @@
+<!-- 재환 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -218,6 +219,10 @@
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
+	    
+	     <input type="hidden" name="hozonUid" value="${hozonUid}">
+	     
+	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
 
     </div>
@@ -268,6 +273,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const ichijiHozon = ${ichijiHozon};
 	console.log("임시저장 데이터:", ichijiHozon);
     
+	const hozonUid = ${hozonUid};
+	
+	const shinseiNo = ${shinseiNo};
+	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
     const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
@@ -357,6 +366,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
+            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
+            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
             redirectUrlInput.value = redirectPath;
 
             form.submit();

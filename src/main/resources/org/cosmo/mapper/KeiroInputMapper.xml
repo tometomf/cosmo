@@ -26,6 +26,8 @@
 		<result property="shikyuKin" column="SHIKYU_KIN" />
 	</resultMap>
 
+
+	<!-- 제환 -->
 	<select id="selectShainKeiroWithCode" parameterType="map"
 		resultMap="ShainKeiroResultMap">
 
@@ -65,6 +67,7 @@
 		<result property="newAddress3" column="NEW_ADDRESS_3" />
 	</resultMap>
 
+	<!-- 지훈 -->
 	<select id="selectAddressWithFallback" parameterType="map"
 		resultMap="ShinseiAddressResultMap">
 
@@ -95,6 +98,7 @@
 			column="NEW_KINMU_ADDRESS_3" />
 	</resultMap>
 
+	<!--지훈  -->
 	<select id="selectKinmuAddressWithFallback" parameterType="map"
 		resultMap="ShinseiKinmuAddressResultMap">
 
@@ -113,15 +117,9 @@
 
 	</select>
 
+	
 
-	<update id="updateViaPlace1">
-		UPDATE SHINSEI_START_KEIRO
-		SET VIA_PLACE_1 = #{viaPlace1, jdbcType=VARCHAR}
-		WHERE KIGYO_CD = #{kigyoCd, jdbcType=NUMERIC}
-		AND SHINSEI_NO = #{shinseiNo, jdbcType=NUMERIC}
-		AND KEIRO_SEQ = #{keiroSeq, jdbcType=NUMERIC}
-	</update>
-
+	<!-- 하정 -->
 	<select id="selectDenshaKeiroDetail" parameterType="map"
 		resultType="org.cosmo.domain.KeiroInputDenshaDTO">
 
@@ -166,6 +164,8 @@
         <result property="kinmuAddressIdoKeido" column="KINMU_ADDRESS_IDO_KEIDO" />
     </resultMap>
 
+
+	<!-- 재환 -->
     <!-- PK로 주소/위치만 조회 -->
     <select id="selectShainLocationByUid" parameterType="map" resultMap="ShainLocationResultMap">
         SELECT
@@ -195,6 +195,7 @@
        <result property="viaPlace1"  column="VIA_PLACE_1" />
    </resultMap>
    
+   <!-- 지훈 -->
    <select id="selectViaPlace1"
         parameterType="map"
         resultMap="ShinseiStartKeiroResultMap">
@@ -327,7 +328,7 @@
         <result property="updDate"              column="UPD_DATE"/>
     </resultMap>
    
-   
+   	<!-- 하정 -->
        <select id="selectStartKeiroOne"
             resultMap="ShinseiStartKeiroMap">
 
@@ -416,5 +417,44 @@
         AND KEIRO_SEQ  = #{keiroSeq}
 
     </select>
+    
+    
+    <insert id="insertProcessLog">
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		USER_UID
+		)
+		VALUES (
+		SYSTIMESTAMP,
+		'SHN',
+		#{type},
+		#{shinseiNo},
+		(SELECT SHINSEI_KBN
+		FROM
+		SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		(SELECT
+		SHINCHOKU_KBN
+		FROM
+		SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}),
+		CASE
+		WHEN
+		#{type} = 'CANCEL'
+		THEN '5'
+		ELSE (SELECT SHINCHOKU_KBN
+		FROM SHINSEI
+		WHERE SHINSEI_NO =
+		#{shinseiNo})
+		END,
+		#{userUid}
+		)
+	</insert>
 
 </mapper>

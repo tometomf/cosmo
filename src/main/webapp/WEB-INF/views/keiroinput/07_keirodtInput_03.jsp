@@ -1,3 +1,4 @@
+<!-- 지훈 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -476,10 +477,12 @@ p　{
             <input type="hidden" name="commuteJson" value="">
 
             <!-- 이 화면에서의 action 이름 (ICHIJI_HOZON.ACTION_NM) -->
-            <input type="hidden" name="actionUrl" value="TSUKIN_SHUDAN_TEMP_SAVE">
+            <input type="hidden" name="actionUrl" value="/keiroinput/07_keiroInput_03">
 
             <!-- 저장 후 이동할 URL (비워두면 /shinsei/ichiji?hozonUid=... 로 이동) -->
             <input type="hidden" name="redirectUrl" value="">
+            
+            <input type="hidden" name="hozonUid" value="${hozonUid}">
          </form>
 
          <%@ include file="/WEB-INF/views/common/footer.jsp"%>

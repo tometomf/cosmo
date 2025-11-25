@@ -1,3 +1,4 @@
+<!-- 하정 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -453,6 +454,8 @@
 
 			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 			<input type="hidden" name="redirectUrl" value="">
+			
+		    <input type="hidden" name="hozonUid" value="${hozonUid}">
 		</form>
 
 
