@@ -33,4 +33,13 @@
 		
 	</select>
 	
+	<select id = "getShinseiNo" resultType="string">
+	
+		select nvl(to_char(max(shinsei_no)), '') as shinsei_no
+		from shinsei
+		where kigyo_cd = #{kigyo_Cd}
+		and shain_uid = '11111'
+	
+	</select>
+	
 </mapper>
