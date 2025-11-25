@@ -40,9 +40,7 @@ public interface HiwariKinmuchiService {
     
     void deleteOne(Integer kigyoCd, Integer shainUid, Integer keiroSeq);
     
-    public interface AddressInputService {
-        AddressViewDto loadCurrentAddress(Integer kigyoCd, Integer shainUid);
-    }
+
 
   //유지희 끝
 

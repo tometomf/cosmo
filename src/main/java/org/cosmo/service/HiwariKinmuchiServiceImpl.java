@@ -165,24 +165,6 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
             
             mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
         }
-        @Service
-        public class AddressInputServiceImpl implements AddressInputService {
-
-            @Override
-            public AddressViewDto loadCurrentAddress(Integer kigyoCd, Integer shainUid) {
-
-                // ★ 더미 데이터 (DB 연동 이전 테스트용)
-                AddressViewDto dto = new AddressViewDto();
-
-                dto.setCurZip("213-0001");
-                dto.setCurPref("神奈川県");
-                dto.setCurCity("川崎市中原区");
-                dto.setCurStreet("上小田中1-2-3");
-                dto.setCurBuilding("レオパレス清の103");
-
-                return dto;
-            }
-        }
 
 
         
