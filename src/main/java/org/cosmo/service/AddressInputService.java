@@ -1,4 +1,4 @@
-package org.cosmo.service;
+package org.cosmo.service;		//조우진
 
 import org.cosmo.domain.AddressInputForm;
 //조우진
