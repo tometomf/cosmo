@@ -11,6 +11,7 @@ import org.cosmo.mapper.HuzuiNewInputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+//김민수
 @Service
 public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 

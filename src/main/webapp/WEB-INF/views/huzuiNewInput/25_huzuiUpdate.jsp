@@ -158,7 +158,7 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 	
 	e.preventDefault(); // a 태그 링크 이동 막기
 	
-	const kigyoCd = "<c:out value='${shain.kigyo_Cd}}' />";
+	const kigyoCd = "<c:out value='${shain.kigyo_Cd}' />";
 	const shainUid = "<c:out value='${shain.shain_Uid}' />";
 	
  	const file_Uid1 = document.getElementById("file_Uid1") ? document.getElementById("file_Uid1").innerText : null;
@@ -259,8 +259,8 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 			},
 			body : JSON.stringify(data)
 	})
-	.then(response => { // 💡 중괄호 시작! (함수 블록)
-	    return response.json(); // 💡 response.json()을 명시적으로 반환
+	.then(response => { 
+	    return response.json(); 
 	})
 	.then(data => {
 			console.log("success:" + data)

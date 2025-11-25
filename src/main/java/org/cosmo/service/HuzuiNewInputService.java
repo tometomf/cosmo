@@ -10,6 +10,7 @@ import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.springframework.transaction.annotation.Transactional;
 
+//김민수
 public interface HuzuiNewInputService {
 	
 	ShainFuzuiShoruiVO getList(String kigyo_Cd,String shain_Uid);

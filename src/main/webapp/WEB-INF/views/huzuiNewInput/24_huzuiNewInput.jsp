@@ -116,7 +116,8 @@ input[type="file"] {
 					<div class = "form_Normal" style="display:grid" id="menkyoKigen">
 							<div class="newInput1">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
 					</div>
-					<div class = "form_Normal henkou1"><input type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img src="/resources/img/cal_icon.gif"></div>
+					<div class = "form_Normal henkou1"><input id="dateInputText" type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img id="dateIcon" src="/resources/img/cal_icon.gif"> <input id="hiddenDateInput" type="date" style="display:none;">
+					</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証番号</div>
@@ -310,6 +311,21 @@ input[type="file"] {
 	const hokenKigen = "<c:out value='${shainHuzuiShorui.hoken_Manryo_Ymd}' />";
 	const hokenKigenBox = document.getElementById("hokenKigen");
 	
+	const textInput = document.getElementById('dateInputText');
+	const icon = document.getElementById('dateIcon');
+	const hiddenDate = document.getElementById('hiddenDateInput');
+
+	icon.addEventListener('click', () => {
+	    // 숨겨진 date input 클릭
+	    hiddenDate.click();
+	});
+
+	// date input 값이 바뀌면 기존 텍스트 인풋에 값 넣기
+	hiddenDate.addEventListener('change', () => {
+	    textInput.value = hiddenDate.value; // YYYY-MM-DD 형식
+	});
+	
+	
 	// 페이지 로딩 시 함수 호출
 	function kigen(value,boxValue){
 	    console.log("면허증 유효기간:", value);
@@ -467,11 +483,11 @@ input[type="file"] {
 		    }
 		});
 		
-		document.getElementById("hozon").addEventListener("click", function(event){
+		document.getElementById("hozon").addEventListener("click", function(e){
 		        
 			e.preventDefault(); // a 태그 링크 이동 막기
 			
-		        fetch('/huzuiNewInput/upload', {
+		        fetch('/huzuiNewInput/hozon', {
 		        	method : 'POST',
 					headers :{
 						'Content-Type' : 'application/json'				

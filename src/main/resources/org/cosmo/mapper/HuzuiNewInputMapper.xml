@@ -2,6 +2,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 김민수 -->
 <mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
 	
 	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
@@ -306,7 +307,7 @@
 		TSUCHI_YMD,
 		TSUCHI_HM,
 		TSUCHISHA_KIGYO_CD,
-		TSUCHISHA_CD
+		TSUCHISHA_CD,
 		SHINSEI_NO,
 		OSHIRASE_NAIYO,
 		ADD_USER_ID,
@@ -323,10 +324,10 @@
 		#{oshirase.tsuchishaCd},
 		#{oshirase.shinseiNo},
 		#{oshirase.oshiraseNaiyo},
-		#{shinsei.addUserId, jdbcType=VARCHAR},
-		#{shinsei.addDate, jdbcType=TIMESTAMP},
-		#{shinsei.updUserId, jdbcType=VARCHAR},
-		#{shinsei.updDate, jdbcType=TIMESTAMP})
+		#{oshirase.addUserId, jdbcType=VARCHAR},
+		#{oshirase.addDate, jdbcType=TIMESTAMP},
+		#{oshirase.updUserId, jdbcType=VARCHAR},
+		#{oshirase.updDate, jdbcType=TIMESTAMP})
 	</insert>
 	
 	<insert id="addProcessLog">
@@ -390,7 +391,7 @@
 		KEY5,
 		USER_UID 
 		)values(
-		#{processLog.processTimestamp},
+		#{processLog.processTimestamp,jdbcType=TIMESTAMP},
 		#{processLog.subsystemId},
 		#{processLog.processCol},
 		0,
@@ -408,7 +409,7 @@
 		TSUCHI_YMD,
 		TSUCHI_HM,
 		TSUCHISHA_KIGYO_CD,
-		TSUCHISHA_CD
+		TSUCHISHA_CD,
 		OSHIRASE_NAIYO,
 		ADD_USER_ID,
 		ADD_DATE,
@@ -450,9 +451,6 @@
 		#{ichiji.addDate, jdbcType=TIMESTAMP},
 		#{ichiji.updUserId, jdbcType=VARCHAR},
 		#{ichiji.updDate, jdbcType=TIMESTAMP})
-		
-		)
-		
 	</insert>
 	
 </mapper>

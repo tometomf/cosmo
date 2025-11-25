@@ -10,6 +10,7 @@ import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 
+//김민수
 @Mapper
 public interface HuzuiNewInputMapper {
 
