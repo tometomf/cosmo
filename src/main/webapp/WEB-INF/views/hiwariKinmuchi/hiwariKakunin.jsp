@@ -293,11 +293,12 @@
       <!-- 버튼 영역 -->
       <div class="button_Left">
         <div class="button_Left_Group">
-          <a href="<c:url value='/hiwariKinmuchi/hiwariKeiro'/>">
-            <img src="/resources/img/back_btn01.gif" alt="戻る">
+          <a href="<c:url value='/hiwariKinmuchi/riyu'/>">
+			 <img src="/resources/img/back_btn01.gif" alt="戻る">
           </a>
           <a href="<c:url value='/hiwariKakunin/submit'/>">
             <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
+             </a>
            <!-- 一時保存: JS 호출 -->
           <a href="javascript:void(0);" onclick="saveTempFromKakunin();">
             <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
