@@ -2,12 +2,7 @@ package org.cosmo.domain;
 
 import lombok.Data;
 import java.sql.Timestamp;
-<<<<<<< HEAD
 
-//제교
-=======
-// 윤종운
->>>>>>> refs/remotes/origin/idoconfirm
 @Data
 public class ShinseiFuzuiShoruiDTO {
 
