@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.util.List;
 
+import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
@@ -38,6 +39,9 @@ public interface HiwariKinmuchiService {
     void saveTemp(Integer kigyoCd, Integer shainUid, List<HiwariKeiroVO> keiroList);
     
     void deleteOne(Integer kigyoCd, Integer shainUid, Integer keiroSeq);
+    
+
+
   //유지희 끝
 
 }
