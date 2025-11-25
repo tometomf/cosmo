@@ -314,18 +314,12 @@ public class HiwariKinmuchiController {
         String kigyoCd = "100";
         String shainUid = "30000001";
         
-        AddressViewDto address = addressService.loadCurrentAddress(kigyoCd, shainUid);
-        
+        // ★★★ 주소 service 호출 제거함 ★★★
+        // AddressViewDto address = addressService.loadCurrentAddress(kigyoCd, shainUid);
+
         HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(100, 30000001L);
         
-        String fullAddress = "";
-        if (address != null) {
-            if (address.getCurZip() != null) fullAddress += address.getCurZip() + " ";
-            if (address.getCurPref() != null) fullAddress += address.getCurPref();
-            if (address.getCurCity() != null) fullAddress += address.getCurCity();
-            if (address.getCurStreet() != null) fullAddress += address.getCurStreet();
-            if (address.getCurBuilding() != null) fullAddress += " " + address.getCurBuilding();
-        }
+        // ★★★ address → 관련 코드 전체 제거 ★★★
         
         String kinmuchiName = "";
         String kinmuchiAddress = "";
@@ -337,12 +331,12 @@ public class HiwariKinmuchiController {
             if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
         }
         
-        model.addAttribute("address", fullAddress.trim());
         model.addAttribute("kinmuchi", kinmuchiName);
         model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
         
         return "hiwariKinmuchi/hiwariMap";
     }
+
    //유지희
     @GetMapping("/submit")
     public String submitApplication(HttpSession session, RedirectAttributes ra) {
@@ -367,7 +361,7 @@ public class HiwariKinmuchiController {
             return "redirect:/hiwariKinmuchi/kakunin";
         }
     }
-    
+    //유지희 끝
 
     //서혜원
     @PostMapping("/tempSave")
