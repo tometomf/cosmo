@@ -2,6 +2,7 @@ package org.cosmo.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.KeiroInputDenshaDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
@@ -50,4 +51,6 @@ public interface KeiroInputMapper {
             @Param("shinseiNo") Integer shinseiNo,
             @Param("keiroSeq") Integer keiroSeq
     );
+    
+    int insertProcessLog(ProcessLogDTO log);
 }

@@ -417,44 +417,34 @@
         AND KEIRO_SEQ  = #{keiroSeq}
 
     </select>
-    
-    
-    <insert id="insertProcessLog">
-		INSERT INTO PROCESS_LOG (
-		PROCESS_TIMESTAMP,
-		SUBSYSTEM_ID,
-		PROCESS_COL,
-		KEY1,
-		KEY2,
-		KEY3,
-		KEY4,
-		USER_UID
-		)
-		VALUES (
-		SYSTIMESTAMP,
-		'SHN',
-		#{type},
-		#{shinseiNo},
-		(SELECT SHINSEI_KBN
-		FROM
-		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}),
-		(SELECT
-		SHINCHOKU_KBN
-		FROM
-		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}),
-		CASE
-		WHEN
-		#{type} = 'CANCEL'
-		THEN '5'
-		ELSE (SELECT SHINCHOKU_KBN
-		FROM SHINSEI
-		WHERE SHINSEI_NO =
-		#{shinseiNo})
-		END,
-		#{userUid}
-		)
-	</insert>
+	
+	  <insert id="insertProcessLog"
+            parameterType="org.cosmo.domain.ProcessLogDTO">
+        INSERT INTO PROCESS_LOG (
+            PROCESS_TIMESTAMP,
+            SUBSYSTEM_ID,
+            PROCESS_COL,
+            KEY1,
+            KEY2,
+            KEY3,
+            KEY4,
+            KEY5,
+            DATA,
+            USER_UID,
+            USER_TRACK
+        ) VALUES (
+            #{processTimestamp, jdbcType=TIMESTAMP},
+            #{subsystemId, jdbcType=VARCHAR},
+            #{processCol, jdbcType=VARCHAR},
+            #{key1, jdbcType=VARCHAR},
+            #{key2, jdbcType=VARCHAR},
+            #{key3, jdbcType=VARCHAR},
+            #{key4, jdbcType=VARCHAR},
+            #{key5, jdbcType=VARCHAR},
+            #{data, jdbcType=CLOB},
+            #{userUid, jdbcType=NUMERIC},
+            #{userTrack, jdbcType=VARCHAR}
+        )
+    </insert>
 
 </mapper>

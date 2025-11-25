@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.IchijiHozonDTO;
@@ -351,7 +352,8 @@ public class KeiroInputController {
             @RequestParam("commuteJson") String commuteJson,
             @RequestParam("actionUrl") String actionUrl,
             @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
-            HttpSession session) {
+            HttpSession session,
+            HttpServletRequest request) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         
@@ -387,6 +389,17 @@ public class KeiroInputController {
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
         oshiraseService.saveTempOshirase(shain, Long.valueOf(shinseiNo));
+        String clientIp = getClientIp(request);
+        
+        keiroInputservice.writeProcessLog(
+                "COS",
+                "TEMP",
+                shinseiNo, "", "", "", "",
+                "",
+                userUid,
+                clientIp
+        );
+        
 
         if(redirectUrl == "") {        	
         	return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
@@ -394,7 +407,36 @@ public class KeiroInputController {
         
         return "redirect:" + redirectUrl;
     }
+	
+	private boolean isBlank(String str) {
+	    return (str == null || str.trim().isEmpty());
+	}
 	 
+	public String getClientIp(HttpServletRequest request) {
+
+	    String ip = request.getHeader("X-Forwarded-For");
+
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getHeader("Proxy-Client-IP");
+	    }
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getHeader("WL-Proxy-Client-IP");
+	    }
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getRemoteAddr();
+	    }
+
+	    if (ip != null && ip.contains(",")) {
+	        ip = ip.split(",")[0].trim();
+	    }
+
+	    if ("0:0:0:0:0:0:0:1".equals(ip)) {
+	        ip = "127.0.0.1";
+	    }
+
+	    return ip;
+	}
+	
 	//재환
 	 @GetMapping(value = "/shain/location", produces = "application/json; charset=UTF-8")
 	    @ResponseBody

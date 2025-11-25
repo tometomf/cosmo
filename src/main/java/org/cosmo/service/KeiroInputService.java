@@ -28,4 +28,15 @@ public interface KeiroInputService {
 
 	//하정
 	ShinseiStartKeiroVO getStartKeiroOne(Integer kigyoCd, Integer shainUid, Integer shinseiNo, Integer keiroSeq);
+	
+    void writeProcessLog(String subsystemId,
+            String processCol,
+            String key1,
+            String key2,
+            String key3,
+            String key4,
+            String key5,
+            String data,
+            Integer userUid,
+            String userTrack);
 }
