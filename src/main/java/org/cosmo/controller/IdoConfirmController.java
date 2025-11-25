@@ -6,6 +6,7 @@ import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
 import org.cosmo.domain.IdoCheckForm;
+import org.cosmo.domain.KeiroInfoForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
 import org.cosmo.domain.ShozokuVO;
@@ -37,16 +38,13 @@ public class IdoConfirmController {
     private final ShozokuService shozokuService;
     private final TokureiService tokureiService;
 
-    // =====================================
-    // 0200 화면: 이동/이전 확인 (GET)
-    // =====================================
-    @GetMapping("/idoconfirm")
+    @GetMapping("/idoconfirm")	//02번화면
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
             Model model) {
 
         if (alertType == null) {
-            alertType = AlertType.SONOTA;
+            alertType = AlertType.SONOHOKA;
         }
         
         // 폼 초기화
@@ -63,9 +61,6 @@ public class IdoConfirmController {
         return "idoconfirm/02_idoConfirm";
     }
 
-    // =====================================
-    // 0200 화면: [다음] 버튼 클릭 시 (POST)
-    // =====================================
     @PostMapping("/next")
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
@@ -73,17 +68,15 @@ public class IdoConfirmController {
             RedirectAttributes rttr) {
 
         if (alertType == null) {
-            alertType = AlertType.SONOTA;
+            alertType = AlertType.SONOHOKA;
         }
 
         boolean kinmu = form.isKinmuChanged();
         boolean jusho = form.isJushoChanged();
 
-        // Service 로직 수행
         NextStep step = idoConfirmService.judge(alertType, kinmu, jusho);
         NextScreen nextScreen = step.getFirstScreen();
 
-        // 폼 데이터 유지 (이름 충돌 방지를 위해 idoCheckForm으로 변경)
         rttr.addFlashAttribute("idoCheckForm", form);
         rttr.addFlashAttribute("alertType", alertType);
 
@@ -196,7 +189,15 @@ public class IdoConfirmController {
     // 경로 정보 (기존 유지)
     // =====================================
     @GetMapping("/keiroInfo")
-    public String keiroInfo() {
+    public String keiroInfo(Model model) {
+        String shainUid = "testUser"; // 세션에서 가져와야 함
+
+        // 서비스에서 데이터 로드 (더미 데이터 혹은 DB 데이터)
+        KeiroInfoForm form = idoConfirmService.loadKeiroInfo(shainUid);
+        
+        // JSP로 데이터 전달
+        model.addAttribute("keiroForm", form);
+        
         return "idoconfirm/05_keiroInfo";
     }
 
