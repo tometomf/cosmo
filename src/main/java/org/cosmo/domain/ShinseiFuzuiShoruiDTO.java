@@ -2,13 +2,13 @@ package org.cosmo.domain;
 
 import lombok.Data;
 import java.sql.Timestamp;
-
+// 윤종운
 @Data
 public class ShinseiFuzuiShoruiDTO {
 
 	// PK
 	private int kigyoCd;            // KIGYO_CD (기업 코드)
-	private int shinseiNo;          // SHINSEI_NO (신청 번호)
+	private long shinseiNo;          // SHINSEI_NO (신청 번호)
 	private int keiroSeq;           // KEIRO_SEQ (경로 순번)
 
 	// 신청/사원 기본 정보 (신청 테이블에서 복제된 값으로 보임)
@@ -52,4 +52,7 @@ public class ShinseiFuzuiShoruiDTO {
 	private Timestamp addDate;      // ADD_DATE
 	private Integer updUserId;      // UPD_USER_ID
 	private Timestamp updDate;      // UPD_DATE
+	
+	private String tsukinShudanName; // 통근 수단 코드(tsukinShudanKbn)에 해당하는 이름
+	private String menkyoTempFileId; // 임시 저장 파일 ID를 저장하기 위한 필드
 }

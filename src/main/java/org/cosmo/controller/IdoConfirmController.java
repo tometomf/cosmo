@@ -8,17 +8,20 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.IdoCheckForm;
 import org.cosmo.domain.KinmuForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
+import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
+import org.cosmo.service.FuzuiShoruiService;
 import org.cosmo.service.GeoService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.IdoConfirmService;
@@ -54,6 +57,7 @@ public class IdoConfirmController {
     private final AddressService addressService;
     private final IchijiHozonService ichijiHozonService;
     private final OshiraseService oshiraseService;
+    private final FuzuiShoruiService fuzuiShoruiService;
 
     // =====================================
     // 0200 화면: 이동/이전 확인 (GET)
@@ -322,11 +326,97 @@ public class IdoConfirmController {
     // =====================================
     // 기타 화면들 (기존 유지)
     // =====================================
-    @GetMapping("/huzuikanri")
-    public String huzuikanri() {
-        return "idoconfirm/08_huzuiKanri";
-    }
+    
+    // 윤종운
+	@GetMapping("/huzuikanri")
+	public String huzuikanri(@ModelAttribute SearchCriteriaDTO criteria, Model model, HttpSession session) {
+		
+		if (criteria == null) {
+			return "redirect:/fatalError";
+		}
+		
+		// --- 0. 임시 더미데이터 주입
+		
+		// 0-1. 세션 데이터 시뮬레이션
+		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
+		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		
+		// kigyoCd 처리 (int)
+		int kigyoCdValue = (kigyoCd == null) ? 0 : kigyoCd.intValue();
+		if (kigyoCdValue == 0) {
+			kigyoCdValue = 100;
+			kigyoCd = kigyoCdValue; // Integer 객체 업데이트
+			session.setAttribute("kigyoCd", kigyoCd);
+		}
+		
+		// shainUid 처리 (Integer)
+		Integer shainUidValue = (shainUid == null) ? 0 : shainUid.intValue();
+		if (shainUidValue == 0) {
+			shainUidValue = 30000001; //
+			shainUid = shainUidValue;
+			session.setAttribute("shainUid", shainUid);
+		}
+		
+		// 0-2. 요청 파라미터(criteria) 시뮬레이션
+		if (criteria.getShinseiNo() == 0) {
+			criteria.setShinseiNo(1);
+		}
+		if (criteria.getKeiroSeq() == 0) {
+			criteria.setKeiroSeq(1);
+		}
+		
+		// --- 더미 데이터 주입 끝
+		
+		// 필수 키 값 criteria에 반영
+		
+		Integer currentKigyoCd = criteria.getKigyoCd();
+		if (currentKigyoCd == null || currentKigyoCd.intValue() == 0) {
+			criteria.setKigyoCd(kigyoCdValue);
+		}
+		
+		Integer currentShainUid = criteria.getShainUid(); // NPE 방지를 위해 변수에 담기
+		if (currentShainUid == null || currentShainUid.intValue() == 0) {
+			criteria.setShainUid(shainUidValue);
+		}
+		
+		// 필수 키 값 criteria 반영 끝
+		
+		// --- 디버그 코드 추가 ---
+		System.out.println("DEBUG: Final kigyoCd = " + criteria.getKigyoCd());
+		System.out.println("DEBUG: Final shinseiNo = " + criteria.getShinseiNo());
+		// -----------------
 
+		// 1. 조회 조건 검증 (필수 키 값 확인)
+		if (criteria.getKigyoCd() == 0 || criteria.getShinseiNo() == 0) {
+			// 필수 값이 없으면 오류 처리 또는 리다이렉트
+			System.err.println("조회 조건 검증 중 오류 발생");
+			return "redirect:/error";
+		}
+
+		try {
+			// 2. 서비스 호출: 화면에 필요한 모든 데이터(신청 정보, 경로 목록, 마스터)를 가져옵니다.
+			FuzuiShoruiFormDTO formData = fuzuiShoruiService.getInitialData(criteria);
+			
+			// --- 서비스 호출 확인 디버그 코드 추가
+			System.out.println("DEBUG: Service call succeeded. Processing to rendering.");
+			// --------------
+
+			// 3. JSP에 데이터 전달
+			model.addAttribute("formData", formData);
+
+			// 4. 기존 JSP 반환
+			return "idoconfirm/08_huzuiKanri";
+
+		} catch (Exception e) {
+			System.err.println("부수 서류 조회 중 오류 발생: " + e.getMessage());
+			// 로그 기록 (PROCESS_LOG 테이블에 실패 기록)
+			// logService.logError(e, "08_huzuiKanri 초기 로딩");
+			e.printStackTrace();
+			return "redirect:/error";
+		}
+	}
+	
+	// 윤종운
     @GetMapping("/kakuninpage")
     public String kakuninpage() {
         return "idoconfirm/09_kakuninPage";
