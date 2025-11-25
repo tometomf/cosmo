@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* 임시저장 + 이동 처리 공통 준비 */
     const ichijiHozon = ${ichijiHozon};
-
+	
     console.log("임시저장 데이터:", ichijiHozon);
     const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn02.gif"]');
     const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
@@ -405,6 +405,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const pass6m       = document.getElementById("pass6m");
     const otherTransport       = document.getElementById("otherTransport");
 
+    busCompany.value = "${busCompany}";
+    busStopFrom.value = "${startPlace}";
+    busStopTo.value = "${endPlace}";
+    oneWayFare.value = "${KatamichiKin}";
+    pass1m.value = "${SanshoTeikiKin1}";
+    pass3m.value = "${SanshoTeikiKin2}";
+    pass6m.value = "${SanshoTeikiKin3}";
+ 
     /**
      * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
      */
@@ -425,6 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
     		tsukinShudanKbn: kbn,       // 예: "2" (버스), "7" (기타)
             startPlace: busStopFrom.value,
             endPlace:  busStopTo.value,
+            katamichiKin: oneWayFare.value,
             sanshoTeikiKin1: pass1m.value,
             sanshoTeikiKin2: pass3m.value,
             sanshoTeikiKin3: pass6m.value,

@@ -157,6 +157,7 @@
     accent-color: #333;
     transform: scale(1.05);
 }
+
 </style>
 </head>
 <body>
@@ -172,7 +173,7 @@
                 <div class="flow_others">完了</div>
             </div>
 
-        <div class="subtitle">【経路①】 通勤手段 入力</div>
+        <div class="subtitle">【経路 ${keiroSeq} 】 通勤手段 入力</div>
         <div class="commute-container">
             <div class="content-box">
                 <div class="info-text">通勤手段を選択してください.</div>
@@ -223,6 +224,8 @@
 	     <input type="hidden" name="hozonUid" value="${hozonUid}">
 	     
 	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+	     
+	     <input type="hidden" name="keiroSeq" value="${keiroSeq}">
 		</form>
 
     </div>
@@ -274,14 +277,12 @@ document.addEventListener("DOMContentLoaded", function() {
 	console.log("임시저장 데이터:", ichijiHozon);
     
 	const hozonUid = ${hozonUid};
-	
 	const shinseiNo = ${shinseiNo};
 	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
     const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
     const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
-    // actionUrl은 JSP에서 value="TSUKIN_SHUDAN_TEMP_SAVE" 로 이미 박혀 있음
 
     /**
      * 현재 선택된 라디오값을 기반으로
