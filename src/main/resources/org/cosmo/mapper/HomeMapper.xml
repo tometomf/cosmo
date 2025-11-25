@@ -8,7 +8,7 @@
 		
 		select row_number() over(order by shinsei_ymd desc) seq, a.* 
 		from (
-		    select hozon_uid, null shinsei_no, '' shinsei_naiyou
+		    select to_char(hozon_uid) hozon_uid, '' shinsei_no, '' shinsei_naiyou
 		         , '' shinsei_ymd, '' ll_shonin_ymd
 		         , '' first_shikyu_ymd
 		         , '' shozoku_nm, '' jutaku_kbn
@@ -16,7 +16,7 @@
 		         , (select code_nm from code where code_sybtsu = '102' and code = a.shinsei_kbn) as shinchoku_kbnnm
 		    from ichiji_hozon a
 		    union all
-		    select null as hozon_uid, shinsei_no, '' as shinsei_naiyou
+		    select '' as hozon_uid, to_char(shinsei_no) as shinsei_no, '' as shinsei_naiyou
 		         , to_char(to_date(shinsei_ymd, 'yyyymmdd'), 'yyyy/mm/dd') shinsei_ymd
 		         , to_char(to_date(LL_SHONIN_YMD, 'yyyymmdd'), 'yyyy/mm/dd') LL_SHONIN_YMD
 		         , '' as first_shikyu_ymd
