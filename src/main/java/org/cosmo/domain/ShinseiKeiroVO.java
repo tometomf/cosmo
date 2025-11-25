@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import lombok.Data;
 
+//하나
 @Data
 public class ShinseiKeiroVO {
 	private String kigyoCd;

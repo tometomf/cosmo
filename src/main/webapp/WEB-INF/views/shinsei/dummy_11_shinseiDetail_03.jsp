@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<!-- 하나 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -251,7 +251,6 @@
 			<div class="button_Side">
 				<div class="button_Side_Group">
 
-					<!-- 신청번호 있을 경우 링크 나중에 수정해야함(상세화면으로) -->
 					<c:choose>
 						<c:when test="${not empty hozonUid}">
 							<img src="/resources/img/back_btn01.gif" alt="back_btn01"

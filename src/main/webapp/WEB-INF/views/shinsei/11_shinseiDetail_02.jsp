@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<!-- 하나 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -147,7 +148,6 @@
 				</div>
 			</div>
 
-			<!-- 링크 나중에 사원톱메뉴로 수정 -->
 			<div class="button_Left">
 				<div class="button_Left_Group">
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"

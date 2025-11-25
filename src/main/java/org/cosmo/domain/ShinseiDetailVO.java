@@ -5,6 +5,7 @@ import java.util.Date;
 
 import lombok.Data;
 
+//제교
 @Data
 public class ShinseiDetailVO {
 

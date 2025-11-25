@@ -3,6 +3,7 @@ package org.cosmo.domain;
 import lombok.Data;
 import java.sql.Timestamp;
 
+//제교
 @Data
 public class ShinseiFuzuiShoruiDTO {
 
