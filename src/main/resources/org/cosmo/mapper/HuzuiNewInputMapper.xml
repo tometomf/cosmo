@@ -90,7 +90,7 @@
 		UPD_USER_ID,
 		UPD_DATE) VALUES (
 		#{shain.kigyo_Cd},
-		#{shinseiFuzuiShorui.shinseiNo},
+		#{shinseiFuzuiShorui.shinseiNo} || TO_CHAR(SHINSEI_NO_SEQ.NEXTVAL, 'FM0000'),
 		SHINSEI_FUZUI_SHORUI_SEQ.NEXTVAL,
 		6,
 		#{shinseiFuzuiShorui.shinseiYmd},
@@ -146,7 +146,15 @@
 		UPD_DATE
 		) values(
 		#{shain.kigyo_Cd},
-		#{shinsei.shinseiNo},
+		 (
+            SELECT shinsei_no
+            FROM (
+                SELECT shinsei_no
+                FROM SHINSEI_FUZUI_SHORUI
+                ORDER BY shinsei_no DESC
+            )
+            WHERE ROWNUM = 1
+        ),
 		6,
 		#{shinsei.shinseiYmd},
 		#{shain.shain_Uid},

@@ -37,7 +37,7 @@
 </body>
 <script type="text/javascript">
 	document.querySelector(".button_Center_Group").addEventListener("click",function(e){
-		location.href = "home";
+		location.href = "/";
 	})
 </script>
 </html>

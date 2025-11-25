@@ -260,11 +260,11 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 			body : JSON.stringify(data)
 	})
 	.then(response => { 
-	    return response.json(); 
+	    return response.text(); 
 	})
 	.then(data => {
 			console.log("success:" + data)
-			location.href = "/huzuiNewInput/26_huzuiKanryo";
+			location.href = "/huzuiNewInput/finalForm";
 	})
     .catch((error) => {
     		console.log("error:" + error)
