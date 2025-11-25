@@ -1,3 +1,5 @@
+// 作成者 : 권예성
+
 package org.cosmo.domain;
 
 import lombok.Data;
