@@ -156,22 +156,24 @@ public class HiwariKinmuchiController {
         return "hiwariKinmuchi/hiwariRiyu";
     }
 
-    //유지희
+ // 유지희
     @GetMapping("/kakunin")
     public String showKakuninPage(HttpSession session, Model model) {
         Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
         Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
-        
-        if (kigyoCd == null) kigyoCd = 1;
-        if (shinseiNo == null) shinseiNo = 1L;
-        
+
+        // ★ 세션에 값이 없으면 처음 신청 선택 화면으로 돌려보냄
+        if (kigyoCd == null || shinseiNo == null) {
+            return "redirect:/shinsei/shinseiSelect";  // <- 너희 신청선택 URL에 맞게 수정
+        }
+
         HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
-      
+
         List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
         if (routes == null) {
             routes = new ArrayList<HiwariKakuninRouteVO>();
         }
-     
+
         Map<String, Object> emp = new HashMap<String, Object>();
         if (header != null) {
             emp.put("no",        header.getEmpNo());
@@ -180,7 +182,7 @@ public class HiwariKinmuchiController {
             emp.put("address",   header.getEmpAddress());
         }
         model.addAttribute("emp", emp);
-        
+
         HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
         Map<String, Object> route1 = new HashMap<String, Object>();
         if (r1 != null) {
@@ -192,7 +194,7 @@ public class HiwariKinmuchiController {
             route1.put("amountMonthly", formatAmount(r1.getKingakuMonthly()));
         }
         model.addAttribute("route1", route1);
-        
+
         HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
         Map<String, Object> route2 = new HashMap<String, Object>();
         if (r2 != null) {
@@ -204,7 +206,7 @@ public class HiwariKinmuchiController {
             route2.put("amountMonthly", formatAmount(r2.getKingakuMonthly()));
         }
         model.addAttribute("route2", route2);
-        
+
         Map<String, Object> apply = new HashMap<String, Object>();
         if (header != null) {
             apply.put("kind",        header.getShinseiKbnNm());
@@ -213,8 +215,9 @@ public class HiwariKinmuchiController {
             apply.put("workDays",    header.getShukkinNissuu() + "日間");
             apply.put("totalAmount", formatAmount(header.getKingakuGokei()));
         }
-        model.addAttribute("apply", apply);
         
+        model.addAttribute("apply", apply);
+
         return "hiwariKinmuchi/hiwariKakunin";
     }
 
@@ -224,7 +227,7 @@ public class HiwariKinmuchiController {
         }
         return String.format("%,d円", amount);
     }
-    
+
     //유지희
     @GetMapping("/kanryo")
     public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
