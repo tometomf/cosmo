@@ -104,7 +104,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;   /* ← 이거 추가 */
+  align-items: flex-start;  
 }
   
 </style>
