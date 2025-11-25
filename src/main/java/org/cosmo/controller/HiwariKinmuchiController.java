@@ -17,8 +17,6 @@ import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.AddressInputService;
-import org.cosmo.service.HiwariKakuninService;
-import org.cosmo.service.HiwariKeiroService;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.OshiraseService;
@@ -42,13 +40,8 @@ public class HiwariKinmuchiController {
 	private OshiraseService oshiraseService;
 
     @Autowired
-    private HiwariKeiroService hiwariKeiroService;
-
-    @Autowired
     private HiwariKinmuchiService service;
     
-    @Autowired
-    private HiwariKakuninService hiwariKakuninService;
 
     @Autowired
     private AddressInputService addressService;
@@ -57,35 +50,41 @@ public class HiwariKinmuchiController {
     //서혜원
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
-
-        // (1) ログインチェック - shainセッションがなければホームに
+    	
         ShainVO shain = (ShainVO) session.getAttribute("shain");
+        
+        
+        
         if (shain == null) {
-            return "redirect:/";
+            shain = new ShainVO();
+            shain.setKigyo_Cd("1001");      // 테스트 기업코드
+            shain.setShain_Uid("1");        // 테스트 사원 UID
+            shain.setShinsei_No(null);      // 신청 전
+            session.setAttribute("shain", shain);   // 세션에 넣어줌
+        }
+        
+      
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+        Long shinseiNo = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            try {
+                shinseiNo = Long.valueOf(shain.getShinsei_No());
+            } catch (NumberFormatException e) {
+                shinseiNo = null;  
+            }
         }
 
-        // (2) セッションから値を取り出す
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+        
+        HiwariKinmuchiVO data =
+                (shinseiNo == null)
+                ? service.getBeforeShinsei(kigyoCd, shainUid)
+                : service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-        // (3) null防止のデフォルト値を入れる(今はログインX状態なので必須)
-        if (kigyoCd == null) kigyoCd = 1001;   // 기본 기업 코드
-        if (shainUid == null) shainUid = 1L;   // 기본 사원 UID
-        // shinseiNoは申請前ならnullが正常。 手付かず。
-
-        // (4) 申請前/後のデータのインポート
-        HiwariKinmuchiVO data;
-        if (shinseiNo == null) {
-            data = service.getBeforeShinsei(kigyoCd, shainUid);
-        } else {
-            data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
-        }
-
-        // (5) 所属リスト(選択ボックス)
         List<String> shoList = service.getShozokuNames(kigyoCd);
 
-        // (6) JSPで配信
         model.addAttribute("initData", data);
         model.addAttribute("shoList", shoList);
 
@@ -138,9 +137,9 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 1;
         if (shinseiNo == null) shinseiNo = 1L;
         
-        HiwariKakuninVO header = hiwariKakuninService.getHeader(kigyoCd, shinseiNo);
+        HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
       
-        List<HiwariKakuninRouteVO> routes = hiwariKakuninService.getRoutes(kigyoCd, shinseiNo);
+        List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
         if (routes == null) {
             routes = new ArrayList<HiwariKakuninRouteVO>();
         }
@@ -215,7 +214,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
+        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -243,7 +242,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(kigyoCd, shainUid);
+        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
         if (keiroList == null) {
             keiroList = new ArrayList<HiwariKeiroVO>();
         }
@@ -266,7 +265,7 @@ public class HiwariKinmuchiController {
 
         if ("temp".equals(action)) {
             
-            hiwariKeiroService.saveTemp(kigyoCd, shainUid, keiroList);
+            service.saveTemp(kigyoCd, shainUid, keiroList);
             return "redirect:/shinsei/11_shinseiDetail_02";
         }
         
@@ -287,7 +286,7 @@ public class HiwariKinmuchiController {
         if (kigyoCd == null) kigyoCd = 100;
         if (shainUid == null) shainUid = 30000001;
 
-        hiwariKeiroService.deleteOne(kigyoCd, shainUid, keiroSeq);
+        service.deleteOne(kigyoCd, shainUid, keiroSeq);
         return "redirect:/hiwariKinmuchi/keiro";
     }
     //유지희
@@ -315,18 +314,12 @@ public class HiwariKinmuchiController {
         String kigyoCd = "100";
         String shainUid = "30000001";
         
-        AddressViewDto address = addressService.loadCurrentAddress(kigyoCd, shainUid);
-        
+        // ★★★ 주소 service 호출 제거함 ★★★
+        // AddressViewDto address = addressService.loadCurrentAddress(kigyoCd, shainUid);
+
         HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(100, 30000001L);
         
-        String fullAddress = "";
-        if (address != null) {
-            if (address.getCurZip() != null) fullAddress += address.getCurZip() + " ";
-            if (address.getCurPref() != null) fullAddress += address.getCurPref();
-            if (address.getCurCity() != null) fullAddress += address.getCurCity();
-            if (address.getCurStreet() != null) fullAddress += address.getCurStreet();
-            if (address.getCurBuilding() != null) fullAddress += " " + address.getCurBuilding();
-        }
+        // ★★★ address → 관련 코드 전체 제거 ★★★
         
         String kinmuchiName = "";
         String kinmuchiAddress = "";
@@ -338,12 +331,12 @@ public class HiwariKinmuchiController {
             if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
         }
         
-        model.addAttribute("address", fullAddress.trim());
         model.addAttribute("kinmuchi", kinmuchiName);
         model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
         
         return "hiwariKinmuchi/hiwariMap";
     }
+
    //유지희
     @GetMapping("/submit")
     public String submitApplication(HttpSession session, RedirectAttributes ra) {
@@ -355,7 +348,7 @@ public class HiwariKinmuchiController {
         
         try {
             
-            hiwariKakuninService.submitApplication(kigyoCd, shinseiNo);
+            service.submitApplication(kigyoCd, shinseiNo);
             
             ra.addFlashAttribute("message", "申請が完了しました");
             
@@ -368,7 +361,7 @@ public class HiwariKinmuchiController {
             return "redirect:/hiwariKinmuchi/kakunin";
         }
     }
-    
+    //유지희 끝
 
     //서혜원
     @PostMapping("/tempSave")
