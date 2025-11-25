@@ -278,6 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
 	const hozonUid = ${hozonUid};
 	const shinseiNo = ${shinseiNo};
+	const keiroSeq = ${keiroSeq};
 	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
@@ -369,6 +370,7 @@ document.addEventListener("DOMContentLoaded", function() {
             redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
             redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
             redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
             redirectUrlInput.value = redirectPath;
 
             form.submit();
