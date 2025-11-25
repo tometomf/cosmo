@@ -39,4 +39,9 @@ public class IchijiHozonServiceImpl implements IchijiHozonService {
             return 0;
         }
     }
+    
+    @Override
+    public IchijiHozonDTO getLatestTemp(Integer userUid) {
+        return ichijiHozonMapper.selectLatestTemp(userUid);
+    }
 }

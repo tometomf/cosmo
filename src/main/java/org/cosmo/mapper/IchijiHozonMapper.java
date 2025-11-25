@@ -1,6 +1,8 @@
 package org.cosmo.mapper;
 
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.IchijiHozonDTO;
 
 public interface IchijiHozonMapper {
@@ -10,4 +12,6 @@ public interface IchijiHozonMapper {
     void insertIchijiHozon(IchijiHozonDTO dto);
 
     IchijiHozonDTO selectLatestByUserAndAction(Map<String, Object> param);
+    
+    IchijiHozonDTO selectLatestTemp(@Param("userUid") Integer userUid);
 }

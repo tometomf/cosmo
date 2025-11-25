@@ -85,4 +85,33 @@
 		WHERE ROWNUM = 1
 	</select>
 
+	
+	 <!-- 전차용 -->
+    <select id="selectLatestTemp"
+            parameterType="map"
+            resultType="org.cosmo.domain.IchijiHozonDTO">
+
+        SELECT *
+        FROM (
+            SELECT
+                HOZON_UID   AS hozonUid,
+                USER_UID    AS userUid,
+                SHINSEI_KBN AS shinseiKbn,
+                SHOZOKU_CD  AS shozokuCd,
+                ALERT_NO    AS alertNo,
+                ALERT_SEQ   AS alertSeq,
+                ACTION_NM   AS actionNm,
+                DATA        AS data,
+                ADD_USER_ID AS addUserId,
+                ADD_DATE    AS addDate,
+                UPD_USER_ID AS updUserId,
+                UPD_DATE    AS updDate
+            FROM ICHIJI_HOZON
+            WHERE USER_UID  = #{userUid}
+            ORDER BY UPD_DATE DESC
+        )
+        WHERE ROWNUM = 1
+    </select>
+
+
 </mapper>

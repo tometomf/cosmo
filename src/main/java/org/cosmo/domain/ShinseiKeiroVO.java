@@ -18,6 +18,7 @@ public class ShinseiKeiroVO {
 	private String startPlace;
 	private String endPlace;
 
+
 	private String shudanName;
 
 	public Long getYuryo() {
