@@ -28,7 +28,7 @@
   .content_Form1 + .content_Form1,
   .content_Form1 + .content_Form2,
   .content_Form2 + .content_Form1,
-  .content_Form2 + .content_Form2 {
+  .content_Form2 +ㄴ .content_Form2 {
     margin-top: 24px !important;
   }
 
@@ -293,7 +293,7 @@
       <!-- 버튼 영역 -->
       <div class="button_Left">
         <div class="button_Left_Group">
-          <a href="<c:url value='/hiwariKinmuchi/riyu'/>">
+          <a href="<c:url value='/hiwariKinmuchi/keiro'/>">
 			 <img src="/resources/img/back_btn01.gif" alt="戻る">
           </a>
           <a href="<c:url value='/hiwariKakunin/submit'/>">
