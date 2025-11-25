@@ -50,35 +50,41 @@ public class HiwariKinmuchiController {
     //서혜원
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
-
-        // (1) ログインチェック - shainセッションがなければホームに
+    	
         ShainVO shain = (ShainVO) session.getAttribute("shain");
+        
+        
+        
         if (shain == null) {
-            return "redirect:/";
+            shain = new ShainVO();
+            shain.setKigyo_Cd("1001");      // 테스트 기업코드
+            shain.setShain_Uid("1");        // 테스트 사원 UID
+            shain.setShinsei_No(null);      // 신청 전
+            session.setAttribute("shain", shain);   // 세션에 넣어줌
+        }
+        
+      
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+        Long shinseiNo = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            try {
+                shinseiNo = Long.valueOf(shain.getShinsei_No());
+            } catch (NumberFormatException e) {
+                shinseiNo = null;  
+            }
         }
 
-        // (2) セッションから値を取り出す
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+        
+        HiwariKinmuchiVO data =
+                (shinseiNo == null)
+                ? service.getBeforeShinsei(kigyoCd, shainUid)
+                : service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-        // (3) null防止のデフォルト値を入れる(今はログインX状態なので必須)
-        if (kigyoCd == null) kigyoCd = 1001;   // 기본 기업 코드
-        if (shainUid == null) shainUid = 1L;   // 기본 사원 UID
-        // shinseiNoは申請前ならnullが正常。 手付かず。
-
-        // (4) 申請前/後のデータのインポート
-        HiwariKinmuchiVO data;
-        if (shinseiNo == null) {
-            data = service.getBeforeShinsei(kigyoCd, shainUid);
-        } else {
-            data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
-        }
-
-        // (5) 所属リスト(選択ボックス)
         List<String> shoList = service.getShozokuNames(kigyoCd);
 
-        // (6) JSPで配信
         model.addAttribute("initData", data);
         model.addAttribute("shoList", shoList);
 
