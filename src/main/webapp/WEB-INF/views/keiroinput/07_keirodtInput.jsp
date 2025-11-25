@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -271,7 +272,9 @@
 </head>
 <body>
 	<div class="layout">
+
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
+
 		<div class="main">
 			<!-- <div class="subtitle"> -->
 			<div class="flow">
@@ -298,24 +301,71 @@
 						<div class="grid">
 							<div class="background">出発地</div>
 							<div>
-								<input type="text" name="From_station">
+								<input type="text" name="From_station"
+									value="${keiro.startPlace}">
 							</div>
 							<div class="swapbutton">
-								<img src="/resources/img/tn/change_btn.gif" id = "ekiSwapButton">
+								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton">
 							</div>
 							<div class="background">到着地</div>
 							<div>
-								<input type="text" name="To_station" value="新宿">
+								<input type="text" name="To_station" value="${keiro.endPlace}">
 							</div>
 						</div>
 						<div></div>
 						<!-- 경유역 그리드 -->
-						<div class="grid2" id="stationContainer">
+						<!-- <div class="grid2" id="stationContainer">
 							<div class="background">経由地1</div>
 							<div>
 								<input type="text" name="middle_station_01">
 							</div>
+						</div> -->
+
+						<div class="grid2" id="stationContainer">
+							<!-- 항상 1개는 보여주기 -->
+							<div class="background">経由地1</div>
+							<div>
+								<input type="text" name="middle_station_01"
+									value="${keiro.viaPlace1}">
+							</div>
+
+							<!-- 2번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace2}">
+								<div class="background">経由地2</div>
+								<div>
+									<input type="text" name="middle_station_02"
+										value="${keiro.viaPlace2}">
+								</div>
+							</c:if>
+
+							<!-- 3번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace3}">
+								<div class="background">経由地3</div>
+								<div>
+									<input type="text" name="middle_station_03"
+										value="${keiro.viaPlace3}">
+								</div>
+							</c:if>
+
+							<!-- 4번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace4}">
+								<div class="background">経由地4</div>
+								<div>
+									<input type="text" name="middle_station_04"
+										value="${keiro.viaPlace4}">
+								</div>
+							</c:if>
+
+							<!-- 5번 경유지 -->
+							<c:if test="${not empty keiro.viaPlace5}">
+								<div class="background">経由地5</div>
+								<div>
+									<input type="text" name="middle_station_05"
+										value="${keiro.viaPlace5}">
+								</div>
+							</c:if>
 						</div>
+
 
 						<div class="button_layout">
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
@@ -335,82 +385,15 @@
 				<div class="station_flow_name">
 					<div id="keiro">経路を入力してください。</div>
 				</div>
-				<div>시간</div>
+				<div id="kensakuTime"></div>
 			</div>
 
 			<div class="charge_info">
 				<img src="/resources/img/tn/tab_keiro_02.gif">
-				<div class="charge_flow">
-					<div class="charge_flow_row">
-						<div>
-							<input type="radio" name="seletRoute">経路1
-						</div>
-						<div>17:31発 -> 18:07着</div>
-						<div>36分</div>
-						<div>乗換1回</div>
-						<div>370円</div>
-						<div>
-							<img src="/resources/img/tn/icon_subway.gif">
-						</div>
-					</div>
-					<div class="charge_flow_row">
-						<div>
-							<input type="radio" name="seletRoute">経路2
-						</div>
-						<div>17:31発 -> 18:07着</div>
-						<div>36分</div>
-						<div>乗換1回</div>
-						<div>370円</div>
-						<div>
-							<img src="/resources/img/tn/icon_jr.gif"> <img
-								src="/resources/img/tn/icon_shitetu.gif"> <img
-								src="/resources/img/tn/icon_subway.gif">
-						</div>
-					</div>
-					<div class="charge_flow_row">
-						<div>
-							<input type="radio" name="seletRoute">経路3
-						</div>
-						<div>17:31発 -> 18:07着</div>
-						<div>36分</div>
-						<div>乗換1回</div>
-						<div>370円</div>
-						<div>
-							<img src="/resources/img/tn/icon_shitetu.gif"> <img
-								src="/resources/img/tn/icon_subway.gif">
-						</div>
-					</div>
-					<div class="charge_flow_row">
-						<div>
-							<input type="radio" name="seletRoute">経路4
-						</div>
-						<div>17:31発 -> 18:07着</div>
-						<div>36分</div>
-						<div>乗換1回</div>
-						<div>370円</div>
-						<div>
-							<img src="/resources/img/tn/icon_shitetu.gif"> <img
-								src="/resources/img/tn/icon_subway.gif">
-						</div>
-					</div>
-					<div class="charge_flow_row">
-						<div>
-							<input type="radio" name="seletRoute">経路5
-						</div>
-						<div>17:31発 -> 18:07着</div>
-						<div>36分</div>
-						<div>乗換1回</div>
-						<div>370円</div>
-						<div>
-							<img src="/resources/img/tn/icon_jr.gif"> <img
-								src="/resources/img/tn/icon_shitetu.gif"> <img
-								src="/resources/img/tn/icon_subway.gif">
-						</div>
-					</div>
-				</div>
+				<div class="charge_flow" id="routeContainer"></div>
 			</div>
 
-			<div class="final_charge">
+			<div class="final_charge" id="chargeList">
 				<div class="final_charge_title">
 					<div>路線</div>
 					<div>区間</div>
@@ -419,7 +402,7 @@
 					<div>6ヶ月</div>
 				</div>
 
-				<div class="final_charge_detail">
+				<div class="final_charge_detail" id="chargeContainer">
 					<div class="final_charge_detail_row">
 						<div>1</div>
 						<div>1</div>
@@ -453,10 +436,25 @@
 
 			<div class="menu_button">
 				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
-					src="/resources/img/keiro_btn02.gif"> <img
-					src="/resources/img/hozon_btn01.gif">
+					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
+					src="/resources/img/hozon_btn01.gif" id="denshaHozonBtn"
+					style="cursor: pointer;">
 			</div>
 		</div>
+
+		<!-- 임시저장용 폼 -->
+		<form id="denshaTempForm" method="post"
+			action="<c:url value='/keiroinput/tempSave'/>">
+			<input type="hidden" name="commuteJson" value="">
+
+			<!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+			<input type="hidden" name="actionUrl"
+				value="/keiroinput/07_keirodtInput">
+
+			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+			<input type="hidden" name="redirectUrl" value="">
+		</form>
+
 
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -468,7 +466,95 @@
 
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("denshaTempForm");
+    const commuteJsonInput = document.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
+    const hozonBtn = document.getElementById("denshaHozonBtn");
+
+    const ichijiHozon = ${empty ichijiHozon ? '{}' : ichijiHozon};
+    
+    function buildCommuteJson() {
+
+        const fromStation = document.querySelector('input[name="From_station"]').value.trim();
+        const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+        /* const middles = [];
+        middleInputs.forEach(input => {
+            const v = input.value.trim();
+            if (v !== "") {
+                middles.push(v);
+            }
+        }); */
+        const toStation = document.querySelector('input[name="To_station"]').value.trim();
+
+        const middle01El = document.querySelector('input[name="middle_station_01"]');
+        const middle02El = document.querySelector('input[name="middle_station_02"]');
+        const middle03El = document.querySelector('input[name="middle_station_03"]');
+        const middle04El = document.querySelector('input[name="middle_station_04"]');
+        const middle05El = document.querySelector('input[name="middle_station_05"]');
+
+        const middleStation01 = middle01El ? middle01El.value.trim() : "";
+        const middleStation02 = middle02El ? middle02El.value.trim() : "";
+        const middleStation03 = middle03El ? middle03El.value.trim() : "";
+        const middleStation04 = middle04El ? middle04El.value.trim() : "";
+        const middleStation05 = middle05El ? middle05El.value.trim() : "";
+        
+        
+        
+        const ikkagetsukingaku    = total1;
+        
+        if (total1 === 0) {
+            alert("定期券情報がありません。");
+            return null;
+        }
+
+
+            const keiro = {
+                tsukinShudan : "1",
+                shudanName :   "電車",
+                startPlace :   fromStation,
+                endPlace :     toStation,
+                tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
+            }
+            
+            const startKeiro = {
+            startPlace :   fromStation, 
+            endPlace :     toStation,
+            viaPlace1: middleStation01,
+            viaPlace2:middleStation02,
+            viaPlace3:middleStation03,
+            viaPlace4:middleStation04,
+            viaPlace5:middleStation05
+            }
+        
+
+        ichijiHozon.keiro = keiro;
+        ichijiHozon.startKeiro = startKeiro;
+        
+        return JSON.stringify(ichijiHozon);
+    }
+
+    
+    if (hozonBtn) {
+        hozonBtn.addEventListener("click", function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+            commuteJsonInput.value = jsonString;
+            redirectUrlInput.value = "";
+
+            form.submit();
+        });
+    }
+
+});
+</script>
+
+
+
+<script>
 		document.addEventListener("DOMContentLoaded", function() {
+
 			const container = document.getElementById("stationContainer");
 			const addBtn = document.getElementById("addStationBtn");
 			const returnToTop = document.getElementById("returnToTop");
@@ -477,6 +563,40 @@
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
 			
+			const Kakutei = document.getElementById("keiroKakutei");
+			let searchedRoute = null;
+
+	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
+
+	    	
+	    	
+	    	function addMiddleRow(initialValue) {
+	    	    const container = document.getElementById("stationContainer");
+	    	    const count = container.querySelectorAll(".background").length;
+	    	    const newIndex = count + 1;
+
+	    	    const newLabel = document.createElement("div");
+	    	    newLabel.className = "background";
+	    	    newLabel.textContent = "経由地" + newIndex;
+
+	    	    const newInputDiv = document.createElement("div");
+	    	    const newInput = document.createElement("input");
+	    	    newInput.type = "text";
+	    	    newInput.name = "middle_station_" + String(newIndex).padStart(2, "0");
+
+	    	    if (initialValue) {
+	    	        newInput.value = initialValue;
+	    	    }
+
+	    	    newInputDiv.appendChild(newInput);
+	    	    container.appendChild(newLabel);
+	    	    container.appendChild(newInputDiv);
+	    	}
+			
+	    	
+	    	
+	    	
+	    	
 			addBtn.addEventListener("click", function() {
 				const count = container.querySelectorAll(".background").length;
 				const newIndex = count + 1;
@@ -497,7 +617,6 @@
 				
 				if(newIndex > 4){
 					disableBtn = document.getElementById("addStationBtn");
-					/* disableBtn.remove(); */ /*/ 스타일 떄문에 remove하니까 버튼이 당겨져버림 */
 					disableBtn.style.visibility = "hidden";
 					disableBtn.style.pointerEvents = "none";
 					
@@ -532,6 +651,72 @@
 				const keiroResult = [formStation, ...middles, ToStation].join(" -> ");
 				
 				keiro.innerText = keiroResult;
+				
+				
+				document.getElementById("kensakuTime").innerText = getCurrentTime();
+				
+				
+				routes = [
+					{
+						depart: "17:31",
+						arrive: "18:07",
+						duration: "36分",     // 분
+						transfer: "1回",      // 회
+						fare: 370,        // 엔
+						icons: ["icon_jr"]
+					},
+					{
+						depart: "17:40",
+						arrive: "18:20",
+						duration: "40分",
+						transfer: "2回",
+						fare: 340,
+						icons: ["icon_shitetu", "icon_jr"]
+					},
+					{
+						depart: "17:20",
+						arrive: "18:10",
+						duration: "50分",
+						transfer: "0回",
+						fare: 410,
+						icons: ["icon_subway", "icon_jr"]
+					}
+				];
+				
+				
+				teikiken = [
+					{
+					name : "東武東上線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: 8500,     // 분
+					threemonth: 13170,      // 회
+					sixmonth: 24950        // 엔
+					},
+					{
+					name : "東京メトロ丸ノ内線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: 4260,     // 분
+					threemonth: 24230,      // 회
+					sixmonth: 45900        // 엔
+					},
+					{
+					name : "東京メトロ丸ノ内線",
+					from: "渋谷",
+					to: "新宿",
+					onemonth: "↓",     // 분
+					threemonth: "↓",      // 회
+					sixmonth: "↓"        // 엔
+					}
+				];
+				
+				routes.sort(function(a,b) {
+					return a.fare - b.fare;
+				});
+				
+				renderRoutes();
+				chargeList();
 			});
 			
 			ekiSwap.addEventListener("click", function() {
@@ -544,10 +729,211 @@
 				endStation.value = emptyStation;
 			});
 			
+			Kakutei.addEventListener("click", function(){
+				
+				const displayedRoute = keiro.innerText.trim();
+				
+				if(!displayedRoute || displayedRoute === "経路を入力してください。"){
+			        alert("経路を入力してください。");
+			        return;
+				}
+				
+				const formStation = document.querySelector('input[name="From_station"]').value;
+				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+					const middles = [];
+					middleInputs.forEach(input => {
+						const v = input.value.trim();
+						if(v !== ""){
+							middles.push(v);
+						}
+					});
+								
+				const ToStation = document.querySelector('input[name="To_station"]').value;
+				const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
+
+			    // 3. 비교
+			    if (currentRoute !== displayedRoute) {
+			        alert("입력한 경로와 조회된 경로가 일치하지 않습니다.");
+			        return;
+			    }
+
+			    if (total1 === 0){
+			        alert("정기권 정보가 없습니다.");
+			        return;
+			    }
+			    			    // 4. 여기까지 왔으면 OK → 다음 로직
+			    alert("경로가 일치합니다. 다음 단계로 진행합니다.");
+			    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
+			    
+			    
+			    
+			});
+			
+			
+			
+			
 		});
 		/* document.addEventListener("click", function()) */
 		
+		function getCurrentTime(){
+			const kensakuTime = new Date();
+			
+			const year = kensakuTime.getFullYear();
+			const month = String(kensakuTime.getMonth()+1).padStart(2,'0');
+			const day = String(kensakuTime.getDate()).padStart(2,'0');
+			const hour = String(kensakuTime.getHours()).padStart(2,'0');
+			const minute = String(kensakuTime.getMinutes()).padStart(2,'0');
+			
+			 return year +"年"+month+"月"+day+"日"+hour+"時"+minute+"分出発";
+		}
+		
 	</script>
+
+<script>
+	
+	let routes = [];
+
+/* 	
+	routes.sort(function(a,b) {
+		return a.fare - b.fare;
+	}); */
+	
+	
+	function renderRoutes(){
+	const container = document.getElementById("routeContainer");
+	container.innerHTML = "";
+	
+		routes.forEach(function(route, index){
+			const row = document.createElement("div");
+			row.className = "charge_flow_row";
+			
+			const iconsHTML = route.icons.map(function(icon){
+				
+				return '<img src = "/resources/img/tn/'+icon+'.gif">';}).join(" ");
+
+			
+				row.innerHTML = 
+				'<div>'+
+					'<input type="radio" name="seletRoute" value =" ' + index + '">経路'+(index + 1)+'</div>' + 
+				'<div>' + route.depart + '発 -> ' + route.arrive + '着</div>' + 
+				'<div>'+route.duration+'</div>' + 
+				'<div>'+route.transfer+'</div>' + 
+				'<div>'+route.fare+'円</div>' + 
+				'<div>'+iconsHTML+'</div>'
+				;
+		
+/* 				row.innerHTML = 
+				`<div>
+					<input type="radio" name="seletRoute" value = "${index}">経路${index + 1}
+				</div>
+				<div>${route.depart}発 -> ${route.arrive}着</div>
+				<div>${route.duration}</div>
+				<div>${route.transfer}</div>
+				<div>${route.fare}</div>
+				<div>${iconsHTML}</div>
+				`; */
+		
+				container.appendChild(row);	
+		});
+	}
+
+	document.addEventListener("DOMContentLoaded", function() {
+		renderRoutes();
+	});
+	</script>
+
+<script>
+		
+
+
+
+	let teikiken = [];
+	
+    const shozokuCD = '${sessionScope.shain.shozoku_Cd}'.trim();
+
+	let total1 = 0;
+	let total3 = 0;
+	let total6 = 0;
+
+	function chargeList(){
+		const container = document.getElementById("chargeContainer");
+		container.innerHTML = "";
+		
+		total1 = 0;
+		total3 = 0;
+		total6 = 0;
+		
+		teikiken.forEach(function(route,index) {
+			const row = document.createElement("div");
+			row.className = "final_charge_detail_row";
+			
+			
+			if(shozokuCD == "006"){
+				row.innerHTML = 
+				'<div>'+route.name+'</div>'+
+				'<div>'+route.from+'->'+route.to+'</div>'+
+				'<div>'+route.onemonth+'</div>'+
+				'<div>'+route.threemonth+'</div>'+
+				'<div>'+route.sixmonth+'</div>'
+			;
+			}else{
+				row.innerHTML = 
+				'<div>'+route.name+'</div>'+
+				'<div>'+route.from+'->'+route.to+'</div>'+
+				'<div>'+route.onemonth+'</div>'+
+				'<div></div>' +
+				'<div></div>'
+				;
+			}
+
+			container.appendChild(row);
+			
+			if(typeof route.onemonth === "number"){
+	        	total1 += route.onemonth;
+			} 
+			if(typeof route.threemonth === "number" && shozokuCD == "006"){
+	        	total3 += route.threemonth;
+			}
+	        if(typeof route.sixmonth === "number" && shozokuCD == "006"){
+	        	total6 += route.sixmonth;
+	        }
+		});
+		
+		const finalRow = document.createElement("div");
+		finalRow.className="final_charge_result";
+		
+		if(shozokuCD == "006"){
+		finalRow.innerHTML =
+			'<div>合計</div>'+
+			'<div></div>'+
+			'<div>'+total1+'円</div>'+
+			'<div>'+total3+'円</div>'+
+			'<div>'+total6+'円</div>'
+		;
+			
+		}else{
+			finalRow.innerHTML =
+			'<div>合計</div>'+
+			'<div></div>'+
+			'<div>'+total1+'円</div>' +
+			'<div></div>' +
+			'<div></div>'
+		}
+		
+		
+		container.appendChild(finalRow);
+	}
+	document.addEventListener("DOMContentLoaded", function() {
+		chargeList();
+	});
+	</script>
+
+
+
+<script>
+		
+	</script>
+
 <script
 	src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl"
 	defer></script>

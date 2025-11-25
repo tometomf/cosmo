@@ -198,16 +198,26 @@
 	height: 275px;
 }
 
-.result-box>div:last-child img {
+.result-box>div:last-child {
+	width: 100%;
+	height: 375px;
+	overflow: hidden;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+#map {
 	width: 100%;
 	height: 100%;
-	object-fit: cover; /* 비율 맞추며 꽉 채움 */
-	display: block;
 }
 
 .button_box {
 	width: 1010px;
 	margin: auto;
+}
+
+.hidden {
+    display: none !important;
 }
 </style>
 </head>
@@ -226,63 +236,349 @@
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-				<div class="transport">手段：徒歩</div>
+				<c:set var="shudanType"
+					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
+				<c:set var="shudanLabel" value="自転車" />
+				<c:if test="${shudanType == '6'}">
+					<c:set var="shudanLabel" value="徒歩" />
+				</c:if>
+				<div class="transport">手段：${shudanLabel}</div>
 			</div>
 			<div class="content_Form1">
 				<div id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">神奈川県川崎市中原区新丸子2-1-2-3 レオパレス新丸子201</div>
+					<div class="form_Normal" id="address"></div>
 				</div>
 				<div id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">東京都中野区本町3-30-4KDX中野坂上ビル8F</div>
+					<div class="form_Normal" id="kinmuAddress"></div>
 				</div>
 			</div>
 			<div class="search-box">
 				<div>上記の住所から勤務地までを検索します。</div>
-				<img src="/resources/img/tn/search_btn01.gif" alt="back_btn01">
+				<img src="/resources/img/tn/search_btn01.gif" id="search" alt="back_btn01">
 			</div>
-			<div class="result-box">
+			<div class="result-box hidden" id="resultBox">
 				<div>
 					<input type="radio" name="result1" value="1" />検索結果
 				</div>
 				<div>
-					<img src="/resources/img/tn/image_map.jpg">
+					<div id="map"></div>
 				</div>
 			</div>
 			<div class="content_Form1">
 				<div id="form_Text1">
 					<div class="form_Column">距離</div>
-					<div class="form_Normal">1.5km</div>
+					<div class="form_Normal" id="distance"></div>
 				</div>
 			</div>
 			<div class="button_box">
 				<div class="button_Left_Group">
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
+				<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						id="btnBack"> <img src="/resources/img/keiro_btn02.gif"
 						alt="nyuryoku_btn01"> <img
 						src="/resources/img/hozon_btn01.gif" alt="nyuryoku_btn01">
 				</div>
 			</div>
-
 		</div>
+		<!-- 임시저장용 폼 -->
+		<form id="tsukinTempForm" method="post"
+			action="<c:url value='/keiroinput/tempSave'/>">
+			<input type="hidden" name="commuteJson" value="">
 
+			<!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+			<input type="hidden" name="actionUrl"
+				value="/keiroinput/07_keiroInput_04">
 
-		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+			<input type="hidden" name="redirectUrl" value="">
+		</form>
+
 	</div>
-	<script>
-		document.getElementById('btnBack').addEventListener('click',
-				function() {
-					if (document.referrer) {
-						location.href = document.referrer;
-						return;
-					}
-					if (history.length > 1) {
-						history.go(-1);
-						return;
-					}
-					location.href = '/';
-				});
-	</script>
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&libraries=maps"
+	defer></script>
+<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+<script>
+  // "35.6909,139.7003" → {lat: 35.6909, lng: 139.7003}
+  function parseLatLng(latlng) {
+    if (!latlng || latlng.indexOf(",") === -1) return null;
+    var parts = latlng.split(",");
+    var lat = parseFloat(parts[0]);
+    var lng = parseFloat(parts[1]);
+    if (isNaN(lat) || isNaN(lng)) return null;
+    return { lat: lat, lng: lng };
+  }
+
+  // 전역 변수로 자택/근무지 좌표 저장 (페이지 로드시 채워짐)
+  var homePos = null;
+  var workPos = null;
+
+  var homeFullAddress = null;
+  var workFullAddress = null;
+  var distance    = null;
+  /**
+   * ① 페이지 로드 후에 실행: 사원 위치 정보만 가져와서
+   *    address / kinmuAddress div 채우고, 좌표를 변수에 저장
+   */
+  function loadShainLocation() {
+    fetch('/keiroinput/shain/location', { method: 'GET' })
+      .then(function(res) {
+        if (!res.ok) {
+          console.error('HTTP 오류:', res.status);
+          throw new Error('HTTP error ' + res.status);
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        console.log('사원 위치 정보:', data);
+
+        var addressDiv = document.getElementById('address');
+        var kinmuAddressDiv = document.getElementById('kinmuAddress');
+
+        var a1 = data.address1 || '';
+        var a2 = data.address2 || '';
+        var a3 = data.address3 || '';
+        var k1 = data.kinmuAddress1 || '';
+        var k2 = data.kinmuAddress2 || '';
+        var k3 = data.kinmuAddress3 || '';
+
+        homeFullAddress = (a1 + ' ' + a2 + ' ' + a3).trim();
+        workFullAddress = (k1 + ' ' + k2 + ' ' + k3).trim();
+
+        if (addressDiv) addressDiv.textContent = homeFullAddress;
+        if (kinmuAddressDiv) kinmuAddressDiv.textContent = workFullAddress;
+
+        // 좌표는 전역 변수에 저장만 해둠
+        homePos = parseLatLng(data.addressIdoKeido);
+        workPos = parseLatLng(data.kinmuAddressIdoKeido);
+
+        if (!homePos || !workPos) {
+          console.error('위도/경도 정보 부족:', data);
+        }
+      })
+      .catch(function(err) {
+        console.error('위치 정보 요청/처리 오류:', err);
+      });
+  }
+
+  /**
+   * ② 검색 버튼 클릭 시 실행: 이미 저장된 homePos / workPos로
+   *    지도 + 경로 + 거리 표시
+   */
+  function initMapAndRoute() {
+    if (!homePos || !workPos) {
+      alert('위치 정보가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.');
+      console.error('homePos/workPos 없음:', homePos, workPos);
+      return;
+    }
+
+    var centerPos = {
+      lat: (homePos.lat + workPos.lat) / 2,
+      lng: (homePos.lng + workPos.lng) / 2
+    };
+
+    var mapDiv = document.getElementById('map');
+    if (!mapDiv) {
+      console.error('map 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    var map = new google.maps.Map(mapDiv, {
+      center: centerPos,
+      zoom: 13
+    });
+
+/*     new google.maps.Marker({
+      position: homePos,
+      map: map,
+      title: '自宅（자택）'
+    });
+
+    new google.maps.Marker({
+      position: workPos,
+      map: map,
+      title: '勤務先（근무지）'
+    }); */
+
+    var directionsService = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    var request = {
+      origin: homePos,
+      destination: workPos,
+      travelMode: google.maps.TravelMode.WALKING
+    };
+
+    directionsService.route(request, function(result, status) {
+      if (status === google.maps.DirectionsStatus.OK) {
+        directionsRenderer.setDirections(result);
+
+        var leg = result.routes[0].legs[0];
+        distance = (leg.distance.value / 1000).toFixed(1);
+        console.log("distance", distance)
+        var distanceDiv = document.getElementById("distance");
+        if (distanceDiv) distanceDiv.textContent = leg.distance.text;
+      } else {
+        console.error('경로 검색 실패:', status);
+      }
+    });
+  }
+
+  
+  //  1) 위치 정보 먼저 가져오기
+  //  2) 검색 버튼 클릭 시 지도/경로 표시
+  window.addEventListener('load', function () {
+    // 1) 위치 정보 로딩
+    loadShainLocation();
+
+    // 2) 검색 버튼 클릭 → initMapAndRoute
+    var searchBtn = document.getElementById('search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+    	  
+        var box = document.getElementById('resultBox');
+        if (box) box.classList.remove('hidden');  
+        initMapAndRoute();
+      });
+    }
+  });
+
+document.addEventListener("DOMContentLoaded", function () {
+    /* 뒤로가기 버튼 */
+    const btnBack = document.getElementById('btnBack');
+    if (btnBack) {
+        btnBack.addEventListener('click', function () {
+            if (document.referrer) {
+                location.href = document.referrer;
+                return;
+            }
+            if (history.length > 1) {
+                history.go(-1);
+                return;
+            }
+            location.href = '/';
+        });
+    }
+
+    /* 합계 표시  */
+    function updateTotal(idInput, idTotal) {
+        const input = document.getElementById(idInput);
+        const total = document.getElementById(idTotal);
+
+        if (!input || !total) return;
+
+        input.addEventListener("input", function () {
+            const value = input.value;
+            if (value === "" || isNaN(value)) {
+                total.textContent = "0円";
+            } else {
+                total.textContent = parseInt(value, 10).toLocaleString('ja-JP') + "円";
+            }
+        });
+    }
+
+    updateTotal("pass1m", "total1m");
+    updateTotal("pass3m", "total3m");
+    updateTotal("pass6m", "total6m");
+
+    /* 임시저장 + 이동 처리 공통 준비 */
+    const ichijiHozon = ${ichijiHozon};
+	console.log("임시저장 데이터:", ichijiHozon);
+    
+    const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn02.gif"]');
+    const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+
+    const form             = document.getElementById("tsukinTempForm");
+    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+
+    // JSTL로 세팅된 값들
+    const shudanType  = "${shudanType}";   // "2" or "7"
+    const shudanLabel = "${shudanLabel}";  // "バス" or "その他"
+
+    /**
+     * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
+     */
+    function buildCommuteJson() {
+        // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
+        const kbn        = shudanType || null;   // "2" 또는 "7"
+        const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
+ 		
+        const keiro =  {
+                tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
+                shudanName:   labelText,  // 예: "バス", "その他"
+                startPlace: homeFullAddress,
+                endPlace:  workFullAddress,
+                shinseiKm: distance 
+            };
+        
+        const startKeiro = {
+        		tsukinShudanKbn: kbn,   
+                startPlace: homeFullAddress,
+                endPlace:  workFullAddress,
+                shinseiKm: distance
+            };
+        
+        ichijiHozon.keiro = keiro;
+        ichijiHozon.startKeiro = startKeiro;
+        
+        console.log(ichijiHozon);
+        return JSON.stringify(ichijiHozon);
+    }
+
+    /* hozon 버튼: 임시저장 + 기본 화면(/shinsei/ichiji)으로 */
+    if (hozonBtn) {
+        hozonBtn.addEventListener("click", function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // redirectUrl 비워서 → 컨트롤러: "redirect:/shinsei/ichiji?hozonUid=..." 로 이동
+            redirectUrlInput.value = "";
+
+            form.submit();
+        });
+    }
+
+    const distanceNullErrorText = "検索してください。";
+    const distanceZeroErrorText = "0Kmは変更できません。 もう一度検索してください。";
+    
+    /* 다음 단계: 임시저장 + 원하는 페이지로 이동 */
+    if (keiroBtn) {
+    	
+        keiroBtn.addEventListener("click", function () {
+        	
+         	if (distance == null) {
+        		alert(distanceNullErrorText);
+        		return;
+        	}
+         	
+         	if (distance == 0) {
+        		alert(distanceZeroErrorText);
+        		return;
+        	}
+
+
+        	
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // 이 화면 이후에 이동할 URL 지정
+            // 예시: 다음이 경로 확인 화면이라면
+            const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+
+            // 컨트롤러에서 return redirectUrl; 그대로 쓰므로
+            redirectUrlInput.value =  nextPath;
+
+            form.submit();
+        });
+    }
+});
+</script>
 </body>
 </html>

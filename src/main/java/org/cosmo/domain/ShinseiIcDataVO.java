@@ -28,5 +28,7 @@ public class ShinseiIcDataVO {
 	private String codeNm;
 	private String shinseiName;
     private ShinseiKeiroVO keiro; 
+    
+    private ShinseiStartKeiroVO startKeiro;
  
 }
