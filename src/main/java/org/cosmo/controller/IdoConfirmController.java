@@ -42,15 +42,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IdoConfirmController {
 
-    // 0200 / 0400 공통
     private final AddressInputService addressInputService; // 0400 화면용
     private final IdoConfirmService idoConfirmService;     // 0200 화면 판정용
+    
     private final ShozokuService shozokuService;
     private final TokureiService tokureiService;
 
-    // 03_근무지 입력 + 임시보존용
     private final GeoService geoService;
     private final AddressService addressService;
+    
     private final IchijiHozonService ichijiHozonService;
     private final OshiraseService oshiraseService;
 
@@ -182,13 +182,14 @@ public class IdoConfirmController {
         return "redirect:/idoconfirm/addressinput";
     }
 
-    // 근무지 입력 (기존 유지)
+    // 作成者 : 권예성
+    // 근무지 입력
     @GetMapping("/kinmuInput")
     public String kinmuInput() {
         return "idoconfirm/03_kinmuInput";
     }
 
-    
+    // 作成者 : 권예성
     @GetMapping("/input")
     public String showKinmuInput(Model model) {
         KinmuForm form = new KinmuForm();
@@ -197,6 +198,7 @@ public class IdoConfirmController {
         return "idoconfirm/03_kinmuInput";
     }
 
+    // 作成者 : 권예성
     // 3번 화면에서 "次へ" 클릭 시
     @PostMapping("/kinmuNext")
     public String kinmuNext(@ModelAttribute("kinmuForm") KinmuForm form,
@@ -247,6 +249,7 @@ public class IdoConfirmController {
         }
     }
 
+    // 作成者 : 권예성
     // 勤務地入力 화면의 임시보존(tempSave) 처리
     @PostMapping("/tempSave")
     public String tempSaveKinmu(
@@ -255,7 +258,7 @@ public class IdoConfirmController {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
-            // 로그인 안 거치고 직접 URL 접근하면 여기서 터짐 (원래 그 설계 그대로 유지)
+            
             throw new RuntimeException("セッションに社員情報がありません。");
         }
 
@@ -302,11 +305,13 @@ public class IdoConfirmController {
         return "idoconfirm/09_kakuninPage";
     }
 
+    // 作成者 : 권예성
     @GetMapping("/kanryoPage")
     public String kanryoPage() {
         return "idoconfirm/10_kanryoPage";
     }
 
+    // 作成者 : 권예성
     // 팝업 및 특례 신청
     @GetMapping("/shozokuSearchPopup")
     public String shozokuSearchPopup(Model model) {
@@ -316,6 +321,7 @@ public class IdoConfirmController {
         return "idoconfirm/shozokuSearchPopup";
     }
 
+    // 作成者 : 권예성
     // 특례 신청 화면
     @GetMapping("/tokureiShinsei")
     public String tokureiShinsei(
@@ -336,6 +342,7 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
+    // 作成者 : 권예성
     // 특례 신청 Submit
     @PostMapping("/tokureiSubmit")
     public String tokureiSubmit(@ModelAttribute TokureiForm form,
