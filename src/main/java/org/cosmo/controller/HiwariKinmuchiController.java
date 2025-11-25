@@ -50,20 +50,12 @@ public class HiwariKinmuchiController {
     //서혜원
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
-    	
+
         ShainVO shain = (ShainVO) session.getAttribute("shain");
-        
-        
-        
+
         if (shain == null) {
-            shain = new ShainVO();
-            shain.setKigyo_Cd("1001");      // 테스트 기업코드
-            shain.setShain_Uid("1");        // 테스트 사원 UID
-            shain.setShinsei_No(null);      // 신청 전
-            session.setAttribute("shain", shain);   // 세션에 넣어줌
+            return "redirect:/";
         }
-        
-      
 
         Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
         Long shainUid   = Long.valueOf(shain.getShain_Uid());
@@ -72,55 +64,99 @@ public class HiwariKinmuchiController {
         if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
             try {
                 shinseiNo = Long.valueOf(shain.getShinsei_No());
-            } catch (NumberFormatException e) {
-                shinseiNo = null;  
+            } catch (Exception e) {
+                shinseiNo = null;
             }
         }
 
-        
         HiwariKinmuchiVO data =
                 (shinseiNo == null)
                 ? service.getBeforeShinsei(kigyoCd, shainUid)
                 : service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-        List<String> shoList = service.getShozokuNames(kigyoCd);
+        String zip = (String) session.getAttribute("ZIP_CD");
+        String a1  = (String) session.getAttribute("ADDRESS_1");
+        String a2  = (String) session.getAttribute("ADDRESS_2");
+        String a3  = (String) session.getAttribute("ADDRESS_3");
+
+        if (isNullOrEmpty(zip)) zip = "1600023";
+        if (isNullOrEmpty(a1))  a1  = "東京都";
+        if (isNullOrEmpty(a2))  a2  = "千代田区丸の内1-1-1";
+        if (isNullOrEmpty(a3))  a3  = "A建物";
+
+
+        data.setGenKinmuZip(zip);
+        data.setGenKinmuAddress1(a1);
+        data.setGenKinmuAddress2(a2);
+        data.setGenKinmuAddress3(a3);
 
         model.addAttribute("initData", data);
-        model.addAttribute("shoList", shoList);
+        model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
 
         return "hiwariKinmuchi/hiwariKinmuchi";
+    }
+
+    private boolean isNullOrEmpty(String s) {
+        return (s == null || s.trim().isEmpty());
     }
 
 
   //서혜원
     @GetMapping("/address")
     public String showHiwariAddressPage(HttpSession session, Model model) {
-    	
-    	ShainVO shain = (ShainVO) session.getAttribute("shain");
+
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
             return "redirect:/";
         }
-        
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
-        
-        if (kigyoCd == null) kigyoCd = 1001;
-        if (shainUid == null) shainUid = 1L;
-        
-        HiwariAddressVO data;
-        
-        if (shinseiNo == null) {
-            data = service.getAddressPageDataBefore(kigyoCd, shainUid);
-        } else {
-            data = service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+        Long shinseiNo = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            try {
+                shinseiNo = Long.valueOf(shain.getShinsei_No());
+            } catch (Exception e) {
+                shinseiNo = null;
+            }
         }
-        
+
+        HiwariAddressVO data =
+                (shinseiNo == null)
+                ? service.getAddressPageDataBefore(kigyoCd, shainUid)
+                : service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
+
+        String genZip      = (String) session.getAttribute("ZIP_CD");
+        String genAddress1 = (String) session.getAttribute("ADDRESS_1");
+        String genAddress2 = (String) session.getAttribute("ADDRESS_2");
+
+        if (isNullOrEmpty(genZip))      genZip      = "1600023";
+        if (isNullOrEmpty(genAddress1)) genAddress1 = "東京都";
+        if (isNullOrEmpty(genAddress2)) genAddress2 = "千代田区丸の内1-1-1";
+
+        data.setGenZip(genZip);
+        data.setGenAddress1(genAddress1);
+        data.setGenAddress2(genAddress2);
+
+        String fullAddress = "";
+
+        if (!isNullOrEmpty(genAddress1)) fullAddress += genAddress1;
+        if (!isNullOrEmpty(genAddress2)) fullAddress += genAddress2;
+
+        if (isNullOrEmpty(fullAddress)) {
+            fullAddress = "大阪府大阪市東淀川区瑞光1-1-1 ハイツ瑞光302";
+        }
+
+        data.setFullAddress(fullAddress);
+
+
         model.addAttribute("initData", data);
         model.addAttribute("addressData", data);
-        
+
         return "hiwariKinmuchi/hiwariAddress";
     }
+  
     
     //서혜원
     @GetMapping("/riyu")
