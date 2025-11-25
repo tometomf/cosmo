@@ -292,8 +292,9 @@ public class KeiroInputController {
 	    // 회사/사원 식별자
 	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
 	    Long   shainUid = Long.parseLong(shain.getShain_Uid());
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid()); // ICHIJI_HOZON용
-
+		/*
+		 * Integer userUid = Integer.parseInt(shain.getShain_Uid()); // ICHIJI_HOZON용
+		 */
 	    // 기본 주소/근무지 
 	    ShinseiDTO addr      = keiroInputservice.getShinseiAddress(kigyoCd, shainUid);
 	    ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid);
@@ -304,28 +305,30 @@ public class KeiroInputController {
 	    
 	    //  ICHIJI_HOZON 임시저장 값으로 덮어쓰기
 	    
+	    //  ICHIJI_HOZON 임시저장 값으로 덮어쓰기
 	    try {
-	        IchijiHozonDTO hozon =  ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
-	        if (hozon != null && hozon.getData() != null) {
-	            
-	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+	        // 🔹 hozonUid가 숫자일 때만 조회 시도
+	        if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+	            IchijiHozonDTO hozon =
+	                    ichijiHozonService.getTemp(Integer.valueOf(hozonUid.trim()));
 
-	            ObjectMapper mapper = new ObjectMapper();
-	            JsonNode root = mapper.readTree(json);
+	            if (hozon != null && hozon.getData() != null) {
+	                String json = new String(hozon.getData(), StandardCharsets.UTF_8);
 
-	            // JSON의 startKeiro 부분만 ShinseiStartKeiroVO로 매핑
-	            JsonNode startKeiroNode = root.path("startKeiro");
-	            if (!startKeiroNode.isMissingNode() && !startKeiroNode.isNull()) {
-	                ShinseiStartKeiroVO restored =
-	                        mapper.treeToValue(startKeiroNode, ShinseiStartKeiroVO.class);
+	                ObjectMapper mapper = new ObjectMapper();
+	                JsonNode root = mapper.readTree(json);
 
-	                if (restored != null) {
-	                    startKeiro = restored;
+	                JsonNode startKeiroNode = root.path("startKeiro");
+	                if (!startKeiroNode.isMissingNode() && !startKeiroNode.isNull()) {
+	                    ShinseiStartKeiroVO restored =
+	                            mapper.treeToValue(startKeiroNode, ShinseiStartKeiroVO.class);
+	                    if (restored != null) {
+	                        startKeiro = restored;
+	                    }
 	                }
 	            }
 	        }
 	    } catch (Exception e) {
-	        
 	        e.printStackTrace();
 	    }
 
@@ -333,6 +336,8 @@ public class KeiroInputController {
 	    model.addAttribute("addr", addr);
 	    model.addAttribute("kinmuAddr", kinmuAddr);
 	    model.addAttribute("startKeiro", startKeiro);
+	    model.addAttribute("hozonUid", hozonUid);
+	    model.addAttribute("shinseiNo", shinseiNo);
 
 	    return "keiroinput/07_keirodtInput_03";
 	}
@@ -349,6 +354,9 @@ public class KeiroInputController {
             HttpSession session) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
+        
+        System.out.println(">>> hozonUid = " + hozonUid);
+        System.out.println(">>> shinseiNo = " + shinseiNo);
 
         Integer userUid   = Integer.parseInt(shain.getShain_Uid());
         String  shozokuCd = shain.getShozoku_Cd();
