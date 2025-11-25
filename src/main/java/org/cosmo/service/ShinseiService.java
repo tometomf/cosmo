@@ -12,21 +12,18 @@ import org.springframework.ui.Model;
 
 public interface ShinseiService {
 
+	//하나
 	ShinseiJyohouVO getShinseiJyohou(Long shinseiNo);
 
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
-	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
-
 	String getShainUidByShinseiNo(String shinseiNo);
 
 	ShinseiIcHozonVO getIchijiHozon(String hozonUid);
 
 	ShainVO getShainByUid(String shainUid);
-
-	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
 
 	ShinseiShoruiVO getShinseiShorui(Long shinseiNo);
 
@@ -57,6 +54,8 @@ public interface ShinseiService {
 	void loadShinseiDetail(Long shinseiNo, String hozonUid, Model model);
 
 	void deleteShinseiByShinseiNo(String shinseiNo);
+	
+	//제교
 
 	void clearHenkoFlags(Long kigyoCd, Long shinseiNo);
 
@@ -66,5 +65,10 @@ public interface ShinseiService {
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
 			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
 			String userIp);
+	
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
+
+	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
+
 
 }

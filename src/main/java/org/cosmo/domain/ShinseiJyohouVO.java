@@ -2,6 +2,7 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
+//하나
 @Data
 public class ShinseiJyohouVO {
 	private Integer kigyoCd;

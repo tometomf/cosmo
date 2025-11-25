@@ -37,7 +37,7 @@ public class ShinseiController {
 	@Autowired
 	private JavaMailSender mailSender;
 
-	@GetMapping("/ichiji")
+	@GetMapping("/ichiji") //하나
 	public String showIchiji(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) throws Exception {
 
@@ -105,18 +105,18 @@ public class ShinseiController {
 		return "shinsei/11_shinseiDetail_02";
 	}
 
-	@GetMapping("/reload")
+	@GetMapping("/reload") //하나
 	public String reloadIchiji(@RequestParam("hozonUid") String hozonUid, Model model) throws Exception {
 
 		ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
 		if (hozon == null) {
-			model.addAttribute("errorMessage", "데이터 없음");
+			model.addAttribute("errorMessage", "データが見つかりません。");
 			return "home";
 		}
 
 		String action = hozon.getActionNm();
 		if (action == null || action.trim().isEmpty()) {
-			model.addAttribute("errorMessage", "데이터 없음");
+			model.addAttribute("errorMessage", "データが見つかりません。");
 			return "home";
 		}
 
@@ -132,7 +132,7 @@ public class ShinseiController {
 		return "redirect:" + action;
 	}
 
-	@GetMapping("/torikesu")
+	@GetMapping("/torikesu") //하나
 	public String viewTorikesu(@RequestParam(value = "no", required = false) String shinseiNo,
 			@RequestParam(value = "hozonUid", required = false) String hozonUid, Model model) {
 
@@ -206,7 +206,7 @@ public class ShinseiController {
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
-	@PostMapping("/updateTorikesu")
+	@PostMapping("/updateTorikesu") //하나
 	public String update(@RequestParam("tkComment") String tkComment,
 			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
 			@RequestParam("beforeKbn") String shinchokuKbn, @RequestParam("hozonUid") String hozonUid,
@@ -253,7 +253,7 @@ public class ShinseiController {
 		return "/huzuiNewInput/26_huzuiKanryo";
 	}
 
-	@PostMapping("/saishinsei")
+	@PostMapping("/saishinsei") //제교
 	public String saishinsei(@RequestParam("kigyoCd") Long kigyoCd, @RequestParam("shinseiNo") Long shinseiNo,
 			@RequestParam("shinseiRiyu") String shinseiRiyu,
 
@@ -307,7 +307,7 @@ public class ShinseiController {
 		return "redirect:/idoconfirm/kanryoPage?shinseiNo=" + shinseiNo;
 	}
 
-	@GetMapping("/shinseiDetail")
+	@GetMapping("/shinseiDetail") //제교
 	public String viewShinseiDetail(@RequestParam("no") Long shinseiNo, HttpSession session, Model model,
 			RedirectAttributes rttr, HttpServletRequest request) {
 
@@ -348,7 +348,7 @@ public class ShinseiController {
 		return "shinsei/11_shinseiDetail";
 	}
 
-	@PostMapping("/hikimodosu")
+	@PostMapping("/hikimodosu") //제교
 	public String hikimodosu(@RequestParam("shinseiNo") Long shinseiNo, HttpSession session, HttpServletRequest request,
 			RedirectAttributes redirectAttributes) {
 
@@ -365,7 +365,7 @@ public class ShinseiController {
 		return "home";
 	}
 
-	@GetMapping("/kakunin")
+	@GetMapping("/kakunin") //제교
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request) {
 
@@ -452,7 +452,7 @@ public class ShinseiController {
 		return "shinsei/11_shinseiDetail_03";
 	}
 
-	@PostMapping("/backFromConfirm")
+	@PostMapping("/backFromConfirm") //제교
 	public String backFromConfirm(@RequestParam("kigyoCd") Long kigyoCd, @RequestParam("shinseiNo") Long shinseiNo) {
 
 		shinseiService.clearHenkoFlags(kigyoCd, shinseiNo);
@@ -460,7 +460,7 @@ public class ShinseiController {
 		return "redirect:/";
 	}
 
-	@PostMapping("/resubmit")
+	@PostMapping("/resubmit") //제교
 	public String resubmit(@RequestParam("shinseiNo") Long shinseiNo, @RequestParam("shinseiRiyu") String shinseiRiyu,
 			HttpSession session, RedirectAttributes rttr) {
 
@@ -485,7 +485,7 @@ public class ShinseiController {
 		return "redirect:/shinsei/list";
 	}
 
-	@GetMapping("/addressCheck")
+	@GetMapping("/addressCheck") //제교
 	public String addressCheck(@RequestParam(required = false) String zip, @RequestParam(required = false) String pref,
 			@RequestParam(required = false) String addr1, @RequestParam(required = false) String addr2, Model model) {
 

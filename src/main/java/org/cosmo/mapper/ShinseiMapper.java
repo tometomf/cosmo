@@ -12,9 +12,11 @@ import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 
+
 @Mapper
 public interface ShinseiMapper {
 
+	//하나
 	ShinseiJyohouVO getShinseiJyohou(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiKeiroVO getShinseiKeiro(@Param("shinseiNo") Long shinseiNo);
@@ -22,16 +24,6 @@ public interface ShinseiMapper {
 	String getShainUidByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
-
-	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
-	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
-
-	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("updUserId") String updUserId);
-
-	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("loginUserId") String loginUserId);
 
 	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") Long shinseiNo);
 
@@ -91,6 +83,8 @@ public interface ShinseiMapper {
 	void deleteShinseiByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
 	String getEmailByShainUid(@Param("shainUid") String shainUid);
+	
+	//제교
 
 	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
@@ -106,5 +100,15 @@ public interface ShinseiMapper {
 
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
+	
+	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
+
+	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("updUserId") String updUserId);
+
+	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("loginUserId") String loginUserId);
 
 }
