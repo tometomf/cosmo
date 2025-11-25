@@ -16,14 +16,18 @@ public interface KeiroInputMapper {
             @Param("shainUid") Long shainUid,
             @Param("keiroSeq") Integer keiroSeq);
 
-    //지훈
+  //지훈
     ShinseiDTO selectAddressWithFallback(
             @Param("kigyoCd") Integer kigyoCd,
-            @Param("shainUid") Long shainUid);
+            @Param("shainUid") Long shainUid,
+            @Param("shinseiNo") Integer shinseiNo,
+            @Param("keiroSeq") Integer keiroSeq);
     //지훈
     ShinseiDTO selectKinmuAddressWithFallback(
             @Param("kigyoCd") Integer kigyoCd,
-            @Param("shainUid") Long shainUid);
+            @Param("shainUid") Long shainUid,
+            @Param("shinseiNo") Integer shinseiNo,
+            @Param("keiroSeq") Integer keiroSeq);
     
     //재환
     ShainLocationVO selectShainLocationByUid(

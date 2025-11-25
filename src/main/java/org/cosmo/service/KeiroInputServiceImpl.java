@@ -37,16 +37,16 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 
 	//지훈
 	@Override
-	public ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid) {
+	public ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq) {
 
-		return mapper.selectAddressWithFallback(kigyoCd, shainUid);
+		return mapper.selectAddressWithFallback(kigyoCd, shainUid, shinseiNo, keiroSeq);
 	}
 
 	//지훈
 	@Override
-	public ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid) {
+	public ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq) {
 
-		return mapper.selectKinmuAddressWithFallback(kigyoCd, shainUid);
+		return mapper.selectKinmuAddressWithFallback(kigyoCd, shainUid, shinseiNo, keiroSeq);
 	}
 
 	//하정

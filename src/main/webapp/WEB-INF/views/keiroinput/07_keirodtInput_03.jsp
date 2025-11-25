@@ -487,6 +487,8 @@ p　{
        				value="${empty hozonUid ? 0 : hozonUid}">
        				
        		<input type="hidden" name="shinseiNo" value="${shinseiNo}">
+       		
+    		
          </form>
 
          <%@ include file="/WEB-INF/views/common/footer.jsp"%>
