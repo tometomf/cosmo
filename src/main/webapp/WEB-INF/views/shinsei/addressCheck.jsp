@@ -110,7 +110,7 @@ h2 {
 </style>
 </head>
 <body>
-	<h2>住所確認</h2>
+	<h2 id="pageTitle">住所確認</h2>
 
 	<div id="errorMessage" class="error-message"></div>
 	<div id="successMessage" class="success-message"></div>
@@ -147,170 +147,210 @@ h2 {
 	</div>
 
 	<script type="text/javascript">
-		//<![CDATA[
-		var map;
-		var marker;
-		var latitude = null;
-		var longitude = null;
+        //<![CDATA[
+        var map;
+        var marker;
+        var latitude = null;
+        var longitude = null;
 
-		// URLパラメータ取得
-		var urlParams = new URLSearchParams(window.location.search);
-		var zip = urlParams.get('zip') || '';
-		var pref = urlParams.get('pref') || '';
-		var addr1 = urlParams.get('addr1') || '';
-		var addr2 = urlParams.get('addr2') || '';
+      
+        var urlParams = new URLSearchParams(window.location.search);
+        var zip = urlParams.get('zip') || '';
+        var pref = urlParams.get('pref') || '';
+        var addr1 = urlParams.get('addr1') || '';
+        var addr2 = urlParams.get('addr2') || '';
+       
+        var mode = urlParams.get('mode') || '';
+     
+        var pageTitleElem = document.getElementById('pageTitle');
+        if (mode === 'kinmu') {
+         
+            document.title = '勤務地確認';
+            if (pageTitleElem) {
+                pageTitleElem.textContent = '勤務地確認';
+            }
+        } else {
+    
+            document.title = '住所確認';
+            if (pageTitleElem) {
+                pageTitleElem.textContent = '住所確認';
+            }
+        }
+     
+        document.getElementById('displayZip').textContent = zip;
+        document.getElementById('displayPref').textContent = pref;
+        document.getElementById('displayAddr1').textContent = addr1;
+        document.getElementById('displayAddr2').textContent = addr2;
 
-		// 画面に表示
-		document.getElementById('displayZip').textContent = zip;
-		document.getElementById('displayPref').textContent = pref;
-		document.getElementById('displayAddr1').textContent = addr1;
-		document.getElementById('displayAddr2').textContent = addr2;
+        // 完全な住所文字列
+        var fullAddress = pref + addr1 + addr2;
 
-		// 完全な住所文字列
-		var fullAddress = pref + addr1 + addr2;
+        console.log('受信した住所:', fullAddress);
+        console.log('mode =', mode);
 
-		console.log('受信した住所:', fullAddress);
+        // OpenStreetMap 초기화
+        function initMap() {
+            // デフォルト位置（東京駅）
+            var defaultPosition = [35.6812, 139.7671];
 
-		// OpenStreetMap 초기화
-		function initMap() {
-			// デフォルト位置（東京駅）
-			var defaultPosition = [ 35.6812, 139.7671 ];
+            map = L.map('map').setView(defaultPosition, 15);
 
-			map = L.map('map').setView(defaultPosition, 15);
+            L.tileLayer(
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }
+            ).addTo(map);
 
-			L
-					.tileLayer(
-							'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-							{
-								attribution : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-							}).addTo(map);
+            marker = L.marker(defaultPosition).addTo(map);
 
-			marker = L.marker(defaultPosition).addTo(map);
+            // 住所から緯度経度取得
+            geocodeAddress(fullAddress);
+        }
 
-			// 住所から緯度経度取得
-			geocodeAddress(fullAddress);
-		}
+        // ジオコーディング実行
+        function geocodeAddress(address) {
+            if (!address || address.trim() === '') {
+                showError('住所が入力されていません。');
+                document.getElementById('displayLatLng').textContent = '住所未入力';
+                return;
+            }
 
-		// ジオコーディング実行
-		function geocodeAddress(address) {
-			if (!address || address.trim() === '') {
-				showError('住所が入力されていません。');
-				document.getElementById('displayLatLng').textContent = '住所未入力';
-				return;
-			}
+            console.log('ジオコーディング開始:', address);
 
-			console.log('ジオコーディング開始:', address);
+            // Nominatim API 호출
+            var apiUrl = 'https://nominatim.openstreetmap.org/search?format=json&q='
+                    + encodeURIComponent(address) + '&countrycodes=jp&limit=1';
 
-			// Nominatim API 호출
-			var apiUrl = 'https://nominatim.openstreetmap.org/search?format=json&q='
-					+ encodeURIComponent(address) + '&countrycodes=jp&limit=1';
+            fetch(apiUrl)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('API呼び出しに失敗しました');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log('API応答:', data);
 
-			fetch(apiUrl)
-					.then(function(response) {
-						if (!response.ok) {
-							throw new Error('API呼び出しに失敗しました');
-						}
-						return response.json();
-					})
-					.then(
-							function(data) {
-								console.log('API応答:', data);
+                    if (data && data.length > 0) {
+                        latitude = parseFloat(data[0].lat);
+                        longitude = parseFloat(data[0].lon);
 
-								if (data && data.length > 0) {
-									latitude = parseFloat(data[0].lat);
-									longitude = parseFloat(data[0].lon);
+                        console.log('取得した緯度経度: lat=' + latitude + ', lng=' + longitude);
 
-									console.log('取得した緯度経度: lat=' + latitude
-											+ ', lng=' + longitude);
+                        // 地図更新
+                        var newPosition = [latitude, longitude];
+                        map.setView(newPosition, 16);
+                        marker.setLatLng(newPosition);
 
-									// 地図更新
-									var newPosition = [ latitude, longitude ];
-									map.setView(newPosition, 16);
-									marker.setLatLng(newPosition);
+                        // 緯度経度表示
+                        var latLngText = latitude.toFixed(6) + ', ' + longitude.toFixed(6);
+                        document.getElementById('displayLatLng').textContent = latLngText;
+                        document.getElementById('displayLatLng').style.color = '#4CAF50';
 
-									// 緯度経度表示
-									var latLngText = latitude.toFixed(6) + ', '
-											+ longitude.toFixed(6);
-									document.getElementById('displayLatLng').textContent = latLngText;
-									document.getElementById('displayLatLng').style.color = '#4CAF50';
+                        showSuccess('緯度経度の取得に成功しました。');
 
-									showSuccess('緯度経度の取得に成功しました。');
+                    } else {
+                        showError('住所から緯度経度を取得できませんでした。住所を確認してください。');
+                        document.getElementById('displayLatLng').textContent = '取得失敗';
+                        document.getElementById('displayLatLng').style.color = 'red';
+                    }
+                })
+                .catch(function(error) {
+                    console.error('エラー:', error);
+                    showError('エラーが発生しました: ' + error.message);
+                    document.getElementById('displayLatLng').textContent = 'エラー';
+                    document.getElementById('displayLatLng').style.color = 'red';
+                });
+        }
 
-								} else {
-									showError('住所から緯度経度を取得できませんでした。住所を確認してください。');
-									document.getElementById('displayLatLng').textContent = '取得失敗';
-									document.getElementById('displayLatLng').style.color = 'red';
-								}
-							})['catch'](function(error) {
-				console.error('エラー:', error);
-				showError('エラーが発生しました: ' + error.message);
-				document.getElementById('displayLatLng').textContent = 'エラー';
-				document.getElementById('displayLatLng').style.color = 'red';
-			});
-		}
+        // エラーメッセージ表示
+        function showError(message) {
+            var errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
 
-		// エラーメッセージ表示
-		function showError(message) {
-			var errorDiv = document.getElementById('errorMessage');
-			errorDiv.textContent = message;
-			errorDiv.style.display = 'block';
+            var successDiv = document.getElementById('successMessage');
+            successDiv.style.display = 'none';
+        }
 
-			var successDiv = document.getElementById('successMessage');
-			successDiv.style.display = 'none';
-		}
+        // 成功メッセージ表示
+        function showSuccess(message) {
+            var successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
 
-		// 成功メッセージ表示
-		function showSuccess(message) {
-			var successDiv = document.getElementById('successMessage');
-			successDiv.textContent = message;
-			successDiv.style.display = 'block';
+            var errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+        }
 
-			var errorDiv = document.getElementById('errorMessage');
-			errorDiv.style.display = 'none';
-		}
+        // ★ 부모창 콜백 공통 처리
+        function applyToParent(pref, addr1, addr2, lat, lng) {
+            console.log('applyToParent called. mode = ' + mode);
 
-		// 決定ボタン押下時
-		function applyAddress() {
-			console.log('決定ボタンクリック');
+            if (!window.opener || window.opener.closed) {
+                alert('親画面が見つかりません。\nこのウィンドウを閉じて、もう一度お試しください。');
+                return false;
+            }
 
-			if (latitude === null || longitude === null) {
-				alert('緯度経度の取得に失敗しました。\n住所を確認して、もう一度お試しください。');
-				return;
-			}
+            try {
+                // 勤務地モード일 때
+                if (mode === 'kinmu' &&
+                    typeof window.opener.applyKinmuAddressFromCheck === 'function') {
 
-			console.log('親画面に送信する値:');
-			console.log('  都道府県: ' + pref);
-			console.log('  住所1: ' + addr1);
-			console.log('  住所2: ' + addr2);
-			console.log('  緯度: ' + latitude);
-			console.log('  経度: ' + longitude);
+                    window.opener.applyKinmuAddressFromCheck(pref, addr1, addr2, lat, lng);
+                }
+                // 기본(住所용) 모드
+                else if (typeof window.opener.applyAddressFromCheck === 'function') {
 
-			// 親画面の関数呼び出し
-			if (window.opener && !window.opener.closed) {
-				try {
-					window.opener.applyAddressFromCheck(pref, addr1, addr2,
-							latitude, longitude);
+                    window.opener.applyAddressFromCheck(pref, addr1, addr2, lat, lng);
+                }
+                else {
+                    alert('親画面にコールバック関数が見つかりません。');
+                    return false;
+                }
 
-					// 成功したら少し待ってから閉じる
-					setTimeout(function() {
-						window.close();
-					}, 500);
+                return true;
 
-				} catch (e) {
-					console.error('親画面への送信エラー:', e);
-					alert('親画面への送信に失敗しました。\nエラー: ' + e.message);
-				}
-			} else {
-				alert('親画面が見つかりません。\nこのウィンドウを閉じて、もう一度お試しください。');
-			}
-		}
+            } catch (e) {
+                console.error('親画面への送信エラー:', e);
+                alert('親画面への送信に失敗しました。\nエラー: ' + e.message);
+                return false;
+            }
+        }
 
-		// ページロード時に地図初期化
-		window.onload = function() {
-			console.log('ページロード完了');
-			initMap();
-		};
-		//]]>
-	</script>
+        // 決定ボタン押下時
+        function applyAddress() {
+            console.log('決定ボタンクリック');
+
+            if (latitude === null || longitude === null) {
+                alert('緯度経度の取得に失敗しました。\n住所を確認して、もう一度お試しください。');
+                return;
+            }
+
+            console.log('親画面に送信する値:');
+            console.log('  都道府県: ' + pref);
+            console.log('  住所1: ' + addr1);
+            console.log('  住所2: ' + addr2);
+            console.log('  緯度: ' + latitude);
+            console.log('  経度: ' + longitude);
+
+            var success = applyToParent(pref, addr1, addr2, latitude, longitude);
+
+            if (success) {
+                // 成功したら少し待ってから閉じる
+                setTimeout(function() {
+                    window.close();
+                }, 500);
+            }
+        }
+
+        // ページロード時に地図初期化
+        window.onload = function() {
+            console.log('ページロード完了');
+            initMap();
+        };
+        //]]>
+    </script>
 </body>
 </html>

@@ -24,6 +24,22 @@ public class ShinseiJyohouVO {
 	private String newKinmuchi2;
 	private String newKinmuchi3;
 
+
+	private String genKinmuZipCd;
+	private String genKinmuAddress1;
+	private String genKinmuAddress2;
+	private String genKinmuAddress3;
+
+	
+	private String newKinmuZipCd;
+	private String newKinmuAddress1;
+	private String newKinmuAddress2;
+	private String newKinmuAddress3;
+
+
+	private String kinmuAddressIdoKeido;
+
+
 	private String riyu;
 	private String idoYmd;
 	private String itenYmd;
@@ -36,12 +52,11 @@ public class ShinseiJyohouVO {
 	private String shinseiName;
 	private String torikeshiYmd;
 	private String sashimodoshiYmd;
-	
+
 	private String yuryoIcS;
 	private String yuryoIcE;
-	
-	private String addressIdoKeido;
 
+	private String addressIdoKeido;
 
 	public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();

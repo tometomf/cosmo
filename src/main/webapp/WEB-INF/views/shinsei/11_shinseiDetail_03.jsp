@@ -12,18 +12,15 @@
 <script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 <!-- ★★★ 여기에 JavaScript 함수들을 먼저 선언 ★★★ -->
 <script type="text/javascript">
-	// 전역 함수로 선언
 	function openAddressCheck() {
 		console.log('=== openAddressCheck 함수 시작 ===');
 
-		// ID로 직접 가져오기
 		var zip1Element = document.getElementById("zipCode1");
 		var zip2Element = document.getElementById("zipCode2");
 		var prefElement = document.getElementById("prefectureSelect");
 		var addr1Element = document.getElementById("address1Input");
 		var addr2Element = document.getElementById("address2Input");
 
-		// 요소 존재 확인
 		if (!zip1Element || !zip2Element || !prefElement || !addr1Element
 				|| !addr2Element) {
 			alert("入力項目が見つかりません。");
@@ -31,7 +28,6 @@
 			return;
 		}
 
-		// 값 가져오기
 		var zip1 = zip1Element.value.trim();
 		var zip2 = zip2Element.value.trim();
 		var pref = prefElement.value.trim();
@@ -41,7 +37,6 @@
 		console.log('입력값 확인: zip1=' + zip1 + ', zip2=' + zip2 + ', pref='
 				+ pref + ', addr1=' + addr1 + ', addr2=' + addr2);
 
-		// 주소 입력 확인
 		if (!pref && !addr1) {
 			alert("都道府県または住所を入力してください。");
 			return;
@@ -56,7 +51,6 @@
 
 		console.log('팝업 URL: ' + url);
 
-		// 팝업 열기
 		try {
 			var popup = window.open(url, "addressCheckWindow",
 					"width=800,height=600,scrollbars=yes,resizable=yes");
@@ -70,6 +64,45 @@
 			}
 		} catch (error) {
 			console.error('팝업 열기 중 오류:', error);
+			alert("エラーが発生しました: " + error.message);
+		}
+	}
+
+	function openKinmuAddressCheck() {
+		console.log('=== openKinmuAddressCheck 함수 시작 ===');
+
+		var zip = "${empty jyohou.newKinmuZipCd ? '' : jyohou.newKinmuZipCd}";
+		var pref = "${empty jyohou.newKinmuAddress1 ? '' : jyohou.newKinmuAddress1}";
+		var addr1 = "${empty jyohou.newKinmuAddress2 ? '' : jyohou.newKinmuAddress2}";
+		var addr2 = "${empty jyohou.newKinmuAddress3 ? '' : jyohou.newKinmuAddress3}";
+
+		console.log("근무지 주소:", zip, pref, addr1, addr2);
+
+		if (!pref && !addr1) {
+			alert("勤務先住所情報がありません。");
+			return;
+		}
+
+		var params = "zip=" + encodeURIComponent(zip) + "&pref="
+				+ encodeURIComponent(pref) + "&addr1="
+				+ encodeURIComponent(addr1) + "&addr2="
+				+ encodeURIComponent(addr2) + "&mode=kinmu"; // ★ 집/근무지 구분용
+
+		var url = "/shinsei/addressCheck?" + params;
+
+		try {
+			var popup = window.open(url, "kinmuAddressCheckWindow",
+					"width=800,height=600,scrollbars=yes,resizable=yes");
+
+			if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+				alert("ポップアップがブロックされました。\nブラウザの設定でポップアップを許可してください。");
+				console.error('근무지 팝업이 차단되었습니다.');
+			} else {
+				console.log('근무지 팝업이 정상적으로 열렸습니다.');
+				popup.focus();
+			}
+		} catch (error) {
+			console.error('근무지 팝업 열기 중 오류:', error);
 			alert("エラーが発生しました: " + error.message);
 		}
 	}
@@ -139,7 +172,6 @@
 				return;
 			}
 
-			// 여기서 찍어야 함 (이제 flgElement가 존재)
 			console.log("addressChgKbnHidden 최종값 = "
 					+ (flgElement.value || '(未設定)'));
 
@@ -165,6 +197,72 @@
 
 		} catch (e) {
 			console.error('applyAddressFromCheck 에러:', e);
+			alert('エラーが発生しました: ' + e.message);
+		}
+	}
+
+	function applyKinmuAddressFromCheck(pref, addr1, addr2, lat, lng) {
+		console.log('=== applyKinmuAddressFromCheck 호출됨 ===');
+		console.log('받은 값(근무지): pref=' + pref + ', addr1=' + addr1 + ', addr2='
+				+ addr2 + ', lat=' + lat + ', lng=' + lng);
+
+		try {
+			var latNum = Number(lat);
+			var lngNum = Number(lng);
+
+			if (isNaN(latNum) || isNaN(lngNum)) {
+				console.error('근무지 緯度経度가 수치가 아님: lat=' + lat + ', lng=' + lng);
+				alert('勤務先の緯度経度の取得に失敗しました。(数値ではありません)');
+				return;
+			}
+
+			var latStr = latNum.toFixed(3);
+			var lngStr = lngNum.toFixed(3);
+			var newIdoKeido = latStr + "," + lngStr;
+
+			console.log('근무지 잘라낸 緯度経度: ' + newIdoKeido + ' (length='
+					+ newIdoKeido.length + ')');
+
+			var idoKeidoElement = document
+					.getElementById("kinmuAddressIdoKeidoHidden");
+			var oldIdoKeidoElement = document
+					.getElementById("oldKinmuAddressIdoKeido");
+			var flgElement = document
+					.getElementById("kinmuAddressChgKbnHidden");
+
+			if (!idoKeidoElement) {
+				console.error('kinmuAddressIdoKeidoHidden 요소를 찾을 수 없습니다.');
+				alert('勤務先緯度経度の保存領域が見つかりません。');
+				return;
+			}
+			if (!flgElement) {
+				console.error('kinmuAddressChgKbnHidden 요소를 찾을 수 없습니다.');
+				alert('勤務先住所変更フラグの保存領域が見つかりません。');
+				return;
+			}
+
+			idoKeidoElement.value = newIdoKeido;
+			console.log('근무지 새로운緯度経度: ' + newIdoKeido);
+
+			var oldVal = oldIdoKeidoElement ? oldIdoKeidoElement.value : '';
+
+			console.log('근무지 修正前緯度経度: ' + oldVal);
+			console.log('근무지 修正後緯度経度: ' + newIdoKeido);
+
+			if (newIdoKeido && newIdoKeido.trim() !== ''
+					&& oldVal !== newIdoKeido) {
+				flgElement.value = "1";
+				console.log('勤務先変更フラグ: 1 (変更あり)');
+				alert("勤務先緯度経度が更新されました。\n緯度経度: " + newIdoKeido
+						+ "\n\n※ 勤務地が変更されました。");
+			} else {
+				flgElement.value = "0";
+				console.log('勤務先変更フラグ: 0 (変更なし)');
+				alert("勤務先緯度経度が更新されました。\n緯度経度: " + newIdoKeido);
+			}
+
+		} catch (e) {
+			console.error('applyKinmuAddressFromCheck 에러:', e);
 			alert('エラーが発生しました: ' + e.message);
 		}
 	}
@@ -307,23 +405,25 @@
 			</div>
 
 			<!-- ===== 경고 영역 ===== -->
-			<div
-				style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
+			<c:if test="${jyohou.shinchokuKbn eq '3'}">
+				<div
+					style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
 
-				<!-- 경고 아이콘 -->
-				<img src="/resources/img/icon_attention.gif" alt="warning"
-					style="width: 35px; height: 35px; flex-shrink: 0; margin-top: 2px;">
+					<!-- 경고 아이콘 -->
+					<img src="/resources/img/icon_attention.gif" alt="warning"
+						style="width: 35px; height: 35px; flex-shrink: 0; margin-top: 2px;">
 
-				<!-- 경고 문장 -->
-				<div style="font-size: 13px; color: #cc0000; line-height: 1.6;">
-					<div>申請内容に不備があったため差戻しされています。</div>
-					<div>不備内容を確認のうえ、再申請を行ってください。</div>
-					<div style="margin-top: 3px; font-weight: bold;">
-						[注意] <span style="font-weight: normal;">
-							申請期限日を過ぎると通勤費申請は行えなくなります。 </span>
+					<!-- 경고 문장 -->
+					<div style="font-size: 13px; color: #cc0000; line-height: 1.6;">
+						<div>申請内容に不備があったため差戻しされています。</div>
+						<div>不備内容を確認のうえ、再申請を行ってください。</div>
+						<div style="margin-top: 3px; font-weight: bold;">
+							[注意] <span style="font-weight: normal;">
+								申請期限日を過ぎると通勤費申請は行えなくなります。 </span>
+						</div>
 					</div>
 				</div>
-			</div>
+			</c:if>
 
 			<!-- ===== 상태 정보 ===== -->
 			<div class="content_Form1" style="margin-top: 25px;">
@@ -342,21 +442,29 @@
 					<div class="form_Normal">${empty jyohou.shinseiYmd ? '' : jyohou.shinseiYmd}</div>
 				</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}</div>
-				</div>
+				<!-- ※ 進捗状況区分 が 「一時保存」 以外のとき만 표시 -->
+				<c:if test="${jyohou.shinchokuKbn ne '1'}">
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">申請解除日</div>
-					<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">差戻し日</div>
+						<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}
+						</div>
 					</div>
-				</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">不備内容</div>
-					<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}</div>
-				</div>
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">申請解除日</div>
+						<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+						</div>
+					</div>
+
+					<div class="form_Text1" id="form_Text2">
+						<div class="form_Column">不備内容</div>
+						<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}
+						</div>
+					</div>
+
+				</c:if>
+
 			</div>
 
 			<!-- ===== 申請前後情報 ===== -->
@@ -479,7 +587,7 @@
 					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}
 						<button type="button"
 							style="border: none; background: none; cursor: pointer; padding: 5px;"
-							onclick="openAddressCheck()">
+							onclick="openKinmuAddressCheck()">
 							<img src="/resources/img/tn/search_btn02.gif" alt="勤務地確認"
 								style="vertical-align: middle; display: block;">
 						</button>
@@ -526,7 +634,8 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 IC</div>
-					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}</div>
+					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -541,8 +650,8 @@
 					<div class="form_Column">1ヶ月金額</div>
 					<div class="form_Normal">
 						<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                            ${keiro.tsuki}円
-                        </c:if>
+                ${keiro.tsuki}円
+            </c:if>
 					</div>
 				</div>
 
@@ -562,8 +671,8 @@
 						style="display: flex; align-items: center; gap: 10px;">
 						<span> <c:if
 								test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                                ${keiro.tsuki}円
-                            </c:if>
+                    ${keiro.tsuki}円
+                </c:if>
 						</span>
 						<button type="button"
 							style="border: 1px solid #ccc; background: #f3f3f3; font-size: 12px; cursor: pointer; padding: 2px 10px;">
@@ -588,7 +697,9 @@
 			</div>
 
 			<!-- Multi Form 예제 (dummy 그대로) -->
+			<!-- 付随書類（自動車） -->
 			<div class="multi_Form">
+				<!-- 면허증 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -598,13 +709,17 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証有効期限</div>
-						<div class="form_Normal">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
+						<div class="form_Normal">${empty shorui.menkyoYukoKigen ? '' : shorui.menkyoYukoKigen}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">免許証番号</div>
-						<div class="form_Normal">${shainHuzuiShorui.menkyo_No}</div>
+						<div class="form_Normal">${empty shorui.menkyoNo ? '' : shorui.menkyoNo}
+						</div>
 					</div>
 				</div>
+
+				<!-- 車検証 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -614,25 +729,35 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車種</div>
-						<div class="form_Normal">${shainHuzuiShorui.shashu}</div>
+						<div class="form_Normal">${empty shorui.shashu ? '' : shorui.shashu}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">ナンバー</div>
-						<div class="form_Normal">${shainHuzuiShorui.toroku_No}</div>
+						<div class="form_Normal">${empty shorui.torokuNo ? '' : shorui.torokuNo}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">排気量</div>
-						<div class="form_Normal">${shainHuzuiShorui.haikiryo}</div>
+						<div class="form_Normal">${empty shorui.haikiryo ? '' : shorui.haikiryo}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">車検有効期限</div>
-						<div class="form_Normal">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
+						<div class="form_Normal">${empty shorui.shakenYukoKigen ? '' : shorui.shakenYukoKigen}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">燃費</div>
-						<div class="form_Normal">15km/L</div>
+						<div class="form_Normal">
+							<c:if test="${not empty shorui.nenpi}">
+                    ${shorui.nenpi}km/L
+                </c:if>
+						</div>
 					</div>
 				</div>
+
+				<!-- 保険 -->
 				<div class="content_Form1" style="width: 330px; margin: 0;">
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">付随書類</div>
@@ -648,30 +773,35 @@
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">保険満了日</div>
-						<div class="form_Normal">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
+						<div class="form_Normal">${empty shorui.hokenManryoYmd ? '' : shorui.hokenManryoYmd}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対人賠償</div>
-						<div class="form_Normal">${shainHuzuiShorui.taijin_Baisho}</div>
+						<div class="form_Normal">${empty shorui.taijinBaisho ? '' : shorui.taijinBaisho}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">対物賠償</div>
-						<div class="form_Normal">${shainHuzuiShorui.taibutsu_Baisho}</div>
+						<div class="form_Normal">${empty shorui.taibutsuBaisho ? '' : shorui.taibutsuBaisho}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">人身障害</div>
-						<div class="form_Normal">${shainHuzuiShorui.jinshin_Shogai}</div>
+						<div class="form_Normal">${empty shorui.jinshinShogai ? '' : shorui.jinshinShogai}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">搭乗者障害</div>
-						<div class="form_Normal">${shainHuzuiShorui.tojosha_Shogai}</div>
+						<div class="form_Normal">${empty shorui.tojoshaShogai ? '' : shorui.tojoshaShogai}
+						</div>
 					</div>
 					<div class="form_Text1" id="form_Text3">
 						<div class="form_Column">等級</div>
-						<div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
+						<div class="form_Normal">${empty shorui.tokyu ? '' : shorui.tokyu}
+						</div>
 					</div>
 				</div>
-
 			</div>
 
 
@@ -679,7 +809,6 @@
 				<c:param name="kigyoCd" value="${shinseiJyohou.kigyoCd}" />
 				<c:param name="shinseiNo" value="${shinseiJyohou.shinseiNo}" />
 			</c:url>
-
 
 			<div class="button_Right">
 				<div class="button_Right_Group">
@@ -689,7 +818,7 @@
 			</div>
 
 
-			<!-- ===== 経路② (dummy) ===== -->
+			<!-- ===== 経路② ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
@@ -697,23 +826,41 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">バス</div>
+					<div class="form_Normal">${empty keiro2.shudanName ? '' : keiro2.shudanName}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Normal">下作延(バス) → 溝峰台駅(バス)</div>
+					<div class="form_Normal">
+						${empty keiro2.startPlace ? '' : keiro2.startPlace}
+						<c:if test="${not empty keiro2.endPlace}">
+				→ ${keiro2.endPlace}
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">金額</div>
-					<div class="form_Normal">13,120円 / 1ヶ月 32,000円 / 3ヶ月 70,000円
-						/ 6ヶ月</div>
+					<div class="form_Column">1ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro2.sanshoTeikiKin1 != null}">
+				${keiro2.sanshoTeikiKin1}円 / ${keiro2.sanshoTeikiTsukiSu1}ヶ月
+			</c:if>
+						<c:if test="${keiro2.sanshoTeikiKin2 != null}">
+				&nbsp; ${keiro2.sanshoTeikiKin2}円 / ${keiro2.sanshoTeikiTsukiSu2}ヶ月
+			</c:if>
+						<c:if test="${keiro2.sanshoTeikiKin3 != null}">
+				&nbsp; ${keiro2.sanshoTeikiKin3}円 / ${keiro2.sanshoTeikiTsukiSu3}ヶ月
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">450円</div>
+					<div class="form_Normal">
+						${empty keiro2.katamichi ? '' : keiro2.katamichi}
+						<c:if test="${not empty keiro2.katamichi}">円</c:if>
+					</div>
 				</div>
 			</div>
 
@@ -737,7 +884,6 @@
 				</div>
 			</div>
 
-
 			<c:url var="keiro2Url" value="/keiroinput/07_keirodtInput_02">
 				<c:param name="kigyoCd" value="${shinseiDetail.kigyoCd}" />
 				<c:param name="shinseiNo" value="${shinseiDetail.shinseiNo}" />
@@ -748,11 +894,11 @@
 				<div class="button_Right_Group">
 					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
 						style="cursor: pointer;" onclick="location.href='${keiro2Url}'">
-
 				</div>
 			</div>
 
-			<!-- ===== 経路③ (dummy) ===== -->
+
+			<!-- ===== 経路③ ===== -->
 			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
 				<div class="form_Title2"
 					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
@@ -760,23 +906,50 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">電車</div>
+					<div class="form_Normal">${empty keiro3.shudanName ? '' : keiro3.shudanName}
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Normal">東京駅 → 金町駅</div>
+					<div class="form_Normal">
+						${empty keiro3.startPlace ? '' : keiro3.startPlace}
+						<c:if test="${not empty keiro3.endPlace}">
+				→ ${keiro3.endPlace}
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">金額</div>
-					<div class="form_Normal">15,000円 / 1ヶ月 45,000円 / 3ヶ月 80,000円
-						/ 6ヶ月</div>
+					<div class="form_Column">1ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro3.sanshoTeikiKin1 != null}">
+				${keiro3.sanshoTeikiKin1}円 / ${keiro3.sanshoTeikiTsukiSu1}ヶ月
+			</c:if>
+						<c:if test="${keiro3.sanshoTeikiKin2 != null}">
+				&nbsp; ${keiro3.sanshoTeikiKin2}円 / ${keiro3.sanshoTeikiTsukiSu2}ヶ月
+			</c:if>
+						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
+				&nbsp; ${keiro3.sanshoTeikiKin3}円 / ${keiro3.sanshoTeikiTsukiSu3}ヶ月
+			</c:if>
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">6ヶ月</div>
+					<div class="form_Normal">
+						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
+				${keiro3.sanshoTeikiKin3}円
+			</c:if>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">18,000円</div>
+					<div class="form_Normal">
+						${empty keiro3.katamichi ? '' : keiro3.katamichi}
+						<c:if test="${not empty keiro3.katamichi}">円</c:if>
+					</div>
 				</div>
 			</div>
 
@@ -812,6 +985,41 @@
 						style="cursor: pointer;" onclick="location.href='${keiro3Url}'">
 				</div>
 			</div>
+
+
+			<!-- ===== 経路④ ===== -->
+			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
+				<div class="form_Title2"
+					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
+					経路④</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">通勤手段</div>
+					<div class="form_Normal">${empty keiro4.shudanName ? '' : keiro4.shudanName}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">住所</div>
+					<div class="form_Normal">${empty keiro4.startPlace ? '' : keiro4.startPlace}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">勤務地</div>
+					<div class="form_Normal">${empty keiro4.endPlace ? '' : keiro4.endPlace}
+					</div>
+				</div>
+
+				<div class="form_Text1" id="form_Text2">
+					<div class="form_Column">距離</div>
+					<div class="form_Normal">
+						${empty keiro4.shinseiKm ? '' : keiro4.shinseiKm}
+						<c:if test="${not empty keiro4.shinseiKm}">km</c:if>
+					</div>
+				</div>
+			</div>
+
 
 			<!-- 기타 테이블 (dummy) -->
 			<div class="content_Form1">
@@ -881,7 +1089,7 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou.shinseiName ? '' : jyohou.shinseiName}</div>
+					<div class="form_Normal">${empty jyohou.shinseiKbn ? '' : jyohou.shinseiKbn}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
@@ -915,9 +1123,11 @@
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						onclick="submitBackForm()"> <img
 						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
-						onclick="submitReapplyForm()"> <img
-						src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-						onclick="goToCancelPage()">
+						onclick="submitReapplyForm()">
+					<c:if test="${jyohou.shinchokuKbn ne '4'}">
+						<img src="/resources/img/shinsei_btn02.gif" alt="この申請を取消する"
+							onclick="goToCancelPage()">
+					</c:if>
 				</div>
 			</div>
 
@@ -937,7 +1147,7 @@
 		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 
 
-		
+
 
 		<!-- 申請理由 -->
 		<input type="hidden" name="shinseiRiyu" id="shinseiRiyuHidden"
@@ -974,6 +1184,19 @@
 		<!-- ★ 修正前 緯度経度 (比較用, DBに送信しない) -->
 		<input type="hidden" id="oldAddressIdoKeido"
 			value="${jyohou.addressIdoKeido}">
+
+		<!-- ★ 勤務地 緯度経度 (DB: KINMU_ADDRESS_IDO_KEIDO VARCHAR2(19)) -->
+		<input type="hidden" name="kinmuAddressIdoKeido"
+			id="kinmuAddressIdoKeidoHidden" value="">
+
+		<!-- ★ 勤務地 住所変更フラグ (DB: KINMU_ADDRESS_CHG_KBN VARCHAR2(1)) -->
+		<input type="hidden" name="kinmuAddressChgKbn"
+			id="kinmuAddressChgKbnHidden" value="">
+
+		<!-- ★ 修正前 勤務地 緯度経度 (비교용, DB에는 안 보냄) -->
+		<input type="hidden" id="oldKinmuAddressIdoKeido"
+			value="${jyohou.kinmuAddressIdoKeido}">
+
 	</form>
 
 	<script type="text/javascript">

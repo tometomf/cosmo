@@ -49,22 +49,30 @@
 
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">一時保存日</div>
-					<div>${hozon.addDate}</div>
+					<div>${empty jyohou? hozon.addDate : jyohou.shinseiYmd}</div>
 				</div>
 			</div>
 
-			<!-- 링크 나중에 수정해야됨 -->
 			<div class="button_Side">
 				<div class="button_Side_Group">
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						onclick="location.href='/'"> <img
 						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
-						 onclick="location.href='/shinsei/reload?hozonUid=${hozonUid}'">
+						onclick="location.href='/shinsei/reload?hozonUid=${hozonUid}'">
 				</div>
 				<div class="button_Side_Group">
-					<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-						onclick="location.href='/shinsei/torikesu?hozonUid=${hozonUid}'">
+					<c:choose>
+						<c:when test="${not empty jyohou and not empty jyohou.shinseiNo}">
+							<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
+								onclick="location.href='/shinsei/torikesu?no=${jyohou.shinseiNo}'">
+						</c:when>
+						<c:otherwise>
+							<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
+								onclick="location.href='/shinsei/torikesu?hozonUid=${hozonUid}'">
+						</c:otherwise>
+					</c:choose>
 				</div>
+
 			</div>
 
 
@@ -81,8 +89,8 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.genShozoku : jyohou.genShonzoku}</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.newShozoku : jyohou.newShonzoku}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genShozoku : jyohou.genShozoku}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newShozoku : jyohou.newShozoku}</div>
 
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -114,15 +122,17 @@
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
-    				<div class="form_Column">異動日/移転日</div>
-    				<div class="form_Normal">
-        				<c:set var="ido"  value="${empty jyohou ? ichiji.idoYmd  : jyohou.idoYmd}" />
-        				<c:set var="iten" value="${empty jyohou ? ichiji.itenYmd : jyohou.itenYmd}" />
+					<div class="form_Column">異動日/移転日</div>
+					<div class="form_Normal">
+						<c:set var="ido"
+							value="${empty jyohou ? ichiji.idoYmd  : jyohou.idoYmd}" />
+						<c:set var="iten"
+							value="${empty jyohou ? ichiji.itenYmd : jyohou.itenYmd}" />
 
-					        <c:if test="${not empty ido}">${ido}</c:if>
-							 <c:if test="${not empty ido and not empty iten}">/</c:if>
-      							  <c:if test="${not empty iten}">${iten} </c:if>
-   					 </div>
+						<c:if test="${not empty ido}">${ido}</c:if>
+						<c:if test="${not empty ido and not empty iten}">/</c:if>
+						<c:if test="${not empty iten}">${iten} </c:if>
+					</div>
 				</div>
 
 

@@ -50,7 +50,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">${jyohou.codeNm}</div>
+					<div class="form_Normal">${empty jyohou? '一時保存中' : jyohou.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -84,22 +84,20 @@
 
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">${empty jyohou.genAddress ? '' : jyohou.genAddress}</div>
-					<div class="form_Normal">${empty jyohou.newAddress ? '' : jyohou.newAddress}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genAddress : jyohou.genAddress}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newAddress : jyohou.newAddress}</div>
 				</div>
-
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${empty jyohou.genShozoku ? '' : jyohou.genShozoku}</div>
-					<div class="form_Normal">${empty jyohou.newShozoku ? '' : jyohou.newShozoku}</div>
-				</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genShozoku : jyohou.genShozoku}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newShozoku : jyohou.newShozoku}</div>
 
+				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${empty jyohou.genKinmuchi ? '' : jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genKinmuchi : jyohou.genKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newKinmuchi : jyohou.newKinmuchi}</div>
 				</div>
-
 			</div>
 
 			<div class="content_Form2">
@@ -109,7 +107,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Required">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
+					<div class="form_Required">${empty keiro.shudanName ? ichiji.keiro.shudanName : keiro.shudanName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -201,25 +199,32 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou.shinseiName ? '' : jyohou.shinseiName}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.shinseiName : jyohou.shinseiName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal">${empty jyohou.riyu ? '' : jyohou.riyu}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.riyu : jyohou.riyu}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移転日</div>
 					<div class="form_Normal">
-						${empty jyohou.idoYmd ? '' : jyohou.idoYmd}
-						<c:if test="${not empty jyohou.itenYmd}"> / ${jyohou.itenYmd}</c:if>
+						<c:set var="ido"
+							value="${empty jyohou ? ichiji.idoYmd  : jyohou.idoYmd}" />
+						<c:set var="iten"
+							value="${empty jyohou ? ichiji.itenYmd : jyohou.itenYmd}" />
+
+						<c:if test="${not empty ido}">${ido}</c:if>
+						<c:if test="${not empty ido and not empty iten}">/</c:if>
+						<c:if test="${not empty iten}">${iten} </c:if>
 					</div>
 				</div>
 
+
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.tennyuYmd : jyohou.tennyuYmd}</div>
 				</div>
 
 

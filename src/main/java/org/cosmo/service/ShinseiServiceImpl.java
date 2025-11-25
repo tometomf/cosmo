@@ -1,12 +1,15 @@
 package org.cosmo.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.mapper.ShinseiMapper;
@@ -37,18 +40,17 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
 		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
 	}
-	
+
 	@Override
 	public ShinseiIcHozonVO getIchijiHozon(String hozonUid) {
 		return shinseiMapper.getIchijiHozon(hozonUid);
 	}
 
-	
 	@Override
 	public String getShainUidByShinseiNo(String shinseiNo) {
 		return shinseiMapper.getShainUidByShinseiNo(shinseiNo);
 	}
-	
+
 	@Override
 	public ShainVO getShainByUid(String shainUid) {
 		return shinseiMapper.getShainByUid(shainUid);
@@ -63,7 +65,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 			throw new IllegalStateException("エラーが発生しました。" + shinseiNo + ")");
 		}
 		String shinseiKbn = jyohou.getShinseiKbn();
-		String shinseiYmd = jyohou.getShinseiYmd(); 
+		String shinseiYmd = jyohou.getShinseiYmd();
 
 		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
 
@@ -72,11 +74,10 @@ public class ShinseiServiceImpl implements ShinseiService {
 		String kigyoCdStr = String.valueOf(kigyoCd);
 		String shinseiNoStr = String.valueOf(shinseiNo);
 
-		int syoriKbn = 6; 
-		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); 
+		int syoriKbn = 6;
+		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr);
 
-		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, 
-				shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
+		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
 		);
 
 		if (shinseiMapper.countStartKeiro(kigyoCdStr, shinseiNoStr) > 0) {
@@ -171,7 +172,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public String getShinchokuKbn(String shinseiNo) {
 		return shinseiMapper.getShinchokuKbn(shinseiNo);
 	}
-	
+
 	@Override
 	public String getEmailByShainUid(String shainUid) {
 		return shinseiMapper.getEmailByShainUid(shainUid);
@@ -285,22 +286,21 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Transactional
 	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
-			String addressChgKbn, String loginUserId, String userIp) {
+			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
+			String userIp) {
 
 		Integer updUserId = null;
 		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
 			try {
 				updUserId = Integer.valueOf(loginUserId.trim());
 			} catch (NumberFormatException e) {
-				// 변환 실패하면 그냥 null 유지
+
 			}
 		}
 
-		// ★ 1) 주소 + 위도경도 + 플래그 업데이트
 		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2,
-				newAddress3, addressIdoKeido, addressChgKbn, updUserId);
+				newAddress3, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, updUserId);
 
-		// ★ 2) 실근무일수 변환
 		Integer jitsu = null;
 		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
 			try {
@@ -309,8 +309,17 @@ public class ShinseiServiceImpl implements ShinseiService {
 			}
 		}
 
-		// ★ 3) 경로 쪽 업데이트
 		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
 	}
+
+	@Override
+	public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		param.put("keiroSeq", keiroSeq);
+		return shinseiMapper.getShinseiKeiroDetail(param);
+	}
+
 
 }

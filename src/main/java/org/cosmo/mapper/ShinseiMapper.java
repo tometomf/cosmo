@@ -1,11 +1,14 @@
 package org.cosmo.mapper;
 
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 
@@ -21,6 +24,8 @@ public interface ShinseiMapper {
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
 
 	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
 
 	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("updUserId") String updUserId);
@@ -96,7 +101,8 @@ public interface ShinseiMapper {
 			@Param("shinseiRiyu") String shinseiRiyu, @Param("newZipCd") String newZipCd,
 			@Param("newAddress1") String newAddress1, @Param("newAddress2") String newAddress2,
 			@Param("newAddress3") String newAddress3, @Param("addressIdoKeido") String addressIdoKeido,
-			@Param("addressChgKbn") String addressChgKbn, @Param("updUserId") Integer updUserId);
+			@Param("addressChgKbn") String addressChgKbn, @Param("kinmuAddressIdoKeido") String kinmuAddressIdoKeido,
+			@Param("kinmuAddressChgKbn") String kinmuAddressChgKbn, @Param("updUserId") Integer updUserId);
 
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);

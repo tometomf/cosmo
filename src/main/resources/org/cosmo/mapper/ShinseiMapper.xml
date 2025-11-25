@@ -164,45 +164,62 @@
 		SHINSEI_NO AS shinseiNo,
 		SHINSEI_KBN AS shinseiKbn,
 		SHINCHOKU_KBN AS shinchokuKbn,
+
 		GEN_ADDRESS_1
 		AS genAddress1,
-		GEN_ADDRESS_2
-		AS genAddress2,
-		GEN_ADDRESS_3
-		AS
+		GEN_ADDRESS_2 AS genAddress2,
+		GEN_ADDRESS_3 AS
 		genAddress3,
 		NEW_ADDRESS_1 AS newAddress1,
 		NEW_ADDRESS_2 AS newAddress2,
 		NEW_ADDRESS_3 AS newAddress3,
-		GEN_SHOZOKU_CD AS
-		genShozoku,
-		NEW_SHOZOKU_CD AS
-		newShozoku,
+
+		GEN_SHOZOKU_CD AS genShozoku,
+		NEW_SHOZOKU_CD AS newShozoku,
+
+
+		GEN_KINMU_ZIP_CD AS genKinmuZipCd,
+		GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
+		GEN_KINMU_ADDRESS_2 AS
+		genKinmuAddress2,
+		GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
+
+		NEW_KINMU_ZIP_CD AS newKinmuZipCd,
+		NEW_KINMU_ADDRESS_1 AS
+		newKinmuAddress1,
+		NEW_KINMU_ADDRESS_2 AS newKinmuAddress2,
+		NEW_KINMU_ADDRESS_3 AS newKinmuAddress3,
+
 		GEN_KINMU_ADDRESS_1 AS
 		genKinmuchi1,
-		GEN_KINMU_ADDRESS_2 AS
-		genKinmuchi2,
-		GEN_KINMU_ADDRESS_3 AS
-		genKinmuchi3,
-		NEW_KINMU_ADDRESS_1 AS
-		newKinmuchi1,
+		GEN_KINMU_ADDRESS_2 AS genKinmuchi2,
+		GEN_KINMU_ADDRESS_3
+		AS genKinmuchi3,
+		NEW_KINMU_ADDRESS_1 AS newKinmuchi1,
 		NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
-		NEW_KINMU_ADDRESS_3
-		AS newKinmuchi3,
+		NEW_KINMU_ADDRESS_3 AS
+		newKinmuchi3,
+
+
+		KINMU_ADDRESS_IDO_KEIDO AS kinmuAddressIdoKeido,
+
 		SHINSEI_RIYU AS riyu,
 		IDO_YMD AS idoYmd,
-		ITEN_YMD AS
-		itenYmd,
-		TENNYU_YMD AS tennyuYmd,
-		RIYO_START_YMD AS riyoStartYmd,
+		ITEN_YMD AS itenYmd,
+		TENNYU_YMD
+		AS tennyuYmd,
+		RIYO_START_YMD AS
+		riyoStartYmd,
 		SHINSEI_YMD AS shinseiYmd,
 		SASHIMODOSHI_YMD AS ssmdsYmd,
 		MOSHIOKURI_COMMENT AS moComment,
 		TORIKESHI_YMD AS torikeshiYmd
 		FROM
 		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}
+		WHERE SHINSEI_NO =
+		#{shinseiNo}
 	</select>
+
 
 	<select id="getShinseiKeiro" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiKeiroVO">
@@ -227,7 +244,45 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
-	<select id="getShinseiShorui" parameterType="Long"
+	<select id="getShinseiKeiroDetail" parameterType="map"
+		resultType="org.cosmo.domain.ShinseiKeiroDetailVO">
+
+		SELECT
+		sk.KIGYO_CD,
+		sk.SHINSEI_NO,
+		sk.KEIRO_SEQ,
+		sk.TSUKIN_SHUDAN_KBN,
+		c.CODE_NM AS shudanName,
+		sk.START_PLACE AS
+		startPlace,
+		sk.END_PLACE AS endPlace,
+		sk.SHINSEI_KM AS shinseiKm,
+		NVL(sk.YURYO_KATAMICHI_KIN, sk.KATAMICHI_KIN) AS katamichi,
+		sk.TSUKI_SHIKYU_KIN AS tsuki,
+		sk.YURYO_IC_S AS yuryoIcS,
+		sk.YURYO_IC_E
+		AS yuryoIcE,
+		sk.SANSHO_TEIKI_TSUKI_SU_1 AS sanshoTeikiTsukiSu1,
+		sk.SANSHO_TEIKI_TSUKI_SU_2 AS sanshoTeikiTsukiSu2,
+		sk.SANSHO_TEIKI_TSUKI_SU_3 AS sanshoTeikiTsukiSu3,
+		sk.SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
+		sk.SANSHO_TEIKI_KIN_2 AS
+		sanshoTeikiKin2,
+		sk.SANSHO_TEIKI_KIN_3 AS sanshoTeikiKin3
+		FROM
+		SHINSEI_START_KEIRO sk
+		LEFT JOIN CODE c
+		ON c.CODE_SYBTSU = '103'
+		AND
+		c.CODE = sk.TSUKIN_SHUDAN_KBN
+		WHERE sk.KIGYO_CD = #{kigyoCd}
+		AND
+		sk.SHINSEI_NO = #{shinseiNo}
+		AND sk.KEIRO_SEQ = #{keiroSeq}
+	</select>
+
+
+<!-- 	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">
 		SELECT
 		KIGYO_CD AS kigyoCd,
@@ -242,7 +297,7 @@
 		TOKYU AS tokyu
 		FROM SHINSEI_FUZUI_SHORUI
 		WHERE SHINSEI_NO = #{shinseiNo}
-	</select>
+	</select> -->
 
 	<select id="getShainUidByShinseiNo" parameterType="String"
 		resultType="String">
@@ -672,7 +727,8 @@
 
 
 	<update id="updateShinseiForReapply" parameterType="map">
-		UPDATE SHINSEI
+		UPDATE
+		SHINSEI
 		SET SHINSEI_RIYU = #{shinseiRiyu},
 		NEW_ZIP_CD = #{newZipCd},
 		NEW_ADDRESS_1 = #{newAddress1},
@@ -680,11 +736,17 @@
 		NEW_ADDRESS_3 = #{newAddress3},
 		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
 		ADDRESS_CHG_KBN = #{addressChgKbn},
+		KINMU_ADDRESS_IDO_KEIDO =
+		#{kinmuAddressIdoKeido},
+		KINMU_ADDRESS_CHG_KBN = #{kinmuAddressChgKbn},
 		SHINCHOKU_KBN = '2',
-		UPD_USER_ID       = #{updUserId, jdbcType=NUMERIC},
+		UPD_USER_ID =
+		#{updUserId, jdbcType=NUMERIC},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO = #{shinseiNo}
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
 	</update>
 
 
@@ -714,9 +776,12 @@
 		resultType="org.cosmo.domain.ShinseiDetailVO">
 		SELECT
 		s.SHINSEI_NO AS shinseiNo,
+		s.SHINCHOKU_KBN AS
+		shinchokuKbn,
 		c_status.CODE_NM AS
 		joutaiName,
-		s.SHINSEI_YMD AS shinseiYmd,
+		s.SHINSEI_YMD AS
+		shinseiYmd,
 		s.SASHIMODOSHI_YMD AS
 		sashimodoshiYmd,
 		TO_DATE(s.FIRST_SHINSEI_YMD, 'YYYYMMDD') AS
@@ -798,6 +863,54 @@
 		AND
 		s.SHINSEI_NO = #{shinseiNo}
 	</select>
+
+	<select id="getShinseiShorui" parameterType="Long"
+		resultType="org.cosmo.domain.ShinseiShoruiVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		SHINSEI_KBN AS shinseiKbn,
+		SHINSEI_YMD AS shinseiYmd,
+		SHAIN_UID AS shainUid,
+		SHAIN_NO AS shainNo,
+		DAIRI_SHINSEISHA_CD AS dairiShinseishaCd,
+		TSUKIN_SHUDAN_KBN AS tsukinShudanKbn,
+		FILE_UID_1 AS fileUid1,
+		FILE_UID_2 AS fileUid2,
+		FILE_UID_3 AS fileUid3,
+		FILE_UID_4 AS fileUid4,
+		FILE_UID_5 AS fileUid5,
+
+		MENKYO_YUKO_KIGEN AS menkyoYukoKigen,
+		MENKYO_NO AS menkyoNo,
+		SHASHU AS shashu,
+		TOROKU_NO AS torokuNo,
+		HAIKIRYO AS haikiryo,
+		SHAKEN_YUKO_KIGEN AS shakenYukoKigen,
+		NENPI AS nenpi,
+
+		HOKEN_MANRYO_YMD AS hokenManryoYmd,
+		TAIJIN_BAISHO AS taijinBaisho,
+		TAIBUTSU_BAISHO AS taibutsuBaisho,
+		JINSHIN_SHOGAI AS jinshinShogai,
+		TOJOSHA_SHOGAI AS tojoshaShogai,
+		TOKYU AS tokyu,
+
+		FIRST_TEIKI_KIKAN AS firstTeikiKikan,
+		NEXT_TEIKI_KIKAN AS nextTeikiKikan,
+		ADD_USER_ID AS addUserId,
+		ADD_DATE AS addDate,
+		UPD_USER_ID AS updUserId,
+		UPD_DATE AS updDate
+		FROM SHINSEI_FUZUI_SHORUI
+		WHERE SHINSEI_NO = #{shinseiNo}
+		AND KEIRO_SEQ = 1
+	</select>
+
+
+
+
 
 
 
