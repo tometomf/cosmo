@@ -3,15 +3,14 @@ package org.cosmo.domain;
 import lombok.Data;
 
 @Data
-public class IchijiHozonVO {
-    // DB ÄÃ·³¸í HOZON_ID¿¡ ¸ÂÃç¼­ º¯¼ö¸í º¯°æ
-    private Long hozonId;        // ±âÁ¸ String uid -> Long hozonId (½ÃÄö½º ¾²¹Ç·Î Long/int ±ÇÀå)
+public class IchijiHozonVO {		//ì¡°ìš°ì§„	
+    private Long hozonId;        
     
-    private String userUid;      // USER_UID
+    private String userUid;      
     private String shinseiKbn;
     private String shozokuCd;
-    private String actionNm;     // ACTION_NM
-    private String data;         // DATA (CLOB)
+    private String actionNm;     
+    private String data;         
     private String addUserId;
-    private String updUserId;
+    private String updUserId;		//ë¯¸ì™„ì„±
 }

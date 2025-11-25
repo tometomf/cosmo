@@ -3,13 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 
-<html>
+<html>		<!-- 조우진 -->
 <head>
 <meta charset="UTF-8">
 <title>通勤経路情報画面</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+
 <style>
-/* 스타일은 기존과 동일합니다 */
 .keiro {
 	display: flex;
 	flex-direction: column;

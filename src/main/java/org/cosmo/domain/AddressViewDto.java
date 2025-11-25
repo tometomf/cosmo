@@ -2,18 +2,17 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
+//ì¡°ìš°ì§„
+
 @Data
 public class AddressViewDto {
-    // Çö ÁÖ¼Ò (DB¿¡¼­ Á¶È¸)
     private String currentZip;
     private String currentPref;
     private String currentAddr1;
     private String currentAddr2;
 
-    // Áß°£ DB ÁÖ¼Ò (»ó´Ü 'ÀÌ ÁÖ¼Ò¸¦ ¹İ¿µ' ¿ëµµ)
-    private String middleDbAddress; // ÀüÃ¼ ÁÖ¼Ò ¹®ÀÚ¿­
+    private String middleDbAddress; 
     
-    // ¹İ¿µ ¹öÆ° Å¬¸¯ ½Ã Ã¤¿ö³ÖÀ» ºĞ¸®µÈ µ¥ÀÌÅÍ (HiddenÀ¸·Î °¡Áö°í ÀÖ°Å³ª ¼­ºñ½º¿¡¼­ Ã³¸®)
     private String middleZip1;
     private String middleZip2;
     private String middlePref;

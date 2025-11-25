@@ -74,9 +74,8 @@ public class IdoConfirmController {
 
         return "idoconfirm/02_idoConfirm";
     }
-
-   
-    @PostMapping("/next") // 02/조우진
+    
+    @PostMapping("/next") //02조우진
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
             @RequestParam(name = "alertType", required = false) AlertType alertType,
@@ -123,7 +122,7 @@ public class IdoConfirmController {
     // 04조우진
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
-        String shainUid = "testUser"; 
+        String shainUid = "INSERT INTO SHAIN (SHAIN_UID, SHAIN_NAME, ZIP_CD, PREF_NAME, ADDR1, ADDR2)"; 
 
         AddressViewDto view = addressInputService.loadViewData(shainUid);
 
