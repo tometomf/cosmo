@@ -336,6 +336,10 @@ input[type="text"]:disabled {
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
+	    
+	    <input type="hidden" name="hozonUid" value="${hozonUid}">
+	    
+	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
 
 	<script>

@@ -481,6 +481,8 @@ p　{
 
             <!-- 저장 후 이동할 URL (비워두면 /shinsei/ichiji?hozonUid=... 로 이동) -->
             <input type="hidden" name="redirectUrl" value="">
+            
+            <input type="hidden" name="hozonUid" value="${hozonUid}">
          </form>
 
          <%@ include file="/WEB-INF/views/common/footer.jsp"%>

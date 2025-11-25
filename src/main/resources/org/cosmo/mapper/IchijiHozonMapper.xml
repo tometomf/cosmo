@@ -6,7 +6,7 @@
 <mapper namespace="org.cosmo.mapper.IchijiHozonMapper">
 
 	<!-- 1) USER_UID으로 UPDATE -->
-	<update id="updateByUserAndAction"
+	<update id="updateByHozonUid"
 		parameterType="org.cosmo.domain.IchijiHozonDTO">
 
 		UPDATE ICHIJI_HOZON
@@ -17,7 +17,7 @@
 		UPD_USER_ID =
 		#{updUserId},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE USER_UID = #{userUid}
+		WHERE HOZON_UID = #{hozonUid}
 	</update>
 
 	<!-- 2) INSERT (새 임시저장 레코드) -->
@@ -59,8 +59,8 @@
 		)
 	</insert>
 
-	<!-- 3) 최신 1건 조회 (USER_UID + ACTION_NM 기준) -->
-	<select id="selectLatestByUserAndAction" parameterType="map"
+	<!-- 3) 불러오기 -->
+	<select id="selectByHozonUid" parameterType="map"
 		resultType="org.cosmo.domain.IchijiHozonDTO">
 
 		SELECT *
@@ -79,39 +79,10 @@
 		UPD_USER_ID AS updUserId,
 		UPD_DATE AS updDate
 		FROM ICHIJI_HOZON
-		WHERE USER_UID = #{userUid}
+		WHERE HOZON_UID = #{hozonUid}
 		ORDER BY ADD_DATE DESC, UPD_DATE DESC
 		)
 		WHERE ROWNUM = 1
 	</select>
-
-	
-	 <!-- 전차용 -->
-    <select id="selectLatestTemp"
-            parameterType="map"
-            resultType="org.cosmo.domain.IchijiHozonDTO">
-
-        SELECT *
-        FROM (
-            SELECT
-                HOZON_UID   AS hozonUid,
-                USER_UID    AS userUid,
-                SHINSEI_KBN AS shinseiKbn,
-                SHOZOKU_CD  AS shozokuCd,
-                ALERT_NO    AS alertNo,
-                ALERT_SEQ   AS alertSeq,
-                ACTION_NM   AS actionNm,
-                DATA        AS data,
-                ADD_USER_ID AS addUserId,
-                ADD_DATE    AS addDate,
-                UPD_USER_ID AS updUserId,
-                UPD_DATE    AS updDate
-            FROM ICHIJI_HOZON
-            WHERE USER_UID  = #{userUid}
-            ORDER BY UPD_DATE DESC
-        )
-        WHERE ROWNUM = 1
-    </select>
-
 
 </mapper>
