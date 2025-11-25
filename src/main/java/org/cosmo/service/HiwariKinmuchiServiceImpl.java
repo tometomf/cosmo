@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.util.List;
 
+import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
@@ -163,6 +164,29 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
             }
             
             mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
-        }//유지희 끝
+        }
+        @Service
+        public class AddressInputServiceImpl implements AddressInputService {
+
+            @Override
+            public AddressViewDto loadCurrentAddress(Integer kigyoCd, Integer shainUid) {
+
+                // ★ 더미 데이터 (DB 연동 이전 테스트용)
+                AddressViewDto dto = new AddressViewDto();
+
+                dto.setCurZip("213-0001");
+                dto.setCurPref("神奈川県");
+                dto.setCurCity("川崎市中原区");
+                dto.setCurStreet("上小田中1-2-3");
+                dto.setCurBuilding("レオパレス清の103");
+
+                return dto;
+            }
+        }
+
+
+        
+        
+        //유지희 끝
     
 }
