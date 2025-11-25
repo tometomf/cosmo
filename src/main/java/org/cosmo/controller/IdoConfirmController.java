@@ -292,8 +292,8 @@ public class IdoConfirmController {
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
 
-    // 경로 정보
-    @GetMapping("/keiroInfo")
+    	
+    @GetMapping("/keiroInfo") //조우진
     public String keiroInfo() {
         return "idoconfirm/05_keiroInfo";
     }
