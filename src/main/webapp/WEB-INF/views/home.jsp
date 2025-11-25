@@ -130,9 +130,9 @@
 		if (shinchokuKbn == '1') {
 			window.location.href = target + '/ichiji' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
 		} else if (shinchokuKbn == '2') {
-			window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
+			window.location.href = target + '/shinseiDetail' + '?no=' + shinseiNo;
 		} else if (shinchokuKbn == '3') {
-			// window.location.href = target + '/shinseiDetail' + '?no' + shinseiNo;
+			window.location.href = target + '/kakunin' + '?no=' + shinseiNo;
 		} else if (shinchokuKbn == '5') {
 			window.location.href = target + '/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
 		}
