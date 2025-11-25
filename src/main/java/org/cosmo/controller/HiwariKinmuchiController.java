@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
@@ -16,7 +15,6 @@ import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
-import org.cosmo.service.AddressInputService;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.OshiraseService;
@@ -42,17 +40,12 @@ public class HiwariKinmuchiController {
     @Autowired
     private HiwariKinmuchiService service;
     
-
-    @Autowired
-    private AddressInputService addressService;
-  
     
     //서혜원
     @GetMapping("hiwariKinmuchi")
     public String showKinmuchiPage(HttpSession session, Model model) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
-
         if (shain == null) {
             return "redirect:/";
         }
@@ -74,27 +67,26 @@ public class HiwariKinmuchiController {
                 ? service.getBeforeShinsei(kigyoCd, shainUid)
                 : service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-        String zip = (String) session.getAttribute("ZIP_CD");
-        String a1  = (String) session.getAttribute("ADDRESS_1");
-        String a2  = (String) session.getAttribute("ADDRESS_2");
-        String a3  = (String) session.getAttribute("ADDRESS_3");
-
-        if (isNullOrEmpty(zip)) zip = "1600023";
-        if (isNullOrEmpty(a1))  a1  = "東京都";
-        if (isNullOrEmpty(a2))  a2  = "千代田区丸の内1-1-1";
-        if (isNullOrEmpty(a3))  a3  = "A建物";
-
-
-        data.setGenKinmuZip(zip);
-        data.setGenKinmuAddress1(a1);
-        data.setGenKinmuAddress2(a2);
-        data.setGenKinmuAddress3(a3);
+        if (isNullOrEmpty(data.getGenKinmuZip())) {
+            data.setGenKinmuZip("1600023");
+        }
+        if (isNullOrEmpty(data.getGenKinmuAddress1())) {
+            data.setGenKinmuAddress1("東京都");
+        }
+        if (isNullOrEmpty(data.getGenKinmuAddress2())) {
+            data.setGenKinmuAddress2("千代田区丸の内1-1-1");
+        }
+        if (isNullOrEmpty(data.getGenKinmuAddress3())) {
+            data.setGenKinmuAddress3("A建物");
+        }
 
         model.addAttribute("initData", data);
         model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
 
         return "hiwariKinmuchi/hiwariKinmuchi";
     }
+
+
 
     private boolean isNullOrEmpty(String s) {
         return (s == null || s.trim().isEmpty());
@@ -127,22 +119,22 @@ public class HiwariKinmuchiController {
                 ? service.getAddressPageDataBefore(kigyoCd, shainUid)
                 : service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
 
-        String genZip      = (String) session.getAttribute("ZIP_CD");
-        String genAddress1 = (String) session.getAttribute("ADDRESS_1");
-        String genAddress2 = (String) session.getAttribute("ADDRESS_2");
+        String genZip      = data.getGenZip();
+        String genAddress1 = data.getGenAddress1();
+        String genAddress2 = data.getGenAddress2();
+        String genAddress3 = data.getGenAddress3();
 
         if (isNullOrEmpty(genZip))      genZip      = "1600023";
         if (isNullOrEmpty(genAddress1)) genAddress1 = "東京都";
         if (isNullOrEmpty(genAddress2)) genAddress2 = "千代田区丸の内1-1-1";
+        if (isNullOrEmpty(genAddress3)) genAddress3 = "A建物";
 
         data.setGenZip(genZip);
         data.setGenAddress1(genAddress1);
         data.setGenAddress2(genAddress2);
+        data.setGenAddress3(genAddress3);
 
-        String fullAddress = "";
-
-        if (!isNullOrEmpty(genAddress1)) fullAddress += genAddress1;
-        if (!isNullOrEmpty(genAddress2)) fullAddress += genAddress2;
+        String fullAddress = genAddress1 + genAddress2;
 
         if (isNullOrEmpty(fullAddress)) {
             fullAddress = "大阪府大阪市東淀川区瑞光1-1-1 ハイツ瑞光302";
