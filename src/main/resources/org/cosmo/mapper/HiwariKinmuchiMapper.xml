@@ -28,64 +28,25 @@
 	<!-- 申請後：SHINSEI + SHOZOKU -->
 	<select id="getAfterShinsei"
 		resultType="org.cosmo.domain.HiwariKinmuchiVO">
-		SELECT
-		-- ===== 現勤務地 쪽 =====
-		-- 勤務先コード（現在の勤務先）
-		sh.GEN_SHOZOKU_CD AS genKinmusakiCd,
-
-		-- 勤務先名（GEN_SHOZOKU_CD 기준）
-		z1.SHOZOKU_NM AS genKinmusakiNm,
-
-		-- 郵便番号（現勤務地）
-		sh.GEN_KINMU_ZIP_CD AS
-		genKinmuZip,
-
-		-- 都道府県（現勤務地）
-		sh.GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
-
-		-- 所在地１（現勤務地）
-		sh.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
-
-		-- 所在地２（現勤務地）
-		sh.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
-
-
-		-- ===== 日割期間 勤務地 쪽 =====
-		-- 勤務先コード（日割期間）
-		sh.NEW_SHOZOKU_CD AS hiwariKinmusakiCd,
-
-		-- 勤務先名（日割期間）
-		z2.SHOZOKU_NM AS hiwariKinmusakiNm,
-
-		-- 郵便番号（日割期間 勤務地）
-		sh.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
-
-		-- 都道府県（日割期間 勤務地）
-		sh.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
-
-		-- 所在地１（日割기간 勤務地）
-		sh.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
-
-		-- 所在地２（日割기간 勤務地）
-		sh.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
-
-		FROM SHINSEI sh
-		LEFT JOIN
-		SHOZOKU z1
-		ON z1.KIGYO_CD = sh.KIGYO_CD
-		AND z1.SHOZOKU_CD =
-		sh.GEN_SHOZOKU_CD -- 現勤務地용
-
-		LEFT JOIN SHOZOKU z2
-		ON z2.KIGYO_CD =
-		sh.KIGYO_CD
-		AND z2.SHOZOKU_CD = sh.NEW_SHOZOKU_CD -- 日割기간용
-
-		WHERE
-		sh.KIGYO_CD = #{kigyoCd}
-		AND sh.SHAIN_UID = #{shainUid}
-		AND
-		sh.SHINSEI_NO = #{shinseiNo}
+		SELECT 
+		ss.GEN_SHOZOKU_CD AS hiwariKinmusakiCd,
+		ss.NEW_SHOZOKU_CD AS hiwariKinmusakiCd, 
+		sz.SHOZOKU_NM AS hiwariKinmusakiNm,
+		ss.GEN_KINMU_ZIP_CD AS hiwariKinmuZip,
+		ss.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
+		ss.GEN_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+		ss.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+		ss.GEN_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+		ss.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+		ss.GEN_KINMU_ADDRESS_3 AS hiwariKinmuAddress3,
+		ss.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
+		FROM SHINSEI ss 
+		INNER JOIN SHOZOKU sz 
+		ON ss.KIGYO_CD = sz.KIGYO_CD 
+		AND ss.SHOZOKU_CD = sz.SHOZOKU_CD 
+		WHERE ss.KIGYO_CD = #{kigyoCd} 
+		AND ss.SHAIN_UID = #{shainUid}
+		AND ss.SHINSEI_NO = #{shinseiNo}
 	</select>
 
 
