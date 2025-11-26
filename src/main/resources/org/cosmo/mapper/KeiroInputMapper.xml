@@ -72,17 +72,24 @@
 		resultMap="ShinseiAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1
-		, NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2
-		, NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        sk.KIGYO_CD,
+        sk.SHAIN_UID,
+        sk.SHINSEI_NO,
+        sk.KEIRO_SEQ,
+        NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1,
+        NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2,
+        NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
+    	FROM SHINSEI_START_KEIRO sk
+        	JOIN SHAIN h
+          	ON h.KIGYO_CD  = sk.KIGYO_CD
+         	AND h.SHAIN_UID = sk.SHAIN_UID
+        	LEFT JOIN SHINSEI s
+          	ON s.KIGYO_CD   = sk.KIGYO_CD
+         	AND s.SHINSEI_NO = sk.SHINSEI_NO
+    	WHERE sk.KIGYO_CD   = #{kigyoCd}
+      		AND sk.SHAIN_UID  = #{shainUid}
+      		AND sk.SHINSEI_NO = #{shinseiNo}
+      		AND sk.KEIRO_SEQ  = #{keiroSeq}
 
 	</select>
 
@@ -90,6 +97,8 @@
 		type="org.cosmo.domain.ShinseiDTO">
 		<result property="kigyoCd" column="KIGYO_CD" />
 		<result property="shainUid" column="SHAIN_UID" />
+		<result property="shinseiNo" column="SHINSEI_NO" />
+    	<result property="keiroSeq" column="KEIRO_SEQ" />
 		<result property="newKinmuAddress1"
 			column="NEW_KINMU_ADDRESS_1" />
 		<result property="newKinmuAddress2"
@@ -103,17 +112,24 @@
 		resultMap="ShinseiKinmuAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1
-		, NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2
-		, NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        sk.KIGYO_CD,
+        sk.SHAIN_UID,
+        sk.SHINSEI_NO,
+        sk.KEIRO_SEQ,
+        NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
+        NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
+        NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+    	FROM SHINSEI_START_KEIRO sk
+        	JOIN SHAIN h
+         	ON h.KIGYO_CD  = sk.KIGYO_CD
+         	AND h.SHAIN_UID = sk.SHAIN_UID
+        	LEFT JOIN SHINSEI s
+          	ON s.KIGYO_CD   = sk.KIGYO_CD
+         	AND s.SHINSEI_NO = sk.SHINSEI_NO
+    	WHERE sk.KIGYO_CD   = #{kigyoCd}
+      		AND sk.SHAIN_UID  = #{shainUid}
+      		AND sk.SHINSEI_NO = #{shinseiNo}
+      		AND sk.KEIRO_SEQ  = #{keiroSeq}
 
 	</select>
 
@@ -329,7 +345,7 @@
     </resultMap>
    
    	<!-- 하정 -->
-       <select id="selectStartKeiroOne"
+       <select id="selectStartKeiro"
             resultMap="ShinseiStartKeiroMap">
 
         SELECT
@@ -417,5 +433,34 @@
         AND KEIRO_SEQ  = #{keiroSeq}
 
     </select>
+	
+	  <insert id="insertProcessLog"
+            parameterType="org.cosmo.domain.ProcessLogDTO">
+        INSERT INTO PROCESS_LOG (
+            PROCESS_TIMESTAMP,
+            SUBSYSTEM_ID,
+            PROCESS_COL,
+            KEY1,
+            KEY2,
+            KEY3,
+            KEY4,
+            KEY5,
+            DATA,
+            USER_UID,
+            USER_TRACK
+        ) VALUES (
+            #{processTimestamp, jdbcType=TIMESTAMP},
+            #{subsystemId, jdbcType=VARCHAR},
+            #{processCol, jdbcType=VARCHAR},
+            #{key1, jdbcType=VARCHAR},
+            #{key2, jdbcType=VARCHAR},
+            #{key3, jdbcType=VARCHAR},
+            #{key4, jdbcType=VARCHAR},
+            #{key5, jdbcType=VARCHAR},
+            #{data, jdbcType=CLOB},
+            #{userUid, jdbcType=NUMERIC},
+            #{userTrack, jdbcType=VARCHAR}
+        )
+    </insert>
 
 </mapper>

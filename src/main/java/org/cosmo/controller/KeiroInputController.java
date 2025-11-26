@@ -3,10 +3,9 @@ package org.cosmo.controller;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.IchijiHozonDTO;
@@ -15,7 +14,6 @@ import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
-import org.cosmo.mapper.IchijiHozonMapper;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.KeiroInputService;
 import org.cosmo.service.OshiraseService;
@@ -44,13 +42,15 @@ public class KeiroInputController {
 	@Autowired
 	private OshiraseService oshiraseService;
 	
-	@Autowired
-    private IchijiHozonMapper ichijiHozonMapper;
-
-	
 	//하정
 	@GetMapping("/07_keirodtInput")
-	public String densha(Locale locale, HttpSession session, Model model) {
+	public String densha(
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			@RequestParam(name = "keiroSeq", required = false) String keiroSeq,
+			Locale locale,
+			HttpSession session, 
+			Model model) {
 
 
 	    Date date = new Date();
@@ -66,17 +66,13 @@ public class KeiroInputController {
 
 	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
 	    Long shainUid   = Long.parseLong(shain.getShain_Uid());
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
 
-	 // 🔹 여기서 keiroSeq를 내부에서 정함 (예: 전차 = 1)
-	    Integer keiroSeq = 1;
-
-	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, keiroSeq);
+	    ShainKeiroDTO keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, Integer.valueOf(keiroSeq));
 
 	    String ichijiHozonJson = "{}";
 	    
 	    try {
-	        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+	    	   IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
 	        if (hozon != null && hozon.getData() != null) {
 
 	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
@@ -131,6 +127,10 @@ public class KeiroInputController {
 	    model.addAttribute("keiro", keiroDto);
 	    
 	    model.addAttribute("ichijiHozon", ichijiHozonJson);
+	    
+	    model.addAttribute("shinseiNo", shinseiNo);
+		model.addAttribute("hozonUid", hozonUid);   
+	    model.addAttribute("keiroSeq", keiroSeq);
 
 	    return "keiroinput/07_keirodtInput";
 	}
@@ -138,8 +138,14 @@ public class KeiroInputController {
 	
 	//재환
 	@GetMapping("/07_keirodtInput_02")
-	public String bus(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale,
-			Model model,  HttpSession session) {
+	public String bus(
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			@RequestParam(name = "keiroSeq", required = false) String keiroSeq,
+			@RequestParam(name = "shudanType", required = false) String shudanType, 
+			Locale locale,
+			Model model, 
+			HttpSession session) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -151,10 +157,9 @@ public class KeiroInputController {
 	        return "redirect:/login";
 	    }
 
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
 
 		   try {
-		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+			   IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
 		        if (hozon != null && hozon.getData() != null) {
 
 		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
@@ -168,8 +173,37 @@ public class KeiroInputController {
 		        e.printStackTrace();
 		    }
 
+		 if(keiroSeq != null && keiroSeq != null) {			 
+			 ShinseiStartKeiroVO shinseiStartKeiro= keiroInputservice.getStartKeiroOne(Integer.valueOf(shain.getKigyo_Cd()), Integer.valueOf(shain.getShain_Uid()), Integer.valueOf(shinseiNo), Integer.valueOf(keiroSeq));   
+			 
+			 if(shinseiStartKeiro != null) {				 
+				 String busCompany = shinseiStartKeiro.getBusCorpNm();
+				 String startPlace = shinseiStartKeiro.getStartPlace();
+				 String endPlace = shinseiStartKeiro.getEndPlace();
+				 Integer KatamichiKin = shinseiStartKeiro.getKatamichiKin();
+				 Integer SanshoTeikiKin1 = shinseiStartKeiro.getSanshoTeikiKin1();
+				 Integer SanshoTeikiKin2 = shinseiStartKeiro.getSanshoTeikiKin2();
+				 Integer SanshoTeikiKin3 = shinseiStartKeiro.getSanshoTeikiKin3();
+				 
+				 
+				 model.addAttribute("busCompany", busCompany);
+				 model.addAttribute("startPlace", startPlace);
+				 model.addAttribute("endPlace", endPlace);
+				 model.addAttribute("KatamichiKin", KatamichiKin);   
+				 model.addAttribute("SanshoTeikiKin1", SanshoTeikiKin1);   
+				 model.addAttribute("SanshoTeikiKin2", SanshoTeikiKin2);   
+				 model.addAttribute("SanshoTeikiKin3", SanshoTeikiKin3);    
+			 }
+			 
+		 }
+		   
+		   
+		
 		model.addAttribute("serverTime", formattedDate);
 	    model.addAttribute("shudanType", shudanType);
+	    model.addAttribute("shinseiNo", shinseiNo);
+		model.addAttribute("hozonUid", hozonUid);   
+	    model.addAttribute("keiroSeq", keiroSeq);
 
 		return "keiroinput/07_keirodtInput_02";
 	}
@@ -178,7 +212,13 @@ public class KeiroInputController {
 	
 	//재환
 	@GetMapping("/07_keirodtInput_04")
-	public String toho(@RequestParam(name = "shudanType", required = false) String shudanType, Locale locale, Model model, HttpSession session) {
+	public String toho(			
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			@RequestParam(name = "keiroSeq", required = false) String keiroSeq,
+			@RequestParam(name = "shudanType", required = false) String shudanType, 
+			Locale locale, Model model,
+			HttpSession session) {
 
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
@@ -190,10 +230,8 @@ public class KeiroInputController {
 	        return "redirect:/login";
 	    }
 
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
-
 		   try {
-		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+			   IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
 		        if (hozon != null && hozon.getData() != null) {
 
 		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
@@ -209,25 +247,31 @@ public class KeiroInputController {
 		   
 		model.addAttribute("serverTime", formattedDate);
 		model.addAttribute("shudanType", shudanType);
-		
+	    model.addAttribute("shinseiNo", shinseiNo);
+		model.addAttribute("hozonUid", hozonUid);   
+	    model.addAttribute("keiroSeq", keiroSeq);
+
 		return "keiroinput/07_keirodtInput_04";
 	}
 
 	
 	//재환
 	@GetMapping("/06_keiroInput")
-	public String select(HttpSession session, Model model) {
-		Integer keiroSeq = 1;
-
+	public String select(
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			@RequestParam(name = "keiroSeq", required = false) String keiroSeq,
+			HttpSession session, 
+			Model model) {
+		
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
 	        return "redirect:/login";
 	    }
-
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid());
-
+	    	
+	    System.out.println("hozonUid" + hozonUid);
 		   try {
-		        IchijiHozonDTO hozon = ichijiHozonService.getLatestTemp(userUid);
+		        IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
 		        if (hozon != null && hozon.getData() != null) {
 
 		            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
@@ -240,97 +284,108 @@ public class KeiroInputController {
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		    }
+		   
+		   ShainKeiroDTO dto = keiroInputservice.getShainKeiro(Integer.valueOf(shain.getShain_Uid()), Long.valueOf(shain.getShain_Uid()), Integer.valueOf(keiroSeq));
 
-		/*
-		 * ShainKeiroDTO dto =
-		 * keiroInputservice.getShainKeiro(Integer.parseInt(shain.getKigyo_Cd()),
-		 * Long.parseLong(shain.getShain_Uid()) , keiroSeq);
-		 */
-		ShainKeiroDTO dto = keiroInputservice.getShainKeiro(100, 2001L, keiroSeq);
+		   model.addAttribute("keiro", dto);
+		   model.addAttribute("shinseiNo", shinseiNo);
+		   model.addAttribute("hozonUid", hozonUid);   
+		   model.addAttribute("keiroSeq", keiroSeq);
 
-		model.addAttribute("keiro", dto);
-
-		System.out.println(dto);
 		return "keiroinput/06_keiroInput";
 	}
 
 	//지훈
-	@GetMapping("/07_keirodtInput_03")
-	public String jidousha(Locale locale, HttpSession session, Model model) {
+		@GetMapping("/07_keirodtInput_03")
+		public String jidousha(
+				@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+				@RequestParam(name = "hozonUid", required = false) String hozonUid,
+				@RequestParam(name = "keiroSeq", required = false) String keiroSeq,
+				Locale locale, HttpSession session,
+				Model model) {
 
-	    
-	    Date date = new Date();
-	    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-	    String formattedDate = dateFormat.format(date);
-	    model.addAttribute("serverTime", formattedDate);
+		    
+		    Date date = new Date();
+		    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		    String formattedDate = dateFormat.format(date);
+		    model.addAttribute("serverTime", formattedDate);
 
-	    
-	    ShainVO shain = (ShainVO) session.getAttribute("shain");
-	    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
-	        return "redirect:/login";
-	    }
+		    
+		    ShainVO shain = (ShainVO) session.getAttribute("shain");
+		    if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
+		        return "redirect:/login";
+		    }
 
-	    // 회사/사원 식별자
-	    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
-	    Long   shainUid = Long.parseLong(shain.getShain_Uid());
-	    Integer userUid = Integer.parseInt(shain.getShain_Uid()); // ICHIJI_HOZON용
+		    // 회사/사원 식별자
+		    Integer kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
+		    Long   shainUid = Long.parseLong(shain.getShain_Uid());
+		    
+		    // 기본 주소/근무지 
+		    ShinseiDTO addr      = keiroInputservice.getShinseiAddress(kigyoCd, shainUid, Integer.valueOf(shinseiNo), Integer.valueOf(keiroSeq));
+		    ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid, Integer.valueOf(shinseiNo), Integer.valueOf(keiroSeq));
 
-	    // 기본 주소/근무지 
-	    ShinseiDTO addr      = keiroInputservice.getShinseiAddress(kigyoCd, shainUid);
-	    ShinseiDTO kinmuAddr = keiroInputservice.getShinseiKinmuAddress(kigyoCd, shainUid);
+		    // 기본 startKeiro
+		    ShinseiStartKeiroVO startKeiro = keiroInputservice.getViaPlace1(kigyoCd, shainUid);
 
-	    // 기본 startKeiro
-	    ShinseiStartKeiroVO startKeiro = keiroInputservice.getViaPlace1(kigyoCd, shainUid);
+		    
+		    //  ICHIJI_HOZON 임시저장 값으로 덮어쓰기
+		    
+		    //  ICHIJI_HOZON 임시저장 값으로 덮어쓰기
+		    try {
+		        // 🔹 hozonUid가 숫자일 때만 조회 시도
+		        if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+		            IchijiHozonDTO hozon =
+		                    ichijiHozonService.getTemp(Integer.valueOf(hozonUid.trim()));
 
-	    
-	    //  ICHIJI_HOZON 임시저장 값으로 덮어쓰기
-	    
-	    try {
-	    	Map<String, Object> param = new HashMap<String, Object>();
-	        param.put("userUid", userUid);
+		            if (hozon != null && hozon.getData() != null) {
+		                String json = new String(hozon.getData(), StandardCharsets.UTF_8);
 
-	        IchijiHozonDTO hozon = ichijiHozonMapper.selectLatestByUserAndAction(param);
-	        if (hozon != null && hozon.getData() != null) {
-	            
-	            String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+		                ObjectMapper mapper = new ObjectMapper();
+		                JsonNode root = mapper.readTree(json);
 
-	            ObjectMapper mapper = new ObjectMapper();
-	            JsonNode root = mapper.readTree(json);
+		                JsonNode startKeiroNode = root.path("startKeiro");
+		                if (!startKeiroNode.isMissingNode() && !startKeiroNode.isNull()) {
+		                    ShinseiStartKeiroVO restored =
+		                            mapper.treeToValue(startKeiroNode, ShinseiStartKeiroVO.class);
+		                    if (restored != null) {
+		                        startKeiro = restored;
+		                    }
+		                }
+		            }
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
 
-	            // JSON의 startKeiro 부분만 ShinseiStartKeiroVO로 매핑
-	            JsonNode startKeiroNode = root.path("startKeiro");
-	            if (!startKeiroNode.isMissingNode() && !startKeiroNode.isNull()) {
-	                ShinseiStartKeiroVO restored =
-	                        mapper.treeToValue(startKeiroNode, ShinseiStartKeiroVO.class);
+		    
+		    model.addAttribute("addr", addr);
+		    model.addAttribute("kinmuAddr", kinmuAddr);
+		    model.addAttribute("startKeiro", startKeiro);
+		    
+		    
+		    model.addAttribute("hozonUid", hozonUid);
+		    model.addAttribute("keiroSeq", keiroSeq);
+		    model.addAttribute("shinseiNo", shinseiNo);
 
-	                if (restored != null) {
-	                    startKeiro = restored;
-	                }
-	            }
-	        }
-	    } catch (Exception e) {
-	        
-	        e.printStackTrace();
-	    }
-
-	    
-	    model.addAttribute("addr", addr);
-	    model.addAttribute("kinmuAddr", kinmuAddr);
-	    model.addAttribute("startKeiro", startKeiro);
-
-	    return "keiroinput/07_keirodtInput_03";
-	}
+		    return "keiroinput/07_keirodtInput_03";
+		}
 
 
 	//재환
 	@PostMapping("/tempSave")
     public String tempSaveCommute(
+			@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
             @RequestParam("commuteJson") String commuteJson,
             @RequestParam("actionUrl") String actionUrl,
             @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
-            HttpSession session) {
+            HttpSession session,
+            HttpServletRequest request) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
+        
+        System.out.println(">>> hozonUid = " + hozonUid);
+        System.out.println(">>> shinseiNo = " + shinseiNo);
 
         Integer userUid   = Integer.parseInt(shain.getShain_Uid());
         String  shozokuCd = shain.getShozoku_Cd();
@@ -340,11 +395,16 @@ public class KeiroInputController {
             shinseiKbn = "01";
         }
         
-        System.out.println(actionUrl);
+        System.out.println(hozonUid);
+        
+        if(hozonUid == null) {
+        	return "";
+        }
 
         byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
 
         IchijiHozonDTO dto = new IchijiHozonDTO();
+        dto.setHozonUid(Integer.valueOf(hozonUid));
         dto.setUserUid(userUid);
         dto.setShinseiKbn(shinseiKbn);
         dto.setShozokuCd(shozokuCd);
@@ -355,7 +415,18 @@ public class KeiroInputController {
         dto.setUpdUserId(userUid);
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
-        oshiraseService.saveTempOshirase(shain);
+        oshiraseService.saveTempOshirase(shain, Long.valueOf(shinseiNo));
+        String clientIp = getClientIp(request);
+        
+        keiroInputservice.writeProcessLog(
+                "COS",
+                "TEMP",
+                shinseiNo, "", "", "", "",
+                "",
+                userUid,
+                clientIp
+        );
+        
 
         if(redirectUrl == "") {        	
         	return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
@@ -363,7 +434,36 @@ public class KeiroInputController {
         
         return "redirect:" + redirectUrl;
     }
+	
+	private boolean isBlank(String str) {
+	    return (str == null || str.trim().isEmpty());
+	}
 	 
+	public String getClientIp(HttpServletRequest request) {
+
+	    String ip = request.getHeader("X-Forwarded-For");
+
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getHeader("Proxy-Client-IP");
+	    }
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getHeader("WL-Proxy-Client-IP");
+	    }
+	    if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+	        ip = request.getRemoteAddr();
+	    }
+
+	    if (ip != null && ip.contains(",")) {
+	        ip = ip.split(",")[0].trim();
+	    }
+
+	    if ("0:0:0:0:0:0:0:1".equals(ip)) {
+	        ip = "127.0.0.1";
+	    }
+
+	    return ip;
+	}
+	
 	//재환
 	 @GetMapping(value = "/shain/location", produces = "application/json; charset=UTF-8")
 	    @ResponseBody

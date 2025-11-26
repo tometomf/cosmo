@@ -193,7 +193,7 @@ p {
 
         window.location.href = "/hiwariKinmuchi/address";
     }
-    
+
     function buildKinmuTempJson() {
 
         const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
@@ -205,43 +205,34 @@ p {
         const address2 = document.querySelector("input[name='address2']").value.trim();
 
         let fullZip = "";
-        if (zip1 !== "" && zip2 !== "") fullZip = zip1 + zip2;
+        if (zip1 !== "" && zip2 !== "") {
+            fullZip = zip1 + zip2;
+        }
 
-        const shinseiIcData = {
-            kigyoCd: null,
-            shinseiNo: null,
+        /* ★★★ 위 JSP처럼 서버에서 가져온 임시 데이터 갱신 ★★★ */
+        const data = ${ichijiHozon};
 
-            genAddress: null,
-            newAddress: prefecture && city ? (prefecture + " " + city + " " + address2) : null,
+        // 기존 주소 → 새 주소 갱신
+        data.genAddress = null;
+        data.newAddress = (prefecture && city)
+            ? (prefecture + " " + city + " " + address2)
+            : null;
 
-            genShozoku: null,
-            newShozoku: newShozokuNm || null,
+        // 소속
+        data.genShozoku = null;
+        data.newShozoku = newShozokuNm || null;
 
-            genKinmuchi: null,
-            newKinmuchi: newShozokuCd || null,
+        // 근무지
+        data.genKinmuchi = null;
+        data.newKinmuchi = newShozokuCd || null;
 
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-
-            keiro: null
-        };
-
-        return JSON.stringify(shinseiIcData);
+        return JSON.stringify(data);
     }
 
 
-    /* ▼ 임시저장 버튼 이벤트 ⭐⭐⭐ */
     document.addEventListener("DOMContentLoaded", function () {
 
-        const hozonBtn = document.querySelector('img[alt="一時保存"]');
+        const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
 
         const form = document.getElementById("kinmuTempForm");
         const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
@@ -253,7 +244,7 @@ p {
                 const jsonString = buildKinmuTempJson();
                 commuteJsonInput.value = jsonString;
 
-                redirectUrlInput.value = "";
+                redirectUrlInput.value = "";  // 기본 이동
 
                 form.submit();
             });

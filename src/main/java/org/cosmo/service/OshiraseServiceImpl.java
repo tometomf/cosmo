@@ -17,7 +17,7 @@ public class OshiraseServiceImpl implements OshiraseService {
     private OshiraseMapper oshiraseMapper;
 
     @Override
-    public void saveTempOshirase(ShainVO shain) {
+    public void saveTempOshirase(ShainVO shain, long setShinseiNo) {
 
         if (shain == null) {
             return; // 세션에 사원 정보가 없으면 아무 것도 안 함
@@ -59,7 +59,7 @@ public class OshiraseServiceImpl implements OshiraseService {
         dto.setTsuchishaKigyoCd(kigyoCd);
         dto.setTsuchishaCd(shainNo);
 
-        dto.setShinseiNo(null);                       // 임시저장 시 NULL
+        dto.setShinseiNo(setShinseiNo);                       // 임시저장 시 NULL
         dto.setOshiraseNaiyo("一時保存しました。");     // 고정메시지
         dto.setKengen(null);                         // 요구사항상 NULL
         dto.setHaishinKbn(null);                     // 필요 시 "0" 등 값 설정

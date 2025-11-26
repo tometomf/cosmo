@@ -8,5 +8,5 @@ public interface OshiraseService {
     /**
      * 임시저장 시 "一時保存しました。" OSHIRASE 레코드 등록
      */
-    void saveTempOshirase(ShainVO shain);
+    void saveTempOshirase(ShainVO shain, long setShinseiNo);
 }
