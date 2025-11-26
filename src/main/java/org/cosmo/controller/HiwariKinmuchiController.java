@@ -71,18 +71,7 @@ public class HiwariKinmuchiController {
 		HiwariKinmuchiVO data = (shinseiNo == null) ? service.getBeforeShinsei(kigyoCd, shainUid)
 				: service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-		if (isNullOrEmpty(data.getGenKinmuZip())) {
-			data.setGenKinmuZip("1600023");
-		}
-		if (isNullOrEmpty(data.getGenKinmuAddress1())) {
-			data.setGenKinmuAddress1("東京都");
-		}
-		if (isNullOrEmpty(data.getGenKinmuAddress2())) {
-			data.setGenKinmuAddress2("千代田区丸の内1-1-1");
-		}
-		if (isNullOrEmpty(data.getGenKinmuAddress3())) {
-			data.setGenKinmuAddress3("A建物");
-		}
+
 
 		model.addAttribute("initData", data);
 		model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
