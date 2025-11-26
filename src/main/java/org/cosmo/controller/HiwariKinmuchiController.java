@@ -159,16 +159,23 @@ public class HiwariKinmuchiController {
  // 유지희
     @GetMapping("/kakunin")
     public String showKakuninPage(HttpSession session, Model model) {
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
 
-        // ★ 세션에 값이 없으면 처음 신청 선택 화면으로 돌려보냄
-        if (kigyoCd == null || shinseiNo == null) {
-            return "redirect:/shinsei/shinseiSelect";  // <- 너희 신청선택 URL에 맞게 수정
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";   
+        }
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shinseiNo  = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            shinseiNo = Long.valueOf(shain.getShinsei_No());
+        }
+
+        if (shinseiNo == null) {
+            return "redirect:/";
         }
 
         HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
-
         List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
         if (routes == null) {
             routes = new ArrayList<HiwariKakuninRouteVO>();
