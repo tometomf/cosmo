@@ -25,119 +25,70 @@ public class AddressInputServiceImpl implements AddressInputService {
         return new AddressInputForm();
     }
 
-    @Override							//test 미완성
-	public AddressViewDto loadViewData(String shainUid) {
-		System.out.println("========== [디버깅 시작] loadViewData ==========");
-		System.out.println("1. 조회하려는 사용자 ID: " + shainUid);
-
-		// 1. 현주소 가져오기
-		AddressViewDto view = mapper.selectCurrentAddress(shainUid);
-		if (view == null) {
-			System.out.println("2. [주의] 현주소(SHAIN) 데이터가 없습니다!");
-			view = new AddressViewDto();
-		} else {
-			System.out.println("2. 현주소 조회 성공: " + view.getCurrentPref());
-		}
-
-		// 2. 중간DB 주소 가져오기 (MIDDLE_DB_TABLE)
-		AddressViewDto middle = mapper.selectMiddleAddress(shainUid);
-
-		if (middle != null) {
-			System.out.println("3. [성공] 중간DB 데이터 찾음!");
-			System.out.println("   - 우편번호: " + middle.getMiddleZip1());
-			System.out.println("   - 도도부현: " + middle.getMiddlePref());
-			System.out.println("   - 주소1: " + middle.getMiddleAddr1());
-
-			// 뷰 객체에 데이터 담기
-			view.setMiddleZip1(middle.getMiddleZip1());
-			view.setMiddleZip2(middle.getMiddleZip2());
-			view.setMiddlePref(middle.getMiddlePref());
-			view.setMiddleAddr1(middle.getMiddleAddr1());
-			view.setMiddleAddr2(middle.getMiddleAddr2());
-		} else {
-			System.out.println("3. [실패] 중간DB(MIDDLE_DB_TABLE)에서 데이터를 못 찾았습니다. (NULL)");
-		}
-		
-		System.out.println("========== [디버깅 종료] ==========");
-		return view;
-	}
+ // private final ShainMapper shainMapper; // 이건 지금 없거나 에러나니까 주석 처리 하거나 빼세요.
 
     @Override
-	public void reflectMiddleAddress(AddressInputForm form, String shainUid) {
-		// 1. DB에서 중간 주소 정보를 가져옴
-		AddressViewDto middle = mapper.selectMiddleAddress(shainUid);
+    public AddressViewDto loadViewData(String shainUid) {
+        AddressViewDto dto = new AddressViewDto();
 
-		if (middle != null) {
-			
-			// =========================================================
-			// 1. 우편번호 처리 (하이픈 유무에 따라 쪼개기)
-			// =========================================================
-			String fullZip = middle.getMiddleZip1();
-			if (fullZip != null && !fullZip.isEmpty()) {
-				if (fullZip.contains("-")) {
-					String[] parts = fullZip.split("-");
-					if (parts.length >= 1) form.setZip1(parts[0]);
-					if (parts.length >= 2) form.setZip2(parts[1]);
-				} else if (fullZip.length() == 7) {
-					form.setZip1(fullZip.substring(0, 3));
-					form.setZip2(fullZip.substring(3));
-				} else {
-					form.setZip1(fullZip);
-				}
-			}
+        // =================================================================
+        // [임시 수정] 사원 기능 연동 전까지 '가짜 데이터'로 테스트합니다.
+        // 나중에 사원 기능이 완성되면 이 부분을 지우고 DB 연결 코드를 쓰세요.
+        // =================================================================
 
-			// =========================================================
-			// 2. 주소 자르기 (설계서 요구사항 반영)
-			// "중간DB주소1"을 분석해서 [도도부현]과 [나머지 주소]로 나눔
-			// =========================================================
-			String rawAddr1 = middle.getMiddleAddr1(); // 예: "神奈川県川崎市高津区..."
-			
-			if (rawAddr1 != null && !rawAddr1.isEmpty()) {
-				// 도, 도, 부, 현 중 어디서 잘라야 할지 위치를 찾음
-				int splitIndex = -1;
-				
-				// 일본 주소 특성상 보통 3~4번째 글자에 현(県) 등이 위치함
-				String[] suffixes = {"県", "都", "道", "府"};
-				
-				for (String suffix : suffixes) {
-					int idx = rawAddr1.indexOf(suffix);
-					// 보통 도도부현은 맨 앞에 오므로 인덱스가 2 또는 3 (0부터 시작하므로)
-					// 예: [0]東[1]京[2]都 -> index 2
-					// 예: [0]神[1]奈[2]川[3]県 -> index 3
-					if (idx >= 2 && idx <= 3) {
-						splitIndex = idx + 1; // 글자 다음부터 잘라야 하므로 +1
-						break; // 찾았으면 반복 종료
-					}
-				}
+        // 1. [화면 상단] 현재 주소 (가짜 데이터)
+        dto.setCurrentZip("111-1111");
+        dto.setCurrentPref("東京都");
+        dto.setCurrentAddr1("新宿区西新宿");
+        dto.setCurrentAddr2("レオパレスビル 101");
 
-				if (splitIndex > 0) {
-					// 찾은 위치를 기준으로 앞부분은 '도도부현', 뒷부분은 '주소1'
-					form.setPref(rawAddr1.substring(0, splitIndex)); // "神奈川県"
-					form.setAddr1(rawAddr1.substring(splitIndex));   // "川崎市高津区..."
-				} else {
-					// 못 찾았으면 (혹은 이미 잘려있거나 형식이 다르면)
-					// 일단 도도부현 칸에 넣을지, 주소 칸에 넣을지 결정 (여기선 도도부현이 비어있으면 도도부현으로 간주)
-					if (middle.getMiddlePref() != null && !middle.getMiddlePref().isEmpty()) {
-						form.setPref(middle.getMiddlePref());
-						form.setAddr1(rawAddr1);
-					} else {
-						// 비상시: 그냥 주소1에 통째로 넣음
-						form.setPref(""); 
-						form.setAddr1(rawAddr1);
-					}
-				}
-			} else {
-				// 주소1이 아예 없는 경우
-				form.setPref(middle.getMiddlePref()); // 혹시 PREF 컬럼에 따로 있으면 그거라도 씀
-				form.setAddr1("");
-			}
+        // 2. [화면 상단] 중간 DB 주소 (여기가 핵심! 버튼 누르면 복사될 값)
+        dto.setMiddleZip("9998888");       // ★ [중요] 이 값이 신주소 우편번호로 들어갑니다.
+        dto.setMiddlePref("大阪府");       // 이 값이 신주소 도도부현으로 들어갑니다.
+        dto.setMiddleAddr1("大阪市北区");   // 이 값이 신주소 시구정촌으로 들어갑니다.
+        dto.setMiddleAddr2("梅田スカイビル"); // 이 값이 신주소 건물명으로 들어갑니다.
 
-			// =========================================================
-			// 3. 건물명 (주소2) 처리
-			// =========================================================
-			form.setAddr2(middle.getMiddleAddr2());
-		}
-	}
+        /* ---------------------------------------------------------
+        나중에 사원 기능(Mapper)이 생기면 아래 주석을 풀고 위 코드를 지우세요.
+        ---------------------------------------------------------
+        ShainVO shain = shainMapper.selectShainInfo(shainUid);
+        if (shain != null) {
+            dto.setCurrentZip(shain.getZipCd());
+            // ... 기존 매핑 로직 ...
+            
+            // [핵심] DB 컬럼값을 DTO에 전달
+            dto.setMiddleZip(shain.getDbZipCd()); 
+        }
+        */
+
+        return dto;
+    }
+    
+    @Override
+    public void reflectMiddleAddress(AddressInputForm form, String shainUid) {
+        // 1. DB에서 중간 주소(사택 주소) 정보를 가져옴
+        // (기존에 만드신 selectMiddleAddress 쿼리 활용)
+        AddressViewDto middle = mapper.selectMiddleAddress(shainUid);
+
+        if (middle != null) {
+            // 2. 우편번호 처리 (1234567 -> 123-4567 분리)
+            String fullZip = middle.getMiddleZip1(); // Mapper에서 앞3자리만 가져왔으면 그대로 사용
+            String zip2 = middle.getMiddleZip2();    // 뒤 4자리
+            
+            // 만약 DB에 7자리가 통으로 들어있다면 나누는 로직 필요, 
+            // 현재 Mapper는 SUBSTR로 나눠서 가져오므로 그대로 세팅
+            form.setZip1(middle.getMiddleZip1());
+            form.setZip2(middle.getMiddleZip2());
+
+            // 3. 주소 옮기기 (DB -> 입력폼)
+            // 상단 주소창에 보이는 값을 그대로 신규 주소창에 복사
+            form.setPref(middle.getMiddlePref());   // 도도부현 (예: 神奈川県)
+            form.setAddr1(middle.getMiddleAddr1()); // 시구정촌 (예: 川崎市...)
+            form.setAddr2(middle.getMiddleAddr2()); // 건물명 (예: レオパレス...)
+            
+            // 필요한 경우 입주예정일(TenyuDate) 등은 비우거나 유지
+        }
+    }
     @Autowired
     private AddressInputMapper addressInputMapper;
 
@@ -155,19 +106,19 @@ public class AddressInputServiceImpl implements AddressInputService {
         // 3. DB 조회 (Mapper 호출)
         // DB에서 '도도부현'과 '시구정촌' 정보를 가져옵니다.
         // 결과는 Map이나 별도의 DTO로 받습니다. 여기서는 Map으로 예시를 듭니다.
-//        Map<String, String> addressData = addressInputMapper.selectZipCode(zip1, zip2);
+       Map<String, String> addressData = addressInputMapper.selectZipCode(zip1, zip2);
 
         // 4. 조회된 결과가 있으면 Form에 세팅
-//        if (addressData != null) {
-//            // DB 컬럼명에 맞춰서 가져옵니다 (예: PREF_NAME, ADDR_NAME)
-//            form.setPref(addressData.get("PREF_NAME")); 
-//            form.setAddr1(addressData.get("ADDR_NAME"));
-//        } else {
-            // (선택) 조회 결과가 없을 때 처리. 예: 에러 메시지 등
-            // form.setPref(""); 
-            // form.setAddr1("");
-        }
-//    }
+       if (addressData != null) {
+          // DB 컬럼명에 맞춰서 가져옵니다 (예: PREF_NAME, ADDR_NAME)
+           form.setPref(addressData.get("PREF_NAME")); 
+            form.setAddr1(addressData.get("ADDR_NAME"));
+        } else {
+         // (선택) 조회 결과가 없을 때 처리. 예: 에러 메시지 등
+           form.setPref(""); 
+            form.setAddr1("");
+      }
+  }
 
     @Override
     public boolean validateAndCheckRoute(AddressInputForm form) {
@@ -208,7 +159,8 @@ public class AddressInputServiceImpl implements AddressInputService {
             System.out.println(">> ICHIJI_HOZON save");
 
             // 4. 알림 등록
-            mapper.insertOshirase(shainUid, "一時保存しました。");
+            
+            mapper.insertOshirase("100", shainUid,"000001", "一時保存しました。");
             System.out.println(">> ar");
             
         } catch (Exception e) {

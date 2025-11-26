@@ -123,22 +123,32 @@ public class IdoConfirmController {
         }
     }
 
+    
     // 04조우진
+ // ==========================================
+    // 04. 주소 입력 화면 (Address Input) - 조우진
+    // ==========================================
+
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
-        String shainUid = "INSERT INTO SHAIN (SHAIN_UID, SHAIN_NAME, ZIP_CD, PREF_NAME, ADDR1, ADDR2)"; 
+        // [주의] 실제 로그인 연동 시 세션에서 가져와야 함. 
+        // DB 테스트 데이터에 넣은 'user123'을 사용합니다.
+        String shainUid = "user123"; 
 
+        // 1. 화면 상단(회색 박스)에 보여줄 DB 데이터 로드
         AddressViewDto view = addressInputService.loadViewData(shainUid);
 
+        // 2. 폼 객체 초기화 (없을 경우만)
         if (!model.containsAttribute("addressInputForm")) {
             model.addAttribute("addressInputForm", addressInputService.initForm());
         }
+        
+        // 3. 뷰 데이터 전달
         model.addAttribute("view", view);
 
         return "idoconfirm/04_addressinput";
     }
 
-    // 04조우진
     @PostMapping("/addressinput")
     public String addressInputPost(
             @ModelAttribute("addressInputForm") AddressInputForm form,
@@ -146,43 +156,60 @@ public class IdoConfirmController {
             Model model,
             RedirectAttributes rttr) {
 
-        String shainUid = "testUser"; // 
+        String shainUid = "user123"; // 테스트용 ID
         String action = form.getAction(); 
 
-        // 반영 버튼
+        // ---------------------------------------------------
+        // 1. 반영 버튼 (DB의 중간주소를 입력폼에 자동 채움)
+        // ---------------------------------------------------
         if ("reflect".equals(action)) {
+            // 서비스에서 DB 값을 조회하여 form에 set 해줌
             addressInputService.reflectMiddleAddress(form, shainUid);
+            
+            // 화면 상단 데이터 다시 로드
             model.addAttribute("view", addressInputService.loadViewData(shainUid));
+            
+            // 값이 채워진 form을 다시 화면으로 전달
+            model.addAttribute("addressInputForm", form);
+            
             return "idoconfirm/04_addressinput";
         }
 
-        // 검색 버튼
+        // ---------------------------------------------------
+        // 2. 우편번호 검색 버튼
+        // ---------------------------------------------------
         if ("search".equals(action)) {
             addressInputService.searchZipCode(form);
             model.addAttribute("view", addressInputService.loadViewData(shainUid));
             return "idoconfirm/04_addressinput";
         }
 
-        // 일시보존 버튼
+        // ---------------------------------------------------
+        // 3. 일시보존 버튼
+        // ---------------------------------------------------
         if ("tempsave".equals(action)) {
             addressInputService.tempSave(form, shainUid);
             rttr.addFlashAttribute("message", "一時保存しました。");
-            rttr.addFlashAttribute("addressInputForm", form); // 입력값 유지
+            rttr.addFlashAttribute("addressInputForm", form); // 입력했던 값 유지
             return "redirect:/idoconfirm/addressinput";
         }
 
-        // 다음 버튼
+        // ---------------------------------------------------
+        // 4. 다음(Next) 버튼
+        // ---------------------------------------------------
         if ("next".equals(action)) {
             boolean isValid = addressInputService.validateAndCheckRoute(form);
+            
             if (!isValid) {
                 model.addAttribute("errorMessage", "必須項目を入力してください。(または経路取得エラー)");
                 model.addAttribute("view", addressInputService.loadViewData(shainUid));
                 return "idoconfirm/04_addressinput";
             }
-            // 다음 화면
+            // 유효성 통과 시 경로 입력 화면으로 이동
             return "redirect:/idoconfirm/keiroInfo";
         }
 
+        // 그 외의 경우 다시 원래 화면으로
         return "redirect:/idoconfirm/addressinput";
     }
 
