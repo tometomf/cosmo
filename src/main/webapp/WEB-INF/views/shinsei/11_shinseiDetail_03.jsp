@@ -597,438 +597,355 @@
 
 			</div>
 
-			<!-- ===== 経路① ===== -->
-			<div class="content_Form2" style="margin-top: 20px; font-size: 13px;">
-				<!-- 제목줄 -->
-				<div class="form_Title2"
-					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-					<div>経路&#${9311 + (empty keiro.keiroSeq ? 0 :
-						keiro.keiroSeq)};</div>
+			<!-- ===== 経路 섹션 시작 ===== -->
+			<c:forEach var="keiro" items="${keiroList}" varStatus="st">
+
+				<div class="content_Form2"
+					style="margin-top: 25px; font-size: 13px;">
+
+					<div class="form_Title2"
+						style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
+						経路&#${9312 + st.index};</div>
+
+					<c:choose>
+						<c:when test="${keiro.tsukinShudanKbn eq '3'}">
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">通勤手段</div>
+								<div class="form_Normal">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">経路 自</div>
+								<div class="form_Normal">${empty keiro.startPlace ? '' : keiro.startPlace}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">経路 至</div>
+								<div class="form_Normal">${empty keiro.endPlace ? '' : keiro.endPlace}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">距離</div>
+								<div class="form_Normal">
+									${empty keiro.shinseiKm ? '' : keiro.shinseiKm}
+									<c:if test="${not empty keiro.shinseiKm}">km</c:if>
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">有料道路 IC</div>
+								<div class="form_Normal">${empty keiro.yuryoIcS && empty keiro.yuryoIcE ? '' : 
+                          keiro.yuryoIcS += ' ～ ' += keiro.yuryoIcE}
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">有料道路 片道</div>
+								<div class="form_Normal">
+									${empty keiro.katamichi ? '' : keiro.katamichi}
+									<c:if test="${not empty keiro.katamichi}">円</c:if>
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">1ヶ月金額</div>
+								<div class="form_Normal">
+									<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
+                            ${keiro.tsuki}円
+                        </c:if>
+								</div>
+							</div>
+
+						</c:when>
+
+						<c:when
+							test="${keiro.tsukinShudanKbn eq '1' or keiro.tsukinShudanKbn eq '2'}">
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">通勤手段</div>
+								<div class="form_Normal">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">経路</div>
+								<div class="form_Normal">
+									${empty keiro.startPlace ? '' : keiro.startPlace}
+									<c:if test="${not empty keiro.endPlace}">
+                            → ${keiro.endPlace}
+                        </c:if>
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">1ヶ月</div>
+								<div class="form_Normal">
+									<c:if test="${keiro.sanshoTeikiKin1 != null}">
+                            ${keiro.sanshoTeikiKin1}円 / ${keiro.sanshoTeikiTsukiSu1}ヶ月
+                        </c:if>
+									<c:if test="${keiro.sanshoTeikiKin2 != null}">
+                            &nbsp; ${keiro.sanshoTeikiKin2}円 / ${keiro.sanshoTeikiTsukiSu2}ヶ月
+                        </c:if>
+									<c:if test="${keiro.sanshoTeikiKin3 != null}">
+                            &nbsp; ${keiro.sanshoTeikiKin3}円 / ${keiro.sanshoTeikiTsukiSu3}ヶ月
+                        </c:if>
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">片道料金</div>
+								<div class="form_Normal">
+									${empty keiro.katamichi ? '' : keiro.katamichi}
+									<c:if test="${not empty keiro.katamichi}">円</c:if>
+								</div>
+							</div>
+
+						</c:when>
+
+						<c:when test="${keiro.tsukinShudanKbn eq '6'}">
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">通勤手段</div>
+								<div class="form_Normal">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">住所</div>
+								<div class="form_Normal">${empty keiro.startPlace ? '' : keiro.startPlace}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">勤務地</div>
+								<div class="form_Normal">${empty keiro.endPlace ? '' : keiro.endPlace}</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">距離</div>
+								<div class="form_Normal">
+									${empty keiro.shinseiKm ? '' : keiro.shinseiKm}
+									<c:if test="${not empty keiro.shinseiKm}">km</c:if>
+								</div>
+							</div>
+
+						</c:when>
+
+						<c:otherwise>
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">通勤手段</div>
+								<div class="form_Normal">${empty keiro.shudanName ? '不明な通勤手段' : keiro.shudanName}
+								</div>
+							</div>
+						</c:otherwise>
+
+					</c:choose>
+
 				</div>
 
-				<!-- 본문 내용 -->
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
-				</div>
+				<c:if test="${keiro.tsukinShudanKbn eq '3'}">
+					<div class="multi_Form">
+						<div class="content_Form1" style="width: 330px; margin: 0;">
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">付随書類</div>
+								<div class="form_Normal">
+									<a href="">免許証コピー</a>
+								</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">免許証有効期限</div>
+								<div class="form_Normal">${empty shorui.menkyoYukoKigen ? '' : shorui.menkyoYukoKigen}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">免許証番号</div>
+								<div class="form_Normal">${empty shorui.menkyoNo ? '' : shorui.menkyoNo}</div>
+							</div>
+						</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">経路 自</div>
-					<div class="form_Normal">${empty keiro.startPlace ? '' : keiro.startPlace}
-					</div>
-				</div>
+						<div class="content_Form1" style="width: 330px; margin: 0;">
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">付随書類</div>
+								<div class="form_Normal">
+									<a href="">車検証コピー</a>
+								</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">車種</div>
+								<div class="form_Normal">${empty shorui.shashu ? '' : shorui.shashu}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">ナンバー</div>
+								<div class="form_Normal">${empty shorui.torokuNo ? '' : shorui.torokuNo}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">排気量</div>
+								<div class="form_Normal">
+									<c:if test="${not empty shorui.haikiryo}">
+                            ${shorui.haikiryo}
+                        </c:if>
+								</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">車検有効期限</div>
+								<div class="form_Normal">${empty shorui.shakenYukoKigen ? '' : shorui.shakenYukoKigen}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">燃費</div>
+								<div class="form_Normal">
+									<c:if test="${not empty shorui.nenpi}">
+                            ${shorui.nenpi}km/L
+                        </c:if>
+								</div>
+							</div>
+						</div>
 
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">経路 至</div>
-					<div class="form_Normal">${empty keiro.endPlace ? '' : keiro.endPlace}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">距離</div>
-					<div class="form_Normal">
-						${empty keiro.shinseiKm ? '' : keiro.shinseiKm}
-						<c:if test="${not empty keiro.shinseiKm}">km</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">有料道路 IC</div>
-					<div class="form_Normal">${empty jyohou.yuryoIcS && empty jyohou.yuryoIcE ? '' : jyohou.yuryoIcS + ' ～ ' + jyohou.yuryoIcE}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">有料道路 片道</div>
-					<div class="form_Normal">
-						${empty keiro.katamichi ? '' : keiro.katamichi}
-						<c:if test="${not empty keiro.katamichi}">円</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">1ヶ月金額</div>
-					<div class="form_Normal">
-						<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                ${keiro.tsuki}円
-            </c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">月当月実勤務回数</div>
-					<div class="form_Normal"
-						style="display: flex; align-items: center; gap: 5px;">
-						<input type="text" id="jitsuKinmuInput" value="15"
-							style="width: 50px; text-align: center; border: 1px solid #ccc; height: 20px;">
-						回
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">月当月金額</div>
-					<div class="form_Normal"
-						style="display: flex; align-items: center; gap: 10px;">
-						<span> <c:if
-								test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                    ${keiro.tsuki}円
-                </c:if>
-						</span>
-						<button type="button"
-							style="border: 1px solid #ccc; background: #f3f3f3; font-size: 12px; cursor: pointer; padding: 2px 10px;">
-							計算</button>
-					</div>
-				</div>
-			</div>
-
-			<c:url var="keiroDetailUrl" value="/keiroinput/07_keirodtInput_03">
-				<c:param name="kigyoCd" value="${shinseiDetail.kigyoCd}" />
-				<c:param name="shinseiNo" value="${shinseiDetail.shinseiNo}" />
-				<c:param name="keiroNo" value="1" />
-			</c:url>
-
-			<!-- 오른쪾 정렬 버튼 예제 -->
-			<div class="button_Right">
-				<div class="button_Right_Group">
-					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
-						style="cursor: pointer;"
-						onclick="location.href='${keiroDetailUrl}'">
-				</div>
-			</div>
-
-			<!-- Multi Form 예제 (dummy 그대로) -->
-			<!-- 付随書類（自動車） -->
-			<div class="multi_Form">
-				<!-- 면허증 -->
-				<div class="content_Form1" style="width: 330px; margin: 0;">
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">免許証コピー</a>
+						<div class="content_Form1" style="width: 330px; margin: 0;">
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">付随書類</div>
+								<div class="form_Normal">
+									<a href="">保険証券コピー（場所）</a>
+								</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">付随書類</div>
+								<div class="form_Normal">
+									<a href="">保険証券コピー（郵便内容）</a>
+								</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">保険満了日</div>
+								<div class="form_Normal">${empty shorui.hokenManryoYmd ? '' : shorui.hokenManryoYmd}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">対人賠償</div>
+								<div class="form_Normal">${empty shorui.taijinBaisho ? '' : shorui.taijinBaisho}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">対物賠償</div>
+								<div class="form_Normal">${empty shorui.taibutsuBaisho ? '' : shorui.taibutsuBaisho}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">人身障害</div>
+								<div class="form_Normal">${empty shorui.jinshinShogai ? '' : shorui.jinshinShogai}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">搭乗者障害</div>
+								<div class="form_Normal">${empty shorui.tojoshaShogai ? '' : shorui.tojoshaShogai}</div>
+							</div>
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">等級</div>
+								<div class="form_Normal">${empty shorui.tokyu ? '' : shorui.tokyu}</div>
+							</div>
 						</div>
 					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">免許証有効期限</div>
-						<div class="form_Normal">${empty shorui.menkyoYukoKigen ? '' : shorui.menkyoYukoKigen}
+				</c:if>
+
+				<c:if
+					test="${keiro.tsukinShudanKbn eq '1' or keiro.tsukinShudanKbn eq '2'}">
+					<div class="multi_Form"
+						style="justify-content: flex-start; margin-top: 15px;">
+						<div class="content_Form1" style="width: 330px; margin: 0;">
+
+
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">付随書類</div>
+								<div class="form_Normal">
+									<c:choose>
+
+										<c:when test="${not empty shorui.fileUid1}">
+											<a href="/idoconfirm/download?fileUid=${shorui.fileUid1}">定期コピー</a>
+										</c:when>
+										<c:otherwise>
+                        添付なし
+                    </c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+
+
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">初回定期期間</div>
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${shorui.firstTeikiKikan == '1'}">1カ月</c:when>
+										<c:when test="${shorui.firstTeikiKikan == '3'}">3カ月</c:when>
+										<c:when test="${shorui.firstTeikiKikan == '6'}">6カ月</c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+
+							<div class="form_Text1" id="form_Text3">
+								<div class="form_Column">次回以降定期期間</div>
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${shorui.nextTeikiKikan == '1'}">1カ月</c:when>
+										<c:when test="${shorui.nextTeikiKikan == '3'}">3カ月</c:when>
+										<c:when test="${shorui.nextTeikiKikan == '6'}">6カ月</c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+
 						</div>
 					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">免許証番号</div>
-						<div class="form_Normal">${empty shorui.menkyoNo ? '' : shorui.menkyoNo}
-						</div>
+
+				</c:if>
+
+				<c:choose>
+					<c:when test="${keiro.tsukinShudanKbn eq '1'}">
+						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput">
+							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
+							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+						</c:url>
+					</c:when>
+					<c:when test="${keiro.tsukinShudanKbn eq '2'}">
+						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_02">
+							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
+							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+						</c:url>
+					</c:when>
+					<c:when test="${keiro.tsukinShudanKbn eq '3'}">
+						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_03">
+							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
+							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+						</c:url>
+					</c:when>
+					<c:when test="${keiro.tsukinShudanKbn eq '6'}">
+						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_04">
+							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
+							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+						</c:url>
+					</c:when>
+					<c:otherwise>
+						<c:url var="keiroEditUrl" value="/keiroinput/06_keirodtInput">
+							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
+							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+						</c:url>
+					</c:otherwise>
+				</c:choose>
+
+				<div class="button_Right">
+					<div class="button_Right_Group">
+						<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
+							style="cursor: pointer;"
+							onclick="location.href='${keiroEditUrl}'">
 					</div>
 				</div>
 
-				<!-- 車検証 -->
-				<div class="content_Form1" style="width: 330px; margin: 0;">
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">車検証コピー</a>
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">車種</div>
-						<div class="form_Normal">${empty shorui.shashu ? '' : shorui.shashu}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">ナンバー</div>
-						<div class="form_Normal">${empty shorui.torokuNo ? '' : shorui.torokuNo}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">排気量</div>
-						<div class="form_Normal">${empty shorui.haikiryo ? '' : shorui.haikiryo}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">車検有効期限</div>
-						<div class="form_Normal">${empty shorui.shakenYukoKigen ? '' : shorui.shakenYukoKigen}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">燃費</div>
-						<div class="form_Normal">
-							<c:if test="${not empty shorui.nenpi}">
-                    ${shorui.nenpi}km/L
-                </c:if>
-						</div>
-					</div>
-				</div>
-
-				<!-- 保険 -->
-				<div class="content_Form1" style="width: 330px; margin: 0;">
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">保険証券コピー（場所）</a>
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">保険証券コピー（郵便内容）</a>
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">保険満了日</div>
-						<div class="form_Normal">${empty shorui.hokenManryoYmd ? '' : shorui.hokenManryoYmd}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">対人賠償</div>
-						<div class="form_Normal">${empty shorui.taijinBaisho ? '' : shorui.taijinBaisho}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">対物賠償</div>
-						<div class="form_Normal">${empty shorui.taibutsuBaisho ? '' : shorui.taibutsuBaisho}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">人身障害</div>
-						<div class="form_Normal">${empty shorui.jinshinShogai ? '' : shorui.jinshinShogai}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">搭乗者障害</div>
-						<div class="form_Normal">${empty shorui.tojoshaShogai ? '' : shorui.tojoshaShogai}
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">等級</div>
-						<div class="form_Normal">${empty shorui.tokyu ? '' : shorui.tokyu}
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<c:url var="huzuiUrl" value="/idoconfirm/huzuikanri">
-				<c:param name="kigyoCd" value="${shinseiJyohou.kigyoCd}" />
-				<c:param name="shinseiNo" value="${shinseiJyohou.shinseiNo}" />
-			</c:url>
-
-			<div class="button_Right">
-				<div class="button_Right_Group">
-					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
-						style="cursor: pointer;" onclick="location.href='${huzuiUrl}'">
-				</div>
-			</div>
-
-
-			<!-- ===== 経路② ===== -->
-			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
-				<div class="form_Title2"
-					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-					経路②</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty keiro2.shudanName ? '' : keiro2.shudanName}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">経路</div>
-					<div class="form_Normal">
-						${empty keiro2.startPlace ? '' : keiro2.startPlace}
-						<c:if test="${not empty keiro2.endPlace}">
-				→ ${keiro2.endPlace}
-			</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">1ヶ月</div>
-					<div class="form_Normal">
-						<c:if test="${keiro2.sanshoTeikiKin1 != null}">
-				${keiro2.sanshoTeikiKin1}円 / ${keiro2.sanshoTeikiTsukiSu1}ヶ月
-			</c:if>
-						<c:if test="${keiro2.sanshoTeikiKin2 != null}">
-				&nbsp; ${keiro2.sanshoTeikiKin2}円 / ${keiro2.sanshoTeikiTsukiSu2}ヶ月
-			</c:if>
-						<c:if test="${keiro2.sanshoTeikiKin3 != null}">
-				&nbsp; ${keiro2.sanshoTeikiKin3}円 / ${keiro2.sanshoTeikiTsukiSu3}ヶ月
-			</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">
-						${empty keiro2.katamichi ? '' : keiro2.katamichi}
-						<c:if test="${not empty keiro2.katamichi}">円</c:if>
-					</div>
-				</div>
-			</div>
-
-			<div class="multi_Form"
-				style="justify-content: flex-start; margin-top: 15px;">
-				<div class="content_Form1" style="width: 330px; margin: 0;">
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">定期コピー</a>
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">初回定期期間</div>
-						<div class="form_Normal">1カ月</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">次回以降定期期間</div>
-						<div class="form_Normal"></div>
-					</div>
-				</div>
-			</div>
-
-			<c:url var="keiro2Url" value="/keiroinput/07_keirodtInput_02">
-				<c:param name="kigyoCd" value="${shinseiDetail.kigyoCd}" />
-				<c:param name="shinseiNo" value="${shinseiDetail.shinseiNo}" />
-				<c:param name="keiroNo" value="2" />
-			</c:url>
-
-			<div class="button_Right">
-				<div class="button_Right_Group">
-					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
-						style="cursor: pointer;" onclick="location.href='${keiro2Url}'">
-				</div>
-			</div>
-
-
-			<!-- ===== 経路③ ===== -->
-			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
-				<div class="form_Title2"
-					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-					経路③</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty keiro3.shudanName ? '' : keiro3.shudanName}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">経路</div>
-					<div class="form_Normal">
-						${empty keiro3.startPlace ? '' : keiro3.startPlace}
-						<c:if test="${not empty keiro3.endPlace}">
-				→ ${keiro3.endPlace}
-			</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">1ヶ月</div>
-					<div class="form_Normal">
-						<c:if test="${keiro3.sanshoTeikiKin1 != null}">
-				${keiro3.sanshoTeikiKin1}円 / ${keiro3.sanshoTeikiTsukiSu1}ヶ月
-			</c:if>
-						<c:if test="${keiro3.sanshoTeikiKin2 != null}">
-				&nbsp; ${keiro3.sanshoTeikiKin2}円 / ${keiro3.sanshoTeikiTsukiSu2}ヶ月
-			</c:if>
-						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
-				&nbsp; ${keiro3.sanshoTeikiKin3}円 / ${keiro3.sanshoTeikiTsukiSu3}ヶ月
-			</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">6ヶ月</div>
-					<div class="form_Normal">
-						<c:if test="${keiro3.sanshoTeikiKin3 != null}">
-				${keiro3.sanshoTeikiKin3}円
-			</c:if>
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">片道料金</div>
-					<div class="form_Normal">
-						${empty keiro3.katamichi ? '' : keiro3.katamichi}
-						<c:if test="${not empty keiro3.katamichi}">円</c:if>
-					</div>
-				</div>
-			</div>
-
-			<div class="multi_Form"
-				style="justify-content: flex-start; margin-top: 15px;">
-				<div class="content_Form1" style="width: 330px; margin: 0%;">
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">付随書類</div>
-						<div class="form_Normal">
-							<a href="">定期コピー</a>
-						</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">初回定期期間</div>
-						<div class="form_Normal">1カ月</div>
-					</div>
-					<div class="form_Text1" id="form_Text3">
-						<div class="form_Column">次回以降定期期間</div>
-						<div class="form_Normal"></div>
-					</div>
-				</div>
-			</div>
-
-			<c:url var="keiro3Url" value="/keiroinput/07_keirodtInput">
-				<c:param name="kigyoCd" value="${shinseiDetail.kigyoCd}" />
-				<c:param name="shinseiNo" value="${shinseiDetail.shinseiNo}" />
-				<c:param name="keiroNo" value="3" />
-			</c:url>
-
-			<div class="button_Right">
-				<div class="button_Right_Group">
-					<img src="/resources/img/tn/shusei_btn01.gif" alt="shusei_btn01"
-						style="cursor: pointer;" onclick="location.href='${keiro3Url}'">
-				</div>
-			</div>
-
-
-			<!-- ===== 経路④ ===== -->
-			<div class="content_Form2" style="margin-top: 25px; font-size: 13px;">
-				<div class="form_Title2"
-					style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-					経路④</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty keiro4.shudanName ? '' : keiro4.shudanName}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">住所</div>
-					<div class="form_Normal">${empty keiro4.startPlace ? '' : keiro4.startPlace}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${empty keiro4.endPlace ? '' : keiro4.endPlace}
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">距離</div>
-					<div class="form_Normal">
-						${empty keiro4.shinseiKm ? '' : keiro4.shinseiKm}
-						<c:if test="${not empty keiro4.shinseiKm}">km</c:if>
-					</div>
-				</div>
-			</div>
-
+			</c:forEach>
 
 			<!-- 기타 테이블 (dummy) -->
 			<div class="content_Form1">
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">その他</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid1 ? '' : shorui.etcFileUid1}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">コメント</div>
+					<div class="form_Normal" style="width: 460px;"> ${empty shorui.etcComment1 ? '' : shorui.etcComment1}</div>
 				</div>
 			</div>
 
@@ -1036,9 +953,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">その他</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid2 ? '' : shorui.etcFileUid2}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">コメント</div>
+					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment2 ? '' : shorui.etcComment2}</div>
 				</div>
 			</div>
 
@@ -1046,9 +963,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">その他</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid3 ? '' : shorui.etcFileUid3}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">コメント</div>
+					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment3 ? '' : shorui.etcComment3}</div>
 				</div>
 			</div>
 
@@ -1056,9 +973,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">その他</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid4 ? '' : shorui.etcFileUid4}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">コメント</div>
+					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment4 ? '' : shorui.etcComment4}</div>
 				</div>
 			</div>
 
@@ -1066,9 +983,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">その他</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid5 ? '' : shorui.etcFileUid5}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">コメント</div>
+					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment5 ? '' : shorui.etcComment5}</div>
 				</div>
 			</div>
 
@@ -1108,8 +1025,10 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}</div>
+					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}
+					</div>
 				</div>
+
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
 					<div class="form_Normal">${empty jyohou.riyoStartYmd ? '' : jyohou.riyoStartYmd}
