@@ -247,169 +247,181 @@ public class HiwariKinmuchiController {
 	@GetMapping("/keiro")
 	public String showKeiroPage(HttpSession session, Model model) {
 
-		Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-		Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
 
-		if (kigyoCd == null)
-			kigyoCd = 100;
-		if (shainUid == null)
-			shainUid = 30000001;
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
 
-		List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
-		if (keiroList == null) {
-			keiroList = new ArrayList<HiwariKeiroVO>();
-		}
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList<>();
+	    }
 
-		int repRouteNo = calcRepRouteNo(keiroList);
+	    int repRouteNo = calcRepRouteNo(keiroList);
 
-		model.addAttribute("keiroList", keiroList);
-		model.addAttribute("repRouteNo", repRouteNo);
+	    model.addAttribute("keiroList", keiroList);
+	    model.addAttribute("repRouteNo", repRouteNo);
 
-		return "hiwariKinmuchi/hiwariKeiro";
+	    return "hiwariKinmuchi/hiwariKeiro";
 	}
+
 
 	// 유지희
 	@PostMapping("/keiro")
-	public String handleKeiro(@RequestParam("action") String action, HttpSession session, Model model) {
+	public String handleKeiro(
+	        @RequestParam("action") String action,
+	        HttpSession session,
+	        Model model) {
 
-		System.out.println("=== DEBUG /keiro POST START ===");
-		System.out.println("action = " + action);
+	    System.out.println("=== DEBUG /keiro POST START ===");
+	    System.out.println("action = " + action);
 
-		Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-		Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
 
-		if (kigyoCd == null)
-			kigyoCd = 100;
-		if (shainUid == null)
-			shainUid = 30000001;
+	        return "redirect:/";
+	    }
 
-		List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
-		if (keiroList == null) {
-			keiroList = new ArrayList<HiwariKeiroVO>();
-		}
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
 
-		int repRouteNo = calcRepRouteNo(keiroList);
-		System.out.println("keiroList size = " + keiroList.size());
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList<>();
+	    }
 
-		if ("apply".equals(action)) {
+	    int repRouteNo = calcRepRouteNo(keiroList);
+	    System.out.println("keiroList size = " + keiroList.size());
 
-			if (keiroList.isEmpty()) {
-				model.addAttribute("errorMsg", "経路が1件も登録されていません。");
-				model.addAttribute("keiroList", keiroList);
-				model.addAttribute("repRouteNo", repRouteNo);
-				return "hiwariKinmuchi/hiwariKeiro";
-			}
+	    if ("apply".equals(action)) {
 
-			return "redirect:/hiwariKinmuchi/kakunin";
-		}
+	        if (keiroList.isEmpty()) {
+	            model.addAttribute("errorMsg", "経路が1件も登録されていません。");
+	            model.addAttribute("keiroList", keiroList);
+	            model.addAttribute("repRouteNo", repRouteNo);
+	            return "hiwariKinmuchi/hiwariKeiro";
+	        }
 
-		if ("temp".equals(action)) {
+	        return "redirect:/hiwariKinmuchi/kakunin";
+	    }
 
-			service.saveTemp(kigyoCd, shainUid, keiroList);
-			return "redirect:/shinsei/11_shinseiDetail_02";
-		}
+	    if ("temp".equals(action)) {
 
-		model.addAttribute("keiroList", keiroList);
-		model.addAttribute("repRouteNo", repRouteNo);
-		return "hiwariKinmuchi/hiwariKeiro";
+	        service.saveTemp(kigyoCd, shainUid, keiroList);
+	        return "redirect:/shinsei/11_shinseiDetail_02";
+	    }
+
+	    model.addAttribute("keiroList", keiroList);
+	    model.addAttribute("repRouteNo", repRouteNo);
+	    return "hiwariKinmuchi/hiwariKeiro";
 	}
+
 
 	// 유지희
 	@GetMapping("/keiro/delete")
-	public String deleteKeiro(@RequestParam("keiroSeq") Integer keiroSeq, HttpSession session) {
+	public String deleteKeiro(
+	        @RequestParam("keiroSeq") Integer keiroSeq,
+	        HttpSession session) {
 
-		Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-		Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
 
-		if (kigyoCd == null)
-			kigyoCd = 100;
-		if (shainUid == null)
-			shainUid = 30000001;
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
 
-		service.deleteOne(kigyoCd, shainUid, keiroSeq);
-		return "redirect:/hiwariKinmuchi/keiro";
+	    service.deleteOne(kigyoCd, shainUid, keiroSeq);
+
+	    return "redirect:/hiwariKinmuchi/keiro";
 	}
 
-	// 유지희
 	@GetMapping("/keiro/edit")
 	public String editKeiro(@RequestParam("keiroSeq") Integer keiroSeq) {
-		return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
+	    return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
 	}
 
-	private int calcRepRouteNo(List<HiwariKeiroVO> keiroList) {
-		if (keiroList == null || keiroList.isEmpty()) {
-			return 1;
-		}
-		return keiroList.size();
-	}
-
-	// 유지희
 	@GetMapping("/keiroInput")
 	public String showKeiroInputPage() {
-		return "keiroinput/06_keiroInput";
+	    return "keiroinput/06_keiroInput";
 	}
 
-	// 유지희
-	@GetMapping("/map")
-	public String showMapPage(HttpSession session, Model model) {
+    private int calcRepRouteNo(List<HiwariKeiroVO> keiroList) {
 
-		String kigyoCd = "100";
-		String shainUid = "30000001";
+        if (keiroList == null || keiroList.isEmpty()) {
+            return 1;
+        }
+  
+        return keiroList.size();
+    }
 
-		// ★★★ 주소 service 호출 제거함 ★★★
-		// AddressViewDto address = addressService.loadCurrentAddress(kigyoCd,
-		// shainUid);
 
-		HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(100, 30000001L);
+ // 유지희
+    @GetMapping("/map")
+    public String showMapPage(HttpSession session, Model model) {
 
-		// ★★★ address → 관련 코드 전체 제거 ★★★
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/"; 
+        }
 
-		String kinmuchiName = "";
-		String kinmuchiAddress = "";
-		if (kinmuchi != null) {
-			kinmuchiName = kinmuchi.getGenKinmusakiNm() != null ? kinmuchi.getGenKinmusakiNm() : "";
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
 
-			if (kinmuchi.getGenKinmuAddress1() != null)
-				kinmuchiAddress += kinmuchi.getGenKinmuAddress1();
-			if (kinmuchi.getGenKinmuAddress2() != null)
-				kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress2();
-			if (kinmuchi.getGenKinmuAddress3() != null)
-				kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
-		}
+        HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(kigyoCd, shainUid);
 
-		model.addAttribute("kinmuchi", kinmuchiName);
-		model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
+        String kinmuchiName = "";
+        String kinmuchiAddress = "";
+        if (kinmuchi != null) {
+            kinmuchiName = kinmuchi.getGenKinmusakiNm() != null ? kinmuchi.getGenKinmusakiNm() : "";
 
-		return "hiwariKinmuchi/hiwariMap";
-	}
+            if (kinmuchi.getGenKinmuAddress1() != null) kinmuchiAddress += kinmuchi.getGenKinmuAddress1();
+            if (kinmuchi.getGenKinmuAddress2() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress2();
+            if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
+        }
 
-	@PostMapping("/submit")
-	public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
+        model.addAttribute("kinmuchi", kinmuchiName);
+        model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
 
-		Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-		Long shinseiNo = (Long) session.getAttribute("SHINSEI_NO");
+        return "hiwariKinmuchi/hiwariMap";
+    }
 
-		// 세션 값 비어 있으면 기본값 세팅
-		if (kigyoCd == null)
-			kigyoCd = 100;
-		if (shinseiNo == null)
-			shinseiNo = 1L;
+    @PostMapping("/submit")
+    public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
 
-		try {
-			// ★ DB 업데이트 (header + route + 금액 등)
-			service.submitApplication(kigyoCd, shinseiNo);
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";
+        }
 
-			// 완료화면 파라미터 전달
-			rttr.addAttribute("shinseiNo", shinseiNo);
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shinseiNo = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            shinseiNo = Long.valueOf(shain.getShinsei_No());
+        }
 
-			// 완료 화면으로 이동
-			return "redirect:/hiwariKinmuchi/kanryo";
+        if (shinseiNo == null) {
+            rttr.addFlashAttribute("error", "申請番号が取得できませんでした。");
+            return "redirect:/hiwariKinmuchi/kakunin";
+        }
 
-		} catch (Exception e) {
-			rttr.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
-			return "redirect:/hiwariKinmuchi/kakunin";
-		}
-	}
+        try {
+         
+            service.submitApplication(kigyoCd, shinseiNo);
+
+            rttr.addAttribute("shinseiNo", shinseiNo);
+
+            return "redirect:/hiwariKinmuchi/kanryo";
+
+        } catch (Exception e) {
+            rttr.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
+            return "redirect:/hiwariKinmuchi/kakunin";
+        }
+    }
+
 
 	// 유지희 끝
 
