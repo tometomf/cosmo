@@ -10,7 +10,7 @@ public class HiwariKakuninVO {
     private Integer kigyoCd;
     
     // 사원 정보 (DB 컬럼명)
-    private Integer shainUid;
+    private Long shainUid;
     private String empNo;              // 社員番号
     private String empName;            // 社員名
     private String empWorkplace;       // 勤務地  👈 추가

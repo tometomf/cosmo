@@ -32,13 +32,13 @@ public interface HiwariKinmuchiService {
     
     void submitApplication(Integer kigyoCd, Long shinseiNo);
     
-    List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Integer shainUid);
+    List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Long shainUid);
     
-    void saveApply(Integer kigyoCd, Integer shainUid, List<HiwariKeiroVO> keiroList);
+    void saveApply(Integer kigyoCd, Long shainUid, List<HiwariKeiroVO> keiroList);
     
-    void saveTemp(Integer kigyoCd, Integer shainUid, List<HiwariKeiroVO> keiroList);
+    void saveTemp(Integer kigyoCd, Long shainUid, List<HiwariKeiroVO> keiroList);
     
-    void deleteOne(Integer kigyoCd, Integer shainUid, Integer keiroSeq);
+    void deleteOne(Integer kigyoCd, Long shainUid, Integer keiroSeq);
     
 
 

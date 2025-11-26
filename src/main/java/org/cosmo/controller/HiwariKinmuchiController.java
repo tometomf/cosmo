@@ -252,8 +252,8 @@ public class HiwariKinmuchiController {
 	    }
 
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
-
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
+	    
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
 	    if (keiroList == null) {
 	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 수정
@@ -285,7 +285,7 @@ public class HiwariKinmuchiController {
 	    }
 
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
 
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
 	    if (keiroList == null) {
@@ -310,7 +310,7 @@ public class HiwariKinmuchiController {
 
 	    if ("temp".equals(action)) {
 
-	        service.saveTemp(kigyoCd, shainUid, keiroList);
+	    	 service.saveTemp(kigyoCd, shainUid, keiroList); 
 	        return "redirect:/shinsei/11_shinseiDetail_02";
 	    }
 
@@ -333,7 +333,7 @@ public class HiwariKinmuchiController {
 	    }
 
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-	    Integer shainUid = Integer.valueOf(shain.getShain_Uid());
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
 
 	    service.deleteOne(kigyoCd, shainUid, keiroSeq);
 

@@ -8,7 +8,7 @@ import lombok.Data;
 public class HiwariKeiroVO {
     private Integer kigyoCd;       
     private Long shinseiNo;       
-    private Integer shainUid;      
+    private Long shainUid;      
     private Integer keiroSeq;       
     private String tsukinShudanKbn; // 통근수단 구분 (1=전철, 2=버스, 3=자동차...)
     private String startPlace;      // 출발지
