@@ -163,93 +163,103 @@
         </div>
       </div>
 
-      <!-- 通勤経路① -->
-      <div class="content_Form2">
-        <div class="form_Title2">
-          <div>通勤経路①</div>
-          <div class="edit-btn" onclick="location.href='<c:url value="/hiwariKinmuchi/edit"/>'"></div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">通勤手段</div>
-          <div class="form_Normal">
-            <c:out value="${route1.transport}" default="バス"/>
+            <!-- 通勤経路一覧（SHINSEI_START_KEIRO 그대로 표시） -->
+      <c:if test="${not empty keiroList}">
+        <c:forEach var="r" items="${keiroList}" varStatus="st">
+
+          <div class="content_Form2">
+            <div class="form_Title2">
+              <div>通勤経路<c:out value="${st.index + 1}"/></div>
+              <!-- 편집 버튼: 해당 경로의 KEIRO_SEQ를 붙여서 이동 -->
+              <div class="edit-btn"
+                   onclick="location.href='<c:url value="/hiwariKinmuchi/keiro/edit"/>?keiroSeq=${r.keiroSeq}'"></div>
+            </div>
+
+            <!-- 通勤手段 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">通勤手段</div>
+              <div class="form_Normal">
+                <c:out value="${r.tsukinShudanNm}" default="―"/>
+              </div>
+            </div>
+
+            <!-- 経路（START ～ END ＋ 経由） -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">経路</div>
+              <div class="form_Normal">
+                <c:out value="${r.startPlace}" default=""/> ～ 
+                <c:out value="${r.endPlace}" default=""/>
+
+                <c:if test="${not empty r.viaPlace1 
+                             or not empty r.viaPlace2 
+                             or not empty r.viaPlace3 
+                             or not empty r.viaPlace4 
+                             or not empty r.viaPlace5}">
+                  （経由：
+                  <c:if test="${not empty r.viaPlace1}"><c:out value="${r.viaPlace1}"/> </c:if>
+                  <c:if test="${not empty r.viaPlace2}"><c:out value="${r.viaPlace2}"/> </c:if>
+                  <c:if test="${not empty r.viaPlace3}"><c:out value="${r.viaPlace3}"/> </c:if>
+                  <c:if test="${not empty r.viaPlace4}"><c:out value="${r.viaPlace4}"/> </c:if>
+                  <c:if test="${not empty r.viaPlace5}"><c:out value="${r.viaPlace5}"/></c:if>
+                  )
+                </c:if>
+              </div>
+            </div>
+
+            <!-- 対象期間 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">対象期間</div>
+              <div class="form_Normal">
+                <c:out value="${r.kikanStartYmd}" default=""/> ～ 
+                <c:out value="${r.kikanEndYmd}" default=""/>
+              </div>
+            </div>
+
+            <!-- 出勤日数 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">出勤日数</div>
+              <div class="form_Normal">
+                <c:out value="${r.shukkinNissuu}" default="0"/>日間
+              </div>
+            </div>
+
+            <!-- 片道料金 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">片道料金</div>
+              <div class="form_Normal">
+                <c:out value="${r.kataMichiKin}" default="0"/>円
+              </div>
+            </div>
+
+            <!-- 申請金額 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">申請金額</div>
+              <div class="form_Normal">
+                <c:out value="${r.shinseiKin}" default="0"/>円
+              </div>
+            </div>
+
+            <!-- 月額（1ヶ月参考値） -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">金額（1ヶ月参考値）</div>
+              <div class="form_Normal">
+                <c:out value="${r.tsukiShikyuKin}" default="0"/>円
+              </div>
+            </div>
+
+            <!-- 日割額 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">日割額</div>
+              <div class="form_Normal">
+                <c:out value="${r.hiwariAto}" default="0"/>円
+              </div>
+            </div>
+
           </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">経路</div>
-          <div class="form_Normal">
-            <c:out value="${route1.route}" default="新丸子交差点 → 新丸子駅"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">出勤日数</div>
-          <div class="form_Normal">
-            <c:out value="${route1.workDays}" default="5日間"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">片道料金</div>
-          <div class="form_Normal">
-            <c:out value="${route1.oneWayFee}" default="―"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">金額</div>
-          <div class="form_Normal">
-            <c:out value="${route1.amount}" default="1,000円"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">金額（1ヶ月参考値）</div>
-          <div class="form_Normal">
-            <c:out value="${route1.amountMonthly}" default="5,000円"/>
-          </div>
-        </div>
-      </div>
-<br>
-      <!-- 通勤経路② -->
-      <div class="content_Form2">
-        <div class="form_Title2">
-          <div>通勤経路②</div>
-          <div class="edit-btn" onclick="location.href='<c:url value="/hiwariKinmuchi/route2/edit"/>'"></div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">通勤手段</div>
-          <div class="form_Normal">
-            <c:out value="${route2.transport}" default="電車"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">経路</div>
-          <div class="form_Normal">
-            <c:out value="${route2.route}" default="新丸子駅 → 中野坂上駅"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">出勤日数</div>
-          <div class="form_Normal">
-            <c:out value="${route2.workDays}" default="5日間"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">片道料金</div>
-          <div class="form_Normal">
-            <c:out value="${route2.oneWayFee}" default="―"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">金額</div>
-          <div class="form_Normal">
-            <c:out value="${route2.amount}" default="2,500円"/>
-          </div>
-        </div>
-        <div class="form_Text1 twoCol">
-          <div class="form_Column">金額（1ヶ月参考値）</div>
-          <div class="form_Normal">
-            <c:out value="${route2.amountMonthly}" default="13,000円"/>
-          </div>
-        </div>
-      </div>
+
+        </c:forEach>
+      </c:if>
+
 
       <!-- 申請情報 -->
       <div class="content_Form1">
