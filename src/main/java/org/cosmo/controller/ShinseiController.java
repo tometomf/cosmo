@@ -382,6 +382,11 @@ public class ShinseiController {
 
 		shinseiService.hikimodosu(kigyoCd, shinseiNo, loginUserId, userIp);
 
+		ShainVO loginUser = shain;
+		ShainVO shinseiUser = shain;
+
+		shinseiService.insertOshiraseHikimodosu(loginUser, shinseiUser, String.valueOf(shinseiNo));
+
 		redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
 
 		return "home";
@@ -475,7 +480,7 @@ public class ShinseiController {
 	@PostMapping("/backFromConfirm") // 제교
 	public String backFromConfirm(@RequestParam("shinseiNo") Long shinseiNo, HttpSession session) {
 
-		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
+		ShainVO loginShain = (ShainVO) session.getAttribute("shain");
 		Long kigyoCd = Long.parseLong(loginShain.getKigyo_Cd());
 
 		shinseiService.clearHenkoFlags(kigyoCd, shinseiNo);
@@ -486,7 +491,7 @@ public class ShinseiController {
 	public String resubmit(@RequestParam("shinseiNo") Long shinseiNo, @RequestParam("shinseiRiyu") String shinseiRiyu,
 			HttpSession session, RedirectAttributes rttr) {
 
-		ShainVO loginShain = (ShainVO) session.getAttribute("loginShain");
+		ShainVO loginShain = (ShainVO) session.getAttribute("shain");
 		if (loginShain == null) {
 			rttr.addFlashAttribute("errorMessage", "ログイン情報が取得できませんでした。");
 			return "redirect:/shinsei/list";
