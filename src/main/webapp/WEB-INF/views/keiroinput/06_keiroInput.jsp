@@ -281,9 +281,14 @@ document.addEventListener("DOMContentLoaded", function() {
             : {};
 	console.log("임시저장 데이터:", ichijiHozon);
     
-	const hozonUid = ${hozonUid};
-	const shinseiNo = ${shinseiNo};
-	const keiroSeq = ${keiroSeq};
+	const hozonUid = '${hozonUid}';
+	const shinseiNo = '${shinseiNo}';
+	const keiroSeq = '${keiroSeq}';
+	
+	const startAddr = '${startAddr}';
+	const endAddr = '${endAddr}';
+	const startPos = '${startPos}';
+	const endPos = '${endPos}';
 	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
@@ -522,12 +527,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     alert("通勤手段が不正です。");
                     return;
             }
-
+			
             redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
             redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
             redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
             redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
+            
+            console.log(startAddr, endAddr, startPos, endPos);
+            
+            if(value == "jiten" || value == "toho" || value == "car"){            	
+	            redirectPath += "&startAddr=" + encodeURIComponent(startAddr);
+	            redirectPath += "&endAddr=" + encodeURIComponent(endAddr);
+	            redirectPath += "&startPos=" + encodeURIComponent(startPos);
+	            redirectPath += "&endPos=" + encodeURIComponent(endPos);            
+            }
+      		
             redirectUrlInput.value = redirectPath;
+            
+            console.log(redirectUrlInput.value);
 
             form.submit();
         });

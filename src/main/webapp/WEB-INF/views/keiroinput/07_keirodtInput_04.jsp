@@ -322,6 +322,9 @@
   var homeFullAddress = null;
   var workFullAddress = null;
   var distance    = null;
+  var addressDiv = document.getElementById('address');
+  var kinmuAddressDiv = document.getElementById('kinmuAddress');
+  
   /**
    * ① 페이지 로드 후에 실행: 사원 위치 정보만 가져와서
    *    address / kinmuAddress div 채우고, 좌표를 변수에 저장
@@ -338,8 +341,6 @@
       .then(function(data) {
         console.log('사원 위치 정보:', data);
 
-        var addressDiv = document.getElementById('address');
-        var kinmuAddressDiv = document.getElementById('kinmuAddress');
 
         var a1 = data.address1 || '';
         var a2 = data.address2 || '';
@@ -350,15 +351,24 @@
 
         homeFullAddress = (a1 + ' ' + a2 + ' ' + a3).trim();
         workFullAddress = (k1 + ' ' + k2 + ' ' + k3).trim();
-
+		
+   	 if(startAddr == '' || endAddr == '' || startPos == '' || endPos == '' ) {	
+   		 
         if (addressDiv) addressDiv.textContent = homeFullAddress;
         if (kinmuAddressDiv) kinmuAddressDiv.textContent = workFullAddress;
-
-        // 좌표는 전역 변수에 저장만 해둠
         homePos = parseLatLng(data.addressIdoKeido);
         workPos = parseLatLng(data.kinmuAddressIdoKeido);
+   		 
+	 } else {
+		 	if (addressDiv) addressDiv.textContent = startAddr;
+	        if (kinmuAddressDiv) kinmuAddressDiv.textContent = endAddr;
+	        homePos = parseLatLng(startPos);
+	        workPos = parseLatLng(endPos); 
+	 }
+        
+	console.log(homePos, homePos);
 
-        if (!homePos || !workPos) {
+        if (!homePos || !homePos) {
           console.error('위도/경도 정보 부족:', data);
         }
       })
@@ -372,6 +382,8 @@
    *    지도 + 경로 + 거리 표시
    */
   function initMapAndRoute() {
+	   
+	   
     if (!homePos || !workPos) {
       alert('위치 정보가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.');
       console.error('homePos/workPos 없음:', homePos, workPos);
@@ -431,12 +443,19 @@
     });
   }
 
+	const startAddr = '${startAddr}';
+	const endAddr = '${endAddr}';
+	const startPos = '${startPos}';
+	const endPos = '${endPos}';
   
+	console.log("위치:", startAddr, endPos);
+    loadShainLocation();
   //  1) 위치 정보 먼저 가져오기
   //  2) 검색 버튼 클릭 시 지도/경로 표시
   window.addEventListener('load', function () {
+	 if(startAddr == '' || endAddr == '' || startPos == '' || endPos == '' ) {		 
+	 }
     // 1) 위치 정보 로딩
-    loadShainLocation();
 
     // 2) 검색 버튼 클릭 → initMapAndRoute
     var searchBtn = document.getElementById('search');
