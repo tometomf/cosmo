@@ -72,24 +72,27 @@
 		resultMap="ShinseiAddressResultMap">
 
 		SELECT
-        sk.KIGYO_CD,
-        sk.SHAIN_UID,
-        sk.SHINSEI_NO,
-        sk.KEIRO_SEQ,
+        h.KIGYO_CD,
+        h.SHAIN_UID,
         NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1,
         NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2,
         NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
-    	FROM SHINSEI_START_KEIRO sk
-        	JOIN SHAIN h
-          	ON h.KIGYO_CD  = sk.KIGYO_CD
-         	AND h.SHAIN_UID = sk.SHAIN_UID
-        	LEFT JOIN SHINSEI s
-          	ON s.KIGYO_CD   = sk.KIGYO_CD
-         	AND s.SHINSEI_NO = sk.SHINSEI_NO
-    	WHERE sk.KIGYO_CD   = #{kigyoCd}
-      		AND sk.SHAIN_UID  = #{shainUid}
-      		AND sk.SHINSEI_NO = #{shinseiNo}
-      		AND sk.KEIRO_SEQ  = #{keiroSeq}
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+      	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+       	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 
@@ -112,24 +115,27 @@
 		resultMap="ShinseiKinmuAddressResultMap">
 
 		SELECT
-        sk.KIGYO_CD,
-        sk.SHAIN_UID,
-        sk.SHINSEI_NO,
-        sk.KEIRO_SEQ,
+        h.KIGYO_CD,
+        h.SHAIN_UID,
         NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
         NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
         NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
-    	FROM SHINSEI_START_KEIRO sk
-        	JOIN SHAIN h
-         	ON h.KIGYO_CD  = sk.KIGYO_CD
-         	AND h.SHAIN_UID = sk.SHAIN_UID
-        	LEFT JOIN SHINSEI s
-          	ON s.KIGYO_CD   = sk.KIGYO_CD
-         	AND s.SHINSEI_NO = sk.SHINSEI_NO
-    	WHERE sk.KIGYO_CD   = #{kigyoCd}
-      		AND sk.SHAIN_UID  = #{shainUid}
-      		AND sk.SHINSEI_NO = #{shinseiNo}
-      		AND sk.KEIRO_SEQ  = #{keiroSeq}
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+    	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+      	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 

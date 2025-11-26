@@ -358,6 +358,9 @@ public class KeiroInputController {
 		    }
 
 		    
+		    System.out.println(">>> addr = " + addr);
+		    System.out.println(">>> kinmuAddr = " + kinmuAddr);
+		    
 		    model.addAttribute("addr", addr);
 		    model.addAttribute("kinmuAddr", kinmuAddr);
 		    model.addAttribute("startKeiro", startKeiro);
