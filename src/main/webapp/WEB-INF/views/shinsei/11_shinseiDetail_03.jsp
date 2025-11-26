@@ -943,9 +943,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid1 ? '' : shorui.etcFileUid1}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid1 ? '' : jyohou.etcFileUid1}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;"> ${empty shorui.etcComment1 ? '' : shorui.etcComment1}</div>
+					<div class="form_Normal" style="width: 460px;"> ${empty jyohou.etcComment1 ? '' : jyohou.etcComment1}</div>
 				</div>
 			</div>
 
@@ -953,9 +953,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid2 ? '' : shorui.etcFileUid2}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid2 ? '' : jyohou.etcFileUid2}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment2 ? '' : shorui.etcComment2}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment2 ? '' : jyohou.etcComment2}</div>
 				</div>
 			</div>
 
@@ -963,9 +963,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid3 ? '' : shorui.etcFileUid3}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid3 ? '' : jyohou.etcFileUid3}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment3 ? '' : shorui.etcComment3}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment3 ? '' : jyohou.etcComment3}</div>
 				</div>
 			</div>
 
@@ -973,9 +973,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid4 ? '' : shorui.etcFileUid4}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid4 ? '' : jyohou.etcFileUid4}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment4 ? '' : shorui.etcComment4}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment4 ? '' : jyohou.etcComment4}</div>
 				</div>
 			</div>
 
@@ -983,9 +983,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid5 ? '' : shorui.etcFileUid5}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid5 ? '' : jyohou.etcFileUid5}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment5 ? '' : shorui.etcComment5}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment5 ? '' : jyohou.etcComment5}</div>
 				</div>
 			</div>
 

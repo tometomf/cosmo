@@ -49,7 +49,8 @@
 		NEW_KINMU_ADDRESS_3 AS
 		newKinmuchi3,
 		ETC_COMMENT_1 AS etcComment1,
-		ETC_COMMENT_2 AS etcComment2,
+		ETC_COMMENT_2 AS
+		etcComment2,
 		ETC_COMMENT_3 AS etcComment3,
 		ETC_COMMENT_4 AS etcComment4,
 		ETC_COMMENT_5 AS etcComment5,
@@ -124,14 +125,17 @@
 	</select>
 
 
+
 	<select id="getFileName" parameterType="Long"
 		resultType="String">
-		SELECT f.name
-		FROM SHINSEI_FUZUI_SHORUI s
+		SELECT f.NAME
+		FROM SHINSEI s
 		JOIN UPLOAD_FILE f
-		ON s.FILE_UID_1 = f.FILE_UID
-		WHERE s. SHINSEI_NO = #{shinseiNo}
+		ON
+		s.ETC_FILE_UID_1 = f.FILE_UID
+		WHERE s.SHINSEI_NO = #{shinseiNo}
 	</select>
+
 
 	<select id="getCodeNm" parameterType="String"
 		resultType="String">
@@ -660,9 +664,8 @@
 		ON fuzui.KIGYO_CD = s.KIGYO_CD
 		AND fuzui.SHINSEI_NO = s.SHINSEI_NO
 		AND fuzui.KEIRO_SEQ = keiro.KEIRO_SEQ
-		LEFT JOIN UPLOAD_FILE uf
-		ON
-		uf.FILE_UID = fuzui.FILE_UID_1
+		LEFT JOIN UPLOAD_FILE uf_etc
+		ON uf_etc.FILE_UID = s.ETC_FILE_UID_1
 		WHERE s.KIGYO_CD = #{kigyoCd}
 		AND
 		s.SHINSEI_NO = #{shinseiNo}
