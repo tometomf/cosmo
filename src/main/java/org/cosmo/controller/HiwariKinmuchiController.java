@@ -243,7 +243,6 @@ public class HiwariKinmuchiController {
 		return "hiwariKinmuchi/hiwariKanryo";
 	}
 
-	// 유지희
 	@GetMapping("/keiro")
 	public String showKeiroPage(HttpSession session, Model model) {
 
@@ -257,7 +256,7 @@ public class HiwariKinmuchiController {
 
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
 	    if (keiroList == null) {
-	        keiroList = new ArrayList<>();
+	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 수정
 	    }
 
 	    int repRouteNo = calcRepRouteNo(keiroList);
@@ -281,7 +280,7 @@ public class HiwariKinmuchiController {
 
 	    ShainVO shain = (ShainVO) session.getAttribute("shain");
 	    if (shain == null) {
-
+	        // 로그인 안 되어 있으면 루트로
 	        return "redirect:/";
 	    }
 
@@ -290,7 +289,7 @@ public class HiwariKinmuchiController {
 
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
 	    if (keiroList == null) {
-	        keiroList = new ArrayList<>();
+	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 변경
 	    }
 
 	    int repRouteNo = calcRepRouteNo(keiroList);
@@ -305,6 +304,7 @@ public class HiwariKinmuchiController {
 	            return "hiwariKinmuchi/hiwariKeiro";
 	        }
 
+	        // 경로가 1건 이상 있으면 확인 화면으로
 	        return "redirect:/hiwariKinmuchi/kakunin";
 	    }
 
@@ -318,6 +318,7 @@ public class HiwariKinmuchiController {
 	    model.addAttribute("repRouteNo", repRouteNo);
 	    return "hiwariKinmuchi/hiwariKeiro";
 	}
+
 
 
 	// 유지희
