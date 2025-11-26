@@ -403,6 +403,8 @@ public class HiwariKinmuchiController {
         }
 
         Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());   // ★★ 이 줄 추가 ★★
+
         Long shinseiNo = null;
         if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
             shinseiNo = Long.valueOf(shain.getShinsei_No());
@@ -414,11 +416,19 @@ public class HiwariKinmuchiController {
         }
 
         try {
-         
+            // 1) 申請テーブル 갱신 (진척구분 2: 승인/신청완료 등)
             service.submitApplication(kigyoCd, shinseiNo);
 
-            rttr.addAttribute("shinseiNo", shinseiNo);
+            // 2) お知らせ登録 ＋ アラートメール 발행 역할
+            oshiraseService.addHiwariShinseiOshirase(
+                kigyoCd,
+                shainUid,
+                shain.getShain_No(),  // 사원번호
+                shinseiNo
+            );
 
+            // 3) 完了画面으로 신청번호 전달
+            rttr.addAttribute("shinseiNo", shinseiNo);
             return "redirect:/hiwariKinmuchi/kanryo";
 
         } catch (Exception e) {
@@ -426,7 +436,6 @@ public class HiwariKinmuchiController {
             return "redirect:/hiwariKinmuchi/kakunin";
         }
     }
-
 
 	// 유지희 끝
 
