@@ -432,7 +432,7 @@ public class KeiroInputController {
         
 
         if(redirectUrl == "") {        	
-        	return "redirect:/shinsei/ichiji?hozonUid?=" + newUid;
+        	return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
         }
         
         return "redirect:" + redirectUrl;
