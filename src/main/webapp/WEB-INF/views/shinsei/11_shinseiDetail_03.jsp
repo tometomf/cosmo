@@ -1041,7 +1041,7 @@
 				<div class="button_Side_Group">
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						onclick="submitBackForm()"> <img
-						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
+						src="/resources/img/shinsei_btn01.gif" alt="nyuryoku_btn01"
 						onclick="submitReapplyForm()">
 					<c:if test="${jyohou.shinchokuKbn ne '4'}">
 						<img src="/resources/img/shinsei_btn02.gif" alt="この申請を取消する"
