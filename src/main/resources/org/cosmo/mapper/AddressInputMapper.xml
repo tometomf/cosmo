@@ -39,7 +39,7 @@
             SHOZOKU_CD,
             ACTION_NM,
             DATA,            ADD_USER_ID,
-            ADD_DATE,
+            ADD_DATE, 
             UPD_USER_ID,
             UPD_DATE
         ) VALUES (
