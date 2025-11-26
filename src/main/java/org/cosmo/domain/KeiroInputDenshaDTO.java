@@ -19,7 +19,11 @@ public class KeiroInputDenshaDTO {
 	
     private String startPlace;
     private String endPlace;
-    private List<String> viaPlaces;
+    private String viaPlace1;         // 경유1
+    private String viaPlace2;         // 경유2
+    private String viaPlace3;         // 경유3
+    private String viaPlace4;         // 경유4
+    private String viaPlace5;         // 경유5
     
     private Integer shinseiKin;
     private Integer tsukiShikyuKin;
