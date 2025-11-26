@@ -29,24 +29,35 @@
 	<select id="getAfterShinsei"
 		resultType="org.cosmo.domain.HiwariKinmuchiVO">
 		SELECT 
-		ss.GEN_SHOZOKU_CD AS hiwariKinmusakiCd,
-		ss.NEW_SHOZOKU_CD AS hiwariKinmusakiCd, 
-		sz.SHOZOKU_NM AS hiwariKinmusakiNm,
-		ss.GEN_KINMU_ZIP_CD AS hiwariKinmuZip,
-		ss.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
-		ss.GEN_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
-		ss.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
-		ss.GEN_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
-		ss.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
-		ss.GEN_KINMU_ADDRESS_3 AS hiwariKinmuAddress3,
-		ss.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
-		FROM SHINSEI ss 
-		INNER JOIN SHOZOKU sz 
-		ON ss.KIGYO_CD = sz.KIGYO_CD 
-		AND ss.SHOZOKU_CD = sz.SHOZOKU_CD 
-		WHERE ss.KIGYO_CD = #{kigyoCd} 
-		AND ss.SHAIN_UID = #{shainUid}
-		AND ss.SHINSEI_NO = #{shinseiNo}
+        -- GEN
+        ss.GEN_SHOZOKU_CD AS genKinmusakiCd,
+        szGen.SHOZOKU_NM AS genKinmusakiNm,
+        ss.GEN_KINMU_ZIP_CD AS genKinmuZip,
+        ss.GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
+        ss.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
+        ss.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
+
+        -- NEW
+        ss.NEW_SHOZOKU_CD AS hiwariKinmusakiCd,
+        szNew.SHOZOKU_NM AS hiwariKinmusakiNm,
+        ss.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
+        ss.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+        ss.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+        ss.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
+
+    FROM SHINSEI ss
+
+    INNER JOIN SHOZOKU szGen
+        ON ss.KIGYO_CD = szGen.KIGYO_CD
+        AND ss.GEN_SHOZOKU_CD = szGen.SHOZOKU_CD
+
+    INNER JOIN SHOZOKU szNew
+        ON ss.KIGYO_CD = szNew.KIGYO_CD
+        AND ss.NEW_SHOZOKU_CD = szNew.SHOZOKU_CD
+
+    WHERE ss.KIGYO_CD = #{kigyoCd}
+      AND ss.SHAIN_UID = #{shainUid}
+      AND ss.SHINSEI_NO = #{shinseiNo}
 	</select>
 
 
@@ -70,31 +81,19 @@
 		-- 상단 社宅住所 바
 		TRIM(s.DB_ADDRESS_1) || ' ' || TRIM(s.DB_ADDRESS_2) AS fullAddress,
 
-		-- 現住所 (신청 전 → SHAIN)
 		s.ZIP_CD AS genZip,
 		s.ADDRESS_1 AS genAddress1,
 		s.ADDRESS_2 AS genAddress2,
-		s.ADDRESS_3 AS genAddress3,
-
-		-- 日割期間住所 없음
-		NULL AS newZip,
-		NULL AS newAddress1,
-		NULL AS newAddress2,
-		NULL AS newAddress3,
-
-		-- この住所を反映 用(중간DB)
-		s.DB_ZIP_CD AS dbZip,
-		s.DB_ADDRESS_1 AS dbAddress1,
-		s.DB_ADDRESS_2 AS dbAddress2
-
-		FROM SHAIN s
-		LEFT JOIN SHOZOKU z
-		ON z.KIGYO_CD = s.KIGYO_CD
-		AND z.SHOZOKU_CD = s.SHOZOKU_CD
-
-		WHERE s.KIGYO_CD = #{kigyoCd}
+		s.ADDRESS_3 AS genAddress3
+		FROM SHAIN s 
+		INNER JOIN SHOZOKU z 
+		ON s.KIGYO_CD = z.KIGYO_CD 
+		AND s.SHOZOKU_CD = z.SHOZOKU_CD 
+		WHERE s.KIGYO_CD = #{kigyoCd} 
 		AND s.SHAIN_UID = #{shainUid}
+		
 	</select>
+	
 
 	<select id="getAddressPageData"
 		resultType="org.cosmo.domain.HiwariAddressVO">
