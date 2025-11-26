@@ -605,7 +605,7 @@
 
 					<div class="form_Title2"
 						style="background-color: #333; color: #fff; font-weight: bold; padding: 5px 10px;">
-						経路&#${9311 + st.index};</div>
+						経路&#${9312 + st.index};</div>
 
 					<c:choose>
 						<c:when test="${keiro.tsukinShudanKbn eq '3'}">
