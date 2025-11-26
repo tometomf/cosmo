@@ -282,17 +282,25 @@ public class ShinseiController {
 		String loginUserId = loginShain.getShain_Uid();
 		String userIp = request.getRemoteAddr();
 
+		ShinseiJyohouVO beforeJyohou = shinseiService.getShinseiJyohou(shinseiNo);
+
+		String shinseiKbn = null;
+		String beforeShinchokuKbn = null;
+
+		if (beforeJyohou != null) {
+			shinseiKbn = beforeJyohou.getShinseiKbn();
+			beforeShinchokuKbn = beforeJyohou.getShinchokuKbn();
+		}
 
 		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
 				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, loginUserId,
 				userIp);
 
-		ShainVO loginUser = loginShain; 
-		ShainVO shinseiUser = loginShain; 
+		ShainVO loginUser = loginShain;
+		ShainVO shinseiUser = loginShain;
 
 		shinseiService.insertOshiraseReapply(loginUser, shinseiUser, String.valueOf(shinseiNo));
 
-		
 		if (loginShain.getShain_Uid() != null) {
 
 			String loginUidStr = loginShain.getShain_Uid();
@@ -313,6 +321,24 @@ public class ShinseiController {
 				System.out.println("★ メール送信完了");
 			}
 		}
+
+		String shainUid = loginShain.getShain_Uid();
+		shinseiService.insertReapplyLog(kigyoCd, shinseiNo, shainUid);
+
+		String afterShinchokuKbn = "2";
+
+		String subsystemId = (String) session.getAttribute("subsystemId");
+		if (subsystemId == null || subsystemId.isEmpty()) {
+			subsystemId = "113";
+		} else if (subsystemId.length() > 3) {
+			subsystemId = subsystemId.substring(0, 3);
+		}
+
+		String userUid = loginShain.getShain_Uid();
+		String userTrack = request.getRemoteAddr();
+
+		shinseiService.insertSaishinseiProcessLog(subsystemId, kigyoCd, shinseiNo, shinseiKbn, beforeShinchokuKbn,
+				afterShinchokuKbn, userUid, userTrack);
 
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
 		return "redirect:/";
@@ -401,7 +427,9 @@ public class ShinseiController {
 
 	@GetMapping("/kakunin") // 제교
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
-			HttpServletRequest request) {
+			HttpServletRequest request, HttpSession session) {
+
+		session.setAttribute("subsystemId", "1103");
 
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
@@ -466,8 +494,6 @@ public class ShinseiController {
 		shinseiService.clearHenkoFlags(kigyoCd, shinseiNo);
 		return "redirect:/";
 	}
-
-
 
 	@GetMapping("/addressCheck") // 제교
 	public String addressCheck(@RequestParam(required = false) String zip, @RequestParam(required = false) String pref,
