@@ -28,24 +28,29 @@
     </select>
     
     <insert id="saveIchijiHozon">
-        INSERT INTO ICHIJI_HOZON (
-            "UID",
-            USER_UID,
-            SHINSEI_KBN,
-            SHOZOKU_CD,
-            ACTION_NM,
-            DATA,
-            ADD_USER_ID,
-            ADD_DATE,
-            UPD_USER_ID,
-            UPD_DATE
-        ) VALUES (
-            SEQ_ICHIJI_HOZON.NEXTVAL,
-            #{userUid}, #{shinseiKbn, jdbcType=VARCHAR},   #{shozokuCd, jdbcType=VARCHAR},    #{actionNm, jdbcType=VARCHAR},     #{data, jdbcType=CLOB}, #{addUserId, jdbcType=VARCHAR},    SYSDATE,
-            #{addUserId, jdbcType=VARCHAR},
-            SYSDATE
-        )
-    </insert>
+    INSERT INTO ICHIJI_HOZON (
+        "UID",
+        USER_UID,
+        SHINSEI_KBN,
+        SHOZOKU_CD,
+        ACTION_NM,
+        DATA,
+        ADD_USER_ID,
+        ADD_DATE,
+        UPD_USER_ID,
+        UPD_DATE
+    ) VALUES (
+        ICHIJI_HOZON_SEQ.NEXTVAL,  #{userUid}, 
+        #{shinseiKbn, jdbcType=VARCHAR},    
+        #{shozokuCd, jdbcType=VARCHAR},    
+        #{actionNm, jdbcType=VARCHAR},      
+        #{data, jdbcType=CLOB}, 
+        #{addUserId, jdbcType=VARCHAR},    
+        SYSDATE,
+        #{addUserId, jdbcType=VARCHAR},
+        SYSDATE
+    )
+</insert>
 
    <insert id="insertOshirase">
         INSERT INTO OSHIRASE (
