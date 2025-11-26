@@ -116,4 +116,7 @@ public interface ShinseiMapper {
 
 	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Map<String, Object> param);
 
+	void insertOshiraseReapply(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
+			@Param("shinseiNo") String shinseiNo);
+
 }

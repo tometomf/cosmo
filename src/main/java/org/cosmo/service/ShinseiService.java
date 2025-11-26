@@ -75,5 +75,7 @@ public interface ShinseiService {
 	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
 	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
+	
+	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
 }

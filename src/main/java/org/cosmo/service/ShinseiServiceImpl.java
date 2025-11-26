@@ -338,4 +338,9 @@ public class ShinseiServiceImpl implements ShinseiService {
 		return shinseiMapper.getShinseiKeiroDetailList(param);
 	}
 
+	@Override
+	public void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshiraseReapply(loginUser, shinseiUser, shinseiNo);
+	}
+
 }

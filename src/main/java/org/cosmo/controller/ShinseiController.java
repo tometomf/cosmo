@@ -280,14 +280,20 @@ public class ShinseiController {
 
 		Long kigyoCd = Long.parseLong(loginShain.getKigyo_Cd());
 		String loginUserId = loginShain.getShain_Uid();
-
 		String userIp = request.getRemoteAddr();
 
-		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
-				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, // ★ 추가
-				kinmuAddressChgKbn, loginUserId, userIp);
 
-		if (loginShain != null && loginShain.getShain_Uid() != null) {
+		shinseiService.saishinsei(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2, newAddress3,
+				jitsuKinmuNissu, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, loginUserId,
+				userIp);
+
+		ShainVO loginUser = loginShain; 
+		ShainVO shinseiUser = loginShain; 
+
+		shinseiService.insertOshiraseReapply(loginUser, shinseiUser, String.valueOf(shinseiNo));
+
+		
+		if (loginShain.getShain_Uid() != null) {
 
 			String loginUidStr = loginShain.getShain_Uid();
 			String email = shinseiService.getEmailByShainUid(loginUidStr);
@@ -305,12 +311,11 @@ public class ShinseiController {
 				System.out.println("★ メール送信開始 → " + email);
 				mailSender.send(message);
 				System.out.println("★ メール送信完了");
-
 			}
 		}
 
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
-		return "redirect:/idoconfirm/kanryoPage?shinseiNo=" + shinseiNo;
+		return "redirect:/";
 	}
 
 	@GetMapping("/shinseiDetail") // 제교
@@ -398,7 +403,6 @@ public class ShinseiController {
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request) {
 
-
 		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
 
 		if (jyohouVo == null) {
@@ -411,20 +415,17 @@ public class ShinseiController {
 			}
 		}
 
-	
 		Long kigyoCd = null;
 		if (jyohouVo.getKigyoCd() != null) {
 			kigyoCd = Long.valueOf(jyohouVo.getKigyoCd());
 		}
 
-		
 		List<ShinseiKeiroDetailVO> keiroList = new ArrayList<ShinseiKeiroDetailVO>();
 
 		if (kigyoCd != null) {
 			keiroList = shinseiService.getShinseiKeiroDetailList(kigyoCd, shinseiNo);
 		}
 
-		
 		for (ShinseiKeiroDetailVO keiro : keiroList) {
 			if (keiro != null && keiro.getTsukinShudanKbn() != null) {
 				String nm = shinseiService.getShudanName(keiro.getTsukinShudanKbn());
@@ -432,10 +433,8 @@ public class ShinseiController {
 			}
 		}
 
-	
 		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
 
-		
 		if (jyohouVo.getShinchokuKbn() != null) {
 			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
 			jyohouVo.setCodeNm(codeNm);
@@ -446,12 +445,10 @@ public class ShinseiController {
 			jyohouVo.setShinseiName(shinseiName);
 		}
 
-		
 		if ("3".equals(jyohouVo.getShinchokuKbn())) {
 			model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
 			model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
 		}
-
 
 		model.addAttribute("jyohou", jyohouVo);
 		model.addAttribute("keiroList", keiroList);
@@ -470,24 +467,7 @@ public class ShinseiController {
 		return "redirect:/";
 	}
 
-	@PostMapping("/resubmit") // 제교
-	public String resubmit(@RequestParam("shinseiNo") Long shinseiNo, @RequestParam("shinseiRiyu") String shinseiRiyu,
-			HttpSession session, RedirectAttributes rttr) {
 
-		ShainVO loginShain = (ShainVO) session.getAttribute("shain");
-		if (loginShain == null) {
-			rttr.addFlashAttribute("errorMessage", "ログイン情報が取得できませんでした。");
-			return "redirect:/shinsei/list";
-		}
-
-		Long kigyoCd = Long.parseLong(loginShain.getKigyo_Cd());
-		String updUserId = loginShain.getShain_Uid();
-
-		shinseiService.resubmitShinsei(kigyoCd, shinseiNo, shinseiRiyu, updUserId);
-
-		rttr.addFlashAttribute("message", "再申請しました。");
-		return "redirect:/shinsei/list";
-	}
 
 	@GetMapping("/addressCheck") // 제교
 	public String addressCheck(@RequestParam(required = false) String zip, @RequestParam(required = false) String pref,
