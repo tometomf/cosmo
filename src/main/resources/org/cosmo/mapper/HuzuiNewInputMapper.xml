@@ -400,7 +400,7 @@
 		)
 	</insert>
 	
-	<insert id="">
+	<insert id="addFile">
 		INSERT INTO UPLOAD_FILE
     (
       FILE_UID,
@@ -411,21 +411,23 @@
       DATA,
       KIGYO_CD,
       ADD_USER_ID,
-      ADD_DATE
+      ADD_DATE,
+      UPD_USER_ID,
+      UPD_DATE
     )
     VALUES
     (
-       #{uploadFile.seq},	
+       #{UploadFile.fileUid},	
       SEQ_UPLOAD_FILE.NEXTVAL,
-      #{uploadFile.title},
-      #{uploadFile.name},
-      #{uploadFile.contentType},
-      #{uploadFile.data},
-      #{uploadFile.kigyoCd},
-      #{uploadFile.addUserId},
-      #{uploadFile.addDate},
-      #{uploadFile.updUserId},
-      #{uploadFile.updDate}
+      #{UploadFile.title},
+      #{UploadFile.name},
+      #{UploadFile.contentType},
+      #{UploadFile.data,jdbcType=BLOB},
+      #{shain.kigyo_Cd},
+      #{shain.shain_Uid},
+      #{UploadFile.addDate},
+      #{shain.shain_Uid},
+      #{UploadFile.updDate}
     )
 	</insert>
 	

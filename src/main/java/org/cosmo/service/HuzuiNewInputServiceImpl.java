@@ -7,6 +7,7 @@ import org.cosmo.domain.ShainFuzuiShoruiVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.mapper.HuzuiNewInputMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 	}
 
 	@Override
-	public void fileUpload(String kigyo_Cd, String shain_Uid, int fileNo, Long fileUid) {
+	public void fileUpload(String kigyo_Cd, String shain_Uid, String fileNo, Long fileUid) {
 
 		huzuiNewInputMapper.fileUpload(kigyo_Cd, shain_Uid, fileNo, fileUid);
 	}
@@ -51,6 +52,12 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		huzuiNewInputMapper.addHozonProcessLog(processLog, shain);
 		huzuiNewInputMapper.addIchijiHozon(ichiji, shain);
 		
+	}
+
+	@Override
+	public void addFile(UploadFileDTO UploadFile, ShainVO shain) {
+		// TODO Auto-generated method stub
+		huzuiNewInputMapper.addFile(UploadFile, shain);
 	}
 
 	
