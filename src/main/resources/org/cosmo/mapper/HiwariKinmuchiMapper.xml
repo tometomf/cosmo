@@ -43,16 +43,16 @@
 		a.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
 
 		-- NEW 소속
-		a.NEW_shozoku_cd AS newShozokuCd,
+		a.NEW_shozoku_cd AS hiwariKinmusakiCd,
 		(SELECT shozoku_nm
 		FROM SHOZOKU
 		WHERE kigyo_cd = a.kigyo_cd
-		AND shozoku_cd = a.new_shozoku_cd) AS newShozokuNm,
+		AND shozoku_cd = a.new_shozoku_cd) AS hiwariKinmusakiNm,
 
-		a.NEW_KINMU_ZIP_CD AS newKinmuZip,
-		a.NEW_KINMU_ADDRESS_1 AS newKinmuAddress1,
-		a.NEW_KINMU_ADDRESS_2 AS newKinmuAddress2,
-		a.NEW_KINMU_ADDRESS_3 AS newKinmuAddress3
+		a.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
+		a.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+		a.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+		a.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
 
 		FROM SHINSEI a
 		WHERE a.KIGYO_CD = #{kigyoCd}
