@@ -37,19 +37,19 @@ public interface HiwariKinmuchiMapper {
     // 유지희
     List<HiwariKeiroVO> findByUser(
         @Param("kigyoCd") Integer kigyoCd,
-        @Param("shainUid") Integer shainUid
+        @Param("shainUid") Long shainUid
     );
     
     int deleteByUser(
         @Param("kigyoCd") Integer kigyoCd,
-        @Param("shainUid") Integer shainUid
+        @Param("shainUid") Long shainUid
     );
     
     int insertKeiro(HiwariKeiroVO vo);
     
     int deleteOne(
         @Param("kigyoCd") Integer kigyoCd,
-        @Param("shainUid") Integer shainUid,
+        @Param("shainUid") Long shainUid,
         @Param("keiroSeq") Integer keiroSeq
  );
     // 유지희

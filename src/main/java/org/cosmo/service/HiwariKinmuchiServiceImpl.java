@@ -48,7 +48,7 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     //서혜원 끝
  
     
-    //유지희
+  //유지희
     /**
      * 確認画面 ヘッダー情報取得
      *  - 社員番号・社員名
@@ -72,103 +72,100 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         // Mapper の経路一覧取得 SQL をそのまま呼び出し
         return mapper.selectKakuninRoutes(kigyoCd, shinseiNo);
     }
-        /**
-         * 申請を承認する
-         *  - 進捗区分を '2' (承認) に更新
-         *  - TODO: お知らせ/メール送信処理
-         */
-        @Override
-        public void submitApplication(Integer kigyoCd, Long shinseiNo) {
-            // 承認状態('2')で更新
-        	mapper.updateShinseiApproval(kigyoCd, shinseiNo, "2");
-            
-            // TODO: お知らせ/メール送信処理が必要な場合ここに追加
+
+    /**
+     * 申請を承認する
+     *  - 進捗区分を '2' (承認) に更新
+     *  - TODO: お知らせ/メール送信処理
+     */
+    @Override
+    public void submitApplication(Integer kigyoCd, Long shinseiNo) {
+        // 承認状態('2')で更新
+        mapper.updateShinseiApproval(kigyoCd, shinseiNo, "2");
+        
+        // TODO: お知らせ/メール送信処理が必要な場合ここに追加
+    }
+
+    @Override
+    public List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Long shainUid) {
+        if (kigyoCd == null) {
+            kigyoCd = 100;
+        }
+        if (shainUid == null) {
+            shainUid = 30000001L;   
         }
         
-        @Override
-        public List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Integer shainUid) {
-            if (kigyoCd == null) {
-                kigyoCd = 100;
-            }
-            if (shainUid == null) {
-                shainUid = 30000001;
-            }
-            
-            return mapper.findByUser(kigyoCd, shainUid);
+        return mapper.findByUser(kigyoCd, shainUid);
+    }
+
+    @Override
+    @Transactional
+    public void saveApply(Integer kigyoCd, Long shainUid, List<HiwariKeiroVO> keiroList) {
+        if (kigyoCd == null) {
+            kigyoCd = 100;
         }
-
-        @Override
-        @Transactional
-        public void saveApply(Integer kigyoCd, Integer shainUid, List<HiwariKeiroVO> keiroList) {
-            if (kigyoCd == null) {
-                kigyoCd = 100;
-            }
-            if (shainUid == null) {
-                shainUid = 30000001;
-            }
-            
-            if (keiroList == null || keiroList.isEmpty()) {
-                return;
-            }
-            
-            // 기존 경로 삭제
-            mapper.deleteByUser(kigyoCd, shainUid);
-            
-            // 새 경로 등록
-            int seq = 1;
-            for (HiwariKeiroVO vo : keiroList) {
-                vo.setKigyoCd(kigyoCd);
-                vo.setShainUid(shainUid);
-                vo.setKeiroSeq(seq++);
-                mapper.insertKeiro(vo);
-            }
+        if (shainUid == null) {
+            shainUid = 30000001L;   
         }
-
-        @Override
-        @Transactional
-        public void saveTemp(Integer kigyoCd, Integer shainUid, List<HiwariKeiroVO> keiroList) {
-            if (kigyoCd == null) {
-                kigyoCd = 100;
-            }
-            if (shainUid == null) {
-                shainUid = 30000001;
-            }
-            
-            if (keiroList == null || keiroList.isEmpty()) {
-                return;
-            }
-            
-            mapper.deleteByUser(kigyoCd, shainUid);
-            
-            int seq = 1;
-            for (HiwariKeiroVO vo : keiroList) {
-                vo.setKigyoCd(kigyoCd);
-                vo.setShainUid(shainUid);
-                vo.setKeiroSeq(seq++);
-                mapper.insertKeiro(vo);
-            }
-        }
-
-        @Override
-        @Transactional
-        public void deleteOne(Integer kigyoCd, Integer shainUid, Integer keiroSeq) {
-            if (kigyoCd == null) {
-                kigyoCd = 100;
-            }
-            if (shainUid == null) {
-                shainUid = 30000001;
-            }
-            
-            if (keiroSeq == null) {
-                return;
-            }
-            
-            mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
-        }
-
-
         
+        if (keiroList == null || keiroList.isEmpty()) {
+            return;
+        }
         
-        //유지희 끝
-    
+        // 기존 경로 삭제
+        mapper.deleteByUser(kigyoCd, shainUid);
+        
+        // 새 경로 등록
+        int seq = 1;
+        for (HiwariKeiroVO vo : keiroList) {
+            vo.setKigyoCd(kigyoCd);
+            vo.setShainUid(shainUid);  
+            vo.setKeiroSeq(seq++);
+            mapper.insertKeiro(vo);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveTemp(Integer kigyoCd, Long shainUid, List<HiwariKeiroVO> keiroList) {
+        if (kigyoCd == null) {
+            kigyoCd = 100;
+        }
+        if (shainUid == null) {
+            shainUid = 30000001L;  
+        }
+        
+        if (keiroList == null || keiroList.isEmpty()) {
+            return;
+        }
+        
+        mapper.deleteByUser(kigyoCd, shainUid);
+        
+        int seq = 1;
+        for (HiwariKeiroVO vo : keiroList) {
+            vo.setKigyoCd(kigyoCd);
+            vo.setShainUid(shainUid);  
+            vo.setKeiroSeq(seq++);
+            mapper.insertKeiro(vo);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteOne(Integer kigyoCd, Long shainUid, Integer keiroSeq) {
+        if (kigyoCd == null) {
+            kigyoCd = 100;
+        }
+        if (shainUid == null) {
+            shainUid = 30000001L;   
+        }
+        
+        if (keiroSeq == null) {
+            return;
+        }
+        
+        mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
+    }
+
+    //유지희 끝
 }
