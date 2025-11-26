@@ -2,13 +2,15 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-//í•˜ë‚˜
+//ú±˜ë‚˜
 @Data
-public class ShinseiJyohouVO {
-	private Integer kigyoCd;
-	private Long shinseiNo;
+public class ShinseiIcDataDTO {
+
+	private String kigyoCd;
+	private String shinseiNo;
 	private String shinseiYmd;
 	private String shinseiKbn;
+	private String shainUid;
 	private String shinchokuKbn;
 	private String genAddress1;
 	private String genAddress2;
@@ -24,23 +26,7 @@ public class ShinseiJyohouVO {
 	private String newKinmuchi1;
 	private String newKinmuchi2;
 	private String newKinmuchi3;
-
-
-	private String genKinmuZipCd;
-	private String genKinmuAddress1;
-	private String genKinmuAddress2;
-	private String genKinmuAddress3;
-
 	
-	private String newKinmuZipCd;
-	private String newKinmuAddress1;
-	private String newKinmuAddress2;
-	private String newKinmuAddress3;
-
-
-	private String kinmuAddressIdoKeido;
-
-
 	private String riyu;
 	private String idoYmd;
 	private String itenYmd;
@@ -48,18 +34,14 @@ public class ShinseiJyohouVO {
 	private String riyoStartYmd;
 	private String ssmdsYmd;
 	private String moComment;
-
+	
 	private String codeNm;
 	private String shinseiName;
-	private String torikeshiYmd;
-	private String sashimodoshiYmd;
-
-	private String yuryoIcS;
-	private String yuryoIcE;
-
-	private String addressIdoKeido;
-
-	public String getGenAddress() {
+    private ShinseiKeiroVO keiro; 
+ 
+    private ShinseiStartKeiroVO startKeiro;
+    
+    public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();
 
 		if (genAddress1 != null && !genAddress1.trim().isEmpty()) {
@@ -113,5 +95,4 @@ public class ShinseiJyohouVO {
 
 		return sb.toString();
 	}
-
 }

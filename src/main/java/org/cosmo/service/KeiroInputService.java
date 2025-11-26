@@ -12,10 +12,10 @@ public interface KeiroInputService {
 	ShainKeiroDTO getShainKeiro(Integer kigyoCd, Long shainUid, Integer keiroSeq);
 
 	//지훈
-	ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid);
+	ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
 	//지훈
-	ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid);
+	ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
 	//재환
 	ShainLocationVO getShainLocation(Long kigyoCd, Long shainUid);
@@ -28,4 +28,15 @@ public interface KeiroInputService {
 
 	//하정
 	ShinseiStartKeiroVO getStartKeiroOne(Integer kigyoCd, Integer shainUid, Integer shinseiNo, Integer keiroSeq);
+	
+    void writeProcessLog(String subsystemId,
+            String processCol,
+            String key1,
+            String key2,
+            String key3,
+            String key4,
+            String key5,
+            String data,
+            Integer userUid,
+            String userTrack);
 }

@@ -14,5 +14,42 @@ public class ShinseiShoruiVO {
 	private String jinshin;
 	private String tojosha;
 	private String tokyu;
+
+	private String shinseiKbn;
+	private String shinseiYmd;
+	private Long shainUid;
+	private String shainNo;
+	private Integer dairiShinseishaCd;
+	private String tsukinShudanKbn;
+
+	private Long fileUid1;
+	private Long fileUid2;
+	private Long fileUid3;
+	private Long fileUid4;
+	private Long fileUid5;
+
+	private String menkyoYukoKigen;
+	private String menkyoNo;
+
+	private String shashu;
+	private String torokuNo;
+	private Integer haikiryo;
+	private String shakenYukoKigen;
+	private java.math.BigDecimal nenpi;
+
+	private String hokenManryoYmd;
+	private String taijinBaisho;
+	private String taibutsuBaisho;
+	private String jinshinShogai;
+	private String tojoshaShogai;
+
+	private String firstTeikiKikan;
+	private String nextTeikiKikan;
+
+	private Long addUserId;
+	private String addDate;
+	private Long updUserId;
+	private String updDate;
+	
 	
 }

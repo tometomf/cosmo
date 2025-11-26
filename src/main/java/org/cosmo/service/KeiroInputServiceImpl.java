@@ -1,6 +1,9 @@
 package org.cosmo.service;
 
+import java.sql.Timestamp;
+
 import org.cosmo.domain.KeiroInputDenshaDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
 import org.cosmo.domain.ShinseiDTO;
@@ -34,16 +37,16 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 
 	//지훈
 	@Override
-	public ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid) {
+	public ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq) {
 
-		return mapper.selectAddressWithFallback(kigyoCd, shainUid);
+		return mapper.selectAddressWithFallback(kigyoCd, shainUid, shinseiNo, keiroSeq);
 	}
 
 	//지훈
 	@Override
-	public ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid) {
+	public ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq) {
 
-		return mapper.selectKinmuAddressWithFallback(kigyoCd, shainUid);
+		return mapper.selectKinmuAddressWithFallback(kigyoCd, shainUid, shinseiNo, keiroSeq);
 	}
 
 	//하정
@@ -64,5 +67,37 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 	            Integer kigyoCd, Integer shainUid, Integer shinseiNo, Integer keiroSeq) {
 
 	        return mapper.selectStartKeiro(kigyoCd, shainUid, shinseiNo, keiroSeq);
+	    }
+	  
+	  @Override
+	    public void writeProcessLog(String subsystemId,
+	                                String processCol,
+	                                String key1,
+	                                String key2,
+	                                String key3,
+	                                String key4,
+	                                String key5,
+	                                String data,
+	                                Integer userUid,
+	                                String userTrack) {
+
+	        ProcessLogDTO log = new ProcessLogDTO ();
+
+	        // PK 컬럼인 PROCESS_TIMESTAMP는 여기서 현재시간으로 세팅
+	        log.setProcessTimestamp(new Timestamp(System.currentTimeMillis()));
+	        log.setSubsystemId(subsystemId);
+	        log.setProcessCol(processCol);
+
+	        log.setKey1(key1);
+	        log.setKey2(key2);
+	        log.setKey3(key3);
+	        log.setKey4(key4);
+	        log.setKey5(key5);
+
+	        log.setData(data);
+	        log.setUserUid(userUid);
+	        log.setUserTrack(userTrack);
+
+	        mapper.insertProcessLog(log);
 	    }
 }

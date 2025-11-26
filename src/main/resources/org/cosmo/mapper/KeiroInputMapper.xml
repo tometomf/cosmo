@@ -72,17 +72,27 @@
 		resultMap="ShinseiAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1
-		, NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2
-		, NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        h.KIGYO_CD,
+        h.SHAIN_UID,
+        NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1,
+        NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2,
+        NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+      	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+       	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 
@@ -90,6 +100,8 @@
 		type="org.cosmo.domain.ShinseiDTO">
 		<result property="kigyoCd" column="KIGYO_CD" />
 		<result property="shainUid" column="SHAIN_UID" />
+		<result property="shinseiNo" column="SHINSEI_NO" />
+    	<result property="keiroSeq" column="KEIRO_SEQ" />
 		<result property="newKinmuAddress1"
 			column="NEW_KINMU_ADDRESS_1" />
 		<result property="newKinmuAddress2"
@@ -103,17 +115,27 @@
 		resultMap="ShinseiKinmuAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1
-		, NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2
-		, NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        h.KIGYO_CD,
+        h.SHAIN_UID,
+        NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
+        NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
+        NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+    	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+      	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 
@@ -329,7 +351,7 @@
     </resultMap>
    
    	<!-- 하정 -->
-       <select id="selectStartKeiroOne"
+       <select id="selectStartKeiro"
             resultMap="ShinseiStartKeiroMap">
 
         SELECT
@@ -417,44 +439,34 @@
         AND KEIRO_SEQ  = #{keiroSeq}
 
     </select>
-    
-    
-    <insert id="insertProcessLog">
-		INSERT INTO PROCESS_LOG (
-		PROCESS_TIMESTAMP,
-		SUBSYSTEM_ID,
-		PROCESS_COL,
-		KEY1,
-		KEY2,
-		KEY3,
-		KEY4,
-		USER_UID
-		)
-		VALUES (
-		SYSTIMESTAMP,
-		'SHN',
-		#{type},
-		#{shinseiNo},
-		(SELECT SHINSEI_KBN
-		FROM
-		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}),
-		(SELECT
-		SHINCHOKU_KBN
-		FROM
-		SHINSEI
-		WHERE SHINSEI_NO = #{shinseiNo}),
-		CASE
-		WHEN
-		#{type} = 'CANCEL'
-		THEN '5'
-		ELSE (SELECT SHINCHOKU_KBN
-		FROM SHINSEI
-		WHERE SHINSEI_NO =
-		#{shinseiNo})
-		END,
-		#{userUid}
-		)
-	</insert>
+	
+	  <insert id="insertProcessLog"
+            parameterType="org.cosmo.domain.ProcessLogDTO">
+        INSERT INTO PROCESS_LOG (
+            PROCESS_TIMESTAMP,
+            SUBSYSTEM_ID,
+            PROCESS_COL,
+            KEY1,
+            KEY2,
+            KEY3,
+            KEY4,
+            KEY5,
+            DATA,
+            USER_UID,
+            USER_TRACK
+        ) VALUES (
+            #{processTimestamp, jdbcType=TIMESTAMP},
+            #{subsystemId, jdbcType=VARCHAR},
+            #{processCol, jdbcType=VARCHAR},
+            #{key1, jdbcType=VARCHAR},
+            #{key2, jdbcType=VARCHAR},
+            #{key3, jdbcType=VARCHAR},
+            #{key4, jdbcType=VARCHAR},
+            #{key5, jdbcType=VARCHAR},
+            #{data, jdbcType=CLOB},
+            #{userUid, jdbcType=NUMERIC},
+            #{userTrack, jdbcType=VARCHAR}
+        )
+    </insert>
 
 </mapper>

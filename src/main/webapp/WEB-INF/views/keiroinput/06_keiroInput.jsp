@@ -157,6 +157,7 @@
     accent-color: #333;
     transform: scale(1.05);
 }
+
 </style>
 </head>
 <body>
@@ -172,7 +173,7 @@
                 <div class="flow_others">完了</div>
             </div>
 
-        <div class="subtitle">【経路①】 通勤手段 入力</div>
+        <div class="subtitle">【経路 ${keiroSeq} 】 通勤手段 入力</div>
         <div class="commute-container">
             <div class="content-box">
                 <div class="info-text">通勤手段を選択してください.</div>
@@ -223,6 +224,8 @@
 	     <input type="hidden" name="hozonUid" value="${hozonUid}">
 	     
 	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+	     
+	     <input type="hidden" name="keiroSeq" value="${keiroSeq}">
 		</form>
 
     </div>
@@ -270,18 +273,22 @@ document.addEventListener("DOMContentLoaded", function() {
         other:  "7"    // その他
     };
 	
-    const ichijiHozon = ${ichijiHozon};
+    let ichijiHozonRaw = '${ichijiHozon}';
+
+    let ichijiHozon =
+        ichijiHozonRaw && ichijiHozonRaw.trim() !== "" && ichijiHozonRaw !== "null"
+            ? JSON.parse(ichijiHozonRaw)
+            : {};
 	console.log("임시저장 데이터:", ichijiHozon);
     
 	const hozonUid = ${hozonUid};
-	
 	const shinseiNo = ${shinseiNo};
+	const keiroSeq = ${keiroSeq};
 	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
     const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
     const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
-    // actionUrl은 JSP에서 value="TSUKIN_SHUDAN_TEMP_SAVE" 로 이미 박혀 있음
 
     /**
      * 현재 선택된 라디오값을 기반으로
@@ -308,6 +315,157 @@ document.addEventListener("DOMContentLoaded", function() {
             tsukinShudan: kbn,       // 예: "1"
             shudanName:   labelText  // 예: "電車"
         };
+        
+        if(ichijiHozon == null || ichijiHozon == ""){
+        	console.log("ichijiHozon null")
+        	ichijiHozon = {
+        			  "kigyoCd": null,
+        			  "shinseiNo": null,
+        			  "shinseiYmd": null,
+        			  "shinseiKbn": null,
+        			  "shainUid": null,
+        			  "shinchokuKbn": null,
+
+        			  "genAddress1": null,
+        			  "genAddress2": null,
+        			  "genAddress3": null,
+
+        			  "newAddress1": null,
+        			  "newAddress2": null,
+        			  "newAddress3": null,
+
+        			  "genShozoku": null,
+        			  "newShozoku": null,
+
+        			  "genKinmuchi1": null,
+        			  "genKinmuchi2": null,
+        			  "genKinmuchi3": null,
+
+        			  "newKinmuchi1": null,
+        			  "newKinmuchi2": null,
+        			  "newKinmuchi3": null,
+
+        			  "riyu": null,
+        			  "idoYmd": null,
+        			  "itenYmd": null,
+        			  "tennyuYmd": null,
+        			  "riyoStartYmd": null,
+        			  "ssmdsYmd": null,
+        			  "moComment": null,
+
+        			  "codeNm": null,
+        			  "shinseiName": null,
+
+        			  "keiro": {
+        			    "kigyoCd": null,
+        			    "shinseiNo": null,
+        			    "keiroSeq": null,
+        			    "tsukinShudan": null,
+        			    "katamichi": null,
+        			    "jitsu": null,
+        			    "tsuki": null,
+        			    "shinseiKm": null,
+
+        			    "startPlace": null,
+        			    "endPlace": null,
+
+        			    "shudanName": null
+        			  },
+
+        			  "startKeiro": {
+        			    "kigyoCd": null,
+        			    "shinseiNo": null,
+        			    "keiroSeq": null,
+
+        			    "shinseiKbn": null,
+        			    "shinseiYmd": null,
+        			    "shainUid": null,
+        			    "shainNo": null,
+        			    "dairiShinseishaCd": null,
+
+        			    "tsukinShudanKbn": null,
+        			    "yuryoTokurei": null,
+        			    "kyoriKagenTokurei": null,
+        			    "jougenKingakuTokurei": null,
+        			    "jougenCut": null,
+        			    "fubiUmuKbn": null,
+
+        			    "kikanStartYmd": null,
+        			    "kikanEndYmd": null,
+        			    "jitsuKinmuNissu": null,
+
+        			    "busCorpNm": null,
+        			    "idoShudanKbn": null,
+        			    "idoShudanEtcNm": null,
+
+        			    "startPlace": null,
+        			    "endPlace": null,
+        			    "viaPlace1": null,
+        			    "viaPlace2": null,
+        			    "viaPlace3": null,
+        			    "viaPlace4": null,
+        			    "viaPlace5": null,
+
+        			    "startIdoKeido": null,
+        			    "startEkicd": null,
+        			    "endEkicd": null,
+        			    "viaPlaceEkicd1": null,
+        			    "viaPlaceEkicd2": null,
+        			    "viaPlaceEkicd3": null,
+        			    "viaPlaceEkicd4": null,
+        			    "viaPlaceEkicd5": null,
+
+        			    "kekkaUrl": null,
+
+        			    "shinseiKin": null,
+        			    "firstTeikiTsukiSu": null,
+        			    "firstShikyuYmd": null,
+        			    "firstShikyuKin": null,
+        			    "nextTeikiTsukiSu": null,
+        			    "regularShikyuKin": null,
+        			    "tsukiShikyuKin": null,
+        			    "katamichiKin": null,
+
+        			    "shinkansenRiyoKbn": null,
+        			    "tokkyuRiyoKbn": null,
+        			    "yuryoRiyoKbn": null,
+        			    "kekkaSelect": null,
+
+        			    "sanshoTeikiTsukiSu1": null,
+        			    "sanshoTeikiKin1": null,
+        			    "sanshoTeikiTsukiSu2": null,
+        			    "sanshoTeikiKin2": null,
+        			    "sanshoTeikiTsukiSu3": null,
+        			    "sanshoTeikiKin3": null,
+
+        			    "shinseiKm": null,
+
+        			    "yuryoIcS": null,
+        			    "yuryoIcE": null,
+        			    "yuryoOfukuKbn": null,
+        			    "yuryoKatamichiKin": null,
+
+        			    "betsuRouteRiyu": null,
+        			    "yuryoRiyoRiyu": null,
+        			    "viaPlaceRiyu": null,
+
+        			    "nenpi": null,
+        			    "gasorinDaiMae": null,
+        			    "yuryoDaiMae": null,
+        			    "goukeiMae": null,
+        			    "hiwariMae": null,
+        			    "gasorinDaiAto": null,
+        			    "yuryoDaiAto": null,
+        			    "goukeiAto": null,
+        			    "hiwariAto": null,
+
+        			    "addUserId": null,
+        			    "addDate": null,
+        			    "updUserId": null,
+        			    "updDate": null
+        			  }
+        			}
+        }
         
         ichijiHozon.keiro = keiro;
 
@@ -368,6 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
             redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
             redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
             redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
             redirectUrlInput.value = redirectPath;
 
             form.submit();
