@@ -4,8 +4,42 @@
 
 <mapper namespace = "org.cosmo.mapper.HomeMapper">
 	
-	<select id="getList" resultType="org.cosmo.domain.ShainVO">
-		SELECT TO_CHAR(SYSDATE, 'YYYY/MM/DD') AS SHAIN_UID FROM DUAL
+	<select id="getList" resultType="org.cosmo.domain.HomeShainVO">
+		
+		select row_number() over(order by shinsei_ymd desc) seq, a.* 
+		from (
+		    select to_char(hozon_uid) hozon_uid, '' shinsei_no, '' shinsei_naiyou
+		         , '' shinsei_ymd, '' ll_shonin_ymd
+		         , '' first_shikyu_ymd
+		         , '' shozoku_nm, '' jutaku_kbn
+		         , shinsei_kbn as shinchoku_kbn
+		         , (select code_nm from code where code_sybtsu = '102' and code = a.shinsei_kbn) as shinchoku_kbnnm
+		    from ichiji_hozon a
+		    union all
+		    select '' as hozon_uid, to_char(shinsei_no) as shinsei_no, '' as shinsei_naiyou
+		         , to_char(to_date(shinsei_ymd, 'yyyymmdd'), 'yyyy/mm/dd') shinsei_ymd
+		         , to_char(to_date(LL_SHONIN_YMD, 'yyyymmdd'), 'yyyy/mm/dd') LL_SHONIN_YMD
+		         , '' as first_shikyu_ymd
+		         , (select shozoku_nm from shozoku where kigyo_cd = a.kigyo_cd and shozoku_cd = b.shozoku_cd) as shozoku_nm
+		         , (select code_nm from code where code_sybtsu = '001' and code = (select code from code where code_sybtsu = '108' and code = a.jutaku_kbn)) as jutaku_kbn
+		         , shinchoku_kbn
+		         , (select code_nm from code where code_sybtsu = '102' and code = a.shinchoku_kbn) as shinchoku_kbnnm
+		    from shinsei a, shain b
+		    where a.kigyo_cd = b.kigyo_cd
+		    and a.shain_uid = b.shain_uid
+		    and a.kigyo_cd = #{kigyo_Cd}
+			and a.shain_uid = #{shain_Uid}
+		) a
+		
+	</select>
+	
+	<select id = "getShinseiNo" resultType="string">
+	
+		select nvl(to_char(max(shinsei_no)), '') as shinsei_no
+		from shinsei
+		where kigyo_cd = #{kigyo_Cd}
+		and shain_uid = #{shain_Uid}
+	
 	</select>
 	
 </mapper>

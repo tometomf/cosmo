@@ -3,6 +3,7 @@ package org.cosmo.controller;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.HomeShainVO;
 import org.cosmo.service.HomeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,15 +23,16 @@ public class HomeController {
 		
 		ShainVO vo = new ShainVO();
 		
-		vo.setKigyo_Cd("100");				// 기업코드
-		vo.setKigyo_Nm("ABCDEFG");
+		vo.setKigyo_Cd("100");					// 기업코드
+		vo.setKigyo_Nm("ABCDEFG");				
 		vo.setShain_Uid("30000001");			// 사원 Uid
-		vo.setShain_No("000001");			// 사원 No
+		vo.setShain_No("000001");				// 사원 No
 		vo.setShain_Nm("山田 一郎");
 		vo.setJigyosho_cd("11000001");
 		vo.setJigyosho_Nm("丸の内ｵﾌｨｽ");
 		vo.setShozoku_Cd("000C00740");
 		vo.setShozoku_Nm("東京書類センター");
+		vo.setShinsei_No(homeService.getShinseiNo(vo.getKigyo_Cd(), vo.getShain_Uid()));
 		
 		session.setAttribute("shain", vo);
 		

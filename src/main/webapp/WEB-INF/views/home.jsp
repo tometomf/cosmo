@@ -19,25 +19,25 @@
 	    width: 750px;
 	    margin: auto;
 	}
-	
+
 	#form_Ttile1 {
 		display: grid;
-		grid-template-columns: 36px 130px 150px 100px 1fr 100px;
+		grid-template-columns: 36px 110px 1fr 120px 120px 120px 170px 50px 1fr;
 	}
 	
 	#form_Text1 {
 		display: grid;
- 		grid-template-columns: 36px 130px 150px 100px 1fr 100px;
-	}
-
-	#form_Ttile2 {
-		display: grid;
-		grid-template-columns: 36px 110px 1fr 120px 120px 120px 120px 50px 1fr;
+		grid-template-columns: 36px 110px 1fr 120px 120px 120px 170px 50px 1fr;
 	}
 	
-	#form_Text2 {
-		display: grid;
-		grid-template-columns: 36px 110px 1fr 120px 120px 120px 120px 50px 1fr;
+	.link_text {
+    	cursor: pointer; 
+    	text-decoration: underline;
+    	color: #007bff; 
+	}
+	
+	.link_text:hover {
+    	color: #0056b3;
 	}
 	
 </style>
@@ -71,38 +71,12 @@
 				</div>
 			</div>
 		</div>
-<!-- 		<div class = "main" style = "background: #efefef; margin-bottom: 50px;"> -->
-<!-- 			<div class = "main_title"> -->
-<!-- 				<div class="subtitle">配信されているアラート</div> -->
-<!-- 			</div> -->
-<!-- 			<div style = "width:1010px; margin: auto;">以下から、申請を行いたいアラートを選択してください。 <br>該当するアラートがない場合、「該当アラートなし」を選択してください。</div> -->
-<!-- 			<div class="content_Form1">	 -->
-<!-- 				<div class="form_Title1" id="form_Ttile1"> -->
-<!-- 					<div></div> -->
-<!-- 					<div>初回配信日</div> -->
-<!-- 					<div>配信理由</div> -->
-<!-- 					<div>配信回数</div> -->
-<!-- 					<div>配信詳細</div> -->
-<!-- 					<div></div> -->
-<!-- 				</div> -->
-<%-- 				<c:forEach items = "${list}" var = "board"> --%>
-<!-- 					<div class="form_Text1" id="form_Text1"> -->
-<!-- 						<div class = "form_Column"></div> -->
-<%-- 						<div class = "form_Normal">${board.shain_Uid}</div> --%>
-<!-- 						<div class = "form_Normal"></div> -->
-<!-- 						<div class = "form_Normal"></div> -->
-<!-- 						<div class = "form_Normal"></div> -->
-<!-- 						<div class = "form_Normal"></div> -->
-<!-- 					</div> -->
-<%-- 				</c:forEach> --%>
-<!-- 			</div> -->
-<!-- 		</div> -->
 		<div class = "main" style = "background: #efefef;">
 			<div class = "main_title">
 				<div class="subtitle">申請中案件の進捗状況</div>
 			</div>
 			<div class="content_Form1">
-				<div class="form_Title1" id="form_Ttile2">
+				<div class="form_Title1" id="form_Ttile1">
 					<div></div>
 					<div>申請番号</div>
 					<div>申請内容</div>
@@ -114,16 +88,17 @@
 					<div>進捗状況</div>
 				</div>
 				<c:forEach items = "${list}" var = "board">
-					<div class="form_Text1" id="form_Text2">
-						<div class = "form_Column"></div>
-						<div class = "form_Normal">${board.shain_Uid}</div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
-						<div class = "form_Normal"></div>
+					<div class="form_Text1" id="form_Text1">
+						<div class = "form_Column" style = "text-align: center;">${board.seq}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.shinsei_No}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.shinsei_Naiyou}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.shinsei_Ymd}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.ll_Shonin_Ymd}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.first_Shikyu_Ymd}</div>
+						<div class = "form_Normal">${board.shozoku_Nm}</div>
+						<div class = "form_Normal" style = "text-align: center;">${board.jutaku_Kbn}</div>
+						<div class = "form_Normal" style = "text-align: center;"><span class = "link_text" 
+							onclick="onClick('<c:out value="${board.shinsei_No}" default=""/>', '<c:out value="${board.hozon_Uid}" default=""/>', ${board.shinchoku_Kbn})">${board.shinchoku_Kbnnm}</span></div>
 					</div>
 				</c:forEach>
 			</div>
@@ -134,6 +109,7 @@
 </html>
 
 <script>
+
 	function buttonClick(gubun) { 
 		
 		const target = window.location.origin; 
@@ -146,4 +122,20 @@
 			window.location.href = target + '/hiwariKinmuchi/hiwariKinmuchi'; 
 		} 
 	}
+	
+	function onClick(shinseiNo, hozon_Uid, shinchokuKbn) {
+		
+		var target = window.location.origin + '/shinsei'; 
+	    
+		if (shinchokuKbn == '1') {
+			window.location.href = target + '/ichiji' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
+		} else if (shinchokuKbn == '2') {
+			window.location.href = target + '/shinseiDetail' + '?no=' + shinseiNo;
+		} else if (shinchokuKbn == '3') {
+			window.location.href = target + '/kakunin' + '?no=' + shinseiNo;
+		} else if (shinchokuKbn == '5') {
+			window.location.href = target + '/torikesu' + '?no=' + shinseiNo + '&hozonUid=' + hozon_Uid;
+		}
+	}
+	
 </script>

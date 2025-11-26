@@ -16,5 +16,5 @@ public class ShozokuService {
 
     public List<ShozokuVO> findShozokuList(int kigyoCd) {
         return shozokuMapper.findShozokuList(kigyoCd);
-    }
+}
 }
