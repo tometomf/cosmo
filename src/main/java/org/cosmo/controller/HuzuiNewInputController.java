@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,6 +18,7 @@ import org.cosmo.domain.ShainFuzuiShoruiVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.service.HuzuiNewInputService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,34 +59,74 @@ public class HuzuiNewInputController {
 	
 	//김민수
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
-	public String fileUpload(@RequestParam("file") MultipartFile file,int fileNo, HttpSession session) {
-		if(!file.isEmpty()) {
-		try {
-			ShainVO shain = (ShainVO) session.getAttribute("shain");
-			if(shain != null) {
-				
-				String kigyo_Cd = shain.getKigyo_Cd();
-				String shain_Uid = shain.getShain_Uid();
-				
-			
-			Long uniqueId = System.currentTimeMillis();
-			
-			File destination = new File("/upload/path/" + uniqueId + "-" + file.getOriginalFilename());
-			file.transferTo(destination);
-			
-			huzuiNewInputService.fileUpload(kigyo_Cd, shain_Uid, fileNo, uniqueId);
-			return "uid:" + uniqueId;
-			} else {
-				return "사원 정보가 없습니다.";
-			}
-			
-		}catch(IOException e) {
-			e.printStackTrace();
-			return "파일 업로드 실패";
-		}
-		}else {
-			return "파일을 선택해주세요";
-		}
+	public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file, String fileNo, HttpSession session) {
+	    if(!file.isEmpty()) {
+	        try {
+	            ShainVO shain = (ShainVO) session.getAttribute("shain");
+	            if(shain != null) {
+	                
+	                // ⭐ 1. 파일이 저장될 디렉토리 경로 정의 (C:/cosmo/upload/files) ⭐
+	                String uploadPath = "C:/cosmo/upload/files"; // 안전한 절대 경로 (슬래시 사용)
+
+	                // 2. 디렉토리가 존재하는지 확인하고, 없다면 생성
+	                File uploadDirectory = new File(uploadPath);
+	                if (!uploadDirectory.exists()) {
+	                    boolean result = uploadDirectory.mkdirs(); 
+	                    if (!result) {
+	                        System.err.println("업로드 디렉토리 생성 실패: " + uploadPath);
+	                        throw new RuntimeException("업로드 디렉토리 생성 실패: " + uploadPath);
+	                    }
+	                }
+	                
+	                // ... (사원 정보 및 DTO 설정 로직) ...
+	                LocalDate today1 = LocalDate.now();
+	           	 	LocalTime now = LocalTime.now();
+
+	
+		           	 // 시간 포맷을 "HHmm"으로 설정
+		           	 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		           	 String time = now.format(timeFormatter);
+	
+		           	 // 날짜와 시간을 결합하여 "yyyy-MM-dd HH:mm:ss" 형식의 문자열을 만듭니다.
+		           	 String dateTimeString = today1.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + time;
+	
+		           	 // Timestamp 객체로 변환
+		           	 Timestamp timestamp = Timestamp.valueOf(dateTimeString);
+		           	 
+	                UploadFileDTO UploadFile = new UploadFileDTO();
+	                Long uniqueId = System.currentTimeMillis();
+	                
+	                UploadFile.setTitle(fileNo);
+	                UploadFile.setName(file.getOriginalFilename());
+	                UploadFile.setContentType(file.getContentType());
+	                UploadFile.setData(file.getBytes());
+	                UploadFile.setFileUid(uniqueId);
+	                UploadFile.setAddDate(timestamp);
+	                UploadFile.setUpdDate(timestamp);
+	                // ⭐ 3. 최종 파일 이름을 만듭니다. ⭐
+	                String savedFileName = uniqueId + "-" + file.getOriginalFilename();
+	               
+	               
+	                // ⭐ 4. 파일을 저장할 최종 File 객체를 생성합니다. ⭐
+	                // File destination = new File(uploadPath, savedFileName);
+	                // 위 코드는 아래와 동일합니다. 
+	                File destination = new File(uploadPath + File.separator + savedFileName);
+	                
+	                // 5. 파일 저장
+	                file.transferTo(destination);
+	                System.out.println("UploadFile" + UploadFile);
+	                huzuiNewInputService.addFile(UploadFile, shain);
+	                return ResponseEntity.ok(Collections.singletonMap("uid", uniqueId));
+	            } else {
+	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사원 정보가 없습니다.");
+	            }
+	        }catch(IOException e) {
+	            e.printStackTrace();
+	            return ResponseEntity.badRequest().body("파일을 선택해주세요");
+	        }
+	    } else {
+	        return ResponseEntity.badRequest().body("파일을 선택해주세요");
+	    }
 	}
 			
 	//김민수
