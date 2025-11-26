@@ -158,7 +158,7 @@ public class HuzuiNewInputController {
  	        System.out.println("신청 vo : "+shinseiDTO);
  	        
  	       
- 	        oshiraseDTO.setShinseiNo(321);
+ 	        oshiraseDTO.setShinseiNo(shinseiNo);
  	        oshiraseDTO.setOshiraseNaiyo("申請");
  	        oshiraseDTO.setTsuchiYmd(toDay);
  	        
@@ -231,6 +231,8 @@ public class HuzuiNewInputController {
              
              String HHtime = nowTime.format(DateTimeFormatter.ofPattern("HHmm"));
 		
+             int shainUid = Integer.parseInt(shain.getShain_Uid());
+             
              processLogDTO.setProcessTimestamp(timestamp);
              processLogDTO.setSubsystemId("123");
              processLogDTO.setProcessCol("hozon");
@@ -240,9 +242,14 @@ public class HuzuiNewInputController {
              oshiraseDTO.setOshiraseNaiyo("一時保存しました");
              oshiraseDTO.setAddDate(timestamp);
              oshiraseDTO.setUpdDate(timestamp);
-         
-             ichijiHozonDTO.setActionNm("hozon");
+             oshiraseDTO.setAddUserId(shainUid);
+             oshiraseDTO.setUpdUserId(shainUid);
              
+             ichijiHozonDTO.setActionNm("hozon");
+             ichijiHozonDTO.setAddDate(timestamp);
+             ichijiHozonDTO.setUpdDate(timestamp);
+             ichijiHozonDTO.setAddUserId(shainUid);
+             ichijiHozonDTO.setUpdUserId(shainUid);
              
              //ichijiHozonDTO.setData(data);
              

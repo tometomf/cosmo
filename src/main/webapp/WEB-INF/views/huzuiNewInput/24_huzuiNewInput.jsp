@@ -1,13 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>  
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-</head>
+
  <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+</head>
+
  <style>
 
 	#form_Text1 {
@@ -108,15 +114,15 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
-					<div class = "form_Normal henkou1"><input type="text" name="" id="file-name-display">　<input type="file" id="file" class="custom-file-upload"><input type="button" value="参照" id="file-select-button">　<input type="button" value="アップロード" id="upload-btn"></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_1}"><a href="#">表示</a></c:if></div>
+					<div class = "form_Normal henkou1"><input type="text" name="file_Uid_1" id="file-name-display1" readonly>　<input type="file" id="file1" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file1">　<input type="button" value="アップロード" id="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証有効期限</div>
 					<div class = "form_Normal" style="display:grid" id="menkyoKigen">
 							<div class="newInput1">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
 					</div>
-					<div class = "form_Normal henkou1"><input id="dateInputText" type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img id="dateIcon" src="/resources/img/cal_icon.gif"> <input id="hiddenDateInput" type="date" style="display:none;">
+					<div class = "form_Normal henkou1"><input id="menkyoKigenInput" type="text" style="width:250px" name="menkyo_Yuko_Kigen"> <img class="calendar-icon" src="/resources/img/cal_icon.gif">
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -138,8 +144,8 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">車検証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty file_Uid_5}"><a href="#">表示</a></c:if></div>
-					<div class = "form_Normal henkou2"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
+					<div class = "form_Normal"><c:if test="${not empty file_Uid_2}"><a href="#">表示</a></c:if></div>
+					<div class = "form_Normal henkou2"><input type="text" name="file_Uid_2" readonly>　<input type="file" id="file2" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file2">　<input type="button" value="アップロード"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">車種</div>
@@ -169,7 +175,7 @@ input[type="file"] {
 					<div class = "form_Normal" style="display:grid" id="shakenKigen">
 							<div class="newInput2">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
 					</div>
-					<div class = "form_Normal henkou2"><input type="text" style="width:250px" name="shaken_Yuko_Kigen"> <img src="/resources/img/cal_icon.gif"></div>
+					<div class = "form_Normal henkou2"><input id="shakenKigenInput" type="text" style="width:250px" name="shaken_Yuko_Kigen"> <img src="/resources/img/cal_icon.gif" class="calendar-icon"></div>
 				</div>
 			</div>
 			
@@ -188,20 +194,20 @@ input[type="file"] {
 					</div>
 					<div class="form_Text1" id="form_Text1" style="border:solid 1px #a0a0a0; border-bottom:none;">
 						<div class="form_Column">保険証券コピー（期間）</div>
-						<div class = "form_Normal"><c:if test="${not empty file_Uid_6}"><a href="#">表示</a></c:if></div>
-						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_3}"><a href="#">表示</a></c:if></div>
+						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_3">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column">保険証券コピー（賠償内容）</div>
-						<div class = "form_Normal"><c:if test="${not empty file_Uid_7}"><a href="#">表示</a></c:if></div>
-						<div class = "form_Normal henkou3"><input type="text">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
+						<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
+						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_4">　<input type="button" value="参照">　<input type="button" value="アップロード"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column" style="">保険満了日</div>
 						<div class = "form_Normal" style="display:grid" id="hokenKigen">
 							<div class="newInput3">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
 						</div>
-						<div class = "form_Normal henkou3"><input type="text" style="width:250px" name="hoken_Manryo_Ymd"> <img src="/resources/img/cal_icon.gif"></div>
+						<div class = "form_Normal henkou3"><input id="hokenKigenInput" type="text" style="width:250px" name="hoken_Manryo_Ymd"> <img class="calendar-icon" src="/resources/img/cal_icon.gif"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1" >
 						<div class = "form_Column">対人賠償</div>
@@ -299,7 +305,6 @@ input[type="file"] {
 		<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 	</div>	
 </body>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="text/javascript">
 
 	const menkyoKigen = "<c:out value='${shainHuzuiShorui.menkyo_Yuko_Kigen}' />";
@@ -310,21 +315,21 @@ input[type="file"] {
 	
 	const hokenKigen = "<c:out value='${shainHuzuiShorui.hoken_Manryo_Ymd}' />";
 	const hokenKigenBox = document.getElementById("hokenKigen");
-	
-	const textInput = document.getElementById('dateInputText');
-	const icon = document.getElementById('dateIcon');
-	const hiddenDate = document.getElementById('hiddenDateInput');
-
-	icon.addEventListener('click', () => {
-	    // 숨겨진 date input 클릭
-	    hiddenDate.click();
-	});
-
-	// date input 값이 바뀌면 기존 텍스트 인풋에 값 넣기
-	hiddenDate.addEventListener('change', () => {
-	    textInput.value = hiddenDate.value; // YYYY-MM-DD 형식
+	 $(function(){
+	$("#menkyoKigenInput, #shakenKigenInput, #hokenKigenInput").datepicker({
+	    dateFormat : 'y/mm/dd',
+	    showButtonPanel : true,
+	    changeMonth : true,
+	    changeYear : true
 	});
 	
+	$(".calendar-icon").each(function(index) {
+	    $(this).on("click", function() {
+	    	$("#" + (index === 0 ? "menkyoKigenInput" : index === 1 ? "shakenKigenInput" : "hokenKigenInput"))
+	        .datepicker("show");
+	    });
+	});
+	});
 	
 	// 페이지 로딩 시 함수 호출
 	function kigen(value,boxValue){
@@ -436,22 +441,27 @@ input[type="file"] {
 		// DOM이 완전히 로드된 후 실행
 		document.addEventListener("DOMContentLoaded", function() {
 		    // 파일 선택 버튼 클릭 시, 숨겨진 파일 입력 필드를 클릭하도록 합니다.
-		    document.getElementById("file-select-button").addEventListener("click", function(event) {
-		        event.preventDefault(); // 기본 동작 막기 (필요 시)
-		        document.getElementById("file").click(); // 숨겨진 파일 입력 필드를 클릭
-		    });
+		    document.querySelectorAll(".file-select-button").forEach(function(button) {
+		    	 const fileInputId = button.dataset.target;
+		         const fileInput = document.getElementById(fileInputId);
+		         const fileNameDisplay = document.getElementById("file-name-display" + fileInputId.slice(-1));
 
-		    // 파일이 선택되면 선택된 파일 이름을 입력 텍스트 필드에 표시
-		    document.getElementById("file").addEventListener("change", function(event) {
-		        var selectedFile = event.target.files[0];
-		        if (selectedFile) {
-		            // 인풋 텍스트 필드에 선택된 파일의 이름을 표시
-		            document.getElementById("file-name-display").value = "選択されたファイル: " + selectedFile.name;
-		        } else {
-		            // 파일이 선택되지 않았을 경우
-		            document.getElementById("file-name-display").value = "ファイルが選択されていません。";
-		        }
-		    });
+		         // 버튼 클릭 시 숨겨진 input 클릭
+		         button.addEventListener("click", function(event) {
+		             event.preventDefault();
+		             fileInput.click();
+		         });
+
+		         // 파일 선택 시 이름 표시
+		         fileInput.addEventListener("change", function(event) {
+		             const selectedFile = event.target.files[0];
+		             if (selectedFile) {
+		                 fileNameDisplay.value = "選択されたファイル: " + selectedFile.name;
+		             } else {
+		                 fileNameDisplay.value = "ファイルが選択されていません。";
+		             }
+		         });
+		     });
 		});
 
 		document.getElementById("upload-btn").addEventListener("click", function(event){
@@ -496,7 +506,7 @@ input[type="file"] {
 		        })
 		        .then(response => {
 		            if (!response.ok) {
-		                throw new Error('파일 업로드 실패');
+		                throw new Error('HTTP error! status: ' + response.status);
 		            }
 		            return response.text(); // 응답을 JSON으로 파싱
 		        })
