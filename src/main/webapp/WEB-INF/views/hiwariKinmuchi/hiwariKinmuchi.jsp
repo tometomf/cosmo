@@ -171,85 +171,125 @@ p {
         <%@ include file="/WEB-INF/views/common/footer.jsp"%>
     </div>
 
-    <!-- ▼ 一時保存用フォーム-->
-    <form id="kinmuTempForm" method="post" action="<c:url value='/hiwariKinmuchi/tempSave'/>">
-        <input type="hidden" name="commuteJson" value="">
-        <input type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE">
-        <input type="hidden" name="redirectUrl" value="">
-    </form>
+  <!-- ▼ 日割 勤務地入力 전용 임시저장 폼 -->
+<form id="kinmuTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
+    
+    <!-- JSON 데이터 -->
+    <input type="hidden" name="commuteJson" value="">
+
+    <!-- 이 화면의 action 이름: 반드시 근무지용으로 설정 -->
+    <input type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE">
+
+    <!-- 이동 URL: 임시저장 버튼은 비우고, 필요 시 JS에서 채움 -->
+    <input type="hidden" name="redirectUrl" value="">
+
+    <!-- 임시저장 ID (없으면 빈값) -->
+    <input type="hidden" name="hozonUid" value="${hozonUid}">
+
+    <!-- 신청번호 (없으면 빈 값) -->
+    <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+
+</form>
+
+
 
 <script>
-    function validateAddress() {
-        const code = document.querySelector("input[name='newShozokuCd']").value.trim();
-        const zip1 = document.querySelector("input[name='zip1']").value.trim();
-        const zip2 = document.querySelector("input[name='zip2']").value.trim();
-        const pref = document.querySelector("input[name='prefecture']").value.trim();
-        const city = document.querySelector("input[name='city']").value.trim();
+// =============================
+// 필수 입력 체크 → 다음 화면 이동
+// =============================
+function validateAddress() {
+    const code = document.querySelector("input[name='newShozokuCd']").value.trim();
+    const zip1 = document.querySelector("input[name='zip1']").value.trim();
+    const zip2 = document.querySelector("input[name='zip2']").value.trim();
+    const pref = document.querySelector("input[name='prefecture']").value.trim();
+    const city = document.querySelector("input[name='city']").value.trim();
 
-        if (code === "" || zip1 === "" || zip2 === "" || pref === "" || city === "") {
-            alert("必須項目に入力漏れがあります。すべて入力してください。");
-            return false;
-        }
-
-        window.location.href = "/hiwariKinmuchi/address";
+    if (code === "" || zip1 === "" || zip2 === "" || pref === "" || city === "") {
+        alert("必須項目に入力漏れがあります。すべて入力してください。");
+        return false;
     }
 
-    function buildKinmuTempJson() {
+    window.location.href = "/hiwariKinmuchi/address";
+}
 
-        const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
-        const newShozokuNm = document.querySelector("select[name='newShozokuNm']").value.trim();
-        const zip1 = document.querySelector("input[name='zip1']").value.trim();
-        const zip2 = document.querySelector("input[name='zip2']").value.trim();
-        const prefecture = document.querySelector("input[name='prefecture']").value.trim();
-        const city = document.querySelector("input[name='city']").value.trim();
-        const address2 = document.querySelector("input[name='address2']").value.trim();
 
-        let fullZip = "";
-        if (zip1 !== "" && zip2 !== "") {
-            fullZip = zip1 + zip2;
-        }
 
-        /* ★★★ 위 JSP처럼 서버에서 가져온 임시 데이터 갱신 ★★★ */
-        const data = ${ichijiHozon};
+// =============================
+// 임시저장 JSON 생성
+// =============================
+function buildKinmuTempJson() {
 
-        // 기존 주소 → 새 주소 갱신
-        data.genAddress = null;
-        data.newAddress = (prefecture && city)
-            ? (prefecture + " " + city + " " + address2)
-            : null;
+    const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
+    const newShozokuNm = document.querySelector("select[name='newShozokuNm']").value.trim();
+    const zip1 = document.querySelector("input[name='zip1']").value.trim();
+    const zip2 = document.querySelector("input[name='zip2']").value.trim();
+    const prefecture = document.querySelector("input[name='prefecture']").value.trim();
+    const city = document.querySelector("input[name='city']").value.trim();
+    const address2 = document.querySelector("input[name='address2']").value.trim();
 
-        // 소속
-        data.genShozoku = null;
-        data.newShozoku = newShozokuNm || null;
-
-        // 근무지
-        data.genKinmuchi = null;
-        data.newKinmuchi = newShozokuCd || null;
-
-        return JSON.stringify(data);
+    let fullZip = "";
+    if (zip1 !== "" && zip2 !== "") {
+        fullZip = zip1 + zip2;
     }
 
+    // JSP에 ichijiHozon 없으면 빈 객체
+    let data = {};
+    try {
+        data = ${ichijiHozon != null ? ichijiHozon : "{}"};
+    } catch (e) {
+        data = {};
+    }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    // 새 근무지 정보 저장
+    data.newKinmusakiCd = newShozokuCd || null;
+    data.newKinmusakiNm = newShozokuNm || null;
 
-        const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+    // 새 주소 설정
+    data.newKinmuZip = fullZip;
+    data.newKinmuAddress = (prefecture && city)
+        ? (prefecture + " " + city + " " + address2)
+        : null;
 
-        const form = document.getElementById("kinmuTempForm");
-        const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
-        const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+    return JSON.stringify(data);
+}
 
-        if (hozonBtn) {
-            hozonBtn.addEventListener("click", function () {
 
-                const jsonString = buildKinmuTempJson();
-                commuteJsonInput.value = jsonString;
 
-                redirectUrlInput.value = "";  // 기본 이동
+// =============================
+// 임시저장 버튼 이벤트
+// =============================
+document.addEventListener("DOMContentLoaded", function () {
 
-                form.submit();
-            });
-        }
-    });
+    const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+    const form = document.getElementById("kinmuTempForm");
+
+    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+
+    if (hozonBtn) {
+        hozonBtn.addEventListener("click", function () {
+
+            const jsonString = buildKinmuTempJson();
+            commuteJsonInput.value = jsonString;
+
+            // hozonUid / shinseiNo 비어있으면 삭제
+            const hozonHidden = form.querySelector('input[name="hozonUid"]');
+            if (!hozonHidden.value || hozonHidden.value.trim() === "") {
+                hozonHidden.remove();
+            }
+
+            const shinseiHidden = form.querySelector('input[name="shinseiNo"]');
+            if (!shinseiHidden.value || shinseiHidden.value.trim() === "") {
+                shinseiHidden.remove();
+            }
+
+            // ★★★ 반드시 redirectUrl 추가 (컨트롤러가 빈값 처리 못함)
+            redirectUrlInput.value = "/shinsei/ichiji";
+
+            form.submit();
+        });
+    }
+});
 </script>
 
 </body>
