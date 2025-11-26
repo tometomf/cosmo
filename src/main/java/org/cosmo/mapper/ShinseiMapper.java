@@ -1,5 +1,6 @@
 package org.cosmo.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -112,5 +113,7 @@ public interface ShinseiMapper {
 
 	void insertOshiraseHikimodosu(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
 			@Param("shinseiNo") String shinseiNo);
+
+	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Map<String, Object> param);
 
 }

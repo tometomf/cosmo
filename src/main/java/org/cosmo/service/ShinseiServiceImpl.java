@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
@@ -327,6 +328,14 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Override
 	public void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
 		shinseiMapper.insertOshiraseHikimodosu(loginUser, shinseiUser, shinseiNo);
+	}
+
+	@Override
+	public List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		return shinseiMapper.getShinseiKeiroDetailList(param);
 	}
 
 }

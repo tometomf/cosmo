@@ -50,6 +50,17 @@ public class ShinseiShoruiVO {
 	private String addDate;
 	private Long updUserId;
 	private String updDate;
-	
-	
+
+	private Long etcFileUid1;
+	private Long etcFileUid2;
+	private Long etcFileUid3;
+	private Long etcFileUid4;
+	private Long etcFileUid5;
+
+	private String etcComment1;
+	private String etcComment2;
+	private String etcComment3;
+	private String etcComment4;
+	private String etcComment5;
+
 }
