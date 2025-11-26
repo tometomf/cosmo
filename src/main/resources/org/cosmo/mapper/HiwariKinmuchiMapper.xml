@@ -279,40 +279,59 @@
 		<result column="VIA_PLACE_4" property="viaPlace4" />       <!-- ★ 추가 -->
 		<result column="VIA_PLACE_5" property="viaPlace5" />       <!-- ★ 추가 -->
 		<result column="KEKKA_SELECT" property="kekkaSelect" />
+		
+	<result column="KIKAN_START_YMD"      property="kikanStartYmd" />
+    <result column="KIKAN_END_YMD"        property="kikanEndYmd" />
+    <result column="JITSU_KINMU_NISSU"    property="shukkinNissuu" />
+    <result column="KATAMICHI_KIN"        property="kataMichiKin" />
+    <result column="SHINSEI_KIN"          property="shinseiKin" />
+    <result column="FIRST_TEIKI_TSUKI_SU" property="firstTeikiTsukiSu" />
+    <result column="TSUKI_SHIKYU_KIN"     property="tsukiShikyuKin" />
+    <result column="HIWARI_ATO"           property="hiwariAto" />
 	</resultMap>
 	<!-- 유지희 -->
-	<!-- 로그인사원의 최신 신청번호 기준 경로 조회 -->
 	<select id="findByUser" resultMap="HiwariKeiroMap">
-		SELECT
-		SSK.KIGYO_CD,
-		SSK.SHINSEI_NO,
-		SSK.KEIRO_SEQ,
-		SSK.SHAIN_UID,
-		SSK.TSUKIN_SHUDAN_KBN,
-		C.CODE_NM AS TSUKIN_SHUDAN_NM, -- ★ 추가: 통근수단명
-		SSK.START_PLACE,
-		SSK.END_PLACE,
-		SSK.VIA_PLACE_1, -- ★ 추가
-		SSK.VIA_PLACE_2, -- ★ 추가
-		SSK.VIA_PLACE_3, -- ★ 추가
-		SSK.VIA_PLACE_4, -- ★ 추가
-		SSK.VIA_PLACE_5, -- ★ 추가
-		SSK.KEKKA_SELECT
-		FROM
-		SHINSEI_START_KEIRO SSK
-		LEFT JOIN CODE C ON C.CODE_SYBTSU = '103' -- ★ 추가: 통근수단 코드
-		AND C.CODE = SSK.TSUKIN_SHUDAN_KBN
-		WHERE
-		SSK.KIGYO_CD = #{kigyoCd} -- ★ 수정: 파라미터로 받기
-		AND SSK.SHINSEI_NO = (
-		SELECT MAX(SHINSEI_NO)
-		FROM SHINSEI
-		WHERE KIGYO_CD = #{kigyoCd} -- ★ 수정
-		AND SHAIN_UID = #{shainUid}
-		)
-		ORDER BY
-		SSK.KEIRO_SEQ
-	</select>
+    SELECT
+        SSK.KIGYO_CD,
+        SSK.SHINSEI_NO,
+        SSK.KEIRO_SEQ,
+        SSK.SHAIN_UID,
+        SSK.TSUKIN_SHUDAN_KBN,
+        C.CODE_NM AS TSUKIN_SHUDAN_NM,
+        SSK.START_PLACE,
+        SSK.END_PLACE,
+        SSK.VIA_PLACE_1,
+        SSK.VIA_PLACE_2,
+        SSK.VIA_PLACE_3,
+        SSK.VIA_PLACE_4,
+        SSK.VIA_PLACE_5,
+        SSK.KEKKA_SELECT,
+        -- 여기부터 계산용 컬럼
+        SSK.KIKAN_START_YMD,
+        SSK.KIKAN_END_YMD,
+        SSK.JITSU_KINMU_NISSU,
+        SSK.KATAMICHI_KIN,
+        SSK.SHINSEI_KIN,
+        SSK.FIRST_TEIKI_TSUKI_SU,
+        SSK.TSUKI_SHIKYU_KIN,
+        SSK.HIWARI_ATO
+    FROM
+        SHINSEI_START_KEIRO SSK
+        LEFT JOIN CODE C
+          ON C.CODE_SYBTSU = '103'
+         AND C.CODE = SSK.TSUKIN_SHUDAN_KBN
+    WHERE
+        SSK.KIGYO_CD = #{kigyoCd}
+      AND SSK.SHINSEI_NO = (
+            SELECT MAX(SHINSEI_NO)
+              FROM SHINSEI
+             WHERE KIGYO_CD = #{kigyoCd}
+               AND SHAIN_UID = #{shainUid}
+        )
+    ORDER BY
+        SSK.KEIRO_SEQ
+</select>
+
 	<!-- 유지희 -->
 	<!-- 해당 사원의 최신 신청에 대한 경로 전체 삭제 -->
 	<delete id="deleteByUser">
@@ -385,5 +404,6 @@
 		AND SHAIN_UID = #{shainUid}
 		AND KEIRO_SEQ = #{keiroSeq}
 	</delete>
+	
 	<!-- 유지희 끝 -->
 </mapper>
