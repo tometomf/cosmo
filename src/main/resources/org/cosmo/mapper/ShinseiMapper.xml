@@ -48,10 +48,19 @@
 		NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
 		NEW_KINMU_ADDRESS_3 AS
 		newKinmuchi3,
-
-
+		ETC_COMMENT_1 AS etcComment1,
+		ETC_COMMENT_2 AS etcComment2,
+		ETC_COMMENT_3 AS etcComment3,
+		ETC_COMMENT_4 AS etcComment4,
+		ETC_COMMENT_5 AS etcComment5,
+		ETC_FILE_UID_1 AS etcFileUid1,
+		ETC_FILE_UID_2 AS
+		etcFileUid2,
+		ETC_FILE_UID_3 AS etcFileUid3,
+		ETC_FILE_UID_4 AS
+		etcFileUid4,
+		ETC_FILE_UID_5 AS etcFileUid5,
 		KINMU_ADDRESS_IDO_KEIDO AS kinmuAddressIdoKeido,
-
 		SHINSEI_RIYU AS riyu,
 		IDO_YMD AS idoYmd,
 		ITEN_YMD AS itenYmd,
@@ -673,22 +682,6 @@
 		DAIRI_SHINSEISHA_CD AS dairiShinseishaCd,
 		TSUKIN_SHUDAN_KBN AS
 		tsukinShudanKbn,
-		FILE_UID_1 AS etcFileUid1,
-		FILE_UID_2 AS
-		etcFileUid2,
-		FILE_UID_3 AS etcFileUid3,
-		FILE_UID_4 AS
-		etcFileUid4,
-		FILE_UID_5 AS etcFileUid5,
-
-
-		ETC_COMMENT_1 AS etcComment1,
-		ETC_COMMENT_2 AS etcComment2,
-		ETC_COMMENT_3 AS etcComment3,
-		ETC_COMMENT_4 AS etcComment4,
-		ETC_COMMENT_5 AS etcComment5,
-	
-
 		MENKYO_YUKO_KIGEN AS menkyoYukoKigen,
 		MENKYO_NO AS
 		menkyoNo,
