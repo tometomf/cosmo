@@ -1,3 +1,4 @@
+<!-- 재환 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -156,6 +157,7 @@
     accent-color: #333;
     transform: scale(1.05);
 }
+
 </style>
 </head>
 <body>
@@ -171,7 +173,7 @@
                 <div class="flow_others">完了</div>
             </div>
 
-        <div class="subtitle">【経路①】 通勤手段 入力</div>
+        <div class="subtitle">【経路 ${keiroSeq} 】 通勤手段 入力</div>
         <div class="commute-container">
             <div class="content-box">
                 <div class="info-text">通勤手段を選択してください.</div>
@@ -191,6 +193,8 @@
                             value="bus"> バス</label>
                         <label><input type="radio"
                             name="way" value="car"> 自動車</label>
+                        <label><input type="radio" name="way"
+                            value="jiten"> 自転車</label>
                         <label><input type="radio" name="way"
                             value="toho"> 徒歩</label>
                         <label><input type="radio" name="way"
@@ -212,11 +216,17 @@
 	    <input type="hidden" name="commuteJson" value="">
 	    
 	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
-	    <input type="hidden" name="actionUrl" value="TSUKIN_SHUDAN_TEMP_SAVE">
+	    <input type="hidden" name="actionUrl" value="/keiroinput/06_keiroInput">
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
-</form>
+	    
+	     <input type="hidden" name="hozonUid" value="${hozonUid}">
+	     
+	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+	     
+	     <input type="hidden" name="keiroSeq" value="${keiroSeq}">
+		</form>
 
     </div>
     <%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -258,15 +268,22 @@ document.addEventListener("DOMContentLoaded", function() {
         densha: "1",   // 電車
         bus:    "2",   // バス
         car:    "3",   // 自動車
+        jiten:  "5",   // 自転車
         toho:   "6",   // 徒歩
         other:  "7"    // その他
     };
-
+	
+    const ichijiHozon = ${ichijiHozon};
+	console.log("임시저장 데이터:", ichijiHozon);
+    
+	const hozonUid = ${hozonUid};
+	const shinseiNo = ${shinseiNo};
+	const keiroSeq = ${keiroSeq};
+	
     // 폼 / hidden input
     const form             = document.getElementById("tsukinTempForm");
     const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
     const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
-    // actionUrl은 JSP에서 value="TSUKIN_SHUDAN_TEMP_SAVE" 로 이미 박혀 있음
 
     /**
      * 현재 선택된 라디오값을 기반으로
@@ -288,39 +305,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const labelText = selected.parentElement.textContent.trim();  // "電車" 등
 
-        // 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식 가정)
-        const shinseiIcData = {
-            // 공통 정보 (이 화면에는 값이 없어서 일단 null로)
-            kigyoCd:   keiro.kigyoCd || null,
-            shinseiNo: null,
-            shinseiYmd: null,
-            shinseiKbn: null,
-            shinchokuKbn: null,
-            genAddress: null,
-            newAddress: null,
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-
-            // 통근 경로 정보
-            keiro: {
-                tsukinShudan: kbn,       // 예: "1"
-                shudanName:   labelText  // 예: "電車"
-                // 필요하면 여기서 startPlace/endPlace 등도 같이 넣을 수 있음
-            }
+        // 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식) 
+        const keiro = {
+            tsukinShudan: kbn,       // 예: "1"
+            shudanName:   labelText  // 예: "電車"
         };
+        
+        ichijiHozon.keiro = keiro;
 
-        return JSON.stringify(shinseiIcData);
+        return JSON.stringify(ichijiHozon);
     }
 
     //  hozonBtn: 임시저장 → 컨트롤러가 기본 redirect(/shinsei/ichiji) 사용
@@ -361,12 +354,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 case "bus":
                 case "other":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
-                    // 버스/기타는 shudanType 쿼리파라미터 필요
-                    redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
                     break;
                 case "car":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
                     break;
+                case "jiten":    
                 case "toho":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
                     break;
@@ -375,6 +367,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
             }
 
+            redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
+            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
+            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
             redirectUrlInput.value = redirectPath;
 
             form.submit();

@@ -17,7 +17,7 @@ public class OshiraseDTO {
 	private String shainNo;         // SHAIN_NO (사원 번호)
 	private Integer tsuchishaKigyoCd; // TSUCHISHA_KIGYO_CD (통지자 기업 코드 - nullable NUMBER)
 	private String tsuchishaCd;     // TSUCHISHA_CD (통지자 코드)
-	private Integer shinseiNo;      // SHINSEI_NO (신청 번호 - nullable NUMBER)
+	private Long shinseiNo;      // SHINSEI_NO (신청 번호 - nullable NUMBER)
 	private String oshiraseNaiyo;   // OSHIRASE_NAIYO (알림 내용 - CLOB -> String)
 	private String kengen;          // KENGEN (권한)
 	private String haishinKbn;      // HAISHIN_KBN (배신/배포 구분)
