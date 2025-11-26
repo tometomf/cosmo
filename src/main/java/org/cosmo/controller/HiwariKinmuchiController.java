@@ -146,77 +146,92 @@ public class HiwariKinmuchiController {
 		return "hiwariKinmuchi/hiwariRiyu";
 	}
 
-	// 유지희
+	//유지희
 	@GetMapping("/kakunin")
 	public String showKakuninPage(HttpSession session, Model model) {
 
-		ShainVO shain = (ShainVO) session.getAttribute("shain");
-		if (shain == null) {
-			return "redirect:/";
-		}
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
 
-		Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-		Long shinseiNo = null;
-		if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
-			shinseiNo = Long.valueOf(shain.getShinsei_No());
-		}
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid   = Long.valueOf(shain.getShain_Uid());   // ★ 추가: 사원 UID
+	    Long shinseiNo  = null;
 
-		if (shinseiNo == null) {
-			return "redirect:/";
-		}
+	    if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+	        shinseiNo = Long.valueOf(shain.getShinsei_No());
+	    }
 
-		HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
-		List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
-		if (routes == null) {
-			routes = new ArrayList<HiwariKakuninRouteVO>();
-		}
+	    if (shinseiNo == null) {
+	        return "redirect:/";
+	    }
 
-		Map<String, Object> emp = new HashMap<String, Object>();
-		if (header != null) {
-			emp.put("no", header.getEmpNo());
-			emp.put("name", header.getEmpName());
-			emp.put("workplace", header.getEmpWorkplace());
-			emp.put("address", header.getEmpAddress());
-		}
-		model.addAttribute("emp", emp);
+	    // ① 확인 헤더
+	    HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
 
-		HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
-		Map<String, Object> route1 = new HashMap<String, Object>();
-		if (r1 != null) {
-			route1.put("transport", r1.getTsukinShudanNm());
-			route1.put("route", r1.getKeiroSection());
-			route1.put("workDays", r1.getShukkinNissuu() + "日間");
-			route1.put("oneWayFee", formatAmount(r1.getKataMichiRyokin()));
-			route1.put("amount", formatAmount(r1.getKingaku()));
-			route1.put("amountMonthly", formatAmount(r1.getKingakuMonthly()));
-		}
-		model.addAttribute("route1", route1);
+	    // ② 확인용 경로(집계 VO)
+	    List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
+	    if (routes == null) {
+	        routes = new ArrayList();
+	    }
 
-		HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
-		Map<String, Object> route2 = new HashMap<String, Object>();
-		if (r2 != null) {
-			route2.put("transport", r2.getTsukinShudanNm());
-			route2.put("route", r2.getKeiroSection());
-			route2.put("workDays", r2.getShukkinNissuu() + "日間");
-			route2.put("oneWayFee", formatAmount(r2.getKataMichiRyokin()));
-			route2.put("amount", formatAmount(r2.getKingaku()));
-			route2.put("amountMonthly", formatAmount(r2.getKingakuMonthly()));
-		}
-		model.addAttribute("route2", route2);
+	    // ③ ★★ SHINSEI_START_KEIRO 원본 값(HiwariKeiroVO) 추가 ★★
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList();
+	    }
+	    model.addAttribute("keiroList", keiroList);   // ← 이걸 JSP에서 바로 쓸 수 있음
 
-		Map<String, Object> apply = new HashMap<String, Object>();
-		if (header != null) {
-			apply.put("kind", header.getShinseiKbnNm());
-			apply.put("reason", header.getShinseiRiyu());
-			apply.put("periodText", header.getTaishoKikanFrom() + " ～ " + header.getTaishoKikanTo());
-			apply.put("workDays", header.getShukkinNissuu() + "日間");
-			apply.put("totalAmount", formatAmount(header.getKingakuGokei()));
-		}
+	    // -------------------------------
+	    // 아래는 기존 emp / route1 / route2 / apply 만드는 부분 그대로 유지
+	    // -------------------------------
+	    Map<String, Object> emp = new HashMap<String, Object>();
+	    if (header != null) {
+	        emp.put("no", header.getEmpNo());
+	        emp.put("name", header.getEmpName());
+	        emp.put("workplace", header.getEmpWorkplace());
+	        emp.put("address", header.getEmpAddress());
+	    }
+	    model.addAttribute("emp", emp);
 
-		model.addAttribute("apply", apply);
+	    HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
+	    Map<String, Object> route1 = new HashMap<String, Object>();
+	    if (r1 != null) {
+	        route1.put("transport", r1.getTsukinShudanNm());
+	        route1.put("route", r1.getKeiroSection());
+	        route1.put("workDays", r1.getShukkinNissuu() + "日間");
+	        route1.put("oneWayFee", formatAmount(r1.getKataMichiRyokin()));
+	        route1.put("amount", formatAmount(r1.getKingaku()));
+	        route1.put("amountMonthly", formatAmount(r1.getKingakuMonthly()));
+	    }
+	    model.addAttribute("route1", route1);
 
-		return "hiwariKinmuchi/hiwariKakunin";
+	    HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
+	    Map<String, Object> route2 = new HashMap<String, Object>();
+	    if (r2 != null) {
+	        route2.put("transport", r2.getTsukinShudanNm());
+	        route2.put("route", r2.getKeiroSection());
+	        route2.put("workDays", r2.getShukkinNissuu() + "日間");
+	        route2.put("oneWayFee", formatAmount(r2.getKataMichiRyokin()));
+	        route2.put("amount", formatAmount(r2.getKingaku()));
+	        route2.put("amountMonthly", formatAmount(r2.getKingakuMonthly()));
+	    }
+	    model.addAttribute("route2", route2);
+
+	    Map<String, Object> apply = new HashMap<String, Object>();
+	    if (header != null) {
+	        apply.put("kind", header.getShinseiKbnNm());
+	        apply.put("reason", header.getShinseiRiyu());
+	        apply.put("periodText", header.getTaishoKikanFrom() + " ～ " + header.getTaishoKikanTo());
+	        apply.put("workDays", header.getShukkinNissuu() + "日間");
+	        apply.put("totalAmount", formatAmount(header.getKingakuGokei()));
+	    }
+	    model.addAttribute("apply", apply);
+
+	    return "hiwariKinmuchi/hiwariKakunin";
 	}
+
 
 	private String formatAmount(Integer amount) {
 		if (amount == null || amount == 0) {
