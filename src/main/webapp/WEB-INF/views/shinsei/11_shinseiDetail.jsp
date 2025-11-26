@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<!-- 제교 -->
 
 <!DOCTYPE html>
 <html>
@@ -88,9 +90,11 @@
 				</div>
 			</div>
 
-			<!-- ===== 이 신청을 되돌리는 버튼 (왼쪽정렬) ===== -->
-			<c:if test="${detail.shinchokuKbn ne '4'}">
-				<%-- 承認済(4)이면 버튼 숨김 --%>
+
+
+
+			<c:if
+				test="${not empty detail.shinchokuKbn and fn:trim(detail.shinchokuKbn) ne '4'}">
 				<div class="button_Left">
 					<form action="<c:url value='/shinsei/hikimodosu' />" method="post">
 						<input type="hidden" name="shinseiNo" value="${detail.shinseiNo}" />
@@ -230,8 +234,8 @@
 			<!-- ===== 돌아가기 버튼 (왼쪽 정렬) ===== -->
 			<div class="button_Left">
 				<div class="button_Left_Group">
-					<a href="/shinsei/list"> <img
-						src="/resources/img/back_btn01.gif" alt="back_btn01">
+					<a href="/"> <img src="/resources/img/back_btn01.gif"
+						alt="back_btn01">
 					</a>
 				</div>
 			</div>

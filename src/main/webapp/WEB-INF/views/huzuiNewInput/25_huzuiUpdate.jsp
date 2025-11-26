@@ -46,13 +46,13 @@
 			<div class="content_Form1">
 	               <div class="form_Text2" id="form_Text4">
 	                  <div class="form_Column">社員番号</div>
-	                  <div class="form_Normal">123456</div>
+	                  <div class="form_Normal">${shain.shain_Uid}</div>
 	                   <div class="form_Column">社員名</div>
-	                  <div class="form_Normal">田中</div>
+	                  <div class="form_Normal">${shain.shain_Nm}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text5">
 	                  <div class="form_Column">申請部分</div>
-	                  <div class="form_Normal" style="margin:">期限更新</div>
+	                  <div class="form_Normal">期限更新</div>
 	               </div>
 			</div>
 			
@@ -66,11 +66,11 @@
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">免許証有効期限</div>
-		                  <div class="form_Normal" style="color: red;">2015/10/21</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.menkyo_Yuko_Kigen}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">免許証番号</div>
-		                  <div class="form_Normal" style="color: red;">1234-5678-90</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.menkyo_No}</div>
 		               </div>
 		    </div>
 		    
@@ -83,19 +83,19 @@
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">車種</div>
-		                  <div class="form_Normal" style="color: red;">ベンツ</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.shashu}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">ナンバー</div>
-		                  <div class="form_Normal" style="color: red;">品川　５００　あ　7777</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.toroku_No}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">排気量</div>
-		                  <div class="form_Normal" style="color: red;">排気量cc</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.haikiryo}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">車検有効期限</div>
-		                  <div class="form_Normal" style="color: red;">2014/12/24</div>
+		                  <div class="form_Normal" style="color: red;">${shainHuzuiShorui.shaken_Yuko_Kigen}</div>
 		               </div>
 		               <div class="form_Text1" id="form_Text3">
 		                  <div class="form_Column">燃費</div>
@@ -116,34 +116,34 @@
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">保険満了日</div>
-	                  <div class="form_Normal">2015/10/10</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.hoken_Manryo_Ymd}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">対人賠償</div>
-	                  <div class="form_Normal">無制限万円</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.taijin_Baisho}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">対物賠償</div>
-	                  <div class="form_Normal">無制限万円</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.taibutsu_Baisho}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">人身障害</div>
-	                  <div class="form_Normal">無制限万円</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.jinshin_Shogai}</div>
 	               </div>
 	               <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">搭乗者障害</div>
-	                  <div class="form_Normal">無制限万円級</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.tojosha_Shogai}</div>
 	               </div>
 	                 <div class="form_Text1" id="form_Text3">
 	                  <div class="form_Column">等級</div>
-	                  <div class="form_Normal">3級等級</div>
+	                  <div class="form_Normal">${shainHuzuiShorui.tokyu}</div>
 	               </div>
 	            </div>
 	         </div>
 		         
 		         
 		         <div class = "button_Left_Group" style="margin:3%">   
-					<img src="/resources/img/back_btn01.gif" alt="back_btn01"> 
+					<a href="javascript:history.back()"><img src="/resources/img/back_btn01.gif" alt="back_btn01"></a> 
 					<img src="/resources/img/shinsei_btn01.gif" alt="shinsei_btn01">
 				</div>
 			</div>

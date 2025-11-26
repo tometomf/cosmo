@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<!-- 하나 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,7 +50,7 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">${jyohou.codeNm}</div>
+					<div class="form_Normal">${empty jyohou? '一時保存中' : jyohou.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -84,22 +84,20 @@
 
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">${empty jyohou.genAddress ? '' : jyohou.genAddress}</div>
-					<div class="form_Normal">${empty jyohou.newAddress ? '' : jyohou.newAddress}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genAddress : jyohou.genAddress}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newAddress : jyohou.newAddress}</div>
 				</div>
-
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${empty jyohou.genShozoku ? '' : jyohou.genShozoku}</div>
-					<div class="form_Normal">${empty jyohou.newShozoku ? '' : jyohou.newShozoku}</div>
-				</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genShozoku : jyohou.genShozoku}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newShozoku : jyohou.newShozoku}</div>
 
+				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${empty jyohou.genKinmuchi ? '' : jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.genKinmuchi : jyohou.genKinmuchi}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.newKinmuchi : jyohou.newKinmuchi}</div>
 				</div>
-
 			</div>
 
 			<div class="content_Form2">
@@ -109,14 +107,22 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Required">${empty keiro.shudanName ? '' : keiro.shudanName}</div>
+					<div class="form_Required">${empty keiro.shudanName ? ichiji.keiro.shudanName : keiro.shudanName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">経路</div>
-					<div class="form_Required">${empty keiro.startPlace ? '' : keiro.startPlace}
-						${empty keiro.endPlace ? '' : '⟶ ' += keiro.endPlace}</div>
+					<div class="form_Required">
+						${empty keiro.startPlace ? '' : keiro.startPlace}
+
+						<c:if
+							test="${not empty keiro.startPlace && not empty keiro.endPlace}">
+       						     ⟶
+      				  </c:if>
+						${empty keiro.endPlace ? '' : keiro.endPlace}
+					</div>
 				</div>
+
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">距離</div>
@@ -129,14 +135,25 @@
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">金額 1ヶ月</div>
 					<div class="form_Required">
-						${empty keiro.tsuki ? '' : keiro.tsuki}
-						<c:if test="${not empty keiro.yuryo}"> + ${keiro.yuryo}</c:if>
+						<c:choose>
+							<c:when test="${keiro.total > 0}">
+       								 ${keiro.total} 円
+   								 </c:when>
+							<c:otherwise>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">有料道路 1ヶ月</div>
-					<div class="form_Required">${empty keiro.yuryo ? '' : keiro.yuryo}</div>
+					<div class="form_Required">
+						<c:choose>
+							<c:when test="${keiro.yuryo != null && keiro.yuryo > 0}">
+                ${keiro.yuryo} 円
+            </c:when>
+						</c:choose>
+					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
@@ -182,25 +199,32 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou.shinseiName ? '' : jyohou.shinseiName}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.shinseiName : jyohou.shinseiName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal">${empty jyohou.riyu ? '' : jyohou.riyu}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.riyu : jyohou.riyu}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移転日</div>
 					<div class="form_Normal">
-						${empty jyohou.idoYmd ? '' : jyohou.idoYmd}
-						<c:if test="${not empty jyohou.itenYmd}"> / ${jyohou.itenYmd}</c:if>
+						<c:set var="ido"
+							value="${empty jyohou ? ichiji.idoYmd  : jyohou.idoYmd}" />
+						<c:set var="iten"
+							value="${empty jyohou ? ichiji.itenYmd : jyohou.itenYmd}" />
+
+						<c:if test="${not empty ido}">${ido}</c:if>
+						<c:if test="${not empty ido and not empty iten}">/</c:if>
+						<c:if test="${not empty iten}">${iten} </c:if>
 					</div>
 				</div>
 
+
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}</div>
+					<div class="form_Normal">${empty jyohou ? ichiji.tennyuYmd : jyohou.tennyuYmd}</div>
 				</div>
 
 
@@ -217,9 +241,9 @@
 						type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
 					<input type="hidden" name="beforeKbn"
 						value="${jyohou.shinchokuKbn}"> <input type="hidden"
-						name="hozonUid" value="${hozon.hozonUid}"> <input
-						type="hidden" name="shinseiKbn" value="${jyohou.shinseiKbn}">
-					<input type="hidden" name="shinseiYmd" value="${jyohou.shinseiYmd}">
+						name="hozonUid" value="${hozonUid}"> <input type="hidden"
+						name="shinseiKbn" value="${jyohou.shinseiKbn}"> <input
+						type="hidden" name="shinseiYmd" value="${jyohou.shinseiYmd}">
 				</form>
 
 			</div>
@@ -227,7 +251,6 @@
 			<div class="button_Side">
 				<div class="button_Side_Group">
 
-					<!-- 신청번호 있을 경우 링크 나중에 수정해야함(상세화면으로) -->
 					<c:choose>
 						<c:when test="${not empty hozonUid}">
 							<img src="/resources/img/back_btn01.gif" alt="back_btn01"
