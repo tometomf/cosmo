@@ -154,18 +154,21 @@
 <script type="text/javascript">
 
 
+	const kigyoCd = "${shain.kigyo_Cd}";
+	const shainUid = "${shain.shain_Uid}";
+	
+	
+	const file_Uid1 = "${not empty shainHuzui.file_Uid_1 ? shainHuzui.file_Uid_1 : shainHuzuiShorui.file_Uid_1}";
+	
+	
+	console.log("file_Uid1" + file_Uid1);
+
 document.getElementById("shincou").addEventListener("click", function(e) {
 	
 	e.preventDefault(); // a 태그 링크 이동 막기
 	
-	const kigyoCd = "<c:out value='${shain.kigyo_Cd}' />";
-	const shainUid = "<c:out value='${shain.shain_Uid}' />";
+	const today = new Date();
 	
- 	const file_Uid1 = document.getElementById("file_Uid1") ? document.getElementById("file_Uid1").innerText : null;
-	const file_Uid2 = document.getElementById("file_Uid2") ? document.getElementById("file_Uid2").innerText : null;
-	const file_Uid3= document.getElementById("file_Uid3") ? document.getElementById("file_Uid3").innerText : null;
-	const file_Uid4= document.getElementById("file_Uid4") ? document.getElementById("file_Uid4").innerText : null;
-	const file_Uid5= document.getElementById("file_Uid5") ? document.getElementById("file_Uid5").innerText : null;
 	const menkyo_Yuko_Kigen= document.getElementById("menkyo_Yuko_Kigen") ? document.getElementById("menkyo_Yuko_Kigen").innerText : null;
 	const menkyo_No= document.getElementById("menkyo_No") ? document.getElementById("menkyo_No").innerText : null;
 	const shashu= document.getElementById("shashu") ? document.getElementById("shashu").innerText : null;
@@ -178,10 +181,10 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 	const jinshin_Shogai= document.getElementById("jinshin_Shogai") ? document.getElementById("jinshin_Shogai").innerText  : null;
 	const tojosha_Shogai= document.getElementById("tojosha_Shogai") ? document.getElementById("tojosha_Shogai").innerText : null;
 	const tokyu= document.getElementById("tokyu") ? document.getElementById("tokyu").innerText : null;
-	const add_User_Id= document.getElementById("add_Shain_Uid") ? document.getElementById("add_Shain_Uid").innerText : null;
-	const add_Date= document.getElementById("add_Date") ? document.getElementById("add_Date").innerText: null;
-	const upd_User_Id= document.getElementById("upd_Shain_Uid") ? document.getElementById("upd_Shain_Uid").innerText : null;
-	const upd_Date= document.getElementById("upd_Date") ? document.getElementById("upd_Date").innerText : null;
+	const add_User_Id= shainUid;
+	const add_Date= today;
+	const upd_User_Id= shainUid;
+	const upd_Date= today;
 			
 	 const data = {
 			 shinseiFuzuiShoruiDTO : {
@@ -189,7 +192,6 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 					 fileUid2: file_Uid2,
 					 fileUid3: file_Uid3,
 					 fileUid4: file_Uid4,
-					 fileUid5: file_Uid5,
 					 menkyoYukoKigen: menkyo_Yuko_Kigen,
 					 menkyoNo: menkyo_No,
 				     shashu: shashu,
@@ -260,6 +262,9 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 			body : JSON.stringify(data)
 	})
 	.then(response => { 
+		if (!response.ok) {            // 200~299가 아니면 에러로 처리
+			throw new Error('HTTP error! status: ' + response.status);
+		}
 	    return response.text(); 
 	})
 	.then(data => {
