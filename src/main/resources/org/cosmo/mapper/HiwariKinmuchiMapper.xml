@@ -83,8 +83,7 @@
 		TRIM(s.DB_ADDRESS_2) AS fullAddress,
 
 		s.ZIP_CD AS genZip,
-		s.ADDRESS_1 AS
-		genAddress1,
+		s.ADDRESS_1 AS genAddress1,
 		s.ADDRESS_2 AS genAddress2,
 		s.ADDRESS_3 AS genAddress3
 		FROM
@@ -122,8 +121,7 @@
 		-- この住所を反映 用
 		s.DB_ZIP_CD AS dbZip,
 		s.DB_ADDRESS_1 AS dbAddress1,
-		s.DB_ADDRESS_2 AS
-		dbAddress2
+		s.DB_ADDRESS_2 AS dbAddress2
 
 		FROM SHAIN s
 		LEFT JOIN SHINSEI sh
