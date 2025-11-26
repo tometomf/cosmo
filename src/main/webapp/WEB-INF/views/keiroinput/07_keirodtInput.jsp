@@ -580,18 +580,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		    // 3. 비교
 		    if (currentRoute !== displayedRoute) {
-		        alert("입력한 경로와 조회된 경로가 일치하지 않습니다.");
+		        alert("入力したパスと照会されたパスが一致しません。");
 		        return;
 		    }
 
 		    if (total1 === 0){
-		        alert("정기권 정보가 없습니다.");
+		        alert("定期券情報がありません。");
 		        return;
 		    }
 		    			    // 4. 여기까지 왔으면 OK → 다음 로직
 
 		    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
-		    alert("경로가 일치합니다. 다음 단계로 진행합니다.");
+		    alert("パスが一致します。 次のステップに進みます。");
 		    const jsonString = buildCommuteJson();
             if (!jsonString) return;
 
