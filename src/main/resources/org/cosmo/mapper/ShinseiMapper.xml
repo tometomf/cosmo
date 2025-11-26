@@ -616,7 +616,8 @@
 		keiro.TSUKI_SHIKYU_KIN AS kingakuMonth,
 		keiro.YURYO_DAI_MAE AS
 		yuryodouroMonth,
-		uf.TITLE AS fuzuiFileTitle,
+		uf.TITLE      AS fuzuiFileTitle,
+        uf_etc.TITLE  AS etcFileTitle,
 		TO_DATE(fuzui.HOKEN_MANRYO_YMD, 'YYYYMMDD') AS hokenManryoDate,
 		fuzui.TAIJIN_BAISHO AS taijinBaisho,
 		fuzui.TAIBUTSU_BAISHO AS
@@ -664,8 +665,15 @@
 		ON fuzui.KIGYO_CD = s.KIGYO_CD
 		AND fuzui.SHINSEI_NO = s.SHINSEI_NO
 		AND fuzui.KEIRO_SEQ = keiro.KEIRO_SEQ
+
+		LEFT JOIN UPLOAD_FILE uf
+		ON
+		uf.FILE_UID = fuzui.FILE_UID_1
+
 		LEFT JOIN UPLOAD_FILE uf_etc
-		ON uf_etc.FILE_UID = s.ETC_FILE_UID_1
+		ON
+		uf_etc.FILE_UID = s.ETC_FILE_UID_1
+
 		WHERE s.KIGYO_CD = #{kigyoCd}
 		AND
 		s.SHINSEI_NO = #{shinseiNo}
@@ -798,7 +806,6 @@
 		FROM
 		SHINSEI
 		WHERE
-		-- 복합 기본 키를 사용하여 특정 신청 건을 조회하는 조건 예시
 		KIGYO_CD = #{kigyoCd}
 		AND SHINSEI_NO
 		= #{shinseiNo}

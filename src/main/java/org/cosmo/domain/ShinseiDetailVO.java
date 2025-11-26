@@ -54,4 +54,6 @@ public class ShinseiDetailVO {
 	private Date tennyuDate; // 転入日
 	private Date kaishiDate; // 開始日
 
+	private String etcFileTitle;  
+
 }
