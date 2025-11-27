@@ -12,6 +12,19 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
 <style>
+
+.route-actions a {
+    display: inline-flex;        /* 아이콘 + 텍스트를 하나의 flex 박스로 */
+    align-items: center;         /* 수직 가운데 정렬 */
+    gap: 4px;                    /* 아이콘-텍스트 간격 */
+}
+
+.route-actions img {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;      /* 혹시 모를 baseline 문제 제거 */
+}
+
 .page-width {
 	width: 950px;
 	margin: 0 auto;
@@ -243,12 +256,12 @@
 									<span class="route-label">経路${maruDigits[st.index + 1]}</span>
 
 									<div class="route-actions">
-										<a href="${editUrl}">変更する</a>
-										<span>｜</span>
-										<a href="${deleteUrl}"
-										   onclick="return confirm('この経路を削除しますか？');">
-											削除する
-										</a>
+										<a href="${editUrl}" class="route-edit-link">
+    									<img src="/resources/img/pencil_icon.gif"> 変更する</a>
+    									<span>｜</span>
+										  <a href="${deleteUrl}" class="route-delete-link"
+     										  onclick="return confirm('この経路を削除しますか？');">
+      										  <img src="/resources/img/clear_icon.gif"> 削除する </a>
 									</div>
 								</div>
 
@@ -282,13 +295,6 @@
 							</div>
 
 						</c:forEach>
-
-						<div style="margin-top:10px; text-align:right;">
-							<a href="${keiroInputUrl}" class="route-add">
-								<img src="/resources/img/tuika_icon.gif" alt="追加">
-								追加する
-							</a>
-						</div>
 
 					</c:otherwise>
 
