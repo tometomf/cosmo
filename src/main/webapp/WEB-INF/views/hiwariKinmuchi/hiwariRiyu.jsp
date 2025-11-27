@@ -99,6 +99,18 @@ button {
 .button_Left_Group img:hover {
 	opacity: 0.85;
 }
+
+.periodBox {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.periodInputs {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
 </style>
 </head>
 
@@ -133,31 +145,43 @@ button {
 					<c:set var="start" value="${initData.shinseigigan1}" />
 					<c:set var="end" value="${initData.shinseigigan2}" />
 
-					<div class="form_Text1">
-						<div class="form_Column">申請期間</div>
-						<div class="form_Normal">
+					<c:set var="start" value="${initData.shinseigigan1}" />
+<c:set var="end" value="${initData.shinseigigan2}" />
 
-							<!-- 시작일 -->
-							<input type="text" id="startDate" name="periodFrom"
-								value="<c:if test='${not empty start}'>
-                        ${fn:substring(start,0,4)}/${fn:substring(start,4,6)}/${fn:substring(start,6,8)}
-                      </c:if>"
-								style="width: 140px;"> <img
-								src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+<c:set var="start" value="${initData.shinseigigan1}" />
+<c:set var="end" value="${initData.shinseigigan2}" />
 
-							<span>〜</span>
+<div class="form_Text1">
+    <div class="form_Column">申請期間</div>
+    <div class="form_Normal">
 
-							<!-- 종료일 -->
-							<input type="text" id="endDate" name="periodTo"
-								value="<c:if test='${not empty end}'>
-                        ${fn:substring(end,0,4)}/${fn:substring(end,4,6)}/${fn:substring(end,6,8)}
-                      </c:if>"
-								style="width: 140px;"> <img
-								src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+        <!-- 시작일 -->
+        <c:set var="startFmt" value="" />
+        <c:if test="${not empty start}">
+            <c:set var="startFmt"
+                value="${fn:substring(start,0,4)}/${fn:substring(start,4,6)}/${fn:substring(start,6,8)}" />
+        </c:if>
 
-							<span id="periodDays" style="margin-left: 10px;"></span>
-						</div>
-					</div>
+        <input type="text" id="startDate" name="periodFrom"
+               value="${startFmt}" style="width:140px;">
+        <img src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+
+        <span>〜</span>
+
+        <!-- 종료일 -->
+        <c:set var="endFmt" value="" />
+        <c:if test="${not empty end}">
+            <c:set var="endFmt"
+                value="${fn:substring(end,0,4)}/${fn:substring(end,4,6)}/${fn:substring(end,6,8)}" />
+        </c:if>
+
+        <input type="text" id="endDate" name="periodTo"
+               value="${endFmt}" style="width:140px;">
+        <img src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+
+        <span id="periodDays" style="margin-left: 10px;"></span>
+    </div>
+</div>
 
 					<div class="form_Text1">
 						<div class="form_Column">出勤日数</div>
@@ -196,29 +220,27 @@ button {
 	</form>
 
 	<script>
-		$(function() {
-			$("#startDate, #endDate").datepicker({
-				dateFormat : 'yy/mm/dd',
-				showButtonPanel : true,
-				changeMonth : true,
-				changeYear : true
-			});
+	$(function () {
 
-			$(".calendar-icon")
-					.each(
-							function(index) {
-								$(this)
-										.on(
-												"click",
-												function() {
-													$(
-															"#"
-																	+ (index === 0 ? "startDate"
-																			: "endDate"))
-															.datepicker("show");
-												});
-							});
-		});
+	    $("#startDate, #endDate").each(function () {
+	        const val = $(this).val();   // JSP 데이터 값 (예: 2025/04/01)
+
+	        $(this).datepicker({
+	            dateFormat : 'yy/mm/dd',
+	            showButtonPanel : true,
+	            changeMonth : true,
+	            changeYear : true,
+	            defaultDate: val ? val : null   // ★ 서버 날짜 기준으로 달력 열기
+	        });
+	    });
+
+	    // 달력 아이콘 클릭 핸들러
+	    $(".calendar-icon").each(function (index) {
+	        $(this).on("click", function () {
+	            $("#" + (index === 0 ? "startDate" : "endDate")).datepicker("show");
+	        });
+	    });
+	});
 
 		function validateReason() {
 			const reason = document.querySelector("textarea[name='reason']").value
