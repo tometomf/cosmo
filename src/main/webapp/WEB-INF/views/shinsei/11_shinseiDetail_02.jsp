@@ -104,17 +104,17 @@
 			<div class="content_Form2">
 				<div class="form_Title2">
 					<div>経路&#${9311 + (empty view.keiroSeq ? 0 : view.keiroSeq)};</div>
+				</div>
+				<c:choose>
+					<c:when test="${view.tsukinShudan eq '1' }">
 
-					<c:choose>
-						<c:when test="${view.tsukinShudan eq '1' }">
-				</div>
-				<div class="form_Text1" id="form_Text2">
-					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty view ? ichiji.keiro.shudanName : view.shudanName}</div>
-				</div>
+						<div class="form_Text1" id="form_Text2">
+							<div class="form_Column">通勤手段</div>
+							<div class="form_Normal">${empty view ? ichiji.keiro.shudanName : view.shudanName}</div>
+						</div>
+					</c:when>
+				</c:choose>
 			</div>
-			</c:when>
-			</c:choose>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
