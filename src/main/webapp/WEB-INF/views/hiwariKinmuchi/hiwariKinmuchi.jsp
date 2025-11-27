@@ -176,7 +176,7 @@ p {
 	    <input type="hidden" name="commuteJson" value="">
 	    
 	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
-	    <input type="hidden" name="actionUrl" value="">
+	    <input type="hidden" name="actionUrl" value="/hiwariKinmuchi/hiwariKinmuchi">
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
@@ -396,7 +396,14 @@ document.addEventListener("DOMContentLoaded", function() {
       }
       
     
-      ichijiHozon.genAddress1 = "123123";
+      ichijiHozon.genShozoku = "${initData.genKinmusakiCd}";
+      ichijiHozon.newShozoku = "${initData.hiwariKinmusakiCd}";
+      ichijiHozon.genKinmuchi1 = "${initData.genKinmuAddress1}";
+      ichijiHozon.genKinmuchi2 = "${initData.genKinmuAddress2}";
+      ichijiHozon.genKinmuchi3 = "${initData.genKinmuAddress3}";
+      ichijiHozon.newKinmuchi1 = "${initData.hiwariKinmuAddress1}";
+      ichijiHozon.newKinmuchi2 = "${initData.hiwariKinmuAddress2}";
+      ichijiHozon.newKinmuchi3 = "${initData.hiwariKinmuAddress3}";
       return JSON.stringify(ichijiHozon);
   }
 
