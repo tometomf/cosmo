@@ -114,8 +114,8 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty file_Uid_1}"><a href="#">表示</a></c:if></div>
-					<div class = "form_Normal henkou1"><input type="text" name="file_Uid_1" id="file-name-display1" readonly>　<input type="file" id="file1" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file1">　<input type="button" value="アップロード" class="upload-btn"></div>
+					<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_4}"><a href="/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_1}">表示</a></c:if></div>
+					<div class = "form_Normal henkou1"><input type="text" name="file_Uid_4" id="file-name-display1" readonly>　<input type="file" id="file1" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file1">　<input type="button" value="アップロード" class="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">免許証有効期限</div>
@@ -144,8 +144,8 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">車検証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty file_Uid_2}"><a href="#">表示</a></c:if></div>
-					<div class = "form_Normal henkou2"><input type="text" name="file_Uid_2"  id="file-name-display2" readonly>　<input type="file" id="file2" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file2">　<input type="button" value="アップロード" class="upload-btn"></div>
+					<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_5}"><a href="#">表示</a></c:if></div>
+					<div class = "form_Normal henkou2"><input type="text" name="file_Uid_5"  id="file-name-display2" readonly>　<input type="file" id="file2" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file2">　<input type="button" value="アップロード" class="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class = "form_Column">車種</div>
@@ -194,13 +194,13 @@ input[type="file"] {
 					</div>
 					<div class="form_Text1" id="form_Text1" style="border:solid 1px #a0a0a0; border-bottom:none;">
 						<div class="form_Column">保険証券コピー（期間）</div>
-						<div class = "form_Normal"><c:if test="${not empty file_Uid_3}"><a href="#">表示</a></c:if></div>
-						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_3"  id="file-name-display3" readonly>　<input type="file" id="file3" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file3">　<input type="button" value="アップロード" class="upload-btn"></div>
+						<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_6}"><a href="#">表示</a></c:if></div>
+						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_6"  id="file-name-display3" readonly>　<input type="file" id="file3" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file3">　<input type="button" value="アップロード" class="upload-btn"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column">保険証券コピー（賠償内容）</div>
-						<div class = "form_Normal"><c:if test="${not empty file_Uid_4}"><a href="#">表示</a></c:if></div>
-						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_4"  id="file-name-display4" readonly>　<input type="file" id="file4" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file4">　<input type="button" value="アップロード" class="upload-btn"></div>
+						<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_7}"><a href="#">表示</a></c:if></div>
+						<div class = "form_Normal henkou3"><input type="text" name="file_Uid_7"  id="file-name-display4" readonly>　<input type="file" id="file4" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file4">　<input type="button" value="アップロード" class="upload-btn"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column" style="">保険満了日</div>
@@ -245,7 +245,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_1}"> <input type="button" value="参照"> <input type="button" value="アップロード">
+				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_1}" name="etc_File_Uid_1"  id="file-name-display5" readonly><input type="file" id="file5" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file5"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" value="${shainHuzuiShorui.etc_Comment_1}">
@@ -256,7 +256,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_2}"> <input type="button" value="参照"> <input type="button" value="アップロード">
+				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_2}" name="etc_File_Uid_2"  id="file-name-display6" readonly><input type="file" id="file6" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file6"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" value="${shainHuzuiShorui.etc_Comment_2}">
@@ -267,7 +267,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_3}"> <input type="button" value="参照"> <input type="button" value="アップロード">
+				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_3}" name="etc_File_Uid_3"  id="file-name-display7" readonly><input type="file" id="file7" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file7"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" value="${shainHuzuiShorui.etc_Comment_3}">
@@ -277,7 +277,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_4}"> <input type="button" value="参照"> <input type="button" value="アップロード">
+				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_4}" name="etc_File_Uid_4"  id="file-name-display8" readonly><input type="file" id="file8" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file8"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" value="${shainHuzuiShorui.etc_Comment_4}">
@@ -287,7 +287,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_5}"> <input type="button" value="参照"> <input type="button" value="アップロード">
+				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_5}" name="etc_File_Uid_5"  id="file-name-display9" readonly> <input type="file" id="file9" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file9"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" value="${shainHuzuiShorui.etc_Comment_5}">
@@ -446,8 +446,8 @@ input[type="file"] {
 		    	 const fileInputId = button.dataset.target;
 		         const fileInput = document.getElementById(fileInputId);
 		         const fileNameDisplay = document.getElementById("file-name-display" + fileInputId.slice(-1));
-
 		         // 버튼 클릭 시 숨겨진 input 클릭
+		         
 		         button.addEventListener("click", function(event) {
 		             event.preventDefault();
 		             fileInput.click();
@@ -469,21 +469,23 @@ input[type="file"] {
 			
 		
 			button.addEventListener("click", function(){
-				const container = button.closest(".form_Normal"); // 같은 div 안
+				const container = button.closest(".form_Normal") ? button.closest(".form_Normal"): button.closest(".input_form"); // 같은 div 안
+				console.log(container);
 		        const fileInput = container.querySelector("input[type='file']");
-		        const wrapper = button.closest(".form_Text1"); 
-		        
+		        const fileName = container.querySelector("input[type='text']");
+		        const fileNameUp = fileName.name.toUpperCase();
+		        const wrapper = button.closest(".form_Text1") ? button.closest(".form_Text1") : container; 
 		        // ⭐ 2. 텍스트를 포함하는 요소(.form_Column)를 찾습니다.
-		        const textElement = wrapper.querySelector(".form_Column");
-		        console.log(textElement);
+		        const textElement = wrapper.querySelector(".form_Column") ? wrapper.querySelector(".form_Column") : wrapper.querySelector(".item_head");
+		       
 		        const fileDescription = textElement.textContent.trim();
 		        const file = fileInput.files[0];
 		        if (!file) { alert("ファイルを選択してください"); return; }
-		    
 		    if(file){
 		        var formData = new FormData();
 		        formData.append("file", file);
 		        formData.append("fileNo", fileDescription);
+		        formData.append("fileName", fileNameUp);
 		        
 		        fetch('/huzuiNewInput/upload', {
 		            method : 'POST',

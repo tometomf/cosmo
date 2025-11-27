@@ -2,12 +2,15 @@ package org.cosmo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Random;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.FuzuiRequestWrapperDTO;
@@ -59,12 +62,12 @@ public class HuzuiNewInputController {
 	
 	//김민수
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
-	public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file, String fileNo, HttpSession session) {
+	public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file, String fileNo,@RequestParam("fileName") String fNo, HttpSession session) {
+		
 	    if(!file.isEmpty()) {
 	        try {
 	            ShainVO shain = (ShainVO) session.getAttribute("shain");
 	            if(shain != null) {
-	                
 	                // ⭐ 1. 파일이 저장될 디렉토리 경로 정의 (C:/cosmo/upload/files) ⭐
 	                String uploadPath = "C:/cosmo/upload/files"; // 안전한 절대 경로 (슬래시 사용)
 
@@ -94,29 +97,41 @@ public class HuzuiNewInputController {
 		           	 Timestamp timestamp = Timestamp.valueOf(dateTimeString);
 		           	 
 	                UploadFileDTO UploadFile = new UploadFileDTO();
-	                Long uniqueId = System.currentTimeMillis();
+	                Random rand = new Random();
+	                StringBuilder sb = new StringBuilder();
+
+	                // 첫 자리 1~9 (0으로 시작하면 18자리 안됨)
+	                sb.append(rand.nextInt(9) + 1);
+
+	                // 나머지 17자리 0~9
+	                for (int i = 0; i < 17; i++) {
+	                    sb.append(rand.nextInt(10));
+	                }
+
+	                // 문자열을 long으로 변환
+	                Long positiveLong = Long.parseLong(sb.toString());
+	                Long fileUid = positiveLong;
 	                
 	                UploadFile.setTitle(fileNo);
 	                UploadFile.setName(file.getOriginalFilename());
 	                UploadFile.setContentType(file.getContentType());
 	                UploadFile.setData(file.getBytes());
-	                UploadFile.setFileUid(uniqueId);
+	                UploadFile.setFileUid(fileUid);
 	                UploadFile.setAddDate(timestamp);
 	                UploadFile.setUpdDate(timestamp);
 	                // ⭐ 3. 최종 파일 이름을 만듭니다. ⭐
-	                String savedFileName = uniqueId + "-" + file.getOriginalFilename();
+	                String savedFileName = positiveLong + "-" + file.getOriginalFilename();
 	               
 	               
 	                // ⭐ 4. 파일을 저장할 최종 File 객체를 생성합니다. ⭐
 	                // File destination = new File(uploadPath, savedFileName);
 	                // 위 코드는 아래와 동일합니다. 
 	                File destination = new File(uploadPath + File.separator + savedFileName);
-	                
+	                fNo.toUpperCase();
 	                // 5. 파일 저장
 	                file.transferTo(destination);
-	                System.out.println("UploadFile" + UploadFile);
-	                huzuiNewInputService.addFile(UploadFile, shain);
-	                return ResponseEntity.ok(Collections.singletonMap("uid", uniqueId));
+	                huzuiNewInputService.addFile(UploadFile, fNo,shain);
+	                return ResponseEntity.ok(Collections.singletonMap("uid", positiveLong));
 	            } else {
 	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사원 정보가 없습니다.");
 	            }
@@ -154,6 +169,45 @@ public class HuzuiNewInputController {
 		
 		return "/huzuiNewInput/25_huzuiUpdate";
 	}
+	
+	
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+	public void downloadFile(@RequestParam("fileUid") Long fileUid, HttpServletResponse response) {
+
+	    // 1. Service를 통해 DB에서 파일 정보 (BLOB 데이터, 원본 파일명, MIME 타입) 조회
+	    // 예: FileVO fileData = fileDownloadService.getFileData(fileId);
+	    
+	    // 가정된 데이터
+	    String originalFilename = "첨부_서류_원본.pdf";
+	    //byte[] fileBytes = /* DB에서 읽어온 BLOB 데이터 */; 
+	    
+	    try {
+	        // 2. HTTP 헤더 설정 (가장 중요)
+	        
+	        // 파일명 인코딩 (한글 깨짐 방지)
+	        String encodedFilename = new String(originalFilename.getBytes("UTF-8"), "ISO-8859-1");
+
+	        // 다운로드 유도 헤더 설정
+	        response.setContentType("application/octet-stream"); // 또는 fileData.getMimeType()
+	        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
+	        response.setHeader("Content-Transfer-Encoding", "binary");
+	        
+	        // 파일 크기 설정 (선택 사항이지만 권장)
+	        //response.setContentLength(fileBytes.length); 
+
+	        // 3. 데이터 전송
+	        OutputStream out = response.getOutputStream();
+	       // out.write(fileBytes);
+	        out.flush();
+	        out.close();
+
+	    } catch (Exception e) {
+	        // 에러 처리 (예: 파일이 DB에 없는 경우, IOException 등)
+	        e.printStackTrace(); 
+	    }
+	}
+	
+	
 	
 	//김민수
 	@PostMapping(value= "/shinseiFuzuiShorui")
@@ -262,12 +316,6 @@ public class HuzuiNewInputController {
 
         	 // Timestamp 객체로 변환
         	 Timestamp timestamp = Timestamp.valueOf(dateTimeString);
-
-        	 
-             //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
-             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-             String formattoDay = today1.format(format);
              
              LocalTime nowTime = LocalTime.now();
              
