@@ -10,19 +10,33 @@ public class ShinseiKeiroVO {
 	private String kigyoCd;
 	private String shinseiNo;
 	private String keiroSeq;
+
+	private String shinseiKbn;
+	private String shinseiYmd;
 	private String tsukinShudan;
-	private Long katamichi;
-	private Long jitsu;
-	private Long tsuki;
+
 	private BigDecimal shinseiKm;
+	private Long tsuki;
+	private String firstShikyuYmd;
 
 	private String startPlace;
 	private String endPlace;
+	private String viaPlace1;
+	private String viaPlace2;
+	private String viaPlace3;
+	private String viaPlace4;
+	private String viaPlace5;
+	
+	private Long katamichi;
+	private Long jitsu;
+    private Integer firstTeikiTsukiSu;
+    private Integer nextTeikiTsukiSu;
 
+    private String idoShudanEtcNm;
+	private String busCorpNm;
+    private Integer sanshoTeikiKin1;
 
 	private String shudanName;
-	
-	
 
 	public Long getYuryo() {
 
@@ -32,7 +46,6 @@ public class ShinseiKeiroVO {
 		return safeKatamichi * (safeJitsu * 2);
 	}
 
-	// 임시저장 데이터에서 null 발생 방지
 	public Long getTsuki() {
 		return tsuki == null ? 0L : tsuki;
 	}
@@ -40,7 +53,7 @@ public class ShinseiKeiroVO {
 	public BigDecimal getShinseiKm() {
 		return shinseiKm == null ? BigDecimal.ZERO : shinseiKm;
 	}
-	
+
 	public Long getTotal() {
 		return getTsuki() + getYuryo();
 	}

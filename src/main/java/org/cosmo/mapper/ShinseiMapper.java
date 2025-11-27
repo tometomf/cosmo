@@ -12,6 +12,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 
 @Mapper
 public interface ShinseiMapper {
@@ -23,7 +24,11 @@ public interface ShinseiMapper {
 
 	String getShainUidByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
+	ShinseiViewDTO getShinseiView(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
+	
+	Long getKigyoCdByShinseiNo(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") Long shinseiNo);
 

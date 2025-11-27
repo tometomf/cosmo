@@ -104,12 +104,115 @@
 		AND KEIRO_SEQ = 1
 	</select>
 
+	<select id="getShinseiView" parameterType="map"
+		resultType="org.cosmo.domain.ShinseiViewDTO">
+
+		SELECT
+		a.KIGYO_CD AS kigyoCd,
+		a.SHINSEI_NO AS shinseiNo,
+		a.SHINSEI_YMD AS shinseiYmd,
+		a.SHINSEI_KBN AS shinseiKbn,
+		a.SHINCHOKU_KBN AS shinchokuKbn,
+
+		a.GEN_ADDRESS_1 AS genAddress1,
+		a.GEN_ADDRESS_2 AS genAddress2,
+		a.GEN_ADDRESS_3 AS genAddress3,
+		a.NEW_ADDRESS_1 AS newAddress1,
+		a.NEW_ADDRESS_2 AS newAddress2,
+		a.NEW_ADDRESS_3 AS newAddress3,
+
+		a.GEN_SHOZOKU_CD AS genShozoku,
+		a.NEW_SHOZOKU_CD AS newShozoku,
+
+		a.GEN_KINMU_ADDRESS_1 AS genKinmuchi1,
+		a.GEN_KINMU_ADDRESS_2 AS genKinmuchi2,
+		a.GEN_KINMU_ADDRESS_3 AS genKinmuchi3,
+		a.NEW_KINMU_ADDRESS_1 AS newKinmuchi1,
+		a.NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
+		a.NEW_KINMU_ADDRESS_3 AS newKinmuchi3,
+		a.SHINSEI_RIYU AS riyu,
+		a.IDO_YMD AS idoYmd,
+		a.ITEN_YMD AS itenYmd,
+		a.TENNYU_YMD AS tennyuYmd,
+		a.RIYO_START_YMD AS
+		riyoStartYmd,
+		a.SHINSEI_YMD AS shinseiYmd,
+		a.SASHIMODOSHI_YMD AS ssmdsYmd,
+		a.MOSHIOKURI_COMMENT AS moComment,
+
+		b.KEIRO_SEQ AS keiroSeq,
+		b.TSUKIN_SHUDAN_KBN AS tsukinShudan,
+		b.SHINSEI_KM AS shinseiKm,
+		b.TSUKI_SHIKYU_KIN AS tsuki,
+		b.FIRST_SHIKYU_YMD AS firstShikyuYmd,
+		b.START_PLACE AS startPlace,
+		b.END_PLACE AS endPlace,
+		b.VIA_PLACE_1 AS viaPlace1,
+		b.VIA_PLACE_2 AS viaPlace2,
+		b.VIA_PLACE_3 AS viaPlace3,
+		b.VIA_PLACE_4 AS viaPlace4,
+		b.VIA_PLACE_5 AS viaPlace5,
+		b.KATAMICHI_KIN AS katamichi,
+		b.JITSU_KINMU_NISSU AS jitsu,
+		b.FIRST_TEIKI_TSUKI_SU AS firstTeikiTsukiSu,
+		b.NEXT_TEIKI_TSUKI_SU AS nextTeikiTsukiSu,
+		b.IDO_SHUDAN_ETC_NM AS idoShudanEtcNm,
+		b.BUS_CORP_NM AS busCorpNm,
+		b.SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
+
+		c.FILE_UID_1 AS fileUid1,
+		c.HOKEN_MANRYO_YMD AS manryoYmd,
+		c.TAIJIN_BAISHO AS taijin,
+		c.TAIBUTSU_BAISHO AS taibutsu,
+		c.JINSHIN_SHOGAI AS jinshin,
+		c.TOJOSHA_SHOGAI AS tojosha,
+		c.TOKYU AS tokyu,
+
+		d.CODE_NM AS shinseiName,
+		e.CODE_NM AS codeNm,
+		f.CODE_NM AS shudanName
+
+		FROM SHINSEI a
+
+		LEFT JOIN SHINSEI_START_KEIRO b
+		ON a.KIGYO_CD = b.KIGYO_CD
+		AND a.SHINSEI_NO = b.SHINSEI_NO
+
+		LEFT JOIN SHINSEI_FUZUI_SHORUI c
+		ON a.KIGYO_CD = c.KIGYO_CD
+		AND a.SHINSEI_NO = c.SHINSEI_NO
+
+		INNER JOIN CODE d
+		ON d.CODE_SYBTSU = '101'
+		AND d.CODE = a.SHINSEI_KBN
+
+		INNER JOIN CODE e
+		ON e.CODE_SYBTSU = '102'
+		AND e.CODE = a.SHINCHOKU_KBN
+
+		INNER JOIN CODE f
+		ON f.CODE_SYBTSU = '103'
+		AND f.CODE = b.TSUKIN_SHUDAN_KBN
+
+		WHERE a.KIGYO_CD = #{kigyoCd}
+		AND a.SHINSEI_NO = #{shinseiNo}
+
+	</select>
+
 	<select id="getShainUidByShinseiNo" parameterType="String"
 		resultType="String">
 		SELECT SHAIN_UID
 		FROM SHINSEI
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
+
+	<select id="getKigyoCdByShinseiNo" parameterType="Long"
+		resultType="Long">
+		SELECT KIGYO_CD
+		FROM SHINSEI
+		WHERE SHINSEI_NO = #{shinseiNo}
+	</select>
+
 
 	<select id="getShainByUid" parameterType="String"
 		resultType="org.cosmo.domain.ShainVO">
@@ -959,33 +1062,35 @@
 
 
 	<insert id="insertSaishinseiProcessLog">
-    INSERT INTO PROCESS_LOG (
-        PROCESS_TIMESTAMP,
-        SUBSYSTEM_ID,
-        PROCESS_COL,
-        KEY1,
-        KEY2,
-        KEY3,
-        KEY4,
-        KEY5,
-        DATA,
-        USER_UID,
-        USER_TRACK
-    )
-    VALUES (
-        SYSTIMESTAMP,
-        #{subsystemId, jdbcType=VARCHAR},
-        #{process,     jdbcType=VARCHAR},
-        #{key1,        jdbcType=VARCHAR},
-        #{key2,        jdbcType=VARCHAR},
-        #{key3,        jdbcType=VARCHAR},
-        #{key4,        jdbcType=VARCHAR},
-        #{key5,        jdbcType=VARCHAR},
-        #{data,        jdbcType=VARCHAR},
-        #{userUid,     jdbcType=VARCHAR},
-        #{userTrack,   jdbcType=VARCHAR}
-    )
-</insert>
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		KEY5,
+		DATA,
+		USER_UID,
+		USER_TRACK
+		)
+		VALUES (
+		SYSTIMESTAMP,
+		#{subsystemId, jdbcType=VARCHAR},
+		#{process, jdbcType=VARCHAR},
+		#{key1, jdbcType=VARCHAR},
+		#{key2,
+		jdbcType=VARCHAR},
+		#{key3, jdbcType=VARCHAR},
+		#{key4, jdbcType=VARCHAR},
+		#{key5, jdbcType=VARCHAR},
+		#{data, jdbcType=VARCHAR},
+		#{userUid,
+		jdbcType=VARCHAR},
+		#{userTrack, jdbcType=VARCHAR}
+		)
+	</insert>
 
 
 

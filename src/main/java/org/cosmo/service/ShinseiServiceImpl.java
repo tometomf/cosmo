@@ -13,6 +13,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 import org.cosmo.mapper.ShinseiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,11 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public ShinseiKeiroVO getShinseiKeiro(Long shinseiNo) {
 		return shinseiMapper.getShinseiKeiro(shinseiNo);
 	}
+	
+	@Override
+	public ShinseiViewDTO getShinseiView(Long kigyoCd, Long shinseiNo) {
+	    return shinseiMapper.getShinseiView(kigyoCd, shinseiNo);
+	}
 
 	@Override
 	public ShinseiIcHozonVO getIchijiHozon(String hozonUid) {
@@ -47,6 +53,12 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public String getShainUidByShinseiNo(String shinseiNo) {
 		return shinseiMapper.getShainUidByShinseiNo(shinseiNo);
 	}
+	
+	@Override
+	public Long getKigyoCdByShinseiNo(Long shinseiNo) {
+	    return shinseiMapper.getKigyoCdByShinseiNo(shinseiNo);
+	}
+
 
 	@Override
 	public ShainVO getShainByUid(String shainUid) {

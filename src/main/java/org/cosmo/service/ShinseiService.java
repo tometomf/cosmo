@@ -1,6 +1,7 @@
 package org.cosmo.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
@@ -10,6 +11,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 import org.springframework.ui.Model;
 
 public interface ShinseiService {
@@ -20,6 +22,10 @@ public interface ShinseiService {
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
 	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
+	
+	ShinseiViewDTO getShinseiView(Long kigyoCd, Long shinseiNo);
+
+	Long getKigyoCdByShinseiNo(Long shinseiNo);
 
 	String getShainUidByShinseiNo(String shinseiNo);
 

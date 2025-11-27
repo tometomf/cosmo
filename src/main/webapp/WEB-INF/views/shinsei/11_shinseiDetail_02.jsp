@@ -45,12 +45,12 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">状況</div>
-					<div>${empty jyohou? '一時保存中' : jyohou.codeNm}</div>
+					<div>${empty view? '一時保存中' : view.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">一時保存日</div>
-					<div>${empty jyohou? hozon.addDate : jyohou.shinseiYmd}</div>
+					<div>${empty view? hozon.addDate : view.shinseiYmd}</div>
 				</div>
 			</div>
 
@@ -63,9 +63,9 @@
 				</div>
 				<div class="button_Side_Group">
 					<c:choose>
-						<c:when test="${not empty jyohou and not empty jyohou.shinseiNo}">
+						<c:when test="${not empty view and not empty view.shinseiNo}">
 							<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
-								onclick="location.href='/shinsei/torikesu?no=${jyohou.shinseiNo}'">
+								onclick="location.href='/shinsei/torikesu?no=${view.shinseiNo}'">
 						</c:when>
 						<c:otherwise>
 							<img src="/resources/img/shinsei_btn02.gif" alt="shinsei_btn02"
@@ -85,50 +85,55 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.genAddress : jyohou.genAddress}</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.newAddress : jyohou.newAddress}</div>
+					<div class="form_Normal">${empty view ? ichiji.genAddress : view.genAddress}</div>
+					<div class="form_Normal">${empty view ? ichiji.newAddress : view.newAddress}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.genShozoku : jyohou.genShozoku}</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.newShozoku : jyohou.newShozoku}</div>
+					<div class="form_Normal">${empty view ? ichiji.genShozoku : view.genShozoku}</div>
+					<div class="form_Normal">${empty view ? ichiji.newShozoku : view.newShozoku}</div>
 
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.genKinmuchi : jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.newKinmuchi : jyohou.newKinmuchi}</div>
+					<div class="form_Normal">${empty view ? ichiji.genKinmuchi : view.genKinmuchi}</div>
+					<div class="form_Normal">${empty view ? ichiji.newKinmuchi : view.newKinmuchi}</div>
 				</div>
 			</div>
 
 			<div class="content_Form2">
 				<div class="form_Title2">
-					<div>経路①</div>
+					<div>経路&#${9311 + (empty view.keiroSeq ? 0 : view.keiroSeq)};</div>
+
+					<c:choose>
+						<c:when test="${view.tsukinShudan eq '1' }">
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">通勤手段</div>
-					<div class="form_Normal">${empty keiro ? ichiji.keiro.shudanName : keiro.shudanName}</div>
+					<div class="form_Normal">${empty view ? ichiji.keiro.shudanName : view.shudanName}</div>
 				</div>
 			</div>
+			</c:when>
+			</c:choose>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.shinseiName : jyohou.shinseiName}</div>
+					<div class="form_Normal">${empty view ? ichiji.shinseiName : view.shinseiName}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.riyu : jyohou.riyu}</div>
+					<div class="form_Normal">${empty view ? ichiji.riyu : view.riyu}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移転日</div>
 					<div class="form_Normal">
 						<c:set var="ido"
-							value="${empty jyohou ? ichiji.idoYmd  : jyohou.idoYmd}" />
+							value="${empty view ? ichiji.idoYmd  : view.idoYmd}" />
 						<c:set var="iten"
-							value="${empty jyohou ? ichiji.itenYmd : jyohou.itenYmd}" />
+							value="${empty view ? ichiji.itenYmd : view.itenYmd}" />
 
 						<c:if test="${not empty ido}">${ido}</c:if>
 						<c:if test="${not empty ido and not empty iten}">/</c:if>
@@ -139,12 +144,12 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.tennyuYmd : jyohou.tennyuYmd}</div>
+					<div class="form_Normal">${empty view ? ichiji.tennyuYmd : view.tennyuYmd}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal">${empty jyohou ? ichiji.riyoStartYmd : jyohou.riyoStartYmd}</div>
+					<div class="form_Normal">${empty view ? ichiji.riyoStartYmd : view.riyoStartYmd}</div>
 				</div>
 			</div>
 
