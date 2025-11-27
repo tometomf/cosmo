@@ -261,7 +261,7 @@
 			</div>
 			<div class="result-box hidden" id="resultBox">
 				<div>
-					<input type="radio" name="result1" value="1" />検索結果
+					<input type="radio" name="result1" value="1" checked/>検索結果
 				</div>
 				<div>
 					<div id="map"></div>

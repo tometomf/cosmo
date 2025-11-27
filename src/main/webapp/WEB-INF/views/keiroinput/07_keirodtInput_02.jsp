@@ -341,8 +341,8 @@ input[type="text"]:disabled {
 	    
 	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
-
-	<script>
+</div>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
     /* 뒤로가기 버튼 */
     const btnBack = document.getElementById('btnBack');
