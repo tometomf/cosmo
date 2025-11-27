@@ -175,6 +175,10 @@ public class HiwariKinmuchiController {
 
 	    // ③ ★★ SHINSEI_START_KEIRO 원본 값(HiwariKeiroVO) 추가 ★★
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    
+	    System.out.println("[DEBUG] /kakunin keiroList size = "
+	    	    + (keiroList == null ? "null" : keiroList.size()));
+	    
 	    if (keiroList == null) {
 	        keiroList = new ArrayList();
 	    }
