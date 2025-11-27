@@ -672,25 +672,31 @@
 								<div class="form_Normal">
 									${empty keiro.startPlace ? '' : keiro.startPlace}
 									<c:if test="${not empty keiro.endPlace}">
-                            → ${keiro.endPlace}
-                        </c:if>
+                → ${keiro.endPlace}
+            </c:if>
 								</div>
 							</div>
 
-							<div class="form_Text1" id="form_Text2">
-								<div class="form_Column">1ヶ月</div>
-								<div class="form_Normal">
-									<c:if test="${keiro.sanshoTeikiKin1 != null}">
-                            ${keiro.sanshoTeikiKin1}円 / ${keiro.sanshoTeikiTsukiSu1}ヶ月
-                        </c:if>
-									<c:if test="${keiro.sanshoTeikiKin2 != null}">
-                            &nbsp; ${keiro.sanshoTeikiKin2}円 / ${keiro.sanshoTeikiTsukiSu2}ヶ月
-                        </c:if>
-									<c:if test="${keiro.sanshoTeikiKin3 != null}">
-                            &nbsp; ${keiro.sanshoTeikiKin3}円 / ${keiro.sanshoTeikiTsukiSu3}ヶ月
-                        </c:if>
+							<c:if test="${keiro.sanshoTeikiKin1 != null}">
+								<div class="form_Text1" id="form_Text2">
+									<div class="form_Column">${keiro.sanshoTeikiTsukiSu1}ヶ月</div>
+									<div class="form_Normal">${keiro.sanshoTeikiKin1}円</div>
 								</div>
-							</div>
+							</c:if>
+
+							<c:if test="${keiro.sanshoTeikiKin2 != null}">
+								<div class="form_Text1" id="form_Text2">
+									<div class="form_Column">${keiro.sanshoTeikiTsukiSu2}ヶ月</div>
+									<div class="form_Normal">${keiro.sanshoTeikiKin2}円</div>
+								</div>
+							</c:if>
+
+							<c:if test="${keiro.sanshoTeikiKin3 != null}">
+								<div class="form_Text1" id="form_Text2">
+									<div class="form_Column">${keiro.sanshoTeikiTsukiSu3}ヶ月</div>
+									<div class="form_Normal">${keiro.sanshoTeikiKin3}円</div>
+								</div>
+							</c:if>
 
 							<div class="form_Text1" id="form_Text2">
 								<div class="form_Column">片道料金</div>
@@ -849,13 +855,13 @@
 								<div class="form_Column">付随書類</div>
 								<div class="form_Normal">
 									<c:choose>
-
 										<c:when test="${not empty shorui.fileUid1}">
-											<a href="/idoconfirm/download?fileUid=${shorui.fileUid1}">定期コピー</a>
+											<a href="/idoconfirm/download?fileUid=${shorui.fileUid1}">
+												${shorui.fileUid1} </a>
 										</c:when>
 										<c:otherwise>
-                        添付なし
-                    </c:otherwise>
+                添付なし
+            </c:otherwise>
 									</c:choose>
 								</div>
 							</div>
@@ -864,26 +870,21 @@
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">初回定期期間</div>
 								<div class="form_Normal">
-									<c:choose>
-										<c:when test="${shorui.firstTeikiKikan == '1'}">1カ月</c:when>
-										<c:when test="${shorui.firstTeikiKikan == '3'}">3カ月</c:when>
-										<c:when test="${shorui.firstTeikiKikan == '6'}">6カ月</c:when>
-										<c:otherwise></c:otherwise>
-									</c:choose>
+									<c:if test="${not empty keiro.firstTeikiKikan}">
+            ${keiro.firstTeikiKikan}ヶ月
+        </c:if>
 								</div>
 							</div>
 
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">次回以降定期期間</div>
 								<div class="form_Normal">
-									<c:choose>
-										<c:when test="${shorui.nextTeikiKikan == '1'}">1カ月</c:when>
-										<c:when test="${shorui.nextTeikiKikan == '3'}">3カ月</c:when>
-										<c:when test="${shorui.nextTeikiKikan == '6'}">6カ月</c:when>
-										<c:otherwise></c:otherwise>
-									</c:choose>
+									<c:if test="${not empty keiro.nextTeikiKikan}">
+            ${keiro.nextTeikiKikan}ヶ月
+        </c:if>
 								</div>
 							</div>
+
 
 						</div>
 					</div>
@@ -943,9 +944,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid1 ? '' : shorui.etcFileUid1}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid1 ? '' : jyohou.etcFileUid1}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;"> ${empty shorui.etcComment1 ? '' : shorui.etcComment1}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment1 ? '' : jyohou.etcComment1}</div>
 				</div>
 			</div>
 
@@ -953,9 +954,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid2 ? '' : shorui.etcFileUid2}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid2 ? '' : jyohou.etcFileUid2}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment2 ? '' : shorui.etcComment2}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment2 ? '' : jyohou.etcComment2}</div>
 				</div>
 			</div>
 
@@ -963,9 +964,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid3 ? '' : shorui.etcFileUid3}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid3 ? '' : jyohou.etcFileUid3}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment3 ? '' : shorui.etcComment3}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment3 ? '' : jyohou.etcComment3}</div>
 				</div>
 			</div>
 
@@ -973,9 +974,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid4 ? '' : shorui.etcFileUid4}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid4 ? '' : jyohou.etcFileUid4}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment4 ? '' : shorui.etcComment4}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment4 ? '' : jyohou.etcComment4}</div>
 				</div>
 			</div>
 
@@ -983,9 +984,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty shorui.etcFileUid5 ? '' : shorui.etcFileUid5}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid5 ? '' : jyohou.etcFileUid5}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty shorui.etcComment5 ? '' : shorui.etcComment5}</div>
+					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment5 ? '' : jyohou.etcComment5}</div>
 				</div>
 			</div>
 
@@ -1041,7 +1042,7 @@
 				<div class="button_Side_Group">
 					<img src="/resources/img/back_btn01.gif" alt="back_btn01"
 						onclick="submitBackForm()"> <img
-						src="/resources/img/nyuryoku_btn01.gif" alt="nyuryoku_btn01"
+						src="/resources/img/shinsei_btn01.gif" alt="nyuryoku_btn01"
 						onclick="submitReapplyForm()">
 					<c:if test="${jyohou.shinchokuKbn ne '4'}">
 						<img src="/resources/img/shinsei_btn02.gif" alt="この申請を取消する"

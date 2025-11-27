@@ -338,4 +338,37 @@ public class ShinseiServiceImpl implements ShinseiService {
 		return shinseiMapper.getShinseiKeiroDetailList(param);
 	}
 
+	@Override
+	public void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshiraseReapply(loginUser, shinseiUser, shinseiNo);
+	}
+
+	@Override
+	@Transactional
+	public void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid) {
+
+		Long logSeq = shinseiMapper.getNextShinseiLogSeq(kigyoCd, shinseiNo);
+
+		String syoriKbn = "4";
+
+		shinseiMapper.insertReapplyLog(kigyoCd, shinseiNo, logSeq, syoriKbn, shainUid);
+	}
+
+	@Override
+	@Transactional
+	public void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack) {
+
+		String key1 = String.valueOf(shinseiNo); 
+		String key2 = shinseiKbn;
+		String key3 = beforeShinchokuKbn;
+		String key4 = afterShinchokuKbn;
+		String key5 = String.valueOf(kigyoCd); 
+		String data = null; 
+
+		String process = "再申請"; 
+
+		shinseiMapper.insertSaishinseiProcessLog(subsystemId, process, key1, key2, key3, key4, key5, data, userUid, userTrack);
+	}
+
 }

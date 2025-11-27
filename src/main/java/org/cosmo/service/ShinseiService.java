@@ -76,4 +76,11 @@ public interface ShinseiService {
 
 	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
 
+	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+
+	void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid);
+
+	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
+
 }

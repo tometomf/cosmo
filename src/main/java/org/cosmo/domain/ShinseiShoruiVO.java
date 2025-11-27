@@ -43,8 +43,6 @@ public class ShinseiShoruiVO {
 	private String jinshinShogai;
 	private String tojoshaShogai;
 
-	private String firstTeikiKikan;
-	private String nextTeikiKikan;
 
 	private Long addUserId;
 	private String addDate;
