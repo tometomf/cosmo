@@ -427,12 +427,10 @@ public class KeiroInputController {
 			shinseiKbn = "01";
 		}
 
-		System.out.println(hozonUid);
-
-		if (hozonUid == null) {
-			return "";
+		if (hozonUid == null || hozonUid == "") {
+			hozonUid = "0";
 		}
-
+		
 		byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
 
 		IchijiHozonDTO dto = new IchijiHozonDTO();
