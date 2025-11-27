@@ -101,8 +101,6 @@ public interface ShinseiMapper {
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
 
-	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
 	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
 
 	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
@@ -130,5 +128,8 @@ public interface ShinseiMapper {
 			@Param("userUid") String userUid, @Param("userTrack") String userTrack);
 
 	int updateEndKeiroForReapply(Map<String, Object> param);
- 
-}
+	
+	List<ShinseiDetailVO> selectShinseiDetail(Map<String, Object> param);
+
+	}
+

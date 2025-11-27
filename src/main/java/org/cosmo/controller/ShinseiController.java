@@ -359,8 +359,8 @@ public class ShinseiController {
 			return "redirect:/";
 		}
 
-		Long kigyoCd = null;
-		Long shainUid = null;
+		Long kigyoCd;
+		Long shainUid;
 
 		try {
 			kigyoCd = Long.parseLong(shain.getKigyo_Cd());
@@ -370,11 +370,13 @@ public class ShinseiController {
 			return "redirect:/";
 		}
 
-		ShinseiDetailVO detail = shinseiService.getShinseiDetail(kigyoCd, shinseiNo);
+		// 🔹 이제 List로 받기
+		List<ShinseiDetailVO> detailList = shinseiService.getShinseiDetail(kigyoCd, shinseiNo);
+		
+		model.addAttribute("detailList", detailList); // 경로별 상세
 
-		if (detail == null) {
+		if (detailList == null || detailList.isEmpty()) {
 			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
-
 			String referer = request.getHeader("Referer");
 			if (referer != null && !referer.isEmpty()) {
 				return "redirect:" + referer;
@@ -383,7 +385,14 @@ public class ShinseiController {
 			}
 		}
 
-		String kbn = detail.getShinchokuKbn();
+		ShinseiDetailVO header = detailList.get(0);
+
+		// 🔹 JSP에서 헤더/리스트 둘 다 쓰기 편하게
+		model.addAttribute("header", header); // 상단 공통 정보
+
+		System.out.println("### detailList size = " + (detailList == null ? 0 : detailList.size()));
+
+		String kbn = header.getShinchokuKbn();
 		if (!"2".equals(kbn) && !"4".equals(kbn)) {
 			rttr.addFlashAttribute("errorMsg", "この画面は「承認待ち」または「承認済み」の申請のみ参照できます。");
 
@@ -394,8 +403,6 @@ public class ShinseiController {
 				return "redirect:/";
 			}
 		}
-
-		model.addAttribute("detail", detail);
 
 		return "shinsei/11_shinseiDetail";
 	}

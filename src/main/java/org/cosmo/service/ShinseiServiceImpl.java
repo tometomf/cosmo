@@ -272,10 +272,16 @@ public class ShinseiServiceImpl implements ShinseiService {
 		param.put("keiroSeq", keiroSeq);
 		return shinseiMapper.getShinseiKeiroDetail(param);
 	}
+	
+	
 
 	@Override
-	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
-		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
+	public List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+
+		return shinseiMapper.selectShinseiDetail(param); // 이제 List 리턴
 	}
 
 	@Override

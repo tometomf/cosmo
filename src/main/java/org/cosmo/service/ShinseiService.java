@@ -19,7 +19,7 @@ public interface ShinseiService {
 
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
-	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
+	// ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
 	String getShainUidByShinseiNo(String shinseiNo);
 
@@ -84,6 +84,9 @@ public interface ShinseiService {
 			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
 	
 	void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId);
+	
+	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
+	
 
 }

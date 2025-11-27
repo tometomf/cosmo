@@ -578,9 +578,9 @@
 	</update>
 
 
-	<update id="updateEndKeiroForReapply"
-		parameterType="map">
-		UPDATE SHINSEI_END_KEIRO
+	<update id="updateEndKeiroForReapply" parameterType="map">
+		UPDATE
+		SHINSEI_END_KEIRO
 		SET KIKAN_START_YMD = NULL,
 		KIKAN_END_YMD = NULL,
 		JITSU_KINMU_NISSU = NULL,
@@ -588,133 +588,139 @@
 		JR_MODOSHI_KBN = NULL,
 		MODOSHI_KIN = NULL,
 		MODOSHI_FILE_UID = NULL,
-		UPD_USER_ID = #{loginUserId},
+		UPD_USER_ID =
+		#{loginUserId},
 		UPD_DATE = SYSDATE
 		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO = #{shinseiNo}
+		AND
+		SHINSEI_NO = #{shinseiNo}
 		AND KEIRO_SEQ = #{keiroSeq}
 	</update>
-
-
 
 
 
 	<select id="selectShinseiDetail"
 		resultType="org.cosmo.domain.ShinseiDetailVO">
 		SELECT
-		s.SHINSEI_NO AS shinseiNo,
-		s.SHINCHOKU_KBN AS
-		shinchokuKbn,
-		c_status.CODE_NM AS
-		joutaiName,
-		s.SHINSEI_YMD AS
-		shinseiYmd,
-		s.SASHIMODOSHI_YMD AS
-		sashimodoshiYmd,
-		TO_DATE(s.FIRST_SHINSEI_YMD, 'YYYYMMDD') AS
-		saishinseiDate,
-		TO_DATE(s.KIGYO_SHONIN_YMD, 'YYYYMMDD') AS shoninDate,
-		TO_DATE(s.RIYO_START_YMD, 'YYYYMMDD') AS shikyuuKaishiDate,
-		s.MOSHIOKURI_COMMENT AS honninComment,
-		(s.GEN_ADDRESS_1 ||
-		s.GEN_ADDRESS_2 || s.GEN_ADDRESS_3) AS genAddress,
-		(s.NEW_ADDRESS_1 ||
-		s.NEW_ADDRESS_2 || s.NEW_ADDRESS_3) AS newAddress,
-		shozoku_before.SHOZOKU_NM AS shozokuBeforeNm,
-		shozoku_after.SHOZOKU_NM
-		AS shozokuAfterNm,
-		(s.GEN_KINMU_ADDRESS_1 || s.GEN_KINMU_ADDRESS_2 ||
-		s.GEN_KINMU_ADDRESS_3) AS kinmuchiBefore,
-		(s.NEW_KINMU_ADDRESS_1 ||
-		s.NEW_KINMU_ADDRESS_2 ||
-		s.NEW_KINMU_ADDRESS_3) AS kinmuchiAfter,
-		c_tsukin.CODE_NM AS tsukinShudanName,
-		(keiro.START_PLACE || ' -> ' ||
-		keiro.END_PLACE) AS keiro,
-		keiro.SHINSEI_KM AS kyori,
-		keiro.TSUKI_SHIKYU_KIN AS kingakuMonth,
-		keiro.YURYO_DAI_MAE AS
-		yuryodouroMonth,
-		uf.TITLE AS fuzuiFileTitle,
-		uf_etc.TITLE AS
-		etcFileTitle,
-		TO_DATE(fuzui.HOKEN_MANRYO_YMD, 'YYYYMMDD') AS
-		hokenManryoDate,
-		fuzui.TAIJIN_BAISHO AS taijinBaisho,
-		fuzui.TAIBUTSU_BAISHO AS
-		taibutsuBaisho,
-		fuzui.JINSHIN_SHOGAI AS
-		jinshinShogai,
-		fuzui.TOJOSHA_SHOGAI AS tojoshaShogai,
-		fuzui.TOKYU AS
-		tokyu,
-		c_shinseiKbn.CODE_NM AS shinseiKbnName,
-		s.SHINSEI_RIYU AS
-		shinseiRiyu,
-		TO_DATE(s.IDO_YMD, 'YYYYMMDD') AS idouDate,
-		TO_DATE(s.TENNYU_YMD,
+		a.KIGYO_CD AS kigyoCd,
+		a.SHINSEI_NO AS shinseiNo,
+
+		a.SHINCHOKU_KBN AS shinchokuKbn,
+		e.CODE_NM AS joutaiName,
+		a.SHINSEI_YMD
+		AS shinseiYmd,
+		a.SASHIMODOSHI_YMD AS sashimodoshiYmd,
+
+		TO_DATE(a.FIRST_SHINSEI_YMD, 'YYYYMMDD') AS saishinseiDate,
+		TO_DATE(a.KIGYO_SHONIN_YMD, 'YYYYMMDD') AS shoninDate,
+		TO_DATE(a.RIYO_START_YMD, 'YYYYMMDD') AS shikyuuKaishiDate,
+
+		a.MOSHIOKURI_COMMENT AS honninComment,
+
+		a.SHINSEI_KBN AS shinseiKbn,
+		d.CODE_NM AS shinseiKbnName,
+		a.SHINSEI_RIYU AS shinseiRiyu,
+
+		(a.GEN_ADDRESS_1 || a.GEN_ADDRESS_2 || a.GEN_ADDRESS_3) AS genAddress,
+		(a.NEW_ADDRESS_1 || a.NEW_ADDRESS_2 || a.NEW_ADDRESS_3) AS newAddress,
+
+		a.GEN_SHOZOKU_CD AS shozokuBeforeNm,
+		a.NEW_SHOZOKU_CD AS
+		shozokuAfterNm,
+
+		(a.GEN_KINMU_ADDRESS_1 || a.GEN_KINMU_ADDRESS_2 ||
+		a.GEN_KINMU_ADDRESS_3) AS kinmuchiBefore,
+		(a.NEW_KINMU_ADDRESS_1 ||
+		a.NEW_KINMU_ADDRESS_2 ||
+		a.NEW_KINMU_ADDRESS_3) AS kinmuchiAfter,
+
+		TO_DATE(a.IDO_YMD, 'YYYYMMDD') AS idouDate,
+		TO_DATE(a.TENNYU_YMD,
 		'YYYYMMDD') AS tennyuDate,
-		TO_DATE(s.RIYO_START_YMD, 'YYYYMMDD') AS
-		kaishiDate
-		FROM SHINSEI s
-		LEFT
-		JOIN CODE c_status
-		ON c_status.CODE_SYBTSU
-		= '102'
-		AND c_status.CODE =
-		s.SHINCHOKU_KBN
-		LEFT JOIN CODE c_shinseiKbn
-		ON c_shinseiKbn.CODE_SYBTSU
-		= '101'
-		AND c_shinseiKbn.CODE =
-		s.SHINSEI_KBN
-		LEFT JOIN SHOZOKU
-		shozoku_before
-		ON
-		shozoku_before.KIGYO_CD = s.KIGYO_CD
-		AND
-		shozoku_before.SHOZOKU_CD =
-		s.GEN_SHOZOKU_CD
-		LEFT JOIN SHOZOKU
-		shozoku_after
-		ON
-		shozoku_after.KIGYO_CD = s.KIGYO_CD
-		AND
-		shozoku_after.SHOZOKU_CD =
-		s.NEW_SHOZOKU_CD
+		TO_DATE(a.RIYO_START_YMD,'YYYYMMDD') AS
+		kaishiDate,
+
+		b.KEIRO_SEQ AS keiroSeq,
+		b.TSUKIN_SHUDAN_KBN AS
+		tsukinShudanKbn,
+		f.CODE_NM AS tsukinShudanName,
+
+		(b.START_PLACE || ' -> '
+		|| b.END_PLACE) AS keiro,
+		b.START_PLACE AS startPlace,
+		b.END_PLACE AS
+		endPlace,
+
+		b.SHINSEI_KM AS kyori,
+		b.TSUKI_SHIKYU_KIN AS kingakuMonth,
+		b.YURYO_DAI_ATO AS yuryodouroMonth,
+		b.KATAMICHI_KIN AS katamichi,
+
+		b.YURYO_KATAMICHI_KIN AS yuryoKatamichiKin,
+
+		b.SANSHO_TEIKI_TSUKI_SU_1
+		AS sanshoTeikiTsukiSu1,
+		b.SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
+		b.SANSHO_TEIKI_TSUKI_SU_2 AS sanshoTeikiTsukiSu2,
+		b.SANSHO_TEIKI_KIN_2
+		AS sanshoTeikiKin2,
+		b.SANSHO_TEIKI_TSUKI_SU_3 AS sanshoTeikiTsukiSu3,
+		b.SANSHO_TEIKI_KIN_3 AS sanshoTeikiKin3,
+
+		b.YURYO_IC_S AS yuryoIcS,
+		b.YURYO_IC_E AS yuryoIcE,
+
+		NVL(c.NENPI, b.NENPI) AS nenpi,
+
+
+		c.FILE_UID_1 AS fileUid1,
+
+		TO_DATE(c.MENKYO_YUKO_KIGEN, 'YYYYMMDD') AS
+		menkyoYukoKigen,
+		c.MENKYO_NO AS menkyoNo,
+		c.SHASHU AS shashu,
+		c.TOROKU_NO AS torokuNo,
+		c.HAIKIRYO AS haikiryo,
+		TO_DATE(c.SHAKEN_YUKO_KIGEN, 'YYYYMMDD') AS shakenYukoKigen,
+
+		TO_DATE(c.HOKEN_MANRYO_YMD, 'YYYYMMDD') AS hokenManryoDate,
+		c.TAIJIN_BAISHO AS taijinBaisho,
+		c.TAIBUTSU_BAISHO AS taibutsuBaisho,
+		c.JINSHIN_SHOGAI AS jinshinShogai,
+		c.TOJOSHA_SHOGAI AS tojoshaShogai,
+		c.TOKYU AS tokyu,
+		c.FIRST_TEIKI_KIKAN AS firstTeikiKikan,
+		c.NEXT_TEIKI_KIKAN AS nextTeikiKikan
+
+		FROM
+		SHINSEI a
 		LEFT JOIN
-		SHINSEI_START_KEIRO keiro
-		ON keiro.KIGYO_CD =
-		s.KIGYO_CD
-		AND
-		keiro.SHINSEI_NO = s.SHINSEI_NO
-		AND keiro.KEIRO_SEQ = 1
+		SHINSEI_START_KEIRO b
+		ON a.KIGYO_CD = b.KIGYO_CD
+		AND a.SHINSEI_NO =
+		b.SHINSEI_NO
+		LEFT JOIN SHINSEI_FUZUI_SHORUI c
+		ON a.KIGYO_CD = c.KIGYO_CD
+		AND a.SHINSEI_NO = c.SHINSEI_NO
+		AND b.KEIRO_SEQ = c.KEIRO_SEQ
+		LEFT JOIN
+		CODE d
+		ON d.CODE_SYBTSU = '101'
+		AND d.CODE = a.SHINSEI_KBN
 		LEFT JOIN CODE
-		c_tsukin
-		ON c_tsukin.CODE_SYBTSU = '103'
-		AND
-		c_tsukin.CODE =
-		keiro.TSUKIN_SHUDAN_KBN
-		LEFT JOIN SHINSEI_FUZUI_SHORUI
-		fuzui
-		ON
-		fuzui.KIGYO_CD = s.KIGYO_CD
-		AND fuzui.SHINSEI_NO = s.SHINSEI_NO
-		AND
-		fuzui.KEIRO_SEQ = keiro.KEIRO_SEQ
+		e
+		ON e.CODE_SYBTSU = '102'
+		AND e.CODE = a.SHINCHOKU_KBN
+		LEFT JOIN CODE f
+		ON f.CODE_SYBTSU = '103'
+		AND f.CODE = b.TSUKIN_SHUDAN_KBN
 
-		LEFT JOIN UPLOAD_FILE uf
-		ON
-		uf.FILE_UID = fuzui.FILE_UID_1
-
-		LEFT JOIN UPLOAD_FILE uf_etc
-		ON
-		uf_etc.FILE_UID = s.ETC_FILE_UID_1
-
-		WHERE s.KIGYO_CD = #{kigyoCd}
-		AND
-		s.SHINSEI_NO = #{shinseiNo}
+		WHERE
+		a.KIGYO_CD = #{kigyoCd}
+		AND a.SHINSEI_NO = #{shinseiNo}
 	</select>
+
+
 
 	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">
@@ -774,92 +780,8 @@
 		AND KEIRO_SEQ = 1
 	</select>
 
-	<select id="getShinseiKeiroDetailList" parameterType="map"
-		resultType="org.cosmo.domain.ShinseiKeiroDetailVO">
-
-		SELECT
-		KIGYO_CD AS kigyoCd,
-		SHINSEI_NO AS shinseiNo,
-		KEIRO_SEQ AS keiroSeq,
-		TSUKIN_SHUDAN_KBN AS tsukinShudanKbn,
-		START_PLACE AS startPlace,
-		END_PLACE AS endPlace,
-		SHINSEI_KM AS
-		shinseiKm,
-		KATAMICHI_KIN AS katamichi,
-		TSUKI_SHIKYU_KIN AS tsuki,
-		SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
-		SANSHO_TEIKI_TSUKI_SU_1 AS
-		sanshoTeikiTsukiSu1,
-		SANSHO_TEIKI_KIN_2 AS sanshoTeikiKin2,
-		SANSHO_TEIKI_TSUKI_SU_2 AS
-		sanshoTeikiTsukiSu2,
-		SANSHO_TEIKI_KIN_3 AS
-		sanshoTeikiKin3,
-		SANSHO_TEIKI_TSUKI_SU_3 AS sanshoTeikiTsukiSu3,
-		YURYO_IC_S AS yuryoIcS,
-		YURYO_IC_E AS yuryoIcE,
-		FIRST_TEIKI_TSUKI_SU AS
-		firstTeikiKikan,
-		NEXT_TEIKI_TSUKI_SU AS nextTeikiKikan
-		FROM
-		SHINSEI_START_KEIRO
-		WHERE KIGYO_CD =
-		#{kigyoCd}
-		AND SHINSEI_NO =
-		#{shinseiNo}
-		ORDER BY
-		KEIRO_SEQ
-	</select>
 
 
-	<select id="selectShinseiList" resultMap="shinseiResultMap"
-		parameterType="map">
-
-		SELECT
-		KIGYO_CD, SHINSEI_NO, SHINSEI_KBN, SHINSEI_YMD,
-		SHINSEI_RIYU,
-		TOKU_SHINSEI_RIYU, SHAIN_UID, SHAIN_NO,
-		DAIRI_SHINSEISHA_CD,
-		SHINCHOKU_KBN,
-		GEN_TSUKINRO_END_KBN,
-		ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
-		GEN_SHOZOKU_CD, GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2,
-		GEN_ADDRESS_3,
-		NEW_SHOZOKU_CD, NEW_ZIP_CD, NEW_ADDRESS_1,
-		NEW_ADDRESS_2, NEW_ADDRESS_3,
-		ADDRESS_IDO_KEIDO, ADDRESS_CORRECT,
-		GEN_KINMU_ZIP_CD,
-		GEN_KINMU_ADDRESS_1,
-		GEN_KINMU_ADDRESS_2,
-		GEN_KINMU_ADDRESS_3, NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1,
-		NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, KINMU_ADDRESS_IDO_KEIDO,
-		KINMU_ADDRESS_CORRECT,
-		GEN_KINMU_PREF_CD, NEW_KINMU_PREF_CD,
-		JUTAKU_KBN, ETC_FILE_UID_1, ETC_FILE_UID_2,
-		ETC_FILE_UID_3,
-		ETC_FILE_UID_4, ETC_FILE_UID_5, ETC_COMMENT_1,
-		ETC_COMMENT_2,
-		ETC_COMMENT_3, ETC_COMMENT_4, ETC_COMMENT_5, RIYO_START_YMD,
-		RIYO_END_YMD,
-		SHIKYU_TEISHI_KBN, KANRIID, IDO_YMD, ITEN_YMD,
-		TENNYU_YMD,
-		HAISHIN_YMD,
-		KEIRO_HENKO_YMD, FIRST_SHINSEI_YMD,
-		KIGYO_SHONIN_YMD, LL_SHONIN_YMD, TSUKINRO_NO,
-		SASHIMODOSHI_YMD,
-		SHINSEI_KIGEN_YMD, MOSHIOKURI_COMMENT, BIBO_COMMENT,
-		ALERT_UMU,
-		TORIKESHI_YMD, TORIKESHI_RIYU, ICHIJI_HOZON_ID, JITSU_KM,
-		NAVITIME_VIEW_CNT,
-		ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
-		FROM
-		SHINSEI
-		WHERE
-		KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO
-		= #{shinseiNo}
-	</select>
 
 
 	<insert id="insertOshiraseHikimodosu" parameterType="map">
@@ -995,12 +917,14 @@
 		#{subsystemId, jdbcType=VARCHAR},
 		#{process, jdbcType=VARCHAR},
 		#{key1, jdbcType=VARCHAR},
-		#{key2, jdbcType=VARCHAR},
+		#{key2,
+		jdbcType=VARCHAR},
 		#{key3, jdbcType=VARCHAR},
 		#{key4, jdbcType=VARCHAR},
 		#{key5, jdbcType=VARCHAR},
 		#{data, jdbcType=VARCHAR},
-		#{userUid, jdbcType=VARCHAR},
+		#{userUid,
+		jdbcType=VARCHAR},
 		#{userTrack, jdbcType=VARCHAR}
 		)
 	</insert>
