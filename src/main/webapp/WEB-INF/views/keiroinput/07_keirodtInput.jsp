@@ -12,26 +12,22 @@
 
 <style>
 .transport-wrapper {
+	width: 1010px;
+	margin: auto;
 	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	min-width: 500px;
-	align-items: center;
 }
 
 .transport {
-	padding: 0.3rem;
+	width: 1010px;
+	padding: 0.5rem;
 	padding-left: 10px;
-	margin: 1rem;
 	text-align: left;
 	font-weight: bold;
-	border-left: 4px solid #666;
-	border-bottom: 1px dotted #999;
-	padding-bottom: 4px;
+	border-left: 5px solid #666;
+	border-bottom: 2px dotted #999;
 	color: #333;
-	width: 90%;
 }
+
 
 .grid {
 	display: grid;
@@ -288,7 +284,7 @@
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-				<div class="transport">手段：電車</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 			<!-- ここまで上位タイトル -->
 
@@ -688,7 +684,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			returnToTop.addEventListener("click", function(){
 				let redirectPath = "";
-				location.href = "http://localhost:8282/keiroinput/06_keiroInput?hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
+				location.href = "http://localhost:8282/keiroinput/06_keiroInput?shudanType=${shudanType}&hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
 				/* redirectPath = "<c:url value='/keiroinput/06_keiroInput'/>";
 	            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
 	            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
