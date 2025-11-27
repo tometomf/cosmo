@@ -2,6 +2,10 @@
 
 package org.cosmo.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.TokureiForm;
 import org.cosmo.mapper.TokureiMapper;
 import org.springframework.stereotype.Service;
@@ -17,28 +21,24 @@ public class TokureiServiceImpl implements TokureiService {
     @Override
     public void saveTokurei(TokureiForm form) {
 
-    	int kigyoCd = 100; // 임시
-    	
-    	 int shinseiNo;
-    	    if (form.getShinseiNo() == null || form.getShinseiNo().trim().isEmpty()) {
-    	        shinseiNo = 1; // 테스트용 기본값
-    	    } else {
-    	        shinseiNo = Integer.parseInt(form.getShinseiNo());
-    	    }
-        
-        String reason = form.getTokureiReason();
+        // 더미 데이터 생성 (신규 INSERT 테스트용)
+    	ShinseiDTO dto = new ShinseiDTO();
 
-        System.out.println(">>> TokureiServiceImpl.saveTokurei()");
-        System.out.println(" kigyoCd      = " + kigyoCd);
-        System.out.println(" shinseiNo    = " + shinseiNo);
-        System.out.println(" reason       = " + reason);
+        dto.setKigyoCd(100);
+        dto.setShinseiNo(mapper.getNextShinseiNo()); // 신규 생성
+        dto.setTokuShinseiRiyu(form.getTokureiReason());
+        dto.setShinseiKbn("01");
+        dto.setShinseiRiyu("特例申請");
+        dto.setShainUid(30000001);
+        dto.setShinseiYmd(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        dto.setShainNo("A0001");
+        dto.setShinchokuKbn("0");
+        dto.setGenTsukinroEndKbn("0");
+        dto.setAddressChgKbn("0");
+        dto.setKinmuAddressChgKbn("0");
+        dto.setKyushokuHukkiKbn("0");
 
-        int result = mapper.updateTokurei(kigyoCd, shinseiNo, reason);
-
-        if (result == 0) {
-            throw new RuntimeException("SHINSEI 테이블 업데이트 실패!");
-        }
+        mapper.insertShinseiForTokurei(dto);  // INSERT
     }
-    
     
 }

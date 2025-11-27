@@ -16,7 +16,7 @@ public interface AddressInputMapper {
     AddressViewDto selectMiddleAddress(String shainUid);
 
     Map<String, String> selectZipCode(@Param("zip1") String zip1, @Param("zip2") String zip2);
-    
+    AddressViewDto selectShainAddress(@Param("shainUid") String shainUid);
     void saveIchijiHozon(IchijiHozonVO vo);
     
     void insertOshirase(
