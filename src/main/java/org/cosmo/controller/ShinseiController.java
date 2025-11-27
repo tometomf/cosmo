@@ -15,6 +15,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 import org.cosmo.service.ShinseiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -46,13 +47,12 @@ public class ShinseiController {
 		if (shinseiNo != null && !shinseiNo.trim().isEmpty()) {
 
 			Long shinseiNoLong = Long.parseLong(shinseiNo);
+			Long kigyoCd = shinseiService.getKigyoCdByShinseiNo(shinseiNoLong);
 
-			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
-			ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNoLong);
-			ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNoLong);
+			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd,shinseiNoLong);
 			String fileName = shinseiService.getFileName(shinseiNoLong);
 
-			if (jyohouVo != null) {
+			if (view != null) {
 
 				String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
 
@@ -61,24 +61,24 @@ public class ShinseiController {
 					shinseiUser = shinseiService.getShainByUid(shainUid);
 				}
 
-				if (jyohouVo.getShinseiKbn() != null) {
-					jyohouVo.setShinseiName(shinseiService.getShinseiName(jyohouVo.getShinseiKbn()));
+				if (view.getShinseiKbn() != null) {
+					view.setShinseiName(shinseiService.getShinseiName(view.getShinseiKbn()));
 				}
 
-				if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-					keiroVo.setShudanName(shinseiService.getShudanName(keiroVo.getTsukinShudan()));
+				if (view != null && view.getTsukinShudan() != null) {
+					view.setShudanName(shinseiService.getShudanName(view.getTsukinShudan()));
 				}
 
-				if (jyohouVo.getShinchokuKbn() != null) {
-					jyohouVo.setCodeNm(shinseiService.getCodeNm(jyohouVo.getShinchokuKbn()));
+				if (view.getShinchokuKbn() != null) {
+					view.setCodeNm(shinseiService.getCodeNm(view.getShinchokuKbn()));
 				}
 
-				model.addAttribute("jyohou", jyohouVo);
-				model.addAttribute("keiro", keiroVo);
-				model.addAttribute("shorui", shoruiVo);
+				model.addAttribute("view", view);
 				model.addAttribute("fileName", fileName);
 				model.addAttribute("shinseiUser", shinseiUser);
 				model.addAttribute("isIchiji", false);
+
+				System.out.println("VIEW = " + view);
 
 				return "shinsei/11_shinseiDetail_02";
 			}
