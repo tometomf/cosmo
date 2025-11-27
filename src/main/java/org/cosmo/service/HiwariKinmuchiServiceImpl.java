@@ -73,17 +73,12 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         return mapper.selectKakuninRoutes(kigyoCd, shinseiNo);
     }
 
-    /**
-     * 申請を承認する
-     *  - 進捗区分を '2' (承認) に更新
-     *  - TODO: お知らせ/メール送信処理
-     */
+   
     @Override
     public void submitApplication(Integer kigyoCd, Long shinseiNo) {
         // 承認状態('2')で更新
         mapper.updateShinseiApproval(kigyoCd, shinseiNo, "2");
-        
-        // TODO: お知らせ/メール送信処理が必要な場合ここに追加
+     
     }
 
     @Override
