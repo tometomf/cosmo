@@ -258,9 +258,15 @@ public class HiwariKinmuchiController {
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
 	    Long shainUid = Long.valueOf(shain.getShain_Uid());
 	    
+	    System.out.println("DEBUG — 세션 kigyoCd=" + kigyoCd + ", shainUid=" + shainUid);
+	    
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    
+	    System.out.println("DEBUG — 조회된 keiroList.size=" + (keiroList == null ? 0 : keiroList.size()));
+	    
 	    if (keiroList == null) {
-	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 수정
+	        keiroList = new ArrayList<HiwariKeiroVO>();   
+	        
 	    }
 
 	    int repRouteNo = calcRepRouteNo(keiroList);
