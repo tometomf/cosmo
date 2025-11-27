@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="org.cosmo.mapper.AddressInputMapper">
 
-    <select id="selectCurrentAddress" resultType="org.cosmo.domain.AddressViewDto">
+    <select id="selectShainAddress" resultType="org.cosmo.domain.AddressViewDto">
         SELECT 
             ZIP_CD      AS currentZip,
-            /* 설계서상 ADDRESS_1은 보통 도도부현, ADDRESS_2는 시구정촌으로 사용됨 */
-            ADDRESS_1   AS currentPref,  
-            ADDRESS_2   AS currentAddr1, 
-            ADDRESS_3   AS currentAddr2
+            ADDRESS_1   AS currentPref,
+            ADDRESS_2   AS currentAddr1,
+            ADDRESS_3   AS currentAddr2,
+            
+            DB_ZIP_CD     AS middleZip,
+            DB_ADDRESS_1  AS middlePref,
+            DB_ADDRESS_2  AS middleAddr1,
+            DB_ADDRESS_3  AS middleAddr2
         FROM SHAIN
         WHERE SHAIN_UID = #{shainUid}
-          AND KIGYO_CD = #{kigyoCd}
     </select>
 
-   <select id="selectMiddleAddress" resultType="org.cosmo.domain.AddressViewDto">
-        SELECT 
-            SUBSTR(DB_ZIP_CD, 1, 3) AS middleZip1,
-            SUBSTR(DB_ZIP_CD, 4, 4) AS middleZip2,
-            
-            DB_ADDRESS_1 AS middlePref,   /* 도도부현 */
-            DB_ADDRESS_2 AS middleAddr1,  /* 시구정촌 */
-            DB_ADDRESS_3 AS middleAddr2   /* 건물명 */
-        FROM SHAIN
-        WHERE SHAIN_UID = #{shainUid}
-          AND KIGYO_CD = #{kigyoCd}
-    </select>
-    
     <insert id="saveIchijiHozon">
         INSERT INTO ICHIJI_HOZON (
             "UID",
@@ -40,14 +32,20 @@
             UPD_USER_ID,
             UPD_DATE
         ) VALUES (
-            SEQ_ICHIJI_HOZON.NEXTVAL,
-            #{userUid}, #{shinseiKbn, jdbcType=VARCHAR},   #{shozokuCd, jdbcType=VARCHAR},    #{actionNm, jdbcType=VARCHAR},     #{data, jdbcType=CLOB}, #{addUserId, jdbcType=VARCHAR},    SYSDATE,
+            ICHIJI_HOZON_SEQ.NEXTVAL, 
+            #{userUid}, 
+            #{shinseiKbn, jdbcType=VARCHAR},    
+            #{shozokuCd, jdbcType=VARCHAR},    
+            #{actionNm, jdbcType=VARCHAR},      
+            #{data, jdbcType=CLOB}, 
+            #{addUserId, jdbcType=VARCHAR},    
+            SYSDATE,
             #{addUserId, jdbcType=VARCHAR},
             SYSDATE
         )
     </insert>
 
-   <insert id="insertOshirase">
+    <insert id="insertOshirase">
         INSERT INTO OSHIRASE (
             KIGYO_CD,
             SHAIN_UID,
@@ -56,10 +54,9 @@
             TSUCHI_HM,
             TSUCHISHA_KIGYO_CD,
             TSUCHISHA_CD,
-            SHINSEI_NO,
-            OSHIRASE_NAIYO,
-            KENGEN,
-            /* HAISHIN_KBN 없음 */
+            SHINSEI_NO,         
+            OSHIRASE_NAIYO,     
+            KENGEN,             
             ADD_USER_ID,
             ADD_DATE,
             UPD_USER_ID,
@@ -69,12 +66,19 @@
             #{shainUid},
             #{shainNo},
             TO_CHAR(SYSDATE, 'YYYYMMDD'),
-            TO_CHAR(SYSDATE, 'HH24MISS'),  /* [수정] HH24MI -> HH24MISS (초 단위까지 저장하여 중복 방지) */
+            TO_CHAR(SYSDATE, 'HH24MISS'), 
             #{kigyoCd},
             #{shainNo},
-            NULL,
-            #{message},
-            NULL,
+            
+            /* [특기사항] 신청번호는 NULL */
+            NULL,               
+            
+            /* [특기사항] 내용은 고정 텍스트: "一時保存しました。" */
+            '一時保存しました。', 
+            
+            /* [특기사항] 권한은 NULL */
+            NULL,               
+            
             #{shainUid},
             SYSDATE,
             #{shainUid},
@@ -87,21 +91,32 @@
             PROCESS_TIMESTAMP,
             SUBSYSTEM_ID,
             PROCESS,
-            KEY1,
-            KEY2,
+            KEY1,               
+            KEY2,               
             KEY3,
             KEY4,
-            KEY5,
-            DATA,
+            KEY5,               
+            DATA,               
             USER_UID,
             USER_TRACK
         ) VALUES (
             SYSDATE,
-            '05','0400','0', 
-            #{shinseiKbn},
+            '05',               /* 서브시스템 ID */
+            '0400',             /* 화면 ID */
+            
+            /* [특기사항] KEY1: 신청번호 (일시저장시: 0 고정) */
+            '0',                
+            
+            #{shinseiKbn},      /* KEY2: 신청구분코드 */
             NULL,
             NULL,
-            TO_CHAR(#{kigyoCd}),NULL,
+            
+            /* [특기사항] KEY5: 세션 기업코드 */
+            #{kigyoCd},         
+            
+            /* [특기사항] DATA: 미사용 (NULL) */
+            NULL,               
+            
             #{userUid},
             #{userIp}
         )
@@ -109,8 +124,10 @@
 
     <select id="selectZipCode" resultType="java.util.HashMap">
         SELECT 
-            ZIP_TODO || ZIP_SHIK || ZIP_ADRS AS "PREF_NAME", /* 주소 전체 연결 */
+            ZIP_TODO || ZIP_SHIK || ZIP_ADRS AS "PREF_NAME", 
             ZIP_ADRS2 AS "ADDR_NAME"
         FROM LEO_ZIP 
-        WHERE ZIP_CODE = #{zipCode} </select>
+        WHERE ZIP_CODE = #{zipCode} 
+    </select>
+
 </mapper>
