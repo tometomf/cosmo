@@ -1,5 +1,6 @@
 package org.cosmo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,10 @@ import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.HiwariRiyuVO;
+import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKinmuchiService;
+import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.OshiraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 @RequestMapping("/hiwariKinmuchi")
 public class HiwariKinmuchiController {
@@ -34,6 +40,9 @@ public class HiwariKinmuchiController {
 
 	@Autowired
 	private HiwariKinmuchiService service;
+	
+	@Autowired
+	private IchijiHozonService ichijiHozonService;
 	
 	
 
@@ -94,6 +103,21 @@ public class HiwariKinmuchiController {
 				shinseiNo = null;
 			}
 		}
+		
+		try {
+			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+			if (hozon != null && hozon.getData() != null) {
+
+				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode root = mapper.readTree(json);
+				System.out.println(root);
+				model.addAttribute("ichijiHozon", root);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		HiwariAddressVO data = (shinseiNo == null) ? service.getAddressPageDataBefore(kigyoCd, shainUid)
 				: service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
@@ -127,6 +151,21 @@ public class HiwariKinmuchiController {
 	            shinseiNo = null;
 	        }
 	    }
+	    
+	    try {
+			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+			if (hozon != null && hozon.getData() != null) {
+
+				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode root = mapper.readTree(json);
+				System.out.println(root);
+				model.addAttribute("ichijiHozon", root);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	    if (shinseiNo == null) {
 	        return "redirect:/hiwariKinmuchi";

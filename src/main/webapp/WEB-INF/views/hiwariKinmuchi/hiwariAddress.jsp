@@ -199,18 +199,29 @@ button {
 				</div>
 			</div>
 		</div>
+		
+		<!-- 임시저장용 폼 -->
+	    <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
+	    <input type="hidden" name="commuteJson" value="">
+	    
+	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+	    <input type="hidden" name="actionUrl" value="/hiwariKinmuchi/hiwariAddress">
+	    
+	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+	    <input type="hidden" name="redirectUrl" value="">
+	    
+	     <input type="hidden" name="hozonUid" value="${hozonUid}">
+	     
+	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+	     
+	     <input type="hidden" name="keiroSeq" value="${keiroSeq}">
+		</form>
 
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
 
-	<!-- ▼ 임시저장용 폼 -->
-	<form id="kinmuTempForm" method="post"
-		action="<c:url value='/hiwariKinmuchi/tempSave'/>">
-		<input type="hidden" name="commuteJson" value=""> <input
-			type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE"> <input
-			type="hidden" name="redirectUrl" value="">
-	</form>
+
 
 	<script>
 
@@ -230,76 +241,231 @@ button {
     }
 
 
-    /* ▼ 임시저장 JSON 생성 — 주소 화면 전용 */
-    function buildKinmuTempJson() {
+   
+    document.addEventListener("DOMContentLoaded", function() {
+    	
 
-        const zip1 = document.querySelector("input[name='zip1']").value.trim();
-        const zip2 = document.querySelector("input[name='zip2']").value.trim();
-        const prefecture = document.querySelector("input[name='prefecture']").value.trim();
-        const city = document.querySelector("input[name='city']").value.trim();
-        const address2Input = document.querySelector("input[name='address2']");
-        const address2 = address2Input ? address2Input.value.trim() : "";
 
-        // 우편번호 합치기
-        let fullZip = "";
-        if (zip1 !== "" && zip2 !== "") {
-            fullZip = zip1 + zip2;
-        }
+    	  const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+    	  const tsugiBtn = document.querySelector('img[src="/resources/img/next_btn01.gif"]');
+    		
+    	  let ichijiHozonRaw = '${ichijiHozon}';
+    	  
+    	  console.log(ichijiHozonRaw);
+    	  let ichijiHozon =
+    	      ichijiHozonRaw && ichijiHozonRaw.trim() !== "" && ichijiHozonRaw !== "null"
+    	          ? JSON.parse(ichijiHozonRaw)
+    	          : "";
+    		console.log("임시저장 데이터:", ichijiHozon);
+    	  
+    		const hozonUid = '${hozonUid}';
+    		const shinseiNo = '${shinseiNo}';
+    		console.log(hozonUid);
+    	  // 폼 / hidden input
+    	  const form             = document.getElementById("tsukinTempForm");
+    	  const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+    	  const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
 
-        // 최종 JSON 객체 (주소 화면은 이것만 있으면 됨)
-        const shinseiIcData = {
-            kigyoCd: null,
-            shinseiNo: null,
+    	  /**
+    	   * 현재 선택된 라디오값을 기반으로
+    	   * 서버에 보낼 통근정보 JSON 문자열을 생성
+    	   */
+    	  function buildCommuteJson() {
 
-            genAddress: null,
-            newAddress:
-                (prefecture && city)
-                    ? (prefecture + " " + city + " " + address2)
-                    : null,
+    	      
+    	      if(ichijiHozon == null || ichijiHozon == ""){
+    	      	console.log("ichijiHozon null")
+    	      	ichijiHozon = {
+    	      			  "kigyoCd": null,
+    	      			  "shinseiNo": null,
+    	      			  "shinseiYmd": null,
+    	      			  "shinseiKbn": null,
+    	      			  "shainUid": null,
+    	      			  "shinchokuKbn": null,
 
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
+    	      			  "genAddress1": null,
+    	      			  "genAddress2": null,
+    	      			  "genAddress3": null,
 
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
+    	      			  "newAddress1": null,
+    	      			  "newAddress2": null,
+    	      			  "newAddress3": null,
 
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-            keiro: null
-        };
+    	      			  "genShozoku": null,
+    	      			  "newShozoku": null,
 
-        return JSON.stringify(shinseiIcData);
+    	      			  "genKinmuchi1": null,
+    	      			  "genKinmuchi2": null,
+    	      			  "genKinmuchi3": null,
+
+    	      			  "newKinmuchi1": null,
+    	      			  "newKinmuchi2": null,
+    	      			  "newKinmuchi3": null,
+
+    	      			  "riyu": null,
+    	      			  "idoYmd": null,
+    	      			  "itenYmd": null,
+    	      			  "tennyuYmd": null,
+    	      			  "riyoStartYmd": null,
+    	      			  "ssmdsYmd": null,
+    	      			  "moComment": null,
+
+    	      			  "codeNm": null,
+    	      			  "shinseiName": null,
+
+    	      			  "keiro": {
+    	      			    "kigyoCd": null,
+    	      			    "shinseiNo": null,
+    	      			    "keiroSeq": null,
+    	      			    "tsukinShudan": null,
+    	      			    "katamichi": null,
+    	      			    "jitsu": null,
+    	      			    "tsuki": null,
+    	      			    "shinseiKm": null,
+
+    	      			    "startPlace": null,
+    	      			    "endPlace": null,
+
+    	      			    "shudanName": null
+    	      			  },
+
+    	      			  "startKeiro": {
+    	      			    "kigyoCd": null,
+    	      			    "shinseiNo": null,
+    	      			    "keiroSeq": null,
+
+    	      			    "shinseiKbn": null,
+    	      			    "shinseiYmd": null,
+    	      			    "shainUid": null,
+    	      			    "shainNo": null,
+    	      			    "dairiShinseishaCd": null,
+
+    	      			    "tsukinShudanKbn": null,
+    	      			    "yuryoTokurei": null,
+    	      			    "kyoriKagenTokurei": null,
+    	      			    "jougenKingakuTokurei": null,
+    	      			    "jougenCut": null,
+    	      			    "fubiUmuKbn": null,
+
+    	      			    "kikanStartYmd": null,
+    	      			    "kikanEndYmd": null,
+    	      			    "jitsuKinmuNissu": null,
+
+    	      			    "busCorpNm": null,
+    	      			    "idoShudanKbn": null,
+    	      			    "idoShudanEtcNm": null,
+
+    	      			    "startPlace": null,
+    	      			    "endPlace": null,
+    	      			    "viaPlace1": null,
+    	      			    "viaPlace2": null,
+    	      			    "viaPlace3": null,
+    	      			    "viaPlace4": null,
+    	      			    "viaPlace5": null,
+
+    	      			    "startIdoKeido": null,
+    	      			    "startEkicd": null,
+    	      			    "endEkicd": null,
+    	      			    "viaPlaceEkicd1": null,
+    	      			    "viaPlaceEkicd2": null,
+    	      			    "viaPlaceEkicd3": null,
+    	      			    "viaPlaceEkicd4": null,
+    	      			    "viaPlaceEkicd5": null,
+
+    	      			    "kekkaUrl": null,
+
+    	      			    "shinseiKin": null,
+    	      			    "firstTeikiTsukiSu": null,
+    	      			    "firstShikyuYmd": null,
+    	      			    "firstShikyuKin": null,
+    	      			    "nextTeikiTsukiSu": null,
+    	      			    "regularShikyuKin": null,
+    	      			    "tsukiShikyuKin": null,
+    	      			    "katamichiKin": null,
+
+    	      			    "shinkansenRiyoKbn": null,
+    	      			    "tokkyuRiyoKbn": null,
+    	      			    "yuryoRiyoKbn": null,
+    	      			    "kekkaSelect": null,
+
+    	      			    "sanshoTeikiTsukiSu1": null,
+    	      			    "sanshoTeikiKin1": null,
+    	      			    "sanshoTeikiTsukiSu2": null,
+    	      			    "sanshoTeikiKin2": null,
+    	      			    "sanshoTeikiTsukiSu3": null,
+    	      			    "sanshoTeikiKin3": null,
+
+    	      			    "shinseiKm": null,
+
+    	      			    "yuryoIcS": null,
+    	      			    "yuryoIcE": null,
+    	      			    "yuryoOfukuKbn": null,
+    	      			    "yuryoKatamichiKin": null,
+
+    	      			    "betsuRouteRiyu": null,
+    	      			    "yuryoRiyoRiyu": null,
+    	      			    "viaPlaceRiyu": null,
+
+    	      			    "nenpi": null,
+    	      			    "gasorinDaiMae": null,
+    	      			    "yuryoDaiMae": null,
+    	      			    "goukeiMae": null,
+    	      			    "hiwariMae": null,
+    	      			    "gasorinDaiAto": null,
+    	      			    "yuryoDaiAto": null,
+    	      			    "goukeiAto": null,
+    	      			    "hiwariAto": null,
+
+    	      			    "addUserId": null,
+    	      			    "addDate": null,
+    	      			    "updUserId": null,
+    	      			    "updDate": null
+    	      			  }
+    	      			}
+    	      }
+    	      
+    	      ichijiHozon.genAddress1 = "${initData.genAddress1}";
+    	      ichijiHozon.genAddress2 = "${initData.genAddress2}";
+    	      ichijiHozon.genAddress3 = "${initData.genAddress3}";
+    	      ichijiHozon.newAddress1 = "${initData.newAddress1}";
+    	      ichijiHozon.newAddress2 = "${initData.newAddress2}";
+    	      ichijiHozon.newAddress3 = "${initData.newAddress3}";
+    	      return JSON.stringify(ichijiHozon);
+    	  }
+
+    	  //  hozonBtn: 임시저장 → 컨트롤러가 기본 redirect(/shinsei/ichiji) 사용
+    	  if (hozonBtn) {
+    	      hozonBtn.addEventListener('click', function () {
+    	          const jsonString = buildCommuteJson();
+    	          if (!jsonString) return;
+
+    	          commuteJsonInput.value = jsonString;
+    	          
+    	          console.log( commuteJsonInput.value);
+
+    	          redirectUrlInput.value = "";
+
+    	          form.submit();
+    	      });
+    	  }
+    	});
+    
+    if (tsugiBtn) {
+  	  tsugiBtn.addEventListener('click', function () {
+            const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+            
+            console.log( commuteJsonInput.value);
+
+            redirectUrlInput.value = "/hiwariKinmuchi/riyu";
+
+            form.submit();
+        });
     }
 
-
-    /* ▼ 임시저장 버튼 이벤트 */
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const hozonBtn = document.querySelector('img[alt="一時保存"]');
-        const form = document.getElementById("kinmuTempForm");
-        const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
-        const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
-
-        if (hozonBtn) {
-            hozonBtn.addEventListener("click", function () {
-
-                const jsonString = buildKinmuTempJson();
-                commuteJsonInput.value = jsonString;
-
-                // 임시저장은 redirect 없음 → 빈값
-                redirectUrlInput.value = "";
-
-                form.submit();
-            });
-        }
-    });
+   
     
     document.addEventListener("DOMContentLoaded", function () {
         const reflectBtn = document.querySelector('img[alt="この住所を反映"]');
@@ -358,6 +524,8 @@ button {
             console.log("住所反映 完了");
         });
     });
+    
+    
 
 </script>
 

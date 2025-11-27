@@ -219,6 +219,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+  const tsugiBtn = document.querySelector('img[src="/resources/img/next_btn01.gif"]');
 	
   let ichijiHozonRaw = '${ichijiHozon}';
   
@@ -418,6 +419,21 @@ document.addEventListener("DOMContentLoaded", function() {
           console.log( commuteJsonInput.value);
 
           redirectUrlInput.value = "";
+
+          form.submit();
+      });
+  }
+  
+  if (tsugiBtn) {
+	  tsugiBtn.addEventListener('click', function () {
+          const jsonString = buildCommuteJson();
+          if (!jsonString) return;
+
+          commuteJsonInput.value = jsonString;
+          
+          console.log( commuteJsonInput.value);
+
+          redirectUrlInput.value = "/hiwariKinmuchi/address";
 
           form.submit();
       });
