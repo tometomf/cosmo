@@ -340,6 +340,10 @@ public class ShinseiController {
 		shinseiService.insertSaishinseiProcessLog(subsystemId, kigyoCd, shinseiNo, shinseiKbn, beforeShinchokuKbn,
 				afterShinchokuKbn, userUid, userTrack);
 
+		Long keiroSeq = 1L;
+
+		shinseiService.updateEndKeiroForReapply(kigyoCd, shinseiNo, keiroSeq, loginUserId);
+
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
 		return "redirect:/";
 	}

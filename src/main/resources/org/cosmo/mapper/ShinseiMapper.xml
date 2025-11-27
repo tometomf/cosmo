@@ -681,6 +681,24 @@
 	</update>
 
 
+	<update id="updateEndKeiroForReapply"
+		parameterType="map">
+		UPDATE SHINSEI_END_KEIRO
+		SET KIKAN_START_YMD = NULL,
+		KIKAN_END_YMD = NULL,
+		JITSU_KINMU_NISSU = NULL,
+		SHINSEI_KIN = NULL,
+		JR_MODOSHI_KBN = NULL,
+		MODOSHI_KIN = NULL,
+		MODOSHI_FILE_UID = NULL,
+		UPD_USER_ID = #{loginUserId},
+		UPD_DATE = SYSDATE
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+		AND KEIRO_SEQ = #{keiroSeq}
+	</update>
+
+
 
 
 
@@ -1061,41 +1079,36 @@
 	</insert>
 
 
-	<insert id="insertSaishinseiProcessLog">
-		INSERT INTO PROCESS_LOG (
-		PROCESS_TIMESTAMP,
-		SUBSYSTEM_ID,
-		PROCESS_COL,
-		KEY1,
-		KEY2,
-		KEY3,
-		KEY4,
-		KEY5,
-		DATA,
-		USER_UID,
-		USER_TRACK
-		)
-		VALUES (
-		SYSTIMESTAMP,
-		#{subsystemId, jdbcType=VARCHAR},
-		#{process, jdbcType=VARCHAR},
-		#{key1, jdbcType=VARCHAR},
-		#{key2,
-		jdbcType=VARCHAR},
-		#{key3, jdbcType=VARCHAR},
-		#{key4, jdbcType=VARCHAR},
-		#{key5, jdbcType=VARCHAR},
-		#{data, jdbcType=VARCHAR},
-		#{userUid,
-		jdbcType=VARCHAR},
-		#{userTrack, jdbcType=VARCHAR}
-		)
-	</insert>
-
-
-
-
-
+  <insert id="insertSaishinseiProcessLog">
+      INSERT INTO PROCESS_LOG (
+      PROCESS_TIMESTAMP,
+      SUBSYSTEM_ID,
+      PROCESS_COL,
+      KEY1,
+      KEY2,
+      KEY3,
+      KEY4,
+      KEY5,
+      DATA,
+      USER_UID,
+      USER_TRACK
+      )
+      VALUES (
+      SYSTIMESTAMP,
+      #{subsystemId, jdbcType=VARCHAR},
+      #{process, jdbcType=VARCHAR},
+      #{key1, jdbcType=VARCHAR},
+      #{key2,
+      jdbcType=VARCHAR},
+      #{key3, jdbcType=VARCHAR},
+      #{key4, jdbcType=VARCHAR},
+      #{key5, jdbcType=VARCHAR},
+      #{data, jdbcType=VARCHAR},
+      #{userUid,
+      jdbcType=VARCHAR},
+      #{userTrack, jdbcType=VARCHAR}
+      )
+   </insert>
 
 	<resultMap id="shinseiResultMap"
 		type="org.cosmo.domain.ShinseiDTO">

@@ -134,4 +134,6 @@ public interface ShinseiMapper {
 			@Param("key4") String key4, @Param("key5") String key5, @Param("data") String data,
 			@Param("userUid") String userUid, @Param("userTrack") String userTrack);
 
+	int updateEndKeiroForReapply(Map<String, Object> param);
+ 
 }
