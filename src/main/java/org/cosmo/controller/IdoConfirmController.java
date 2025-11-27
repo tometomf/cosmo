@@ -315,7 +315,7 @@ public class IdoConfirmController {
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-       // oshiraseService.saveTempOshirase(shain);
+        oshiraseService.saveTempOshirase(shain, newUid);
 
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
