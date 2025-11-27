@@ -337,48 +337,44 @@
 		<result column="TSUKI_SHIKYU_KIN" property="tsukiShikyuKin" />
 		<result column="HIWARI_ATO" property="hiwariAto" />
 	</resultMap>
-	<!-- 유지희 -->
-	<select id="findByUser" resultMap="HiwariKeiroMap">
-		SELECT
-		SSK.KIGYO_CD,
-		SSK.SHINSEI_NO,
-		SSK.KEIRO_SEQ,
-		SSK.SHAIN_UID,
-		SSK.TSUKIN_SHUDAN_KBN,
-		C.CODE_NM AS TSUKIN_SHUDAN_NM,
-		SSK.START_PLACE,
-		SSK.END_PLACE,
-		SSK.VIA_PLACE_1,
-		SSK.VIA_PLACE_2,
-		SSK.VIA_PLACE_3,
-		SSK.VIA_PLACE_4,
-		SSK.VIA_PLACE_5,
-		SSK.KEKKA_SELECT,
-		-- 여기부터 계산용 컬럼
-		SSK.KIKAN_START_YMD,
-		SSK.KIKAN_END_YMD,
-		SSK.JITSU_KINMU_NISSU,
-		SSK.KATAMICHI_KIN,
-		SSK.SHINSEI_KIN,
-		SSK.FIRST_TEIKI_TSUKI_SU,
-		SSK.TSUKI_SHIKYU_KIN,
-		SSK.HIWARI_ATO
-		FROM
-		SHINSEI_START_KEIRO SSK
-		LEFT JOIN CODE C
-  ON C.CODE_SYBTSU = '103'
- AND LPAD(C.CODE, 2, '0') = SSK.TSUKIN_SHUDAN_KBN
-		WHERE
-		SSK.KIGYO_CD = #{kigyoCd}
-		AND SSK.SHINSEI_NO = (
-		SELECT MAX(SHINSEI_NO)
-		FROM SHINSEI
-		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHAIN_UID = #{shainUid}
-		)
-		ORDER BY
-		SSK.KEIRO_SEQ
-	</select>
+	    <!-- 유지희 -->
+    <select id="findByUser" resultMap="HiwariKeiroMap">
+        SELECT
+            SSK.KIGYO_CD,
+            SSK.SHINSEI_NO,
+            SSK.KEIRO_SEQ,
+            SSK.SHAIN_UID,
+            SSK.TSUKIN_SHUDAN_KBN,
+            C.CODE_NM AS TSUKIN_SHUDAN_NM,
+            SSK.START_PLACE,
+            SSK.END_PLACE,
+            SSK.VIA_PLACE_1,
+            SSK.VIA_PLACE_2,
+            SSK.VIA_PLACE_3,
+            SSK.VIA_PLACE_4,
+            SSK.VIA_PLACE_5,
+            SSK.KEKKA_SELECT,
+            -- 여기부터 계산용 컬럼
+            SSK.KIKAN_START_YMD,
+            SSK.KIKAN_END_YMD,
+            SSK.JITSU_KINMU_NISSU,
+            SSK.KATAMICHI_KIN,
+            SSK.SHINSEI_KIN,
+            SSK.FIRST_TEIKI_TSUKI_SU,
+            SSK.TSUKI_SHIKYU_KIN,
+            SSK.HIWARI_ATO
+        FROM
+            SHINSEI_START_KEIRO SSK
+            LEFT JOIN CODE C
+              ON C.CODE_SYBTSU = '103'
+             AND LPAD(C.CODE, 2, '0') = SSK.TSUKIN_SHUDAN_KBN
+        WHERE
+            SSK.KIGYO_CD = #{kigyoCd}
+            AND SSK.SHAIN_UID = #{shainUid}
+        ORDER BY
+            SSK.KEIRO_SEQ
+    </select>
+
 
 	<!-- 유지희 -->
 	<!-- 해당 사원의 최신 신청에 대한 경로 전체 삭제 -->
