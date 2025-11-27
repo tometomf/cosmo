@@ -15,8 +15,6 @@ import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.HiwariRiyuVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKinmuchiService;
-import org.cosmo.service.IchijiHozonService;
-import org.cosmo.service.KeiroInputService;
 import org.cosmo.service.OshiraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,16 +30,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class HiwariKinmuchiController {
 
 	@Autowired
-	private IchijiHozonService ichijiHozonService;
-
-	@Autowired
 	private OshiraseService oshiraseService;
 
 	@Autowired
 	private HiwariKinmuchiService service;
-	
-	@Autowired
-	private KeiroInputService keiroInputservice;
 	
 	
 
@@ -81,10 +73,7 @@ public class HiwariKinmuchiController {
 		return "hiwariKinmuchi/hiwariKinmuchi";
 	}
 
-	private boolean isNullOrEmpty(String s) {
-		return (s == null || s.trim().isEmpty());
-	}
-
+	
 	// 서혜원
 	@GetMapping("/address")
 	public String showHiwariAddressPage(HttpSession session, Model model) {
