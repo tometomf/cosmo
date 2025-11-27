@@ -4,12 +4,13 @@ import java.sql.Timestamp;
 
 import lombok.Data;
 
+//제교
 @Data
 public class ShinseiDTO {
 	
 	// PK
 	private int kigyoCd; // KIGYO_CD (기업 코드)
-	private int shinseiNo; // SHINSEI_NO (신청 번호)
+	private long shinseiNo; // SHINSEI_NO (신청 번호)
 	
 	// 신청 기본 정보
 	private String shinseiKbn; // SHINSEI_KBN (신청 구분)

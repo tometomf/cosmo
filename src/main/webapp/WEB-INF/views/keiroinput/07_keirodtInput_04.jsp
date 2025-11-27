@@ -1,3 +1,4 @@
+<!-- 재환 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -292,6 +293,10 @@
 
 			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 			<input type="hidden" name="redirectUrl" value="">
+			
+		    <input type="hidden" name="hozonUid" value="${hozonUid}">
+		    
+		    <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
 
 	</div>
@@ -484,7 +489,9 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTotal("pass6m", "total6m");
 
     /* 임시저장 + 이동 처리 공통 준비 */
-
+    const ichijiHozon = ${ichijiHozon};
+	console.log("임시저장 데이터:", ichijiHozon);
+    
     const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn02.gif"]');
     const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
 
@@ -503,41 +510,27 @@ document.addEventListener("DOMContentLoaded", function () {
         // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
         const kbn        = shudanType || null;   // "2" 또는 "7"
         const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
- 
-        const shinseiIcData = {
-            kigyoCd:   null,
-            shinseiNo: null,
-            shinseiYmd: null,
-            shinseiKbn: null,
-            shinchokuKbn: null,
-            genAddress: null,
-            newAddress: null,
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-
-            // 통근 경로 정보
-            keiro: {
+ 		
+        const keiro =  {
                 tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
                 shudanName:   labelText,  // 예: "バス", "その他"
                 startPlace: homeFullAddress,
                 endPlace:  workFullAddress,
                 shinseiKm: distance 
-            }
-        };
-		
-        console.log(shinseiIcData);
-        return JSON.stringify(shinseiIcData);
+            };
+        
+        const startKeiro = {
+        		tsukinShudanKbn: kbn,   
+                startPlace: homeFullAddress,
+                endPlace:  workFullAddress,
+                shinseiKm: distance
+            };
+        
+        ichijiHozon.keiro = keiro;
+        ichijiHozon.startKeiro = startKeiro;
+        
+        console.log(ichijiHozon);
+        return JSON.stringify(ichijiHozon);
     }
 
     /* hozon 버튼: 임시저장 + 기본 화면(/shinsei/ichiji)으로 */
@@ -555,9 +548,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    const distanceNullErrorText = "検索してください。";
+    const distanceZeroErrorText = "0Kmは変更できません。 もう一度検索してください。";
+    
     /* 다음 단계: 임시저장 + 원하는 페이지로 이동 */
     if (keiroBtn) {
+    	
         keiroBtn.addEventListener("click", function () {
+        	
+         	if (distance == null) {
+        		alert(distanceNullErrorText);
+        		return;
+        	}
+         	
+         	if (distance == 0) {
+        		alert(distanceZeroErrorText);
+        		return;
+        	}
+
+
+        	
             const jsonString = buildCommuteJson();
             if (!jsonString) return;
 
