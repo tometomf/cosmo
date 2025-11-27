@@ -81,12 +81,14 @@ p {
                         <div class="form_Column">勤務先</div>
                         <div class="form_Normal">${initData.genKinmusakiNm}</div>
                         <div class="form_Normal">
-                            <select style="width: 120px;" name="newShozokuNm">
-                                <option>${initData.hiwariKinmusakiNm}</option>
-                                <c:forEach var="nm" items="${shoList}">
-                                    <option>${nm}</option>
-                                </c:forEach>
-                            </select>
+                            <select name="newShozokuNm" style="width: 120px;">
+    						<c:forEach var="nm" items="${shoList}">
+       					 	<option value="${nm}"
+           				 	<c:if test="${nm == initData.hiwariKinmusakiNm}">selected</c:if>>
+            							${nm}
+       						 </option>
+    						</c:forEach>
+							</select>
                         </div>
                     </div>
 
