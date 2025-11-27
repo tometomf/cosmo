@@ -173,7 +173,7 @@
 								type="hidden" id="h_middlePref" value="${view.middlePref}" /> <input
 								type="hidden" id="h_middleAddr1" value="${view.middleAddr1}" />
 							<input type="hidden" id="h_middleAddr2"
-								value="${view.middleAddr2}" />
+								value="${view.middleAddr2}" />		<!-- db에서 값 불러오기 -->
 						</div>
 
 						<div class="form_Normal">

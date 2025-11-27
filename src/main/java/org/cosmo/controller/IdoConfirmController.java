@@ -195,24 +195,51 @@ public class IdoConfirmController {
         }
 
         // ---------------------------------------------------
-        // 4. 다음(Next) 버튼
-        // ---------------------------------------------------
+     // 4. [다음(次へ)] 버튼 클릭 시 (수정된 부분)
+        // ==============================================================
         if ("next".equals(action)) {
-            boolean isValid = addressInputService.validateAndCheckRoute(form);
             
-            if (!isValid) {
-                model.addAttribute("errorMessage", "必須項目を入力してください。(または経路取得エラー)");
+            // 1) 필수 입력값 체크 (빈 값 확인)
+            // (AddressInputServiceImpl에 있는 기본 검증 사용)
+            boolean isBasicValid = addressInputService.validateAndCheckRoute(form);
+            
+            if (!isBasicValid) {
+                model.addAttribute("errorMessage", "必須項目を入力してください。");
+                // 화면 깨짐 방지용 데이터 로드
                 model.addAttribute("view", addressInputService.loadViewData(shainUid));
                 return "idoconfirm/04_addressinput";
             }
-            // 유효성 통과 시 경로 입력 화면으로 이동
+
+            // 2) 주소 문자열 합치기 (도도부현 + 시구정촌 + 건물명)
+            String fullAddress = form.getPref() + form.getAddr1() 
+                               + (form.getAddr2() == null ? "" : form.getAddr2());
+            
+            System.out.println(">> GeoService 호출 전 주소: " + fullAddress);
+
+            // 3) ★ 동료가 만든 GeoService 호출 (위도/경도 취득) ★
+            GeoPoint point = geoService.getLatLng(fullAddress);
+
+            // 4) 좌표 취득 실패 시 (에러 메시지 표시 및 화면 유지)
+            if (point == null) {
+                model.addAttribute("errorMessage", "住所の緯度経度が取得できませんでした。");
+                model.addAttribute("view", addressInputService.loadViewData(shainUid));
+                return "idoconfirm/04_addressinput";
+            }
+
+            // 5) 성공 시 로그 출력 (취득 확인)
+            System.out.println("===== [04] 좌표 취득 성공 =====");
+            System.out.println("Lat: " + point.getLat());
+            System.out.println("Lng: " + point.getLng());
+            
+            // (필요하다면 여기서 다음 화면으로 넘길 데이터 처리 가능)
+            
+            // 6) 경로 입력 화면으로 이동
             return "redirect:/idoconfirm/keiroInfo";
         }
 
-        // 그 외의 경우 다시 원래 화면으로
+        // 그 외 -> 원래 화면
         return "redirect:/idoconfirm/addressinput";
     }
-
     // 作成者 : 권예성
     // 근무지 입력
     @GetMapping("/kinmuInput")
