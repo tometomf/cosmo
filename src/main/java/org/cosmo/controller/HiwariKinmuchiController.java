@@ -76,7 +76,7 @@ public class HiwariKinmuchiController {
 	
 	// 서혜원
 	@GetMapping("/address")
-	public String showHiwariAddressPage(HttpSession session, Model model) {
+	public String showHiwariAddressPage(@RequestParam(name = "hozonUid", required = false) String hozonUid,HttpSession session, Model model) {
 
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		if (shain == null) {
@@ -100,6 +100,8 @@ public class HiwariKinmuchiController {
 
 		model.addAttribute("initData", data);
 		model.addAttribute("addressData", data);
+		model.addAttribute("hozonUid", hozonUid);
+		model.addAttribute("shinseiNo", shinseiNo);
 
 		return "hiwariKinmuchi/hiwariAddress";
 	}
@@ -107,7 +109,7 @@ public class HiwariKinmuchiController {
 	
 	// 서혜원
 	@GetMapping("/riyu")
-	public String showRiyuPage(HttpSession session, Model model) {
+	public String showRiyuPage(@RequestParam(name = "hozonUid", required = false) String hozonUid,HttpSession session, Model model) {
 
 	    ShainVO shain = (ShainVO) session.getAttribute("shain");
 	    if (shain == null) {
@@ -133,6 +135,8 @@ public class HiwariKinmuchiController {
 	    HiwariRiyuVO data = service.getRiyuPageAfter(kigyoCd, shainUid, shinseiNo);
 
 	    model.addAttribute("initData", data);
+	    model.addAttribute("hozonUid", hozonUid);
+		model.addAttribute("shinseiNo", shinseiNo);
 
 	    return "hiwariKinmuchi/hiwariRiyu";
 	}
