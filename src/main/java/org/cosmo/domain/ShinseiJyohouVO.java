@@ -2,6 +2,7 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
+//하나
 @Data
 public class ShinseiJyohouVO {
 	private Integer kigyoCd;
@@ -9,13 +10,49 @@ public class ShinseiJyohouVO {
 	private String shinseiYmd;
 	private String shinseiKbn;
 	private String shinchokuKbn;
-	private String genAddress;
-	private String newAddress;
+	private String genAddress1;
+	private String genAddress2;
+	private String genAddress3;
+	private String newAddress1;
+	private String newAddress2;
+	private String newAddress3;
 	private String genShozoku;
 	private String newShozoku;
-	private String genKinmuchi;
-	private String newKinmuchi;
+	private String genKinmuchi1;
+	private String genKinmuchi2;
+	private String genKinmuchi3;
+	private String newKinmuchi1;
+	private String newKinmuchi2;
+	private String newKinmuchi3;
+
+
+	private String genKinmuZipCd;
+	private String genKinmuAddress1;
+	private String genKinmuAddress2;
+	private String genKinmuAddress3;
+
 	
+	private String newKinmuZipCd;
+	private String newKinmuAddress1;
+	private String newKinmuAddress2;
+	private String newKinmuAddress3;
+
+	private String etcComment1;
+	private String etcComment2;
+	private String etcComment3;
+	private String etcComment4;
+	private String etcComment5;
+	
+
+	private Long etcFileUid1;
+	private Long etcFileUid2;
+	private Long etcFileUid3;
+	private Long etcFileUid4;
+	private Long etcFileUid5;
+
+	private String kinmuAddressIdoKeido;
+
+
 	private String riyu;
 	private String idoYmd;
 	private String itenYmd;
@@ -23,7 +60,70 @@ public class ShinseiJyohouVO {
 	private String riyoStartYmd;
 	private String ssmdsYmd;
 	private String moComment;
-	
+
 	private String codeNm;
 	private String shinseiName;
+	private String torikeshiYmd;
+	private String sashimodoshiYmd;
+
+	private String yuryoIcS;
+	private String yuryoIcE;
+
+	private String addressIdoKeido;
+
+	public String getGenAddress() {
+		StringBuilder sb = new StringBuilder();
+
+		if (genAddress1 != null && !genAddress1.trim().isEmpty()) {
+			sb.append(genAddress1.trim());
+		}
+		if (genAddress2 != null && !genAddress2.trim().isEmpty()) {
+			sb.append(genAddress2.trim());
+		}
+		if (genAddress3 != null && !genAddress3.trim().isEmpty()) {
+			sb.append(genAddress3.trim());
+		}
+
+		return sb.toString();
+	}
+
+	public String getNewAddress() {
+		StringBuilder sb = new StringBuilder();
+
+		if (newAddress1 != null && !newAddress1.trim().isEmpty())
+			sb.append(newAddress1.trim());
+		if (newAddress2 != null && !newAddress2.trim().isEmpty())
+			sb.append(newAddress2.trim());
+		if (newAddress3 != null && !newAddress3.trim().isEmpty())
+			sb.append(newAddress3.trim());
+
+		return sb.toString();
+	}
+
+	public String getGenKinmuchi() {
+		StringBuilder sb = new StringBuilder();
+
+		if (genKinmuchi1 != null && !genKinmuchi1.trim().isEmpty())
+			sb.append(genKinmuchi1.trim());
+		if (genKinmuchi2 != null && !genKinmuchi2.trim().isEmpty())
+			sb.append(genKinmuchi2.trim());
+		if (genKinmuchi3 != null && !genKinmuchi3.trim().isEmpty())
+			sb.append(genKinmuchi3.trim());
+
+		return sb.toString();
+	}
+
+	public String getNewKinmuchi() {
+		StringBuilder sb = new StringBuilder();
+
+		if (newKinmuchi1 != null && !newKinmuchi1.trim().isEmpty())
+			sb.append(newKinmuchi1.trim());
+		if (newKinmuchi2 != null && !newKinmuchi2.trim().isEmpty())
+			sb.append(newKinmuchi2.trim());
+		if (newKinmuchi3 != null && !newKinmuchi3.trim().isEmpty())
+			sb.append(newKinmuchi3.trim());
+
+		return sb.toString();
+	}
+
 }

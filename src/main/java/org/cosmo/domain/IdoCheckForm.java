@@ -1,20 +1,18 @@
-
 package org.cosmo.domain;
 
-import lombok.Data;
+import lombok.Data;		//조우진
 
 @Data
 public class IdoCheckForm {
-   
-    private String kinmuChange;   // 勤務地が：変わる/変わらない
-    private String jushoChange;   // 住所が：変わる/変わらない
+    private String kinmuChange;
+    
+    private String jushoChange;
 
-    public boolean isKinmuChange() {
-        return "Y".equals(kinmuChange);
+    public boolean isKinmuChanged() {
+        return "Y".equals(this.kinmuChange);
     }
 
-    public boolean isJushoChange() {
-        return "Y".equals(jushoChange);
-        //sdfd
+    public boolean isJushoChanged() {
+        return "Y".equals(this.jushoChange);
     }
 }

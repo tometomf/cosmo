@@ -1,12 +1,16 @@
 package org.cosmo.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
-import org.cosmo.domain.ShinseiIcDataVO;
+import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
+import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.mapper.ShinseiMapper;
@@ -23,6 +27,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	@Autowired
 	private ShinseiMapper shinseiMapper;
 
+	// 하나
 	@Override
 	public ShinseiJyohouVO getShinseiJyohou(Long shinseiNo) {
 		return shinseiMapper.getShinseiJyohou(shinseiNo);
@@ -34,79 +39,27 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
-		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
+	public ShinseiIcHozonVO getIchijiHozon(String hozonUid) {
+		return shinseiMapper.getIchijiHozon(hozonUid);
 	}
 
 	@Override
-	@Transactional
-	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
-
-		// 신청정보조회
-		ShinseiJyohouVO jyohou = shinseiMapper.getShinseiJyohou(shinseiNo);
-		if (jyohou == null) {
-			// 신청정보없으면 에러
-			throw new IllegalStateException("申請情報が存在しません。(申請番号=" + shinseiNo + ")");
-		}
-		String shinseiKbn = jyohou.getShinseiKbn(); // 신청구분 코드
-		String shinseiYmd = jyohou.getShinseiYmd(); // 신청일자
-
-		// 상태 일시보존으로 되돌리기
-		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
-
-		// 신청일자 null로 변경. 없는신청으로 침
-		shinseiMapper.updateAlertForHikimodoshi(kigyoCd, shinseiNo, loginUserId);
-
-		String kigyoCdStr = String.valueOf(kigyoCd); // 매퍼 로그 메서드들은 String 사용
-		String shinseiNoStr = String.valueOf(shinseiNo);
-
-		int syoriKbn = 6; // 6번 hikimodoshi
-		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr); // 다음 LOG_SEQ 채번
-
-		// 로그에 INSERT
-		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, // 6 : 引戻し
-				shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
-		);
-
-		if (shinseiMapper.countStartKeiro(kigyoCdStr, shinseiNoStr) > 0) {
-
-			shinseiMapper.insertStartKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		} else {
-
-			shinseiMapper.insertEmptyStartKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		}
-
-		if (shinseiMapper.countEndKeiro(kigyoCdStr, shinseiNoStr) > 0) {
-			shinseiMapper.insertEndKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		} else {
-			shinseiMapper.insertEmptyEndKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		}
-
-		if (shinseiMapper.countFuzuiShorui(kigyoCdStr, shinseiNoStr) > 0) {
-			shinseiMapper.insertFuzuiShoruiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		} else {
-			shinseiMapper.insertEmptyFuzuiShoruiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
-		}
-
-		shinseiMapper.insertProcessLog(shinseiNoStr, loginUserId, "HIKIMODOSHI");
-	}
-
-	public ShinseiJyohouVO getShinseiJyohou(String shinseiNo) {
-		return shinseiMapper.getShinseiJyohou(shinseiNo);
+	public String getShainUidByShinseiNo(String shinseiNo) {
+		return shinseiMapper.getShainUidByShinseiNo(shinseiNo);
 	}
 
 	@Override
-	public ShinseiKeiroVO getShinseiKeiro(String shinseiNo) {
-		return shinseiMapper.getShinseiKeiro(shinseiNo);
+	public ShainVO getShainByUid(String shainUid) {
+		return shinseiMapper.getShainByUid(shainUid);
 	}
 
 	@Override
-	public ShinseiShoruiVO getShinseiShorui(String shinseiNo) {
+	public ShinseiShoruiVO getShinseiShorui(Long shinseiNo) {
 		return shinseiMapper.getShinseiShorui(shinseiNo);
 	}
 
 	@Override
-	public ShinseiIcDataVO getIcData(String hozonUid) {
+	public ShinseiIcDataDTO getIcData(String hozonUid) {
 
 		ShinseiIcHozonVO row = shinseiMapper.getIchijiHozon(hozonUid);
 
@@ -114,20 +67,20 @@ public class ShinseiServiceImpl implements ShinseiService {
 			return null;
 		}
 
-		// BLOB → JSON 문자열 변환
 		String json = new String(row.getData(), StandardCharsets.UTF_8);
 
 		ObjectMapper mapper = new ObjectMapper();
-		ShinseiIcDataVO vo;
+		ShinseiIcDataDTO vo;
 
 		try {
-			vo = mapper.readValue(json, ShinseiIcDataVO.class);
+			vo = mapper.readValue(json, ShinseiIcDataDTO.class);
 		} catch (Exception e) {
-			throw new RuntimeException("임시저장 데이터 변환 오류", e);
+			throw new RuntimeException("エラーが発生しました。", e);
 		}
 
-		if (vo.getShinseiKbn() != null && !vo.getShinseiKbn().isEmpty()) {
-			String shinseiName = shinseiMapper.getShinseiName(vo.getShinseiKbn());
+		if (row.getShinseiKbn() != null && !row.getShinseiKbn().isEmpty()) {
+			vo.setShinseiKbn(row.getShinseiKbn());
+			String shinseiName = shinseiMapper.getShinseiName(row.getShinseiKbn());
 			vo.setShinseiName(shinseiName);
 		}
 
@@ -161,13 +114,18 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public String getFileName(String shinseiNo) {
+	public String getFileName(Long shinseiNo) {
 		return shinseiMapper.getFileName(shinseiNo);
 	}
 
 	@Override
 	public String getShinchokuKbn(String shinseiNo) {
 		return shinseiMapper.getShinchokuKbn(shinseiNo);
+	}
+
+	@Override
+	public String getEmailByShainUid(String shainUid) {
+		return shinseiMapper.getEmailByShainUid(shainUid);
 	}
 
 	@Override
@@ -183,8 +141,8 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public void insertOshirase(ShainVO shain, String shinseiNo) {
-		shinseiMapper.insertOshirase(shain, shinseiNo);
+	public void insertOshirase(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshirase(loginUser, shinseiUser, shinseiNo);
 	}
 
 	@Override
@@ -225,7 +183,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public void loadShinseiDetail(String shinseiNo, String hozonUid, Model model) {
+	public void loadShinseiDetail(Long shinseiNo, String hozonUid, Model model) {
 		ShinseiJyohouVO jyohouVo = getShinseiJyohou(shinseiNo);
 
 		if (jyohouVo != null) {
@@ -250,13 +208,167 @@ public class ShinseiServiceImpl implements ShinseiService {
 		}
 
 		if (hozonUid == null) {
-			throw new RuntimeException("hozonUidがありません。");
+			throw new RuntimeException("エラーが発生しました。");
 		}
 
-		ShinseiIcDataVO ichijiVo = getIcData(hozonUid);
+		ShinseiIcDataDTO ichijiVo = getIcData(hozonUid);
 
 		model.addAttribute("ichiji", ichijiVo);
 		model.addAttribute("isIchiji", true);
+	}
+
+	@Override
+	public void deleteShinseiByShinseiNo(String shinseiNo) {
+		shinseiMapper.deleteShinseiByShinseiNo(shinseiNo);
+	}
+
+	// 제교
+
+	@Override
+	public void clearHenkoFlags(Long kigyoCd, Long shinseiNo) {
+		shinseiMapper.clearHenkoFlags(kigyoCd, shinseiNo);
+	}
+
+	@Override
+	public void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId) {
+		shinseiMapper.updateForResubmit(kigyoCd, shinseiNo, shinseiRiyu, updUserId);
+	}
+
+	@Override
+	@Transactional
+	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
+			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
+			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
+			String userIp) {
+
+		Integer updUserId = null;
+		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
+			try {
+				updUserId = Integer.valueOf(loginUserId.trim());
+			} catch (NumberFormatException e) {
+
+			}
+		}
+
+		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2,
+				newAddress3, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, updUserId);
+
+		Integer jitsu = null;
+		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
+			try {
+				jitsu = Integer.valueOf(jitsuKinmuNissu.trim());
+			} catch (NumberFormatException e) {
+			}
+		}
+
+		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
+	}
+
+	@Override
+	public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		param.put("keiroSeq", keiroSeq);
+		return shinseiMapper.getShinseiKeiroDetail(param);
+	}
+
+	@Override
+	public ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo) {
+		return shinseiMapper.selectShinseiDetail(kigyoCd, shinseiNo);
+	}
+
+	@Override
+	@Transactional
+	public void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp) {
+
+		ShinseiJyohouVO jyohou = shinseiMapper.getShinseiJyohou(shinseiNo);
+		if (jyohou == null) {
+			throw new IllegalStateException("エラーが発生しました。" + shinseiNo + ")");
+		}
+		String shinseiKbn = jyohou.getShinseiKbn();
+		String shinseiYmd = jyohou.getShinseiYmd();
+
+		shinseiMapper.updateShinseiToIchijihozon(kigyoCd, shinseiNo, loginUserId);
+
+		shinseiMapper.updateAlertForHikimodoshi(kigyoCd, shinseiNo, loginUserId);
+
+		String kigyoCdStr = String.valueOf(kigyoCd);
+		String shinseiNoStr = String.valueOf(shinseiNo);
+
+		int syoriKbn = 6;
+		Long logSeq = shinseiMapper.getNextLogSeq(kigyoCdStr, shinseiNoStr);
+
+		shinseiMapper.insertShinseiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, shinseiKbn, shinseiYmd, loginUserId // SHAIN_UID
+		);
+
+		if (shinseiMapper.countStartKeiro(kigyoCdStr, shinseiNoStr) > 0) {
+
+			shinseiMapper.insertStartKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		} else {
+
+			shinseiMapper.insertEmptyStartKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		}
+
+		if (shinseiMapper.countEndKeiro(kigyoCdStr, shinseiNoStr) > 0) {
+			shinseiMapper.insertEndKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		} else {
+			shinseiMapper.insertEmptyEndKeiroLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		}
+
+		if (shinseiMapper.countFuzuiShorui(kigyoCdStr, shinseiNoStr) > 0) {
+			shinseiMapper.insertFuzuiShoruiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		} else {
+			shinseiMapper.insertEmptyFuzuiShoruiLog(kigyoCdStr, shinseiNoStr, logSeq, syoriKbn, loginUserId);
+		}
+
+		shinseiMapper.insertProcessLog(shinseiNoStr, loginUserId, "HIKIMODOSHI");
+	}
+
+	@Override
+	public void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshiraseHikimodosu(loginUser, shinseiUser, shinseiNo);
+	}
+
+	@Override
+	public List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		return shinseiMapper.getShinseiKeiroDetailList(param);
+	}
+
+	@Override
+	public void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo) {
+		shinseiMapper.insertOshiraseReapply(loginUser, shinseiUser, shinseiNo);
+	}
+
+	@Override
+	@Transactional
+	public void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid) {
+
+		Long logSeq = shinseiMapper.getNextShinseiLogSeq(kigyoCd, shinseiNo);
+
+		String syoriKbn = "4";
+
+		shinseiMapper.insertReapplyLog(kigyoCd, shinseiNo, logSeq, syoriKbn, shainUid);
+	}
+
+	@Override
+	@Transactional
+	public void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack) {
+
+		String key1 = String.valueOf(shinseiNo); 
+		String key2 = shinseiKbn;
+		String key3 = beforeShinchokuKbn;
+		String key4 = afterShinchokuKbn;
+		String key5 = String.valueOf(kigyoCd); 
+		String data = null; 
+
+		String process = "再申請"; 
+
+		shinseiMapper.insertSaishinseiProcessLog(subsystemId, process, key1, key2, key3, key4, key5, data, userUid, userTrack);
 	}
 
 }

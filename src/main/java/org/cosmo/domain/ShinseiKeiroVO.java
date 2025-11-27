@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import lombok.Data;
 
+//하나
 @Data
 public class ShinseiKeiroVO {
 	private String kigyoCd;
@@ -20,6 +21,8 @@ public class ShinseiKeiroVO {
 
 
 	private String shudanName;
+	
+	
 
 	public Long getYuryo() {
 
@@ -36,5 +39,9 @@ public class ShinseiKeiroVO {
 
 	public BigDecimal getShinseiKm() {
 		return shinseiKm == null ? BigDecimal.ZERO : shinseiKm;
+	}
+	
+	public Long getTotal() {
+		return getTsuki() + getYuryo();
 	}
 }

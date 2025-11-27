@@ -2,20 +2,24 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-/**
- * 0400 화면에 표시할 주소 정보 (현재/신청후)
- */
+//조우진
+
 @Data
 public class AddressViewDto {
+    private String currentZip;
+    private String currentPref;
+    private String currentAddr1;
+    private String currentAddr2;
 
-    // 現住所 (신청 전: 社員M 등)
-    private String curZip;       // 213-0001
-    private String curPref;      // 神奈川県
-    private String curCity;      // 川崎市中原区
-    private String curStreet;    // 上小田中1-2-3
-    private String curBuilding;  // レオパレス清の103
-
-    // 新住所 (신청 후: 申請T or 一時保存)
-    // 여기 값은 AddressInputForm으로 옮겨서 input value로 쓸 거라
-    // 꼭 있어야 하는 건 아님. 필요하면 추가로 사용.
+    private String middleDbAddress; 
+    
+    // [추가] DB의 우편번호 원본(7자리)을 담을 변수입니다.
+    // JSP에서 ${view.middleZip}으로 꺼내 쓰기 위함입니다.
+    private String middleZip; 
+    
+    private String middleZip1;
+    private String middleZip2;
+    private String middlePref;
+    private String middleAddr1;
+    private String middleAddr2;
 }
