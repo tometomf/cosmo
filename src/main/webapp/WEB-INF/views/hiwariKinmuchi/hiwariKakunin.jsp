@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <%-- 유지희 --%>
 
@@ -110,9 +111,10 @@
 </style>
 </head>
 <body>
+<p>DEBUG keiroList size = ${fn:length(keiroList)}</p>
 <div class="layout">
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
-
+  
   <!-- 신청선택 화면과 동일한 상단 구조 -->
   <div class="main">
     <div class="main_title">
