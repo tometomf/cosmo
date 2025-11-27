@@ -16,7 +16,6 @@ public interface HuzuiNewInputService {
 	
 	ShainFuzuiShoruiVO getList(String kigyo_Cd,String shain_Uid);
 	
-	void fileUpload(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid,@Param ("fileNo") String fileNo, @Param("fileUid") Long fileUid);
 	
     @Transactional
     public void saveAll(ShinseiDTO shinsei,ShainVO shain,ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,OshiraseDTO oshirase,ProcessLogDTO processLog); 
@@ -24,7 +23,9 @@ public interface HuzuiNewInputService {
     @Transactional
     public void saveHozon(ShainVO shain,OshiraseDTO oshirase,ProcessLogDTO processLog,IchijiHozonDTO ichiji); 
     
-    void addFile(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("shain")ShainVO shain);
+    @Transactional
+    public void addFile(UploadFileDTO UploadFile,String fNo,ShainVO shain);
+    
 }  
 
 

@@ -6,12 +6,25 @@
 <mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
 	
 	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
+   	 	SELECT *
+		FROM (
+		    SELECT *
+		    FROM SHAIN_FUZUI_SHORUI a
+		    INNER JOIN UPLOAD_FILE b
+		    ON a.KIGYO_CD = b.KIGYO_CD
+		    AND a.FILE_UID_4 = b.FILE_UID
+		    WHERE a.KIGYO_CD = #{kigyo_Cd}
+		    AND a.SHAIN_UID = #{shain_Uid}
+		    ORDER BY b.SEQ DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+	
+	<select id="getFile">
 		SELECT * 
-		FROM SHAIN_FUZUI_SHORUI a inner join UPLOAD_FILE b
-    	on a.KIGYO_CD = b.KIGYO_CD
-    	where a.FILE_UID_4 = b.FILE_UID
-    	and a.KIGYO_CD = #{kigyo_Cd}
-   	 	and a.SHAIN_UID = #{shain_Uid}
+		FROM UPLOAD_FILE
+		WHERE FILE_UID = #{fileUid}
+		
 	</select>
 	
 	<select id="getFiles">
@@ -51,11 +64,11 @@
 	    and a.SHAIN_UID = #{shain_Uid}
 	</select>
 	
-	<update id="fileUpload">
+	<update id="fileUpdate">
 		update SHAIN_FUZUI_SHORUI 
-		set #{fileNo} = #{fileUid} 
-		where KIGYO_CD = #{kigyo_Cd} 
-		and shain_uid = #{shain_Uid}
+		set ${fNo} = #{UploadFile.fileUid} 
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
 	</update>
 	
 	<insert id="addFuzuiShorui">

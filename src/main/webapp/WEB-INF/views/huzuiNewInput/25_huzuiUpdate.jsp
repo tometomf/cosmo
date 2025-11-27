@@ -34,7 +34,7 @@
 </style>
 <body>
 	<div class = "layout">
-		<%-- <%@ include file="/WEB-INF/views/common/header.jsp" %> --%>
+		<%@ include file="/WEB-INF/views/common/header.jsp" %> 
 		<div class = "main">
 			<div class = "main_title">
 				<div class="subtitle">付図書類更新 確認</div>
