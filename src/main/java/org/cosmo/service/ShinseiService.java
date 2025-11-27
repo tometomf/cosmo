@@ -82,5 +82,8 @@ public interface ShinseiService {
 
 	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
 			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
+	
+	void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId);
+
 
 }

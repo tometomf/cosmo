@@ -12,26 +12,22 @@
 
 <style>
 .transport-wrapper {
+	width: 1010px;
+	margin: auto;
 	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	min-width: 500px;
-	align-items: center;
 }
 
 .transport {
-	padding: 0.3rem;
+	width: 1010px;
+	padding: 0.5rem;
 	padding-left: 10px;
-	margin: 1rem;
 	text-align: left;
 	font-weight: bold;
-	border-left: 4px solid #666;
-	border-bottom: 1px dotted #999;
-	padding-bottom: 4px;
+	border-left: 5px solid #666;
+	border-bottom: 2px dotted #999;
 	color: #333;
-	width: 90%;
 }
+
 
 .grid {
 	display: grid;
@@ -288,7 +284,7 @@
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-				<div class="transport">手段：電車</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 			<!-- ここまで上位タイトル -->
 
@@ -456,6 +452,8 @@
 			<input type="hidden" name="redirectUrl" value="">
 			
 		    <input type="hidden" name="hozonUid" value="${hozonUid}">
+		    
+		    <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
 
 
@@ -475,6 +473,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const commuteJsonInput = document.querySelector('input[name="commuteJson"]');
     const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
     const hozonBtn = document.getElementById("denshaHozonBtn");
+    const kakutei = document.getElementById("keiroKakutei");
+    
 
     const ichijiHozon = ${empty ichijiHozon ? '{}' : ichijiHozon};
     
@@ -550,7 +550,62 @@ document.addEventListener("DOMContentLoaded", function () {
             form.submit();
         });
     }
+    
 
+    if(kakutei){
+    	kakutei.addEventListener("click", function(){
+			
+			const displayedRoute = keiro.innerText.trim();
+			
+			if(!displayedRoute || displayedRoute === "経路を入力してください。"){
+		        alert("経路を入力してください。");
+		        return;
+			}
+			
+			const formStation = document.querySelector('input[name="From_station"]').value;
+			const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+				const middles = [];
+				middleInputs.forEach(input => {
+					const v = input.value.trim();
+					if(v !== ""){
+						middles.push(v);
+					}
+				});
+							
+			const ToStation = document.querySelector('input[name="To_station"]').value;
+			const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
+
+		    // 3. 비교
+		    if (currentRoute !== displayedRoute) {
+		        alert("入力したパスと照会されたパスが一致しません。");
+		        return;
+		    }
+
+		    if (total1 === 0){
+		        alert("定期券情報がありません。");
+		        return;
+		    }
+		    			    // 4. 여기까지 왔으면 OK → 다음 로직
+
+		    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
+		    alert("パスが一致します。 次のステップに進みます。");
+		    const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // 이 화면 이후에 이동할 URL 지정
+            // 예시: 다음이 경로 확인 화면이라면
+            const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+
+            // 컨트롤러에서 return redirectUrl; 그대로 쓰므로
+            redirectUrlInput.value =  nextPath;
+
+            form.submit();
+		   
+		});
+    }
+    
 });
 </script>
 
@@ -567,11 +622,11 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
 			
-			const Kakutei = document.getElementById("keiroKakutei");
+			
 			let searchedRoute = null;
 
 	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
-
+	       
 	    	
 	    	
 	    	function addMiddleRow(initialValue) {
@@ -628,7 +683,14 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 			
 			returnToTop.addEventListener("click", function(){
-				location.href = "http://localhost:8282/keiroinput/06_keiroInput";
+				let redirectPath = "";
+				location.href = "http://localhost:8282/keiroinput/06_keiroInput?shudanType=${shudanType}&hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
+				/* redirectPath = "<c:url value='/keiroinput/06_keiroInput'/>";
+	            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
+	            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+	            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
+	            redirectUrlInput.value = redirectPath;
+	            form.submit(); */
 			});
 			
 			kensaku.addEventListener("click", function(){
@@ -733,45 +795,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				endStation.value = emptyStation;
 			});
 			
-			Kakutei.addEventListener("click", function(){
-				
-				const displayedRoute = keiro.innerText.trim();
-				
-				if(!displayedRoute || displayedRoute === "経路を入力してください。"){
-			        alert("経路を入力してください。");
-			        return;
-				}
-				
-				const formStation = document.querySelector('input[name="From_station"]').value;
-				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
-					const middles = [];
-					middleInputs.forEach(input => {
-						const v = input.value.trim();
-						if(v !== ""){
-							middles.push(v);
-						}
-					});
-								
-				const ToStation = document.querySelector('input[name="To_station"]').value;
-				const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
-
-			    // 3. 비교
-			    if (currentRoute !== displayedRoute) {
-			        alert("입력한 경로와 조회된 경로가 일치하지 않습니다.");
-			        return;
-			    }
-
-			    if (total1 === 0){
-			        alert("정기권 정보가 없습니다.");
-			        return;
-			    }
-			    			    // 4. 여기까지 왔으면 OK → 다음 로직
-			    alert("경로가 일치합니다. 다음 단계로 진행합니다.");
-			    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
-			    
-			    
-			    
-			});
+			
 			
 			
 			

@@ -47,7 +47,11 @@ public class HiwariKinmuchiController {
 
 	// 서혜원
 	@GetMapping("hiwariKinmuchi")
-	public String showKinmuchiPage(HttpSession session, Model model) {
+	public String showKinmuchiPage(
+	@RequestParam(name = "hozonUid", required = false) String hozonUid,
+			HttpSession session, Model model) {
+		
+		
 
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
 		if (shain == null) {
@@ -71,6 +75,8 @@ public class HiwariKinmuchiController {
 
 		model.addAttribute("initData", data);
 		model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
+		model.addAttribute("hozonUid", hozonUid);
+		model.addAttribute("shinseiNo", shinseiNo);
 
 		return "hiwariKinmuchi/hiwariKinmuchi";
 	}

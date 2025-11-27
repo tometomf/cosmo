@@ -46,7 +46,9 @@ public class KeiroInputController {
 
 	// 하정
 	@GetMapping("/07_keirodtInput")
-	public String densha(@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+	public String densha(
+			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(name = "shudanType", required = false) String shudanType,
 			@RequestParam(name = "hozonUid", required = false) String hozonUid,
 			@RequestParam(name = "keiroSeq", required = false) String keiroSeq, Locale locale, HttpSession session,
 			Model model) {
@@ -67,7 +69,13 @@ public class KeiroInputController {
 
 		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo != "") {
 			keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, Integer.valueOf(keiroSeq));
+			
+			   if (keiroDto != null && keiroDto.getTsukinShudanKbn() != null) {
+			        shudanType = keiroDto.getTsukinShudanKbn();
+			    }
 		}
+		
+		
 
 		String ichijiHozonJson = "{}";
 
@@ -121,17 +129,26 @@ public class KeiroInputController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+
+		
+		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
 
 		model.addAttribute("keiro", keiroDto);
-
 		model.addAttribute("ichijiHozon", ichijiHozonJson);
-
+		model.addAttribute("shudanNm", shudanCode.getCodeNm());		
+		model.addAttribute("shudanType",shudanType);
 		model.addAttribute("shinseiNo", shinseiNo);
 		model.addAttribute("hozonUid", hozonUid);
 		model.addAttribute("keiroSeq", keiroSeq);
 
+		
+		System.out.println(">>> shudanType = " + shudanType);
+		System.out.println(">>> shudanNm   = " + shudanCode.getCodeNm());
+		
 		return "keiroinput/07_keirodtInput";
 	}
+
 
 	// 재환
 	@GetMapping("/07_keirodtInput_02")

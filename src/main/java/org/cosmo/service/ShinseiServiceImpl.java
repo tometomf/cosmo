@@ -359,16 +359,30 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
 			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack) {
 
-		String key1 = String.valueOf(shinseiNo); 
+		String key1 = String.valueOf(shinseiNo);
 		String key2 = shinseiKbn;
 		String key3 = beforeShinchokuKbn;
 		String key4 = afterShinchokuKbn;
-		String key5 = String.valueOf(kigyoCd); 
-		String data = null; 
+		String key5 = String.valueOf(kigyoCd);
+		String data = null;
 
-		String process = "再申請"; 
+		String process = "再申請";
 
-		shinseiMapper.insertSaishinseiProcessLog(subsystemId, process, key1, key2, key3, key4, key5, data, userUid, userTrack);
+		shinseiMapper.insertSaishinseiProcessLog(subsystemId, process, key1, key2, key3, key4, key5, data, userUid,
+				userTrack);
+	}
+
+	@Override
+	public void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		param.put("keiroSeq", keiroSeq);
+		param.put("loginUserId", loginUserId);
+
+		int updated = shinseiMapper.updateEndKeiroForReapply(param);
+
 	}
 
 }
