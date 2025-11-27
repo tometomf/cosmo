@@ -306,7 +306,7 @@
 									value="${keiro.startPlace}">
 							</div>
 							<div class="swapbutton">
-								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton">
+								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton"style="cursor: pointer;">
 							</div>
 							<div class="background">到着地</div>
 							<div>
@@ -370,10 +370,10 @@
 
 						<div class="button_layout">
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
-								class="add_btn">
+								class="add_btn"style="cursor: pointer;">
 							<!-- 경유지 추가버튼 -->
 							<img src="/resources/img/tn/search_btn01.gif"
-								id="SearchStationBtn" class="add_btn">
+								id="SearchStationBtn" class="add_btn"style="cursor: pointer;">
 						</div>
 					</div>
 				</div>
@@ -436,8 +436,8 @@
 			</div>
 
 			<div class="menu_button">
-				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
-					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
+				<img src="/resources/img/back_btn01.gif" id="returnToTop"style="cursor: pointer;"> <img
+					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"style="cursor: pointer;"> <img
 					src="/resources/img/hozon_btn01.gif" id="denshaHozonBtn"
 					style="cursor: pointer;">
 			</div>
@@ -456,6 +456,8 @@
 			<input type="hidden" name="redirectUrl" value="">
 			
 		    <input type="hidden" name="hozonUid" value="${hozonUid}">
+		    
+		    <input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		</form>
 
 
@@ -475,6 +477,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const commuteJsonInput = document.querySelector('input[name="commuteJson"]');
     const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
     const hozonBtn = document.getElementById("denshaHozonBtn");
+    const kakutei = document.getElementById("keiroKakutei");
+    
 
     const ichijiHozon = ${empty ichijiHozon ? '{}' : ichijiHozon};
     
@@ -512,7 +516,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
-
             const keiro = {
                 tsukinShudan : "1",
                 shudanName :   "電車",
@@ -522,16 +525,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             
             const startKeiro = {
-            startPlace :   fromStation, 
-            endPlace :     toStation,
-            viaPlace1: middleStation01,
+            startPlace:fromStation, 
+            endPlace:toStation,
+            viaPlace1:middleStation01,
             viaPlace2:middleStation02,
             viaPlace3:middleStation03,
             viaPlace4:middleStation04,
             viaPlace5:middleStation05
             }
         
-
+		
+            
+            
         ichijiHozon.keiro = keiro;
         ichijiHozon.startKeiro = startKeiro;
         
@@ -549,7 +554,62 @@ document.addEventListener("DOMContentLoaded", function () {
             form.submit();
         });
     }
+    
 
+    if(kakutei){
+    	kakutei.addEventListener("click", function(){
+			
+			const displayedRoute = keiro.innerText.trim();
+			
+			if(!displayedRoute || displayedRoute === "経路を入力してください。"){
+		        alert("経路を入力してください。");
+		        return;
+			}
+			
+			const formStation = document.querySelector('input[name="From_station"]').value;
+			const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+				const middles = [];
+				middleInputs.forEach(input => {
+					const v = input.value.trim();
+					if(v !== ""){
+						middles.push(v);
+					}
+				});
+							
+			const ToStation = document.querySelector('input[name="To_station"]').value;
+			const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
+
+		    // 3. 비교
+		    if (currentRoute !== displayedRoute) {
+		        alert("入力したパスと照会されたパスが一致しません。");
+		        return;
+		    }
+
+		    if (total1 === 0){
+		        alert("定期券情報がありません。");
+		        return;
+		    }
+		    			    // 4. 여기까지 왔으면 OK → 다음 로직
+
+		    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
+		    alert("パスが一致します。 次のステップに進みます。");
+		    const jsonString = buildCommuteJson();
+            if (!jsonString) return;
+
+            commuteJsonInput.value = jsonString;
+
+            // 이 화면 이후에 이동할 URL 지정
+            // 예시: 다음이 경로 확인 화면이라면
+            const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+
+            // 컨트롤러에서 return redirectUrl; 그대로 쓰므로
+            redirectUrlInput.value =  nextPath;
+
+            form.submit();
+		   
+		});
+    }
+    
 });
 </script>
 
@@ -566,11 +626,11 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
 			
-			const Kakutei = document.getElementById("keiroKakutei");
+			
 			let searchedRoute = null;
 
 	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
-
+	       
 	    	
 	    	
 	    	function addMiddleRow(initialValue) {
@@ -627,7 +687,14 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 			
 			returnToTop.addEventListener("click", function(){
-				location.href = "http://localhost:8282/keiroinput/06_keiroInput";
+				let redirectPath = "";
+				location.href = "http://localhost:8282/keiroinput/06_keiroInput?hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
+				/* redirectPath = "<c:url value='/keiroinput/06_keiroInput'/>";
+	            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
+	            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+	            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
+	            redirectUrlInput.value = redirectPath;
+	            form.submit(); */
 			});
 			
 			kensaku.addEventListener("click", function(){
@@ -732,45 +799,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				endStation.value = emptyStation;
 			});
 			
-			Kakutei.addEventListener("click", function(){
-				
-				const displayedRoute = keiro.innerText.trim();
-				
-				if(!displayedRoute || displayedRoute === "経路を入力してください。"){
-			        alert("経路を入力してください。");
-			        return;
-				}
-				
-				const formStation = document.querySelector('input[name="From_station"]').value;
-				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
-					const middles = [];
-					middleInputs.forEach(input => {
-						const v = input.value.trim();
-						if(v !== ""){
-							middles.push(v);
-						}
-					});
-								
-				const ToStation = document.querySelector('input[name="To_station"]').value;
-				const currentRoute = [formStation, ...middles, ToStation].join(" -> ");
-
-			    // 3. 비교
-			    if (currentRoute !== displayedRoute) {
-			        alert("입력한 경로와 조회된 경로가 일치하지 않습니다.");
-			        return;
-			    }
-
-			    if (total1 === 0){
-			        alert("정기권 정보가 없습니다.");
-			        return;
-			    }
-			    			    // 4. 여기까지 왔으면 OK → 다음 로직
-			    alert("경로가 일치합니다. 다음 단계로 진행합니다.");
-			    // TODO: 실제 제출 처리 (폼 submit 등) 넣기
-			    
-			    
-			    
-			});
+			
 			
 			
 			

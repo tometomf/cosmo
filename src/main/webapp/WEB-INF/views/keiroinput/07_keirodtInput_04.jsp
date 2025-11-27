@@ -239,11 +239,7 @@
 			<div class="transport-wrapper">
 				<c:set var="shudanType"
 					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
-				<c:set var="shudanLabel" value="自転車" />
-				<c:if test="${shudanType == '6'}">
-					<c:set var="shudanLabel" value="徒歩" />
-				</c:if>
-				<div class="transport">手段：${shudanLabel}</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 			<div class="content_Form1">
 				<div id="form_Text1">
@@ -261,7 +257,7 @@
 			</div>
 			<div class="result-box hidden" id="resultBox">
 				<div>
-					<input type="radio" name="result1" value="1" />検索結果
+					<input type="radio" name="result1" value="1" checked/>検索結果
 				</div>
 				<div>
 					<div id="map"></div>
@@ -322,6 +318,9 @@
   var homeFullAddress = null;
   var workFullAddress = null;
   var distance    = null;
+  var addressDiv = document.getElementById('address');
+  var kinmuAddressDiv = document.getElementById('kinmuAddress');
+  
   /**
    * ① 페이지 로드 후에 실행: 사원 위치 정보만 가져와서
    *    address / kinmuAddress div 채우고, 좌표를 변수에 저장
@@ -338,8 +337,6 @@
       .then(function(data) {
         console.log('사원 위치 정보:', data);
 
-        var addressDiv = document.getElementById('address');
-        var kinmuAddressDiv = document.getElementById('kinmuAddress');
 
         var a1 = data.address1 || '';
         var a2 = data.address2 || '';
@@ -350,15 +347,24 @@
 
         homeFullAddress = (a1 + ' ' + a2 + ' ' + a3).trim();
         workFullAddress = (k1 + ' ' + k2 + ' ' + k3).trim();
-
+		
+   	 if(startAddr == '' || endAddr == '' || startPos == '' || endPos == '' ) {	
+   		 
         if (addressDiv) addressDiv.textContent = homeFullAddress;
         if (kinmuAddressDiv) kinmuAddressDiv.textContent = workFullAddress;
-
-        // 좌표는 전역 변수에 저장만 해둠
         homePos = parseLatLng(data.addressIdoKeido);
         workPos = parseLatLng(data.kinmuAddressIdoKeido);
+   		 
+	 } else {
+		 	if (addressDiv) addressDiv.textContent = startAddr;
+	        if (kinmuAddressDiv) kinmuAddressDiv.textContent = endAddr;
+	        homePos = parseLatLng(startPos);
+	        workPos = parseLatLng(endPos); 
+	 }
+        
+	console.log(homePos, homePos);
 
-        if (!homePos || !workPos) {
+        if (!homePos || !homePos) {
           console.error('위도/경도 정보 부족:', data);
         }
       })
@@ -372,6 +378,8 @@
    *    지도 + 경로 + 거리 표시
    */
   function initMapAndRoute() {
+	   
+	   
     if (!homePos || !workPos) {
       alert('위치 정보가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요.');
       console.error('homePos/workPos 없음:', homePos, workPos);
@@ -431,12 +439,19 @@
     });
   }
 
+	const startAddr = '${startAddr}';
+	const endAddr = '${endAddr}';
+	const startPos = '${startPos}';
+	const endPos = '${endPos}';
   
+	console.log("위치:", startAddr, endPos);
+    loadShainLocation();
   //  1) 위치 정보 먼저 가져오기
   //  2) 검색 버튼 클릭 시 지도/경로 표시
   window.addEventListener('load', function () {
+	 if(startAddr == '' || endAddr == '' || startPos == '' || endPos == '' ) {		 
+	 }
     // 1) 위치 정보 로딩
-    loadShainLocation();
 
     // 2) 검색 버튼 클릭 → initMapAndRoute
     var searchBtn = document.getElementById('search');
@@ -501,7 +516,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // JSTL로 세팅된 값들
     const shudanType  = "${shudanType}";   // "2" or "7"
-    const shudanLabel = "${shudanLabel}";  // "バス" or "その他"
+    const shudanNm = "${shudanNm}";  // "バス" or "その他"
 
     /**
      * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
@@ -509,11 +524,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function buildCommuteJson() {
         // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
         const kbn        = shudanType || null;   // "2" 또는 "7"
-        const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
+        const shudanNm  = shudanNm || "";    // "バス" 또는 "その他"
  		
         const keiro =  {
                 tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
-                shudanName:   labelText,  // 예: "バス", "その他"
+                shudanName:   shudanNm,  // 예: "バス", "その他"
                 startPlace: homeFullAddress,
                 endPlace:  workFullAddress,
                 shinseiKm: distance 

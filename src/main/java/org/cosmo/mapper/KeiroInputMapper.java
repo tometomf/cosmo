@@ -1,6 +1,9 @@
 package org.cosmo.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShainKeiroDTO;
@@ -57,4 +60,10 @@ public interface KeiroInputMapper {
     );
     
     int insertProcessLog(ProcessLogDTO log);
+    
+    CodeVO selectCodeName(
+            @Param("codeSybtsu") String codeSybtsu,
+            @Param("code") String code );
+    
+    List<CodeVO> selectCodeListBySybtsu(String codeSybtsu);
 }

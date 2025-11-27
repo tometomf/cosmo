@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import lombok.Data;
 
+//제교
 @Data
 public class ShinseiDTO {
 	
