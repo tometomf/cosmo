@@ -622,11 +622,31 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
 			
-			
+
 			let searchedRoute = null;
 
 	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
 	       
+	    	
+	    	
+	    	
+	    	
+	    	const shinseiCheck = "${shinseiNo}";
+	    	
+	    	if(shinseiCheck.trim().length > 0){
+	    		const currentText = "[再]経路入力"
+	    		
+	    		document.querySelector('.flow_current').innerText = currentText;
+	    	}else{
+	    		const currentText = "経路入力"
+	    		
+	    		document.querySelector('.flow_current').innerText = currentText;
+	    	}
+	    		
+	    	
+	    	
+	    	
+	    	
 	    	
 	    	
 	    	function addMiddleRow(initialValue) {
@@ -695,28 +715,51 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			kensaku.addEventListener("click", function(){
 				
+				let fullPath = null;
+
 				const formStation = document.querySelector('input[name="From_station"]').value;
-/* 				const middleStation01 = document.querySelector('input[name="middle_station_01"]')?.value|| "";
+ 				const middleStation01 = document.querySelector('input[name="middle_station_01"]')?.value|| "";
 				const middleStation02 = document.querySelector('input[name="middle_station_02"]')?.value|| "";
 				const middleStation03 = document.querySelector('input[name="middle_station_03"]')?.value|| "";
 				const middleStation04 = document.querySelector('input[name="middle_station_04"]')?.value|| "";
-				const middleStation05 = document.querySelector('input[name="middle_station_05"]')?.value|| ""; */
-				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+				const middleStation05 = document.querySelector('input[name="middle_station_05"]')?.value|| ""; 
+				/* const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]'); */
 				const middles = [];
-				middleInputs.forEach(input => {
+				/*middleInputs.forEach(input => {
 					const v = input.value.trim();
 					if(v !== ""){
 						middles.push(v);
 					}
-				});
+				}); */
+				
+				if(middleStation01.trim().length>0) {
+					middles.push(middleStation01);
+				}
+				if(middleStation02) {
+					middles.push(middleStation02);
+				}
+				if(middleStation03) {
+					middles.push(middleStation03);
+				}
+				if(middleStation04) {
+					middles.push(middleStation04);
+				}
+				if(middleStation05) {
+					middles.push(middleStation05);
+				}
+				
 				
 				
 				
 				const ToStation = document.querySelector('input[name="To_station"]').value;
 				
-				const keiroResult = [formStation, ...middles, ToStation].join(" -> ");
-				
+				// 모든 역을 순서대로 담은 '배열'
+				fullPath = [formStation, ...middles, ToStation]; 
+				// 화면에 표시할 '문자열'
+				const keiroResult = fullPath.join(" -> "); 
+
 				keiro.innerText = keiroResult;
+				
 				
 				
 				document.getElementById("kensakuTime").innerText = getCurrentTime();
@@ -749,12 +792,29 @@ document.addEventListener("DOMContentLoaded", function () {
 					}
 				];
 				
+				teikiken = [];
+				for (let i = 0; i < fullPath.length - 1; i++) {
+			        const from = fullPath[i];
+			        const to = fullPath[i + 1];
+
+			        
+			        teikiken.push({
+			        	name: "東武東上線",
+			            from: from,
+			            to: to,
+			            onemonth: 8000, 
+			            threemonth: 13000, 
+			            sixmonth: 24000 
+			        });
+			    }
 				
+			
+				/* 
 				teikiken = [
 					{
 					name : "東武東上線",
-					from: "渋谷",
-					to: "新宿",
+					from: formStation,
+					to: ToStation,
 					onemonth: 8500,     // 분
 					threemonth: 13170,      // 회
 					sixmonth: 24950        // 엔
@@ -770,12 +830,12 @@ document.addEventListener("DOMContentLoaded", function () {
 					{
 					name : "東京メトロ丸ノ内線",
 					from: "渋谷",
-					to: "新宿",
+					to: ToStation,
 					onemonth: "↓",     // 분
 					threemonth: "↓",      // 회
 					sixmonth: "↓"        // 엔
 					}
-				];
+				]; */
 				
 				routes.sort(function(a,b) {
 					return a.fare - b.fare;
