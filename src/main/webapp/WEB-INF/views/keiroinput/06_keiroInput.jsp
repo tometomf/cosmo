@@ -186,19 +186,21 @@
                 </div>
                 <div class="commute-panel">
                     <div class="commute-label light">新 通勤手段</div>
-                    <div class="commute-body">
-                        <label><input type="radio" name="way" value="densha"
+                    <div class="commute-body" id="commuteShudan">
+    <!--                     <label><input type="radio" name="way" value="densha"
                             checked> 電車</label>
                         <label><input type="radio" name="way"
                             value="bus"> バス</label>
                         <label><input type="radio"
                             name="way" value="car"> 自動車</label>
+                          <label><input type="radio"
+                            name="way" value="bike"> バイク</label>    
                         <label><input type="radio" name="way"
                             value="jiten"> 自転車</label>
                         <label><input type="radio" name="way"
                             value="toho"> 徒歩</label>
                         <label><input type="radio" name="way"
-                            value="other"> その他</label>
+                            value="other"> その他</label> -->
                     </div>
                 </div>
             </div>
@@ -234,6 +236,43 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+	
+	
+	  const uniqueByName = [];
+	  const nameSet = new Set();
+	
+	  const shudanList = JSON.parse('${shudanJson}');
+		console.log(shudanList);
+	  
+	shudanList
+	    .sort((a, b) => a.dispNum - b.dispNum) // 표시 순서대로 정렬
+	    .forEach(item => {
+	      if (!nameSet.has(item.codeNm)) {
+	        nameSet.add(item.codeNm);
+	        uniqueByName.push(item);
+	      }
+	    });
+
+	  // 2) 라디오 버튼 렌더링
+	  const container = document.getElementById('commuteShudan');
+	  const radioName = 'way';
+
+	  uniqueByName.forEach((item, index) => {
+	    const label = document.createElement('label');
+	    const input = document.createElement('input');
+
+	    input.type = 'radio';
+	    input.name = radioName;
+	    input.value = item.code;     
+	    if (index === 0) {
+	      input.checked = true;      // 첫 번째는 기본 체크
+	    }
+
+	    label.appendChild(input);
+	    label.appendChild(document.createTextNode(' ' + item.codeNm));
+	    container.appendChild(label);
+	  });
+	
     // 서버에서 내려주는 기존 정보
     const keiro = {
         kigyoCd: "${keiro.kigyoCd}",
@@ -262,16 +301,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const keiroBtn = document.querySelector('img[src="/resources/img/keiro_btn01.gif"]');
     const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
     const radios   = document.querySelectorAll('input[name="way"]');
-
-    // 통근수단 value → 코드 매핑 (CODE 103 등과 맞춰서 사용)
-    const TSUKIN_SHUDAN_MAP = {
-        densha: "1",   // 電車
-        bus:    "2",   // バス
-        car:    "3",   // 自動車
-        jiten:  "5",   // 自転車
-        toho:   "6",   // 徒歩
-        other:  "7"    // その他
-    };
 	
     let ichijiHozonRaw = '${ichijiHozon}';
 
@@ -307,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const value = selected.value;            // "densha" / "bus" / ...
-        const kbn   = TSUKIN_SHUDAN_MAP[value];  // "1" / "2" / ...
+        const kbn   = value;  // "1" / "2" / ...
         if (!kbn) {
             alert("通勤手段コードが未設定です。(" + value + ")");
             return null;
@@ -505,22 +534,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            const value = selected.value;  // "densha", "bus", "car", "toho", "other"
+            const value = selected.value;  // "densha", "bus", "car", "toho", "other"\
             let redirectPath = "";
 
             switch (value) {
-                case "densha":
+                case "1":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput'/>";
                     break;
-                case "bus":
-                case "other":
+                case "2":
+                case "7":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_02'/>";
                     break;
-                case "car":
+                case "3":
+                case "4":	
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_03'/>";
                     break;
-                case "jiten":    
-                case "toho":
+                case "5":    
+                case "6":
                     redirectPath = "<c:url value='/keiroinput/07_keirodtInput_04'/>";
                     break;
                 default:
@@ -528,7 +558,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
             }
 			
-            redirectPath += "?shudanType=" + encodeURIComponent(TSUKIN_SHUDAN_MAP[value]);
+            redirectPath += "?shudanType=" + encodeURIComponent(value);
             redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
             redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
             redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);

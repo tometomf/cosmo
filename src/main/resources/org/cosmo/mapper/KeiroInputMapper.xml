@@ -79,11 +79,13 @@
 		SELECT
 		h.KIGYO_CD,
 		h.SHAIN_UID,
-		NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1,
+		NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS
+		NEW_ADDRESS_1,
 		NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2,
 		NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
 		FROM SHAIN h
-		LEFT JOIN SHINSEI s
+		LEFT
+		JOIN SHINSEI s
 		ON s.KIGYO_CD = h.KIGYO_CD
 		AND s.SHAIN_UID = h.SHAIN_UID
 		<!-- shinseiNo가 넘어온 경우에만 필터 -->
@@ -92,7 +94,8 @@
 		</if>
 		LEFT JOIN SHINSEI_START_KEIRO sk
 		ON sk.KIGYO_CD = s.KIGYO_CD
-		AND sk.SHINSEI_NO = s.SHINSEI_NO
+		AND
+		sk.SHINSEI_NO = s.SHINSEI_NO
 		<if test="keiroSeq != null">
 			AND sk.KEIRO_SEQ = #{keiroSeq}
 		</if>
@@ -122,11 +125,15 @@
 		SELECT
 		h.KIGYO_CD,
 		h.SHAIN_UID,
-		NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
-		NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
-		NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+		NVL(s.NEW_KINMU_ADDRESS_1,
+		h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
+		NVL(s.NEW_KINMU_ADDRESS_2,
+		h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
+		NVL(s.NEW_KINMU_ADDRESS_3,
+		h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
 		FROM SHAIN h
-		LEFT JOIN SHINSEI s
+		LEFT JOIN SHINSEI
+		s
 		ON s.KIGYO_CD = h.KIGYO_CD
 		AND s.SHAIN_UID = h.SHAIN_UID
 		<!-- shinseiNo가 넘어온 경우에만 필터 -->
@@ -135,7 +142,8 @@
 		</if>
 		LEFT JOIN SHINSEI_START_KEIRO sk
 		ON sk.KIGYO_CD = s.KIGYO_CD
-		AND sk.SHINSEI_NO = s.SHINSEI_NO
+		AND
+		sk.SHINSEI_NO = s.SHINSEI_NO
 		<if test="keiroSeq != null">
 			AND sk.KEIRO_SEQ = #{keiroSeq}
 		</if>
@@ -240,14 +248,17 @@
 		, s.SHINSEI_NO
 		, s.KEIRO_SEQ
 		, s.SHAIN_UID
-		, s.VIA_PLACE_1
+		,
+		s.VIA_PLACE_1
 		FROM SHINSEI_START_KEIRO s
 		WHERE s.KIGYO_CD = #{kigyoCd}
 		AND s.SHAIN_UID = #{shainUid}
 		AND s.SHINSEI_NO = (
-		SELECT MAX(s2.SHINSEI_NO)
+		SELECT
+		MAX(s2.SHINSEI_NO)
 		FROM SHINSEI_START_KEIRO s2
-		WHERE s2.KIGYO_CD = #{kigyoCd}
+		WHERE s2.KIGYO_CD =
+		#{kigyoCd}
 		AND s2.SHAIN_UID = #{shainUid}
 		)
 		AND s.KEIRO_SEQ = 1
@@ -456,10 +467,12 @@
 		FROM
 		SHINSEI_START_KEIRO
 		WHERE
-		KIGYO_CD = #{kigyoCd}
+		KIGYO_CD =
+		#{kigyoCd}
 		AND SHAIN_UID = #{shainUid}
 		AND SHINSEI_NO = #{shinseiNo}
-		AND KEIRO_SEQ = #{keiroSeq}
+		AND
+		KEIRO_SEQ = #{keiroSeq}
 
 	</select>
 
@@ -483,23 +496,39 @@
 		#{processCol, jdbcType=VARCHAR},
 		#{key1, jdbcType=VARCHAR},
 		#{key2, jdbcType=VARCHAR},
-		#{key3, jdbcType=VARCHAR},
+		#{key3,
+		jdbcType=VARCHAR},
 		#{key4, jdbcType=VARCHAR},
 		#{key5, jdbcType=VARCHAR},
 		#{data, jdbcType=CLOB},
 		#{userUid, jdbcType=NUMERIC},
-		#{userTrack, jdbcType=VARCHAR}
+		#{userTrack,
+		jdbcType=VARCHAR}
 		)
 	</insert>
 
 	<select id="selectCodeName" resultType="org.cosmo.domain.CodeVO">
 		SELECT
-		CODE_SYBTSU AS codeSybtsu,
+		CODE_SYBTSU AS
+		codeSybtsu,
 		CODE AS code,
 		CODE_NM AS codeNm
 		FROM CODE
-		WHERE CODE_SYBTSU = #{codeSybtsu}
+		WHERE CODE_SYBTSU =
+		#{codeSybtsu}
 		AND CODE = #{code}
 	</select>
 
+	<select id="selectCodeListBySybtsu" parameterType="string"
+		resultType="org.cosmo.domain.CodeVO">
+		SELECT
+		CODE_SYBTSU AS
+		codeSybtsu,
+		CODE AS code,
+		CODE_NM AS codeNm,
+		DISP_NUM AS dispNum
+		FROM CODE
+		WHERE CODE_SYBTSU = #{codeSybtsu}
+		ORDER BY DISP_NUM
+	</select>
 </mapper>

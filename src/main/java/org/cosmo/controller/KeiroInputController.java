@@ -3,6 +3,7 @@ package org.cosmo.controller;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -307,7 +308,21 @@ public class KeiroInputController {
 			model.addAttribute("shinseiNo", shinseiNo);
 			model.addAttribute("keiroSeq", keiroSeq);
 		}
+		
+		
+		List<CodeVO> shudanCodeList = keiroInputservice.getCodeList("103");
+		
 
+	    ObjectMapper mapper = new ObjectMapper();
+	    String shudanJson = "";
+
+	    try {
+	        shudanJson = mapper.writeValueAsString(shudanCodeList);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		
+		model.addAttribute("shudanJson", shudanJson);
 		model.addAttribute("hozonUid", hozonUid);
 
 		return "keiroinput/06_keiroInput";

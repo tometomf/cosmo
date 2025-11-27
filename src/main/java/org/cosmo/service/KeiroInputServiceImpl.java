@@ -1,6 +1,7 @@
 package org.cosmo.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.KeiroInputDenshaDTO;
@@ -105,5 +106,10 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 	   @Override
 	    public CodeVO getCodeName(String codeSybtsu, String code) {
 	        return mapper.selectCodeName(codeSybtsu, code);
+	    }
+	   
+	    @Override
+	    public List<CodeVO> getCodeList(String codeSybtsu) {
+	        return mapper.selectCodeListBySybtsu(codeSybtsu);
 	    }
 }
