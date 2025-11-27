@@ -306,7 +306,7 @@
 									value="${keiro.startPlace}">
 							</div>
 							<div class="swapbutton">
-								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton">
+								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton"style="cursor: pointer;">
 							</div>
 							<div class="background">到着地</div>
 							<div>
@@ -370,10 +370,10 @@
 
 						<div class="button_layout">
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
-								class="add_btn">
+								class="add_btn"style="cursor: pointer;">
 							<!-- 경유지 추가버튼 -->
 							<img src="/resources/img/tn/search_btn01.gif"
-								id="SearchStationBtn" class="add_btn">
+								id="SearchStationBtn" class="add_btn"style="cursor: pointer;">
 						</div>
 					</div>
 				</div>
@@ -436,8 +436,8 @@
 			</div>
 
 			<div class="menu_button">
-				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
-					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
+				<img src="/resources/img/back_btn01.gif" id="returnToTop"style="cursor: pointer;"> <img
+					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"style="cursor: pointer;"> <img
 					src="/resources/img/hozon_btn01.gif" id="denshaHozonBtn"
 					style="cursor: pointer;">
 			</div>
@@ -512,7 +512,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
-
             const keiro = {
                 tsukinShudan : "1",
                 shudanName :   "電車",
@@ -522,16 +521,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             
             const startKeiro = {
-            startPlace :   fromStation, 
-            endPlace :     toStation,
-            viaPlace1: middleStation01,
+            startPlace:fromStation, 
+            endPlace:toStation,
+            viaPlace1:middleStation01,
             viaPlace2:middleStation02,
             viaPlace3:middleStation03,
             viaPlace4:middleStation04,
             viaPlace5:middleStation05
             }
         
-
+		
+            
+            
         ichijiHozon.keiro = keiro;
         ichijiHozon.startKeiro = startKeiro;
         

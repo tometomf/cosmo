@@ -1,5 +1,8 @@
 package org.cosmo.service;
 
+import java.util.List;
+
+import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
@@ -39,4 +42,8 @@ public interface KeiroInputService {
             String data,
             Integer userUid,
             String userTrack);
+    
+    CodeVO getCodeName(String codeSybtsu, String code);
+    
+    List<CodeVO> getCodeList(String codeSybtsu);
 }
