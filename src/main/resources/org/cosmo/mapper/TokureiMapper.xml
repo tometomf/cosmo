@@ -5,12 +5,46 @@
 
 <mapper namespace="org.cosmo.mapper.TokureiMapper">
 
-    <update id="updateTokurei">
-        UPDATE SYSTEM.SHINSEI
-		SET TOKU_SHINSEI_RIYU = #{reason}
-		WHERE KIGYO_CD = #{kigyoCd}
- 		 AND SHINSEI_NO = #{shinseiNo}
-    </update>
+	<insert id="insertShinseiForTokurei" parameterType="org.cosmo.domain.ShinseiDTO">
+INSERT INTO SHINSEI (
+    KIGYO_CD,
+    SHINSEI_NO,
+    SHINSEI_RIYU,
+    TOKU_SHINSEI_RIYU,
+    SHINSEI_KBN,
+    SHAIN_UID,
+    SHINSEI_YMD,
+    SHAIN_NO,
+    SHINCHOKU_KBN,
+    GEN_TSUKINRO_END_KBN,
+    ADDRESS_CHG_KBN,
+    KINMU_ADDRESS_CHG_KBN,
+    KYUSHOKU_HUKKI_KBN
+)
+VALUES (
+    #{kigyoCd},
+    #{shinseiNo},
+    #{shinseiRiyu},
+    #{tokuShinseiRiyu},
+    #{shinseiKbn},
+    #{shainUid},
+    #{shinseiYmd},
+    #{shainNo},
+    #{shinchokuKbn},
+    #{genTsukinroEndKbn},
+    #{addressChgKbn},
+    #{kinmuAddressChgKbn},
+    #{kyushokuHukkiKbn}
+)
+</insert>
+
+	
+	
+    <select id="getNextShinseiNo" resultType="int">
+    SELECT NVL(MAX(SHINSEI_NO),0) + 1
+    FROM SHINSEI
+	</select>
+
 
 </mapper>
 

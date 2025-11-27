@@ -482,7 +482,13 @@ p　{
             <!-- 저장 후 이동할 URL (비워두면 /shinsei/ichiji?hozonUid=... 로 이동) -->
             <input type="hidden" name="redirectUrl" value="">
             
-            <input type="hidden" name="hozonUid" value="${hozonUid}">
+            <input type="hidden"
+       				name="hozonUid"
+       				value="${empty hozonUid ? 0 : hozonUid}">
+       				
+       		<input type="hidden" name="shinseiNo" value="${shinseiNo}">
+       		
+    		
          </form>
 
          <%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -619,16 +625,17 @@ p　{
     if (!form) {
       return;
     }
-
+    
+    
     var commuteJsonInput = form.querySelector('input[name="commuteJson"]');
-    var actionUrlInput   = form.querySelector('input[name="actionUrl"]');
+    /* var actionUrlInput   = form.querySelector('input[name="actionUrl"]'); */
     var redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
 
     // 버튼 (이미지) 찾기
     var hozonBtn = document.querySelector('img[alt="hozon_btn01"]');   // 일시저장
     var keiroBtn = document.querySelector('img[alt="keiro_btn02"]');   // 경로확정(지금은 같은 처리)
 
-  
+    
     
     /**
      * 저장 전에 체크할 공통 검증
@@ -1346,7 +1353,7 @@ p　{
       return JSON.stringify(data);
     }
 
-
+	
 
     // [일시저장] 버튼
     if (hozonBtn) {
@@ -1374,6 +1381,8 @@ p　{
         		  document.querySelector('#carRouteTempForm input[name="commuteJson"]').value
         		));
         
+        
+   
         redirectUrlInput.value = "";
         form.submit();
       });
@@ -1448,6 +1457,8 @@ p　{
         
         
         const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+        
+        
         //나중에 URL넣어주기
         redirectUrlInput.value = nextPath;
         form.submit();

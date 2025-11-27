@@ -12,6 +12,5 @@ public class AddressInputForm {
     private String addr1;     
     private String addr2;     
     private String tenyuDate; 
-
     private String action;
 }

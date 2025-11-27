@@ -2,7 +2,7 @@ package org.cosmo.domain;
 
 import lombok.Data;
 import java.sql.Timestamp;
-// 윤종운
+
 @Data
 public class ShinseiFuzuiShoruiDTO {
 

@@ -1,26 +1,56 @@
 package org.cosmo.domain;
 
+import org.apache.ibatis.type.Alias;
 import lombok.Data;
 
-/**
- * “úŠ„‹Î–±’n ‰Šú•\¦ VO
- */
 @Data
+@Alias("HiwariKinmuchiVO") //ì„œí˜œì›
 public class HiwariKinmuchiVO {
 
-    // Š‘®
-    private String shozokuCd;     // Š‘®ƒR[ƒh
-    private String shozokuNm;     // Š‘®–¼
+    // ===== ç¾å‹¤å‹™åœ° ìª½ =====
+    // å‹¤å‹™å…ˆã‚³ãƒ¼ãƒ‰
+    private String genKinmusakiCd;   // ì‹ ì²­ ì „: SHAIN.SHOZOKU_CD
+                                     // ì‹ ì²­ í›„: SHINSEI.GEN_SHOZOKU_CD
 
-    // Œ»‹Î–±’niŠù‘¶FSHAINj
-    private String kinmuZipCd;    // ‹Î–±’n—X•Ö”Ô†
-    private String kinmuPrefCd;   // ‹Î–±’n ZŠi“s“¹•{Œ§j
-    private String kinmuAddress1; // ‹Î–±’n ZŠis‹æ’¬‘ºE”Ô’nj
-    private String kinmuAddress2; // ‹Î–±’n ZŠiŒš•¨j
+    // å‹¤å‹™å…ˆï¼ˆì†Œì†ëª…ï¼‰
+    private String genKinmusakiNm;   // SHOZOKU.SHOZOKU_NM
 
-    // V‹Î–±’ni\¿Œã‚Ì‚İFSHINSEIj
-    private String newKinmuAddress1; // V‹Î–±’n s‹æ’¬‘ºE”Ô’n
-    private String newKinmuAddress2; // V‹Î–±’n Œš•¨
+    // éƒµä¾¿ç•ªå·
+    private String genKinmuZip;      // ì‹ ì²­ ì „: SHAIN.KINMU_ZIP_CD
+                                     // ì‹ ì²­ í›„: SHINSEI.GEN_KINMU_ZIP_CD
 
-    private Long shinseiNo;       // \¿”Ô†i\¿Œã‚Ì‚İƒZƒbƒgj
+    // éƒ½é“åºœçœŒ
+    private String genKinmuAddress1; // ì‹ ì²­ ì „: SHAIN.KINMU_ADDRESS_1
+                                     // ì‹ ì²­ í›„: SHINSEI.GEN_KINMU_ADDRESS_1
+
+    // æ‰€åœ¨åœ°ï¼‘
+    private String genKinmuAddress2; // ì‹ ì²­ ì „: SHAIN.KINMU_ADDRESS_2
+                                     // ì‹ ì²­ í›„: SHINSEI.GEN_KINMU_ADDRESS_2
+
+    // æ‰€åœ¨åœ°ï¼’ï¼ˆê±´ë¬¼ëª… ë“±ï¼‰
+    private String genKinmuAddress3; // ì‹ ì²­ ì „: SHAIN.KINMU_ADDRESS_3
+                                     // ì‹ ì²­ í›„: SHINSEI.GEN_KINMU_ADDRESS_3
+
+
+
+    // ===== æ—¥å‰²æœŸé–“ å‹¤å‹™åœ° ìª½ =====
+    // å‹¤å‹™å…ˆã‚³ãƒ¼ãƒ‰
+    private String hiwariKinmusakiCd;  // ì‹ ì²­ í›„: SHINSEI.NEW_SHOZOKU_CD
+
+    // å‹¤å‹™å…ˆï¼ˆì†Œì†ëª…ï¼‰
+    private String hiwariKinmusakiNm;  // SHOZOKU.SHOZOKU_NM
+
+    // éƒµä¾¿ç•ªå·
+    private String hiwariKinmuZip;     // ì‹ ì²­ í›„: SHINSEI.NEW_KINMU_ZIP_CD
+
+    // éƒ½é“åºœçœŒ
+    private String hiwariKinmuAddress1;// ì‹ ì²­ í›„: SHINSEI.NEW_KINMU_ADDRESS_1
+
+    // æ‰€åœ¨åœ°ï¼‘
+    private String hiwariKinmuAddress2;// ì‹ ì²­ í›„: SHINSEI.NEW_KINMU_ADDRESS_2
+
+    // æ‰€åœ¨åœ°ï¼’ï¼ˆê±´ë¬¼ëª… ë“±ï¼‰
+    private String hiwariKinmuAddress3;// ì‹ ì²­ í›„: SHINSEI.NEW_KINMU_ADDRESS_3
 }
+
+

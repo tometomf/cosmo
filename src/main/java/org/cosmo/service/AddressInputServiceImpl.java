@@ -7,7 +7,7 @@ import org.cosmo.mapper.AddressInputMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper; // JSON 변환용
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AddressInputServiceImpl implements AddressInputService {
 
-    private final AddressInputMapper mapper;
+    // 기존에 가지고 계신 매퍼 하나만 사용합니다.
+    private final AddressInputMapper mapper; 
 
     @Override
     public AddressInputForm initForm() {
@@ -24,100 +25,83 @@ public class AddressInputServiceImpl implements AddressInputService {
 
     @Override
     public AddressViewDto loadViewData(String shainUid) {
-        // 현 주소 조회
-        AddressViewDto view = mapper.selectCurrentAddress(shainUid);
-        if (view == null) view = new AddressViewDto();
+        // 1. ★수정됨★ ShainMapper 대신 기존 mapper를 사용해 DTO를 바로 조회합니다.
+        // (AddressInputMapper.xml에 selectShainAddress 쿼리를 추가했어야 합니다)
+        AddressViewDto dto = mapper.selectShainAddress(shainUid);
 
-        // 중간 DB(사택 등) 주소 조회 - '반영' 버튼용
-        AddressViewDto middle = mapper.selectMiddleAddress(shainUid);
-        if (middle != null) {
-            view.setMiddleDbAddress(middle.getMiddleDbAddress());
-            // 필요한 경우 상세 필드도 view에 세팅
+        if (dto != null) {
+            // 2. [화면 상단] 중간 DB 주소 텍스트 만들기
+            // (이미 Mapper에서 컬럼 매핑을 다 해서 가져왔으므로, 합치기만 하면 됩니다)
+            String fullMiddleAddr = 
+                (dto.getMiddlePref() == null ? "" : dto.getMiddlePref()) + " " +
+                (dto.getMiddleAddr1() == null ? "" : dto.getMiddleAddr1()) + " " +
+                (dto.getMiddleAddr2() == null ? "" : dto.getMiddleAddr2());
+            
+            // 화면에 보여줄 텍스트 세팅
+            dto.setMiddleDbAddress(fullMiddleAddr.trim());
+            
+            // 참고: 나머지 필드(currentZip, middleZip 등)는 
+            // XML 쿼리에서 이미 DTO 필드명과 매칭시켜 가져왔으므로 별도 세팅 불필요
+            
         } else {
-            // 더미 데이터 (테스트용)
-            view.setMiddleDbAddress("大阪府大阪市東淀川区瑞光1－1－1ハイツ瑞光３０２");
+            // 데이터가 없을 경우 빈 객체 리턴하여 NullPointerException 방지
+            dto = new AddressViewDto();
+            dto.setCurrentZip("");
+            dto.setMiddleZip("");
         }
-        
-        return view;
-    }
 
+        return dto;
+    }
+    
     @Override
     public void reflectMiddleAddress(AddressInputForm form, String shainUid) {
-        // DB에서 반영할 주소 정보를 다시 가져오거나, ViewDto에서 가져온 값을 사용
-        // 여기서는 DB 조회 가정
-        AddressViewDto middle = mapper.selectMiddleAddress(shainUid);
-        if (middle != null) {
-            form.setZip1(middle.getMiddleZip1());
-            form.setZip2(middle.getMiddleZip2());
-            form.setPref(middle.getMiddlePref());
-            form.setAddr1(middle.getMiddleAddr1());
-            form.setAddr2(middle.getMiddleAddr2());
-        } else {
-            // 테스트용 하드코딩 (설계서 예시)
-            form.setZip1("533");
-            form.setZip2("0005");
-            form.setPref("大阪府");
-            form.setAddr1("大阪市東淀川区瑞光1－1－1");
-            form.setAddr2("ハイツ瑞光３０２");
-        }
+        // (사용 안 함: JSP 자바스크립트에서 처리)
     }
 
     @Override
     public void searchZipCode(AddressInputForm form) {
-        // 실제로는 DB나 API를 조회해야 함. 여기서는 Mock 처리
-        if ("211".equals(form.getZip1()) && "0001".equals(form.getZip2())) {
-            form.setPref("神奈川県");
-            form.setAddr1("川崎市中原区新丸子");
-        }
+        // (사용 안 함: JSP AjaxZip3 라이브러리에서 처리)
     }
 
     @Override
     public boolean validateAndCheckRoute(AddressInputForm form) {
-        // 1. 필수 입력 체크
-        if (form.getZip1() == null || form.getZip2() == null || 
-            form.getPref() == null || form.getAddr1() == null || 
-            form.getTenyuDate() == null || form.getTenyuDate().isEmpty()) {
-            return false; // 에러
-        }
-
-        // 2. 설계서 로직: Navitime API 위도경도 취득 (Mock)
-        // 3. 설계서 로직: 거리 제한 체크 (1.2km 미만 등)
-        
-        // 통과라 가정
+        if (form.getZip1() == null || form.getZip1().isEmpty()) return false;
+        if (form.getPref() == null || form.getPref().isEmpty()) return false;
         return true;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void tempSave(AddressInputForm form, String shainUid) {
         try {
-            System.out.println("===== test save=== ");
-            System.out.println("user: " + shainUid);
+            System.out.println("===== [Service] 일시저장 시작 =====");
+            System.out.println("User: " + shainUid);
             
             // 1. JSON 변환
             ObjectMapper om = new ObjectMapper();
             String json = om.writeValueAsString(form);
-            System.out.println("date: " + json);
-
-            // 2. VO 생성
+            
+            // 2. VO 생성 및 데이터 세팅
             IchijiHozonVO vo = new IchijiHozonVO();
             vo.setUserUid(shainUid);
-            vo.setActionNm("0400");
-            vo.setData(json);
+            vo.setActionNm("0400"); // 화면 ID
+            vo.setData(json);       // JSON 데이터
+            // 필요한 경우 ShozokuCd, ShinseiKbn 등 추가 세팅
             
-            // 3. Mapper 호출
+            // 3. DB 저장 (기존 mapper 사용)
             mapper.saveIchijiHozon(vo);
-            System.out.println(">> ICHIJI_HOZON save");
+            System.out.println(">> ICHIJI_HOZON 저장 완료");
 
-            // 4. 알림 등록
-            mapper.insertOshirase(shainUid, "一時保存しました。");
-            System.out.println(">> ar");
+            // 4. 알림 등록 (기존 mapper 사용)
+            // 파라미터 순서나 개수는 AddressInputMapper 인터페이스 정의에 맞춰주세요.
+            mapper.insertOshirase("100", shainUid, "000001", "一時保存しました。");
+            System.out.println(">> 알림 등록 완료");
             
         } catch (Exception e) {
-            System.err.println("!!!!!errr!!!!!");
+            System.err.println("!!!!! 저장 중 에러 발생 !!!!!");
             e.printStackTrace();
-            // 에러를 던져서 트랜잭션이 롤백되게 함 (중요)
-            throw new RuntimeException("fffff", e);
+            // 트랜잭션 롤백을 위해 런타임 예외 발생
+            throw new RuntimeException("일시저장 실패", e);
         }
     }
 }

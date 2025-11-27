@@ -20,4 +20,10 @@ public class HomeServiceImpl implements HomeService {
 		
 		return homeMapper.getList(kigyo_Cd, shain_Uid);
 	}
+
+	@Override
+	public String getShinseiNo(String kigyo_Cd, String shain_Uid) {
+		
+		return homeMapper.getShinseiNo(kigyo_Cd, shain_Uid);
+	}
 }
