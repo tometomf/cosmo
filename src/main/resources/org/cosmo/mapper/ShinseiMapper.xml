@@ -126,13 +126,16 @@
 
 		a.GEN_KINMU_ADDRESS_1 AS genKinmuchi1,
 		a.GEN_KINMU_ADDRESS_2 AS genKinmuchi2,
-		a.GEN_KINMU_ADDRESS_3 AS genKinmuchi3,
+		a.GEN_KINMU_ADDRESS_3 AS
+		genKinmuchi3,
 		a.NEW_KINMU_ADDRESS_1 AS newKinmuchi1,
 		a.NEW_KINMU_ADDRESS_2 AS newKinmuchi2,
-		a.NEW_KINMU_ADDRESS_3 AS newKinmuchi3,
+		a.NEW_KINMU_ADDRESS_3 AS
+		newKinmuchi3,
 		a.SHINSEI_RIYU AS riyu,
 		a.IDO_YMD AS idoYmd,
-		a.ITEN_YMD AS itenYmd,
+		a.ITEN_YMD AS
+		itenYmd,
 		a.TENNYU_YMD AS tennyuYmd,
 		a.RIYO_START_YMD AS
 		riyoStartYmd,
@@ -147,14 +150,17 @@
 		b.FIRST_SHIKYU_YMD AS firstShikyuYmd,
 		b.START_PLACE AS startPlace,
 		b.END_PLACE AS endPlace,
-		b.VIA_PLACE_1 AS viaPlace1,
+		b.VIA_PLACE_1 AS
+		viaPlace1,
 		b.VIA_PLACE_2 AS viaPlace2,
 		b.VIA_PLACE_3 AS viaPlace3,
 		b.VIA_PLACE_4 AS viaPlace4,
 		b.VIA_PLACE_5 AS viaPlace5,
-		b.KATAMICHI_KIN AS katamichi,
+		b.KATAMICHI_KIN
+		AS katamichi,
 		b.JITSU_KINMU_NISSU AS jitsu,
-		b.FIRST_TEIKI_TSUKI_SU AS firstTeikiTsukiSu,
+		b.FIRST_TEIKI_TSUKI_SU AS
+		firstTeikiTsukiSu,
 		b.NEXT_TEIKI_TSUKI_SU AS nextTeikiTsukiSu,
 		b.IDO_SHUDAN_ETC_NM AS idoShudanEtcNm,
 		b.BUS_CORP_NM AS busCorpNm,
@@ -174,28 +180,34 @@
 
 		FROM SHINSEI a
 
-		LEFT JOIN SHINSEI_START_KEIRO b
+		LEFT JOIN
+		SHINSEI_START_KEIRO b
 		ON a.KIGYO_CD = b.KIGYO_CD
-		AND a.SHINSEI_NO = b.SHINSEI_NO
+		AND a.SHINSEI_NO =
+		b.SHINSEI_NO
 
 		LEFT JOIN SHINSEI_FUZUI_SHORUI c
 		ON a.KIGYO_CD = c.KIGYO_CD
 		AND a.SHINSEI_NO = c.SHINSEI_NO
 
 		INNER JOIN CODE d
-		ON d.CODE_SYBTSU = '101'
+		ON d.CODE_SYBTSU =
+		'101'
 		AND d.CODE = a.SHINSEI_KBN
 
 		INNER JOIN CODE e
-		ON e.CODE_SYBTSU = '102'
+		ON e.CODE_SYBTSU =
+		'102'
 		AND e.CODE = a.SHINCHOKU_KBN
 
 		INNER JOIN CODE f
-		ON f.CODE_SYBTSU = '103'
+		ON f.CODE_SYBTSU =
+		'103'
 		AND f.CODE = b.TSUKIN_SHUDAN_KBN
 
 		WHERE a.KIGYO_CD = #{kigyoCd}
-		AND a.SHINSEI_NO = #{shinseiNo}
+		AND
+		a.SHINSEI_NO = #{shinseiNo}
 
 	</select>
 
@@ -776,7 +788,8 @@
 		NVL(c.NENPI, b.NENPI) AS nenpi,
 
 
-		c.FILE_UID_1 AS fileUid1,
+		c.FILE_UID_1
+		AS fileUid1,
 
 		TO_DATE(c.MENKYO_YUKO_KIGEN, 'YYYYMMDD') AS
 		menkyoYukoKigen,
@@ -957,6 +970,44 @@
 		SYSTIMESTAMP
 		)
 	</insert>
+
+	<select id="getShinseiKeiroDetailList" parameterType="map"
+		resultType="org.cosmo.domain.ShinseiKeiroDetailVO">
+
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		TSUKIN_SHUDAN_KBN AS tsukinShudanKbn,
+		START_PLACE AS startPlace,
+		END_PLACE AS endPlace,
+		SHINSEI_KM AS
+		shinseiKm,
+		KATAMICHI_KIN AS katamichi,
+		TSUKI_SHIKYU_KIN AS tsuki,
+		SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
+		SANSHO_TEIKI_TSUKI_SU_1 AS
+		sanshoTeikiTsukiSu1,
+		SANSHO_TEIKI_KIN_2 AS sanshoTeikiKin2,
+		SANSHO_TEIKI_TSUKI_SU_2 AS
+		sanshoTeikiTsukiSu2,
+		SANSHO_TEIKI_KIN_3 AS
+		sanshoTeikiKin3,
+		SANSHO_TEIKI_TSUKI_SU_3 AS sanshoTeikiTsukiSu3,
+		YURYO_IC_S AS yuryoIcS,
+		YURYO_IC_E AS yuryoIcE,
+		FIRST_TEIKI_TSUKI_SU AS
+		firstTeikiKikan,
+		NEXT_TEIKI_TSUKI_SU AS nextTeikiKikan
+		FROM
+		SHINSEI_START_KEIRO
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+		ORDER BY
+		KEIRO_SEQ
+	</select>
 
 
 	<select id="getNextShinseiLogSeq" resultType="long">
