@@ -118,6 +118,9 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         // 새 경로 등록
         int seq = 1;
         for (HiwariKeiroVO vo : keiroList) {
+        	
+        	 calcAmounts(vo);
+        	
             vo.setKigyoCd(kigyoCd);
             vo.setShainUid(shainUid);  
             vo.setKeiroSeq(seq++);
@@ -143,6 +146,9 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         
         int seq = 1;
         for (HiwariKeiroVO vo : keiroList) {
+        	
+        	 calcAmounts(vo);
+        	
             vo.setKigyoCd(kigyoCd);
             vo.setShainUid(shainUid);  
             vo.setKeiroSeq(seq++);
@@ -165,6 +171,44 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         }
         
         mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
+    }
+    // ====== 여기부터 경로 금액 계산용 유틸 ======
+
+    // null 방지용 NVL
+    private int nvl(Integer v) {
+        return (v == null) ? 0 : v.intValue();
+    }
+
+    /**
+     * 1경로 분의 금액 계산
+     *  - shinseiKin   : 申請金額        = 片道料金 × 2 × 出勤日数
+     *  - hiwariAto    : 日割額          = 申請金額 ÷ 出勤日数
+     *  - tsukiShikyuKin : 1ヶ月参考値  = 日割額 × 21(日)
+     */
+    private void calcAmounts(HiwariKeiroVO vo) {
+
+        int kata = nvl(vo.getKataMichiKin());   // 片道料金
+        int days = nvl(vo.getShukkinNissuu());  // 出勤日数
+
+        // 요금이나 일수가 0이면 모두 0 처리
+        if (kata <= 0 || days <= 0) {
+            vo.setShinseiKin(0);
+            vo.setHiwariAto(0);
+            vo.setTsukiShikyuKin(0);
+            return;
+        }
+
+        // 申請金額 = 片道料金 × 2 × 出勤日数
+        int shinsei = kata * 2 * days;
+        vo.setShinseiKin(shinsei);
+
+        // 日割額 = 申請金額 ÷ 出勤日数  (결과적으로 kata×2)
+        int hiwari = shinsei / days;
+        vo.setHiwariAto(hiwari);
+
+        // 1ヶ月参考値 = 日割額 × 21日  (※ 21은 나중에 마스터에서 취득 가능)
+        int tsuki = hiwari * 21;
+        vo.setTsukiShikyuKin(tsuki);
     }
 
     //유지희 끝
