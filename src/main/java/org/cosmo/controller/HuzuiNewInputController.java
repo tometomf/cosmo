@@ -1,13 +1,16 @@
 package org.cosmo.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,7 +64,7 @@ public class HuzuiNewInputController {
 	}
 	
 	//김민수
-	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	@RequestMapping(value="/upload", method=RequestMethod.POST,produces="application/json")
 	public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file, String fileNo,@RequestParam("fileName") String fNo, HttpSession session) {
 		
 	    if(!file.isEmpty()) {
@@ -146,10 +149,9 @@ public class HuzuiNewInputController {
 			
 	//김민수
 	@RequestMapping(value = "/updateForm", method = RequestMethod.POST)
-	public String update(ShainFuzuiShoruiVO vo, Model model, HttpSession session) {
+	public String update(@RequestParam("uploadedFiles") List<MultipartFile> fileList,ShainFuzuiShoruiVO vo, Model model, HttpSession session) {
 		
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
-		
 		if(shain != null) {
 			
 			String kigyo_Cd = shain.getKigyo_Cd();
@@ -158,12 +160,10 @@ public class HuzuiNewInputController {
 			ShainFuzuiShoruiVO data = huzuiNewInputService.getList(kigyo_Cd, shain_Uid);
 			
 			model.addAttribute("shainHuzuiShorui", data);
-			System.out.println(data);
+			
 		}
 		
-		
 		model.addAttribute("shainHuzui", vo);
-		
 		System.out.print(vo);
 		
 		
@@ -293,13 +293,14 @@ public class HuzuiNewInputController {
 	
 	//김민수
 	@RequestMapping(value="/hozon", method= RequestMethod.POST)
-	public ResponseEntity<?> hozonSubmit(HttpSession session){
+	public ResponseEntity<?> hozonSubmit(@RequestBody ShainFuzuiShoruiVO vo, HttpSession session){
 		try {
 			ShainVO shain = (ShainVO) session.getAttribute("shain");
 			OshiraseDTO oshiraseDTO = new OshiraseDTO();
         	ProcessLogDTO processLogDTO = new ProcessLogDTO();
         	IchijiHozonDTO ichijiHozonDTO = new IchijiHozonDTO();
-
+        	
+        	byte[] blobData = serialize(vo);
         	 LocalDate today1 = LocalDate.now();
         	 LocalTime now = LocalTime.now();
 
@@ -340,7 +341,7 @@ public class HuzuiNewInputController {
              ichijiHozonDTO.setUpdDate(timestamp);
              ichijiHozonDTO.setAddUserId(shainUid);
              ichijiHozonDTO.setUpdUserId(shainUid);
-             
+             ichijiHozonDTO.setData(blobData);
              //ichijiHozonDTO.setData(data);
              
              huzuiNewInputService.saveHozon(shain, oshiraseDTO, processLogDTO, ichijiHozonDTO);
@@ -352,4 +353,15 @@ public class HuzuiNewInputController {
 	}
 	
 }
+
+	private byte[] serialize(Object obj) {
+	    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	         ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+	        
+	        oos.writeObject(obj); 
+	        return bos.toByteArray(); 
+	    } catch (IOException e) {
+	        throw new RuntimeException("객체 직렬화 오류", e);
+	    }
+	}
 }

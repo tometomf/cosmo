@@ -158,10 +158,23 @@
 	const shainUid = "${shain.shain_Uid}";
 	
 	
-	const file_Uid1 = "${not empty shainHuzui.file_Uid_1 ? shainHuzui.file_Uid_1 : shainHuzuiShorui.file_Uid_1}";
+	const file_Uid4 = "${not empty shainHuzui.file_Uid_4 ? shainHuzui.file_Uid_4 : shainHuzuiShorui.file_Uid_4}";
+	const file_Uid5 = "${not empty shainHuzui.file_Uid_5 ? shainHuzui.file_Uid_5 : shainHuzuiShorui.file_Uid_5}";
+	const file_Uid6 = "${not empty shainHuzui.file_Uid_6 ? shainHuzui.file_Uid_6 : shainHuzuiShorui.file_Uid_6}";
+	const file_Uid7 = "${not empty shainHuzui.file_Uid_7 ? shainHuzui.file_Uid_7 : shainHuzuiShorui.file_Uid_7}";
+	const etc_File_Uid_1 = "${not empty shainHuzui.etc_File_Uid_1 ? shainHuzui.etc_File_Uid_1 : shainHuzuiShorui.etc_File_Uid_1}";
+	const etc_File_Uid_2 = "${not empty shainHuzui.etc_File_Uid_2 ? shainHuzui.etc_File_Uid_2 : shainHuzuiShorui.etc_File_Uid_2}";
+	const etc_File_Uid_3 = "${not empty shainHuzui.etc_File_Uid_3 ? shainHuzui.etc_File_Uid_3 : shainHuzuiShorui.etc_File_Uid_3}";
+	const etc_File_Uid_4 = "${not empty shainHuzui.etc_File_Uid_4 ? shainHuzui.etc_File_Uid_4 : shainHuzuiShorui.etc_File_Uid_4}";
+	const etc_File_Uid_5 = "${not empty shainHuzui.etc_File_Uid_5 ? shainHuzui.etc_File_Uid_5 : shainHuzuiShorui.etc_File_Uid_5}";
+	const etc_Comment_1 = "${not empty shainHuzui.etc_Comment_1 ? shainHuzui.etc_Comment_1 : shainHuzuiShorui.etc_File_Uid_1}";
+	const etc_Comment_2 = "${not empty shainHuzui.etc_Comment_2 ? shainHuzui.etc_Comment_2 : shainHuzuiShorui.etc_File_Uid_2}";
+	const etc_Comment_3 = "${not empty shainHuzui.etc_Comment_3 ? shainHuzui.etc_Comment_3 : shainHuzuiShorui.etc_File_Uid_3}";
+	const etc_Comment_4 = "${not empty shainHuzui.etc_Comment_4 ? shainHuzui.etc_Comment_4 : shainHuzuiShorui.etc_File_Uid_4}";
+	const etc_Comment_5 = "${not empty shainHuzui.etc_Comment_5 ? shainHuzui.etc_Comment_5 : shainHuzuiShorui.etc_File_Uid_5}";
 	
 	
-	console.log("file_Uid1" + file_Uid1);
+
 
 document.getElementById("shincou").addEventListener("click", function(e) {
 	
@@ -188,10 +201,10 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 			
 	 const data = {
 			 shinseiFuzuiShoruiDTO : {
-					 fileUid1: file_Uid1,
-					 fileUid2: file_Uid2,
-					 fileUid3: file_Uid3,
-					 fileUid4: file_Uid4,
+					 fileUid1: file_Uid4,
+					 fileUid2: file_Uid5,
+					 fileUid3: file_Uid6,
+					 fileUid4: file_Uid7,
 					 menkyoYukoKigen: menkyo_Yuko_Kigen,
 					 menkyoNo: menkyo_No,
 				     shashu: shashu,
@@ -210,7 +223,7 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 				     updDate: upd_Date	
 		    },
 		    shinseiDTO : {
-		    		/* etcFileUid1:etc_File_Uid1,
+		    		etcFileUid1:etc_File_Uid1,
 		    		etcFileUid2:etc_File_Uid2,
 		    		etcFileUid3:etc_File_Uid3,
 		    		etcFileUid4:etc_File_Uid4,
@@ -219,7 +232,7 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 		    		etcComment2:etc_Comment2,
 		    		etcComment3:etc_Comment3,
 		    		etcComment4:etc_Comment4,
-		    		etcComment5:etc_Comment5, */
+		    		etcComment5:etc_Comment5, 
 		    		addUserId: add_User_Id,
 				    addDate: add_Date,
 				    updUserId: upd_User_Id,

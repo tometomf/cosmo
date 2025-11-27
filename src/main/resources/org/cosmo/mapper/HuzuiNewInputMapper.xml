@@ -6,8 +6,6 @@
 <mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
 	
 	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
-   	 	SELECT *
-		FROM (
 		    SELECT *
 		    FROM SHAIN_FUZUI_SHORUI a
 		    INNER JOIN UPLOAD_FILE b
@@ -15,9 +13,6 @@
 		    AND a.FILE_UID_4 = b.FILE_UID
 		    WHERE a.KIGYO_CD = #{kigyo_Cd}
 		    AND a.SHAIN_UID = #{shain_Uid}
-		    ORDER BY b.SEQ DESC
-		)
-		WHERE ROWNUM = 1
 	</select>
 	
 	<select id="getFile">
@@ -431,7 +426,7 @@
     VALUES
     (
        #{UploadFile.fileUid},	
-      SEQ_UPLOAD_FILE.NEXTVAL,
+      0,
       #{UploadFile.title},
       #{UploadFile.name},
       #{UploadFile.contentType},
