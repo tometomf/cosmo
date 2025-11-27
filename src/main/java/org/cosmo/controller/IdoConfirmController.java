@@ -132,8 +132,9 @@ public class IdoConfirmController {
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
         // [주의] 실제 로그인 연동 시 세션에서 가져와야 함. 
-        // DB 테스트 데이터에 넣은 'user123'을 사용합니다.
-        String shainUid = "user123"; 
+        String shainUid = "user123"; //로그인기능 되면 수정
+     //String shainUid = (String) session.getAttribute("loginUserId");
+        
 
         // 1. 화면 상단(회색 박스)에 보여줄 DB 데이터 로드
         AddressViewDto view = addressInputService.loadViewData(shainUid);
@@ -195,7 +196,7 @@ public class IdoConfirmController {
         }
 
         // ---------------------------------------------------
-     // 4. [다음(次へ)] 버튼 클릭 시 (수정된 부분)
+     // 4. 다음(次へ) 버튼 클릭
         // ==============================================================
         if ("next".equals(action)) {
             
@@ -216,7 +217,7 @@ public class IdoConfirmController {
             
             System.out.println(">> GeoService 호출 전 주소: " + fullAddress);
 
-            // 3) ★ 동료가 만든 GeoService 호출 (위도/경도 취득) ★
+            // 3) GeoService 호출 (위도/경도 취득)
             GeoPoint point = geoService.getLatLng(fullAddress);
 
             // 4) 좌표 취득 실패 시 (에러 메시지 표시 및 화면 유지)

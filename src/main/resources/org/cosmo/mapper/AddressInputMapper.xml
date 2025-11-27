@@ -4,17 +4,21 @@
 
 <mapper namespace="org.cosmo.mapper.AddressInputMapper">
 
-    <select id="selectShainAddress" resultType="org.cosmo.domain.AddressViewDto">
+   <select id="selectShainAddress" resultType="org.cosmo.domain.AddressViewDto">
         SELECT 
+            /* 현주소 (여기는 1,2,3 다 있음) */
             ZIP_CD      AS currentZip,
             ADDRESS_1   AS currentPref,
             ADDRESS_2   AS currentAddr1,
             ADDRESS_3   AS currentAddr2,
             
+            /* 중간주소 (여기는 1,2만 있음!) */
             DB_ZIP_CD     AS middleZip,
-            DB_ADDRESS_1  AS middlePref,
-            DB_ADDRESS_2  AS middleAddr1,
-            DB_ADDRESS_3  AS middleAddr2
+            DB_ADDRESS_1  AS middlePref,   /* 도도부현 */
+            DB_ADDRESS_2  AS middleAddr1,  /* 시구정촌+건물명 */
+            
+            
+            NULL          AS middleAddr2   
         FROM SHAIN
         WHERE SHAIN_UID = #{shainUid}
     </select>
@@ -66,7 +70,7 @@
             #{shainUid},
             #{shainNo},
             TO_CHAR(SYSDATE, 'YYYYMMDD'),
-            TO_CHAR(SYSDATE, 'HH24MISS'), 
+            TO_CHAR(SYSDATE, 'HH24MI'), 
             #{kigyoCd},
             #{shainNo},
             
