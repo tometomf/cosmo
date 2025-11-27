@@ -35,4 +35,9 @@
 		<%@ include file="/WEB-INF/views/common/footer.jsp" %>	
 	</div>	
 </body>
+<script type="text/javascript">
+	document.querySelector(".button_Center_Group").addEventListener("click",function(e){
+		location.href = "/";
+	})
+</script>
 </html>

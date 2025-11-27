@@ -316,9 +316,10 @@ public class IdoConfirmController {
             HttpSession session) {
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
+        
         if (shain == null) {
-            
-            throw new RuntimeException("セッションに社員情報がありません。");
+            shain = new ShainVO();
+            shain.setShain_Uid("30000001");  // 더미 사원번호
         }
 
         int userUid = Integer.parseInt(shain.getShain_Uid());
@@ -342,7 +343,7 @@ public class IdoConfirmController {
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-        oshiraseService.saveTempOshirase(shain);
+       // oshiraseService.saveTempOshirase(shain);
 
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }

@@ -20,23 +20,25 @@ public class IchijiHozonServiceImpl implements IchijiHozonService {
     public int saveOrUpdateCommuteTemp(IchijiHozonDTO dto) {
 
         // 1) 먼저 UPDATE 시도
-        int updated = ichijiHozonMapper.updateByUserAndAction(dto);
+        int updated = ichijiHozonMapper.updateByHozonUid(dto);
 
         // 2) 갱신된 행이 없으면 INSERT
         if (updated == 0) {
             ichijiHozonMapper.insertIchijiHozon(dto);
         }
 
-        // 3) USER_UID + ACTION_NM 기준으로 최종 데이터 조회
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put("userUid", dto.getUserUid());
+        // 3)HozonUid 기준으로 최종 데이터 조회
+        IchijiHozonDTO hozon = ichijiHozonMapper.selectByHozonUid(dto.getHozonUid());
 
-        IchijiHozonDTO latest = ichijiHozonMapper.selectLatestByUserAndAction(param);
-
-        if (latest != null) {
-            return latest.getHozonUid();
+        if (hozon != null) {
+            return hozon.getHozonUid();
         } else {
             return 0;
         }
+    }
+    
+    @Override
+    public IchijiHozonDTO getTemp(Integer hozonUid) {
+        return ichijiHozonMapper.selectByHozonUid(hozonUid);
     }
 }

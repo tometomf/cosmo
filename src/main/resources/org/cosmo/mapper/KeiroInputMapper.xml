@@ -26,6 +26,8 @@
 		<result property="shikyuKin" column="SHIKYU_KIN" />
 	</resultMap>
 
+
+	<!-- 제환 -->
 	<select id="selectShainKeiroWithCode" parameterType="map"
 		resultMap="ShainKeiroResultMap">
 
@@ -65,21 +67,32 @@
 		<result property="newAddress3" column="NEW_ADDRESS_3" />
 	</resultMap>
 
+	<!-- 지훈 -->
 	<select id="selectAddressWithFallback" parameterType="map"
 		resultMap="ShinseiAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1
-		, NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2
-		, NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        h.KIGYO_CD,
+        h.SHAIN_UID,
+        NVL(s.NEW_ADDRESS_1, h.ADDRESS_1) AS NEW_ADDRESS_1,
+        NVL(s.NEW_ADDRESS_2, h.ADDRESS_2) AS NEW_ADDRESS_2,
+        NVL(s.NEW_ADDRESS_3, h.ADDRESS_3) AS NEW_ADDRESS_3
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+      	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+       	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 
@@ -87,6 +100,8 @@
 		type="org.cosmo.domain.ShinseiDTO">
 		<result property="kigyoCd" column="KIGYO_CD" />
 		<result property="shainUid" column="SHAIN_UID" />
+		<result property="shinseiNo" column="SHINSEI_NO" />
+    	<result property="keiroSeq" column="KEIRO_SEQ" />
 		<result property="newKinmuAddress1"
 			column="NEW_KINMU_ADDRESS_1" />
 		<result property="newKinmuAddress2"
@@ -95,33 +110,38 @@
 			column="NEW_KINMU_ADDRESS_3" />
 	</resultMap>
 
+	<!--지훈  -->
 	<select id="selectKinmuAddressWithFallback" parameterType="map"
 		resultMap="ShinseiKinmuAddressResultMap">
 
 		SELECT
-		h.KIGYO_CD
-		, h.SHAIN_UID
-		, NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1
-		, NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2
-		, NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
-		FROM SHAIN h
-		LEFT JOIN SHINSEI s
-		ON s.KIGYO_CD = h.KIGYO_CD
-		AND s.SHAIN_UID = h.SHAIN_UID
-		WHERE h.KIGYO_CD = #{kigyoCd}
-		AND h.SHAIN_UID = #{shainUid}
+        h.KIGYO_CD,
+        h.SHAIN_UID,
+        NVL(s.NEW_KINMU_ADDRESS_1, h.KINMU_ADDRESS_1) AS NEW_KINMU_ADDRESS_1,
+        NVL(s.NEW_KINMU_ADDRESS_2, h.KINMU_ADDRESS_2) AS NEW_KINMU_ADDRESS_2,
+        NVL(s.NEW_KINMU_ADDRESS_3, h.KINMU_ADDRESS_3) AS NEW_KINMU_ADDRESS_3
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+     	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+     	<if test="shinseiNo != null">
+       	AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+    	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+     	<if test="keiroSeq != null">
+      	AND sk.KEIRO_SEQ = #{keiroSeq}
+     	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 
+	
 
-	<update id="updateViaPlace1">
-		UPDATE SHINSEI_START_KEIRO
-		SET VIA_PLACE_1 = #{viaPlace1, jdbcType=VARCHAR}
-		WHERE KIGYO_CD = #{kigyoCd, jdbcType=NUMERIC}
-		AND SHINSEI_NO = #{shinseiNo, jdbcType=NUMERIC}
-		AND KEIRO_SEQ = #{keiroSeq, jdbcType=NUMERIC}
-	</update>
-
+	<!-- 하정 -->
 	<select id="selectDenshaKeiroDetail" parameterType="map"
 		resultType="org.cosmo.domain.KeiroInputDenshaDTO">
 
@@ -166,6 +186,8 @@
         <result property="kinmuAddressIdoKeido" column="KINMU_ADDRESS_IDO_KEIDO" />
     </resultMap>
 
+
+	<!-- 재환 -->
     <!-- PK로 주소/위치만 조회 -->
     <select id="selectShainLocationByUid" parameterType="map" resultMap="ShainLocationResultMap">
         SELECT
@@ -195,6 +217,7 @@
        <result property="viaPlace1"  column="VIA_PLACE_1" />
    </resultMap>
    
+   <!-- 지훈 -->
    <select id="selectViaPlace1"
         parameterType="map"
         resultMap="ShinseiStartKeiroResultMap">
@@ -217,5 +240,233 @@
          AND s.KEIRO_SEQ = 1
 
    </select>
+
+    <resultMap id="ShinseiStartKeiroMap" type="org.cosmo.domain.ShinseiStartKeiroVO">
+        <!-- PK -->
+        <id     property="kigyoCd"      column="KIGYO_CD"/>
+        <id     property="shinseiNo"    column="SHINSEI_NO"/>
+        <id     property="keiroSeq"     column="KEIRO_SEQ"/>
+
+        <!-- 기본 정보 -->
+        <result property="shinseiKbn"           column="SHINSEI_KBN"/>
+        <result property="shinseiYmd"           column="SHINSEI_YMD"/>
+        <result property="shainUid"             column="SHAIN_UID"/>
+        <result property="shainNo"              column="SHAIN_NO"/>
+        <result property="dairiShinseishaCd"    column="DAIRI_SHINSEISHA_CD"/>
+
+        <!-- 특례/부비 관련 -->
+        <result property="tsukinShudanKbn"      column="TSUKIN_SHUDAN_KBN"/>
+        <result property="yuryoTokurei"         column="YURYO_TOKUREI"/>
+        <result property="kyoriKagenTokurei"    column="KYORI_KAGEN_TOKUREI"/>
+        <result property="jougenKingakuTokurei" column="JOUGEN_KINGAKU_TOKUREI"/>
+        <result property="jougenCut"            column="JOUGEN_CUT"/>
+        <result property="fubiUmuKbn"           column="FUBI_UMU_KBN"/>
+
+        <!-- 기간/근무일수 -->
+        <result property="kikanStartYmd"        column="KIKAN_START_YMD"/>
+        <result property="kikanEndYmd"          column="KIKAN_END_YMD"/>
+        <result property="jitsuKinmuNissu"      column="JITSU_KINMU_NISSU"/>
+
+        <!-- 버스/이동수단 -->
+        <result property="busCorpNm"            column="BUS_CORP_NM"/>
+        <result property="idoShudanKbn"         column="IDO_SHUDAN_KBN"/>
+        <result property="idoShudanEtcNm"       column="IDO_SHUDAN_ETC_NM"/>
+
+        <!-- 구간/경유지 -->
+        <result property="startPlace"           column="START_PLACE"/>
+        <result property="endPlace"             column="END_PLACE"/>
+        <result property="viaPlace1"            column="VIA_PLACE_1"/>
+        <result property="viaPlace2"            column="VIA_PLACE_2"/>
+        <result property="viaPlace3"            column="VIA_PLACE_3"/>
+        <result property="viaPlace4"            column="VIA_PLACE_4"/>
+        <result property="viaPlace5"            column="VIA_PLACE_5"/>
+
+        <!-- 좌표/역코드 -->
+        <result property="startIdoKeido"        column="START_IDO_KEIDO"/>
+        <result property="startEkicd"           column="START_EKICD"/>
+        <result property="endEkicd"             column="END_EKICD"/>
+        <result property="viaPlaceEkicd1"       column="VIA_PLACE_EKICD_1"/>
+        <result property="viaPlaceEkicd2"       column="VIA_PLACE_EKICD_2"/>
+        <result property="viaPlaceEkicd3"       column="VIA_PLACE_EKICD_3"/>
+        <result property="viaPlaceEkicd4"       column="VIA_PLACE_EKICD_4"/>
+        <result property="viaPlaceEkicd5"       column="VIA_PLACE_EKICD_5"/>
+
+        <!-- 경로 검색 결과 URL(CLOB) -->
+        <result property="kekkaUrl"             column="KEKKA_URL"/>
+
+        <!-- 금액/정기권 관련 -->
+        <result property="shinseiKin"           column="SHINSEI_KIN"/>
+        <result property="firstTeikiTsukiSu"    column="FIRST_TEIKI_TSUKI_SU"/>
+        <result property="firstShikyuYmd"       column="FIRST_SHIKYU_YMD"/>
+        <result property="firstShikyuKin"       column="FIRST_SHIKYU_KIN"/>
+        <result property="nextTeikiTsukiSu"     column="NEXT_TEIKI_TSUKI_SU"/>
+        <result property="regularShikyuKin"     column="REGULAR_SHIKYU_KIN"/>
+        <result property="tsukiShikyuKin"       column="TSUKI_SHIKYU_KIN"/>
+        <result property="katamichiKin"         column="KATAMICHI_KIN"/>
+
+        <!-- 신칸센/특급/유료 구간 -->
+        <result property="shinkansenRiyoKbn"    column="SHINKANSEN_RIYO_KBN"/>
+        <result property="tokkyuRiyoKbn"        column="TOKKYU_RIYO_KBN"/>
+        <result property="yuryoRiyoKbn"         column="YURYO_RIYO_KBN"/>
+        <result property="kekkaSelect"          column="KEKKA_SELECT"/>
+
+        <!-- 참고 정기권1~3 -->
+        <result property="sanshoTeikiTsukiSu1"  column="SANSHO_TEIKI_TSUKI_SU_1"/>
+        <result property="sanshoTeikiKin1"      column="SANSHO_TEIKI_KIN_1"/>
+        <result property="sanshoTeikiTsukiSu2"  column="SANSHO_TEIKI_TSUKI_SU_2"/>
+        <result property="sanshoTeikiKin2"      column="SANSHO_TEIKI_KIN_2"/>
+        <result property="sanshoTeikiTsukiSu3"  column="SANSHO_TEIKI_TSUKI_SU_3"/>
+        <result property="sanshoTeikiKin3"      column="SANSHO_TEIKI_KIN_3"/>
+
+        <!-- 거리 (NUMBER(4,1) → BigDecimal) -->
+        <result property="shinseiKm"            column="SHINSEI_KM"/>
+
+        <!-- 유료 IC / 왕복구분 / 편도금액 -->
+        <result property="yuryoIcS"             column="YURYO_IC_S"/>
+        <result property="yuryoIcE"             column="YURYO_IC_E"/>
+        <result property="yuryoOfukuKbn"        column="YURYO_OFUKU_KBN"/>
+        <result property="yuryoKatamichiKin"    column="YURYO_KATAMICHI_KIN"/>
+
+        <!-- 사유(CLOB) -->
+        <result property="betsuRouteRiyu"       column="BETSU_ROUTE_RIYU"/>
+        <result property="yuryoRiyoRiyu"        column="YURYO_RIYO_RIYU"/>
+        <result property="viaPlaceRiyu"         column="VIA_PLACE_RIYU"/>
+
+        <!-- 연비/비용 전/후 (NENPI도 BigDecimal) -->
+        <result property="nenpi"                column="NENPI"/>
+        <result property="gasorinDaiMae"        column="GASORIN_DAI_MAE"/>
+        <result property="yuryoDaiMae"          column="YURYO_DAI_MAE"/>
+        <result property="goukeiMae"            column="GOUKEI_MAE"/>
+        <result property="hiwariMae"            column="HIWARI_MAE"/>
+        <result property="gasorinDaiAto"        column="GASORIN_DAI_ATO"/>
+        <result property="yuryoDaiAto"          column="YURYO_DAI_ATO"/>
+        <result property="goukeiAto"            column="GOUKEI_ATO"/>
+        <result property="hiwariAto"            column="HIWARI_ATO"/>
+
+        <!-- 공통 등록/수정 정보 -->
+        <result property="addUserId"            column="ADD_USER_ID"/>
+        <result property="addDate"              column="ADD_DATE"/>
+        <result property="updUserId"            column="UPD_USER_ID"/>
+        <result property="updDate"              column="UPD_DATE"/>
+    </resultMap>
+   
+   	<!-- 하정 -->
+       <select id="selectStartKeiro"
+            resultMap="ShinseiStartKeiroMap">
+
+        SELECT
+            KIGYO_CD,
+            SHINSEI_NO,
+            KEIRO_SEQ,
+            SHINSEI_KBN,
+            SHINSEI_YMD,
+            SHAIN_UID,
+            SHAIN_NO,
+            DAIRI_SHINSEISHA_CD,
+            TSUKIN_SHUDAN_KBN,
+            YURYO_TOKUREI,
+            KYORI_KAGEN_TOKUREI,
+            JOUGEN_KINGAKU_TOKUREI,
+            JOUGEN_CUT,
+            FUBI_UMU_KBN,
+            KIKAN_START_YMD,
+            KIKAN_END_YMD,
+            JITSU_KINMU_NISSU,
+            BUS_CORP_NM,
+            IDO_SHUDAN_KBN,
+            IDO_SHUDAN_ETC_NM,
+            START_PLACE,
+            END_PLACE,
+            VIA_PLACE_1,
+            VIA_PLACE_2,
+            VIA_PLACE_3,
+            VIA_PLACE_4,
+            VIA_PLACE_5,
+            START_IDO_KEIDO,
+            START_EKICD,
+            END_EKICD,
+            VIA_PLACE_EKICD_1,
+            VIA_PLACE_EKICD_2,
+            VIA_PLACE_EKICD_3,
+            VIA_PLACE_EKICD_4,
+            VIA_PLACE_EKICD_5,
+            KEKKA_URL,
+            SHINSEI_KIN,
+            FIRST_TEIKI_TSUKI_SU,
+            FIRST_SHIKYU_YMD,
+            FIRST_SHIKYU_KIN,
+            NEXT_TEIKI_TSUKI_SU,
+            REGULAR_SHIKYU_KIN,
+            TSUKI_SHIKYU_KIN,
+            KATAMICHI_KIN,
+            SHINKANSEN_RIYO_KBN,
+            TOKKYU_RIYO_KBN,
+            YURYO_RIYO_KBN,
+            KEKKA_SELECT,
+            SANSHO_TEIKI_TSUKI_SU_1,
+            SANSHO_TEIKI_KIN_1,
+            SANSHO_TEIKI_TSUKI_SU_2,
+            SANSHO_TEIKI_KIN_2,
+            SANSHO_TEIKI_TSUKI_SU_3,
+            SANSHO_TEIKI_KIN_3,
+            SHINSEI_KM,
+            YURYO_IC_S,
+            YURYO_IC_E,
+            YURYO_OFUKU_KBN,
+            YURYO_KATAMICHI_KIN,
+            BETSU_ROUTE_RIYU,
+            YURYO_RIYO_RIYU,
+            VIA_PLACE_RIYU,
+            NENPI,
+            GASORIN_DAI_MAE,
+            YURYO_DAI_MAE,
+            GOUKEI_MAE,
+            HIWARI_MAE,
+            GASORIN_DAI_ATO,
+            YURYO_DAI_ATO,
+            GOUKEI_ATO,
+            HIWARI_ATO,
+            ADD_USER_ID,
+            ADD_DATE,
+            UPD_USER_ID,
+            UPD_DATE
+        FROM
+            SHINSEI_START_KEIRO
+        WHERE
+            KIGYO_CD   = #{kigyoCd}
+        AND SHAIN_UID = #{shainUid}
+        AND SHINSEI_NO = #{shinseiNo}
+        AND KEIRO_SEQ  = #{keiroSeq}
+
+    </select>
+	
+	  <insert id="insertProcessLog"
+            parameterType="org.cosmo.domain.ProcessLogDTO">
+        INSERT INTO PROCESS_LOG (
+            PROCESS_TIMESTAMP,
+            SUBSYSTEM_ID,
+            PROCESS_COL,
+            KEY1,
+            KEY2,
+            KEY3,
+            KEY4,
+            KEY5,
+            DATA,
+            USER_UID,
+            USER_TRACK
+        ) VALUES (
+            #{processTimestamp, jdbcType=TIMESTAMP},
+            #{subsystemId, jdbcType=VARCHAR},
+            #{processCol, jdbcType=VARCHAR},
+            #{key1, jdbcType=VARCHAR},
+            #{key2, jdbcType=VARCHAR},
+            #{key3, jdbcType=VARCHAR},
+            #{key4, jdbcType=VARCHAR},
+            #{key5, jdbcType=VARCHAR},
+            #{data, jdbcType=CLOB},
+            #{userUid, jdbcType=NUMERIC},
+            #{userTrack, jdbcType=VARCHAR}
+        )
+    </insert>
 
 </mapper>
