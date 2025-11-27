@@ -247,7 +247,9 @@ p　{
             <div class="subtitle">【経路③】　経路詳細　入力</div>
 
             <div class="transport-wrapper">
-               <div class="transport">手段：自動車</div>
+            <c:set var="shudanType"
+					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
+               <div class="transport">手段：${shudanNm}</div>
             </div>
 
             <div class="text">
@@ -260,11 +262,11 @@ p　{
             <div class="table">
                <div class="form_Text1">
                   <div class="form_Column1"><p>住所</p></div>
-                  <div class="form_Normal"><p>${addr.newAddress1}${addr.newAddress2}${addr.newAddress3}</p></div>
+                  <div class="form_Normal"><p id="address"></p></div>
                </div>
                <div class="form_Text1">
                   <div class="form_Column1"><p>勤務地</p></div>
-                  <div class="form_Normal"><p>${kinmuAddr.newKinmuAddress1}${kinmuAddr.newKinmuAddress2}${kinmuAddr.newKinmuAddress3}</p></div>
+                  <div class="form_Normal"><p id="kinmuAddress"></p></div>
                </div>
                <div class="form_Text1">
                   <div class="form_Column1"><p>経由地</p></div>
@@ -495,6 +497,10 @@ p　{
       </div>
    </div>
 
+	<script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&libraries=maps"
+      defer></script>
+
    <script>
   // 뒤로가기
   (function () {
@@ -515,6 +521,107 @@ p　{
       location.href = '/';
     });
   })();
+  
+  
+  
+  
+  		function parseLatLng(latlng) {
+	    if (!latlng || latlng.indexOf(",") === -1) return null;
+	    var parts = latlng.split(",");
+	    var lat = parseFloat(parts[0]);
+	    var lng = parseFloat(parts[1]);
+	    if (isNaN(lat) || isNaN(lng)) return null;
+	    return { lat: lat, lng: lng };
+	  	}
+
+	  // 전역: 자택/근무지 좌표 & 거리
+	  var homePos = null;
+	  var workPos = null;
+	  
+	  var homeFullAddress = null;
+	  var workFullAddress = null;
+
+	  // 선택된 루트 거리
+	  var distance      = null;  // 현재 선택된 루트 km
+	  
+	  var addressDiv      = document.getElementById('address');
+	  var kinmuAddressDiv = document.getElementById('kinmuAddress');
+	  
+	  const startAddr = "<c:out value='${startAddr}' default='' />";
+	  const endAddr   = "<c:out value='${endAddr}' default='' />";
+	  const startPos  = "<c:out value='${startPos}' default='' />";
+	  const endPos    = "<c:out value='${endPos}' default='' />";
+	  
+	  var routeNoTollKm = null;  // 검색結果1
+	  var routeTollKm   = null;  // 검색結果2
+
+	  // 위치 정보 로딩
+	  function loadShainLocation() {
+	    fetch('/keiroinput/shain/location', { method: 'GET' })
+	      .then(function (res) {
+	        if (!res.ok) {
+	          console.error('HTTP 오류:', res.status);
+	          throw new Error('HTTP error ' + res.status);
+	        }
+	        return res.json();
+	      })
+	      .then(function (data) {
+	        console.log('사원 위치 정보:', data);
+	        
+	        
+	        var a1 = data.address1 || '';
+	        var a2 = data.address2 || '';
+	        var a3 = data.address3 || '';
+	        var k1 = data.kinmuAddress1 || '';
+	        var k2 = data.kinmuAddress2 || '';
+	        var k3 = data.kinmuAddress3 || '';
+
+	        // 1) 기본값: SHAIN/근무지 주소 기준 문자열
+	        var defaultHomeAddr = (a1 + ' ' + a2 + ' ' + a3).trim();
+      		var defaultWorkAddr = (k1 + ' ' + k2 + ' ' + k3).trim();
+
+	        // 2) startAddr/endAddr/startPos/endPos가 넘어왔는지 체크
+	        var hasParams =
+	          	(startAddr && startAddr !== '') &&
+	          	(endAddr   && endAddr   !== '') &&
+	          	(startPos  && startPos  !== '') &&
+	          	(endPos    && endPos    !== '');
+	        
+	        if (hasParams) {
+	        	homeFullAddress = startAddr;
+	            workFullAddress = endAddr;
+	            homePos = parseLatLng(startPos);
+	            workPos = parseLatLng(endPos);
+	        } else {
+	        	homeFullAddress = defaultHomeAddr;
+	            workFullAddress = defaultWorkAddr;
+
+	            homePos = parseLatLng(data.addressIdoKeido);
+	            workPos = parseLatLng(data.kinmuAddressIdoKeido);
+	        }
+	        
+	        // 화면 표시
+	        if (addressDiv)      addressDiv.textContent      = homeFullAddress;
+	        if (kinmuAddressDiv) kinmuAddressDiv.textContent = workFullAddress;
+	        
+	        console.log("homePos:", homePos, "workPos:", workPos);
+
+	        if (!homePos || !workPos) {
+	          console.error('위도/경도 정보 부족:', data);
+	        }
+	      })
+	      .catch(function (err) {
+	        console.error('위치 정보 요청/처리 오류:', err);
+	      });
+	  }
+  
+  
+  
+  
+  
+  
+	  
+	  
   
 	//=== 자동차 지급 계산용 상수 (전역) ===
   	//  - 연비: 10km/L
@@ -617,8 +724,230 @@ p　{
   }
   
   
+  
+  
+  
+  
+//공통 경로 그리기
+  function drawRoute(mapDivId, avoidTolls, callback) {
+    var mapDiv = document.getElementById(mapDivId);
+    if (!mapDiv) {
+      console.error('[' + mapDivId + '] 요소를 찾을 수 없습니다.');
+      if (callback) callback(null, 'NO_ELEMENT');
+      return;
+    }
+
+    var centerPos = {
+      lat: (homePos.lat + workPos.lat) / 2,
+      lng: (homePos.lng + workPos.lng) / 2
+    };
+
+    var map = new google.maps.Map(mapDiv, {
+      center: centerPos,
+      zoom: 13
+    });
+
+    var directionsService  = new google.maps.DirectionsService();
+    var directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    var viaInput  = document.getElementById('viaPlace1Input');
+    var viaText   = viaInput ? viaInput.value.trim() : '';
+    var waypoints = [];
+
+    if (viaText) {
+      waypoints.push({
+        location: viaText,
+        stopover: true
+      });
+    }
+
+    var request = {
+      origin:      homePos,
+      destination: workPos,
+      travelMode:  google.maps.TravelMode.DRIVING,
+      avoidTolls:  !!avoidTolls
+    };
+
+    if (waypoints.length > 0) {
+      request.waypoints = waypoints;
+    }
+
+    directionsService.route(request, function (result, status) {
+      if (status === google.maps.DirectionsStatus.OK) {
+        directionsRenderer.setDirections(result);
+        if (callback) callback(result, status);
+      } else {
+        console.error('[' + mapDivId + '] 경로 검색 실패:', status);
+        if (callback) callback(null, status);
+      }
+    });
+  }
+
+  // 전체 거리(km) 계산
+  function calcTotalDistanceKm(route) {
+    if (!route || !route.legs || route.legs.length === 0) return null;
+    var meters = 0;
+    route.legs.forEach(function (leg) {
+      if (leg.distance && leg.distance.value) {
+        meters += leg.distance.value;
+      }
+    });
+    if (meters === 0) return null;
+    return (meters / 1000).toFixed(1);
+  }
+
+  /**
+   * 검색結果 라디오 선택에 따른 요약/표시 제어
+   */
+  function applyRouteDetails(routeType) {
+    var km = null;
+    var tollUseText = '';
+
+    if (routeType === 'noToll') {
+      km = routeNoTollKm;
+      tollUseText = '利用しない';
+    } else if (routeType === 'toll') {
+      km = routeTollKm;
+      tollUseText = '利用する';
+    }
+
+    // 선택된 루트 거리 전역 저장
+    if (km != null) {
+      distance = km;
+    }
+
+    var distLabel = document.getElementById('routeSummaryDistance');
+    var tollLabel = document.getElementById('routeSummaryTollUse');
+
+    if (distLabel && km != null) {
+      distLabel.textContent = km + 'km';
+    }
+    if (tollLabel && tollUseText) {
+      tollLabel.textContent = tollUseText;
+    }
+
+    // IC/片道料金 블록 표시/비표시
+    var tollBlock = document.getElementById('tollDetailBlock');
+    if (tollBlock) {
+      if (routeType === 'toll') {
+        tollBlock.classList.remove('hidden');   // 유료도로 선택 시 표시
+      } else {
+        tollBlock.classList.add('hidden');      // 그 외에는 숨김
+      }
+    }
+  }
+
+  // 검색 버튼 클릭 시 지도/경로 표시
+  function initMapAndRoute() {
+    if (!homePos || !workPos) {
+      alert('位置情報がまだ準備できていません。少し待ってから再度お試しください。');
+      console.error('homePos/workPos 없음:', homePos, workPos);
+      return;
+    }
+
+    // 검색結果1 (유료도로 미이용)
+    drawRoute('mapNoToll', true, function (result, status) {
+      if (!result) return;
+
+      var route = result.routes[0];
+      var km = calcTotalDistanceKm(route);
+
+      routeNoTollKm = km;
+      distance      = km;
+
+      var distanceDiv = document.getElementById('distance');
+      if (distanceDiv && km != null) {
+        distanceDiv.textContent = '一般経路で距離：' + km + 'km';
+      }
+
+      hasRouteSearched = true;
+      
+      // 기본값은 검색結果1 선택
+      var noTollRadio = document.getElementById('routeNoTollRadio');
+      if (noTollRadio) {
+        noTollRadio.checked = true;
+        applyRouteDetails('noToll');
+      }
+    });
+
+    // 검색結果2 (유료도로 이용)
+    drawRoute('mapToll', false, function (result, status) {
+      if (!result) {
+        console.warn('유료도로 포함 루트를 찾지 못했습니다:', status);
+        return;
+      }
+      var route = result.routes[0];
+      var km = calcTotalDistanceKm(route);
+      routeTollKm = km;
+    });
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // 초기 바인딩
+  window.addEventListener('load', function () {
+    loadShainLocation();
+
+    var searchBtn = document.getElementById('search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+        initMapAndRoute();
+      });
+    }
+
+    var radioNoToll = document.getElementById('routeNoTollRadio');
+    var radioToll   = document.getElementById('routeTollRadio');
+
+    if (radioNoToll) {
+      radioNoToll.addEventListener('change', function () {
+        if (this.checked) {
+          applyRouteDetails('noToll');
+        }
+      });
+    }
+    if (radioToll) {
+      radioToll.addEventListener('change', function () {
+        if (this.checked) {
+          applyRouteDetails('toll');
+        }
+      });
+    }
+  });
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   var hasRouteSearched = false;
+  
+  
+  
   // 초기처리 + 일시저장
   document.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("carRouteTempForm");
@@ -626,6 +955,8 @@ p　{
       return;
     }
     
+    const shudanType = "<c:out value='${shudanType}' default='' />";
+    const shudanNm   = "<c:out value='${shudanNm}' default='' />";
     
     var commuteJsonInput = form.querySelector('input[name="commuteJson"]');
     /* var actionUrlInput   = form.querySelector('input[name="actionUrl"]'); */
@@ -1057,6 +1388,13 @@ p　{
     })();
     
     
+    
+    
+    
+    
+    
+    
+    
     /**
      * 유료도로 특례 / 거리하한 체크 플래그 계산
      * - 인자:
@@ -1125,10 +1463,10 @@ p　{
      */
     function buildCarInitialJson() {
       // JSP에서 내려온 주소/근무지 (초기처리 1,2번과 동일 데이터)
-      var homeAddress =
-        "${addr.newAddress1}${addr.newAddress2}${addr.newAddress3}";
-      var workAddress =
-        "${kinmuAddr.newKinmuAddress1}${kinmuAddr.newKinmuAddress2}${kinmuAddr.newKinmuAddress3}";
+      var homeAddress = homeFullAddress || null;
+        
+      var workAddress = workFullAddress || null;
+        
 
       // 1) 경유지 + 경유지 이유
       var viaInput = document.getElementById("viaPlace1Input");
@@ -1174,7 +1512,17 @@ p　{
       var yuryoIcS           = icStartInput ? icStartInput.value.trim() : null;
       var yuryoIcE           = icEndInput   ? icEndInput.value.trim() : null;
       var yuryoKatamichiKinStr = tollPriceInput ? tollPriceInput.value.trim() : "";
-      var yuryoKatamichiKin    = yuryoKatamichiKinStr ? parseInt(yuryoKatamichiKinStr, 10) : null;
+      var yuryoKatamichiKin = null;
+      if (tollPriceInput) {
+        var raw = tollPriceInput.value.trim();
+        if (raw) {
+          var cleaned = raw.replace(/,/g, '');
+          var tmpPrice = parseInt(cleaned, 10);
+          if (!isNaN(tmpPrice)) {
+            yuryoKatamichiKin = tmpPrice;
+          }
+        }
+      }
 
       var betsuRouteRiyu     = betsuRouteRiyuInput ? betsuRouteRiyuInput.value.trim() : null;
 
@@ -1250,12 +1598,13 @@ p　{
       var tollFlags = buildCarTollFlags(kmNumber, yuryoRiyoKbn, yuryoOfukuKbn, CAR_IS_SHATAKU);
    
    
-   	
+      const kbn        = shudanType || null;   
+      const shudanNmLable  = shudanNm ||  null;    
 
       // ====== ShinseiKeiroVO (요약) ======
       var keiro = {
-        tsukinShudan: "3",           // 자동차
-        shudanName:   "自動車",
+        tsukinShudan: kbn,           // 자동차
+        shudanName:   shudanNmLable,
         startPlace:   homeAddress || null,
         endPlace:     workAddress || null,
         shinseiKm:    kmNumber,       // 최종 적용 거리
@@ -1323,14 +1672,22 @@ p　{
         shinchokuKbn:  null,
 
         // 주소 관련
-        genAddress:    null,
-        newAddress:    homeAddress || null,
-
+        genAddress1:    null,
+        genAddress2:    null,
+        genAddress3:    null,
+        newAddress1:    homeAddress || null,
+        newAddress2:    null,
+        newAddress3:    null,
+        
         // 소속/근무지 관련
         genShozoku:    null,
         newShozoku:    null,
-        genKinmuchi:   null,
-        newKinmuchi:   workAddress || null,
+        genKinmuchi1:   null,
+        genKinmuchi2:   null,
+        genKinmuchi3:   null,
+        newKinmuchi1:   workAddress || null,
+        newKinmuchi2: 	null,
+        newKinmuchi3: 	null,
 
         // 기타 공통 필드들
         riyu:          null,
@@ -1670,239 +2027,10 @@ p　{
     
   });
    </script>
-
-   <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&libraries=maps"
-      defer></script>
-
-   <script>
-  // "35.6909,139.7003" → {lat: 35.6909, lng: 139.7003}
-  function parseLatLng(latlng) {
-    if (!latlng || latlng.indexOf(",") === -1) return null;
-    var parts = latlng.split(",");
-    var lat = parseFloat(parts[0]);
-    var lng = parseFloat(parts[1]);
-    if (isNaN(lat) || isNaN(lng)) return null;
-    return { lat: lat, lng: lng };
-  }
-
-  // 전역: 자택/근무지 좌표 & 거리
-  var homePos = null;
-  var workPos = null;
-
-  // 선택된 루트 거리
-  var distance      = null;  // 현재 선택된 루트 km
-  var routeNoTollKm = null;  // 검색結果1
-  var routeTollKm   = null;  // 검색結果2
-
-  // 위치 정보 로딩
-  function loadShainLocation() {
-    fetch('/keiroinput/shain/location', { method: 'GET' })
-      .then(function (res) {
-        if (!res.ok) {
-          console.error('HTTP 오류:', res.status);
-          throw new Error('HTTP error ' + res.status);
-        }
-        return res.json();
-      })
-      .then(function (data) {
-        console.log('사원 위치 정보:', data);
-        homePos = parseLatLng(data.addressIdoKeido);
-        workPos = parseLatLng(data.kinmuAddressIdoKeido);
-
-        if (!homePos || !workPos) {
-          console.error('위도/경도 정보 부족:', data);
-        }
-      })
-      .catch(function (err) {
-        console.error('위치 정보 요청/처리 오류:', err);
-      });
-  }
-
-  // 공통 경로 그리기
-  function drawRoute(mapDivId, avoidTolls, callback) {
-    var mapDiv = document.getElementById(mapDivId);
-    if (!mapDiv) {
-      console.error('[' + mapDivId + '] 요소를 찾을 수 없습니다.');
-      if (callback) callback(null, 'NO_ELEMENT');
-      return;
-    }
-
-    var centerPos = {
-      lat: (homePos.lat + workPos.lat) / 2,
-      lng: (homePos.lng + workPos.lng) / 2
-    };
-
-    var map = new google.maps.Map(mapDiv, {
-      center: centerPos,
-      zoom: 13
-    });
-
-    var directionsService  = new google.maps.DirectionsService();
-    var directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-
-    var viaInput  = document.getElementById('viaPlace1Input');
-    var viaText   = viaInput ? viaInput.value.trim() : '';
-    var waypoints = [];
-
-    if (viaText) {
-      waypoints.push({
-        location: viaText,
-        stopover: true
-      });
-    }
-
-    var request = {
-      origin:      homePos,
-      destination: workPos,
-      travelMode:  google.maps.TravelMode.DRIVING,
-      avoidTolls:  !!avoidTolls
-    };
-
-    if (waypoints.length > 0) {
-      request.waypoints = waypoints;
-    }
-
-    directionsService.route(request, function (result, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        directionsRenderer.setDirections(result);
-        if (callback) callback(result, status);
-      } else {
-        console.error('[' + mapDivId + '] 경로 검색 실패:', status);
-        if (callback) callback(null, status);
-      }
-    });
-  }
-
-  // 전체 거리(km) 계산
-  function calcTotalDistanceKm(route) {
-    if (!route || !route.legs || route.legs.length === 0) return null;
-    var meters = 0;
-    route.legs.forEach(function (leg) {
-      if (leg.distance && leg.distance.value) {
-        meters += leg.distance.value;
-      }
-    });
-    if (meters === 0) return null;
-    return (meters / 1000).toFixed(1);
-  }
-
-  /**
-   * 검색結果 라디오 선택에 따른 요약/표시 제어
-   */
-  function applyRouteDetails(routeType) {
-    var km = null;
-    var tollUseText = '';
-
-    if (routeType === 'noToll') {
-      km = routeNoTollKm;
-      tollUseText = '利用しない';
-    } else if (routeType === 'toll') {
-      km = routeTollKm;
-      tollUseText = '利用する';
-    }
-
-    // 선택된 루트 거리 전역 저장
-    if (km != null) {
-      distance = km;
-    }
-
-    var distLabel = document.getElementById('routeSummaryDistance');
-    var tollLabel = document.getElementById('routeSummaryTollUse');
-
-    if (distLabel && km != null) {
-      distLabel.textContent = km + 'km';
-    }
-    if (tollLabel && tollUseText) {
-      tollLabel.textContent = tollUseText;
-    }
-
-    // IC/片道料金 블록 표시/비표시
-    var tollBlock = document.getElementById('tollDetailBlock');
-    if (tollBlock) {
-      if (routeType === 'toll') {
-        tollBlock.classList.remove('hidden');   // 유료도로 선택 시 표시
-      } else {
-        tollBlock.classList.add('hidden');      // 그 외에는 숨김
-      }
-    }
-  }
-
-  // 검색 버튼 클릭 시 지도/경로 표시
-  function initMapAndRoute() {
-    if (!homePos || !workPos) {
-      alert('位置情報がまだ準備できていません。少し待ってから再度お試しください。');
-      console.error('homePos/workPos 없음:', homePos, workPos);
-      return;
-    }
-
-    // 검색結果1 (유료도로 미이용)
-    drawRoute('mapNoToll', true, function (result, status) {
-      if (!result) return;
-
-      var route = result.routes[0];
-      var km = calcTotalDistanceKm(route);
-
-      routeNoTollKm = km;
-      distance      = km;
-
-      var distanceDiv = document.getElementById('distance');
-      if (distanceDiv && km != null) {
-        distanceDiv.textContent = '一般経路で距離：' + km + 'km';
-      }
-
-      hasRouteSearched = true;
-      
-      // 기본값은 검색結果1 선택
-      var noTollRadio = document.getElementById('routeNoTollRadio');
-      if (noTollRadio) {
-        noTollRadio.checked = true;
-        applyRouteDetails('noToll');
-      }
-    });
-
-    // 검색結果2 (유료도로 이용)
-    drawRoute('mapToll', false, function (result, status) {
-      if (!result) {
-        console.warn('유료도로 포함 루트를 찾지 못했습니다:', status);
-        return;
-      }
-      var route = result.routes[0];
-      var km = calcTotalDistanceKm(route);
-      routeTollKm = km;
-    });
-  }
-
-  // 초기 바인딩
-  window.addEventListener('load', function () {
-    loadShainLocation();
-
-    var searchBtn = document.getElementById('search');
-    if (searchBtn) {
-      searchBtn.addEventListener('click', function () {
-        initMapAndRoute();
-      });
-    }
-
-    var radioNoToll = document.getElementById('routeNoTollRadio');
-    var radioToll   = document.getElementById('routeTollRadio');
-
-    if (radioNoToll) {
-      radioNoToll.addEventListener('change', function () {
-        if (this.checked) {
-          applyRouteDetails('noToll');
-        }
-      });
-    }
-    if (radioToll) {
-      radioToll.addEventListener('change', function () {
-        if (this.checked) {
-          applyRouteDetails('toll');
-        }
-      });
-    }
-  });
-   </script>
+ 
 </body>
 </html>
+
+
+
+
