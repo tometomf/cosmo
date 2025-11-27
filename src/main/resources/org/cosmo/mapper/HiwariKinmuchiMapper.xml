@@ -110,28 +110,24 @@
 		sh.GEN_ADDRESS_2 AS genAddress2,
 		sh.GEN_ADDRESS_3 AS genAddress3,
 
-		--
-		日割期間住所 (신청 후 → SHINSEI.NEW_KINMU_*)
-		sh.NEW_KINMU_ZIP_CD AS newZip,
-		sh.NEW_KINMU_ADDRESS_1 AS newAddress1,
-		sh.NEW_KINMU_ADDRESS_2 AS
-		newAddress2,
-		sh.NEW_KINMU_ADDRESS_3 AS newAddress3,
+		-- 日割期間住所 (신청 후 → SHINSEI.NEW_*)
+		sh.NEW_ZIP_CD AS newZip,
+		sh.NEW_ADDRESS_1 AS newAddress1,
+		sh.NEW_ADDRESS_2 AS newAddress2,
+		sh.NEW_ADDRESS_3 AS newAddress3,
 
 		-- この住所を反映 用
 		s.DB_ZIP_CD AS dbZip,
 		s.DB_ADDRESS_1 AS dbAddress1,
 		s.DB_ADDRESS_2 AS dbAddress2
 
-		FROM SHAIN s
-		LEFT JOIN SHINSEI sh
+		FROM SHINSEI sh
+		INNER JOIN SHAIN s
 		ON sh.KIGYO_CD = s.KIGYO_CD
 		AND sh.SHAIN_UID = s.SHAIN_UID
-		AND sh.SHINSEI_NO = #{shinseiNo}
 
-		WHERE
-		s.KIGYO_CD = #{kigyoCd}
-		AND s.SHAIN_UID = #{shainUid}
+		WHERE sh.KIGYO_CD = #{kigyoCd}
+		AND sh.SHINSEI_NO = #{shinseiNo}
 	</select>
 
 	<!-- 여기까지 어드레스 -->

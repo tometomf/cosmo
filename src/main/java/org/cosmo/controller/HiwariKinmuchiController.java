@@ -71,8 +71,6 @@ public class HiwariKinmuchiController {
 		HiwariKinmuchiVO data = (shinseiNo == null) ? service.getBeforeShinsei(kigyoCd, shainUid)
 				: service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-
-
 		model.addAttribute("initData", data);
 		model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
 
@@ -107,39 +105,13 @@ public class HiwariKinmuchiController {
 		HiwariAddressVO data = (shinseiNo == null) ? service.getAddressPageDataBefore(kigyoCd, shainUid)
 				: service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
 
-		String genZip = data.getGenZip();
-		String genAddress1 = data.getGenAddress1();
-		String genAddress2 = data.getGenAddress2();
-		String genAddress3 = data.getGenAddress3();
-
-		if (isNullOrEmpty(genZip))
-			genZip = "1600023";
-		if (isNullOrEmpty(genAddress1))
-			genAddress1 = "東京都";
-		if (isNullOrEmpty(genAddress2))
-			genAddress2 = "千代田区丸の内1-1-1";
-		if (isNullOrEmpty(genAddress3))
-			genAddress3 = "A建物";
-
-		data.setGenZip(genZip);
-		data.setGenAddress1(genAddress1);
-		data.setGenAddress2(genAddress2);
-		data.setGenAddress3(genAddress3);
-
-		String fullAddress = genAddress1 + genAddress2;
-
-		if (isNullOrEmpty(fullAddress)) {
-			fullAddress = "大阪府大阪市東淀川区瑞光1-1-1 ハイツ瑞光302";
-		}
-
-		data.setFullAddress(fullAddress);
-
 		model.addAttribute("initData", data);
 		model.addAttribute("addressData", data);
 
 		return "hiwariKinmuchi/hiwariAddress";
 	}
 
+	
 	// 서혜원
 	@GetMapping("/riyu")
 	public String showRiyuPage() {
