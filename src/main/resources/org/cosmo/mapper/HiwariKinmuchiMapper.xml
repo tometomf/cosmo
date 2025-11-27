@@ -30,7 +30,7 @@
 	<select id="getAfterShinsei"
 		resultType="org.cosmo.domain.HiwariKinmuchiVO">
 		SELECT
-		-- GEN 소속
+		-- GEN 
 		a.GEN_shozoku_cd AS genKinmusakiCd,
 		(SELECT shozoku_nm
 		FROM SHOZOKU
@@ -42,7 +42,7 @@
 		a.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
 		a.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
 
-		-- NEW 소속
+		-- NEW 
 		a.NEW_shozoku_cd AS hiwariKinmusakiCd,
 		(SELECT shozoku_nm
 		FROM SHOZOKU
@@ -78,7 +78,7 @@
 	<select id="getAddressPageDataBefore"
 		resultType="org.cosmo.domain.HiwariAddressVO">
 		SELECT
-		-- 상단 社宅住所 바
+		-- 社宅住所 바
 		TRIM(s.DB_ADDRESS_1) || ' ' ||
 		TRIM(s.DB_ADDRESS_2) AS fullAddress,
 
@@ -131,6 +131,33 @@
 	</select>
 
 	<!-- 여기까지 어드레스 -->
+	
+	
+	<!-- 여기부터 리유 -->
+	
+	<select id="shinseiRiyuPage"
+		resultType="org.cosmo.domain.HiwariRiyuVO">
+		SELECT
+		
+		sh.SHINSEI_RIYU AS shinseiriyu,
+		sh.RIYO_START_YMD AS shinseigigan1,
+		sh.RIYO_END_YMD AS shinseigigan2,
+		ssk.JITSU_KINMU_NISSU AS shukkinnissu
+		
+		FROM SHINSEI sh
+		INNER JOIN SHINSEI_START_KEIRO ssk
+		ON sh.KIGYO_CD = ssk.KIGYO_CD
+		AND sh.SHINSEI_NO = ssk.SHINSEI_NO
+		AND ssk.KEIRO_SEQ = 1
+		
+		WHERE sh.KIGYO_CD = #{kigyoCd}
+		AND sh.SHAIN_UID = #{shainUid}
+		AND sh.SHINSEI_NO = #{shinseiNo}
+		
+	</select>
+	
+	<!-- 여기까지 리유 -->
+	
 	<!-- 서혜원 끝 -->
 
 

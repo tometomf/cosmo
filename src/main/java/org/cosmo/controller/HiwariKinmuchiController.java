@@ -1,12 +1,10 @@
 package org.cosmo.controller;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.HiwariAddressVO;
@@ -14,7 +12,7 @@ import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
-import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.HiwariRiyuVO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
@@ -114,9 +112,36 @@ public class HiwariKinmuchiController {
 	
 	// 서혜원
 	@GetMapping("/riyu")
-	public String showRiyuPage() {
-		return "hiwariKinmuchi/hiwariRiyu";
+	public String showRiyuPage(HttpSession session, Model model) {
+
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
+
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+	    Long shinseiNo = null;
+	    if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+	        try {
+	            shinseiNo = Long.valueOf(shain.getShinsei_No());
+	        } catch (Exception e) {
+	            shinseiNo = null;
+	        }
+	    }
+
+	    if (shinseiNo == null) {
+	        return "redirect:/hiwariKinmuchi";
+	    }
+
+	    HiwariRiyuVO data = service.getRiyuPageAfter(kigyoCd, shainUid, shinseiNo);
+
+	    model.addAttribute("initData", data);
+
+	    return "hiwariKinmuchi/hiwariRiyu";
 	}
+	
 
 	//유지희
 	@GetMapping("/kakunin")

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 
 
@@ -125,19 +126,35 @@ button {
 					<div class="form_Text1">
 						<div class="form_Column">日割申請理由</div>
 						<div class="form_Normal">
-							<textarea name="reason" maxlength="1000"></textarea>
+							<textarea name="reason" maxlength="1000">${initData.shinseiriyu}</textarea>
 						</div>
 					</div>
+
+					<c:set var="start" value="${initData.shinseigigan1}" />
+					<c:set var="end" value="${initData.shinseigigan2}" />
 
 					<div class="form_Text1">
 						<div class="form_Column">申請期間</div>
 						<div class="form_Normal">
+
+							<!-- 시작일 -->
 							<input type="text" id="startDate" name="periodFrom"
-								value="2013/04/10" style="width: 140px;"> <img
+								value="<c:if test='${not empty start}'>
+                        ${fn:substring(start,0,4)}/${fn:substring(start,4,6)}/${fn:substring(start,6,8)}
+                      </c:if>"
+								style="width: 140px;"> <img
 								src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
-							<span>〜</span> <input type="text" id="endDate" name="periodTo"
-								value="2013/04/10" style="width: 140px;"> <img
+
+							<span>〜</span>
+
+							<!-- 종료일 -->
+							<input type="text" id="endDate" name="periodTo"
+								value="<c:if test='${not empty end}'>
+                        ${fn:substring(end,0,4)}/${fn:substring(end,4,6)}/${fn:substring(end,6,8)}
+                      </c:if>"
+								style="width: 140px;"> <img
 								src="/resources/img/cal_icon.gif" alt="달력" class="calendar-icon">
+
 							<span id="periodDays" style="margin-left: 10px;"></span>
 						</div>
 					</div>
@@ -145,7 +162,8 @@ button {
 					<div class="form_Text1">
 						<div class="form_Column">出勤日数</div>
 						<div class="form_Normal">
-							<input type="text" name="workDays" value="4" style="width: 40px;">
+							<input type="text" name="workDays"
+								value="${initData.shukkinnissu}" style="width: 40px;">
 							日間 <span class="note">※実働日数を入力してください。</span>
 						</div>
 					</div>
@@ -156,7 +174,8 @@ button {
 					<div class="button_Left_Group">
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
 							style="cursor: pointer;" onclick="location.href='address'">
-						<img src="/resources/img/next_btn01.gif" alt="次へ" onclick="validateReason()"> <img
+						<img src="/resources/img/next_btn01.gif" alt="次へ"
+							onclick="validateReason()"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存">
 					</div>
 				</div>
@@ -168,12 +187,13 @@ button {
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-	
-	<form id="riyuTempForm" method="post" action="<c:url value='/hiwariKinmuchi/tempSave'/>">
-    <input type="hidden" name="commuteJson" value="">
-    <input type="hidden" name="actionUrl" value="RIYU_TEMP_SAVE">
-    <input type="hidden" name="redirectUrl" value="">
-</form>
+
+	<form id="riyuTempForm" method="post"
+		action="<c:url value='/hiwariKinmuchi/tempSave'/>">
+		<input type="hidden" name="commuteJson" value=""> <input
+			type="hidden" name="actionUrl" value="RIYU_TEMP_SAVE"> <input
+			type="hidden" name="redirectUrl" value="">
+	</form>
 
 	<script>
 		$(function() {
@@ -199,135 +219,150 @@ button {
 												});
 							});
 		});
-		
+
 		function validateReason() {
-		    const reason  = document.querySelector("textarea[name='reason']").value.trim();
-		    const from    = document.querySelector("input[name='periodFrom']").value.trim();
-		    const to      = document.querySelector("input[name='periodTo']").value.trim();
-		    const work    = document.querySelector("input[name='workDays']").value.trim();
+			const reason = document.querySelector("textarea[name='reason']").value
+					.trim();
+			const from = document.querySelector("input[name='periodFrom']").value
+					.trim();
+			const to = document.querySelector("input[name='periodTo']").value
+					.trim();
+			const work = document.querySelector("input[name='workDays']").value
+					.trim();
 
-		    // 必須入力チェック
-		    if (reason === "" || from === "" || to === "" || work === "") {
-		        alert("必須項目に入力漏れがあります。すべて入力してください。");
-		        return false;
-		    }
+			// 必須入力チェック
+			if (reason === "" || from === "" || to === "" || work === "") {
+				alert("必須項目に入力漏れがあります。すべて入力してください。");
+				return false;
+			}
 
-		    // ----------------------------
-		    // ① 日付大小チェック(From > To → エラー)
-		    // ----------------------------
-		    const fromDate = new Date(from);
-		    const toDate = new Date(to);
+			// ----------------------------
+			// ① 日付大小チェック(From > To → エラー)
+			// ----------------------------
+			const fromDate = new Date(from);
+			const toDate = new Date(to);
 
-		    if (fromDate > toDate) {
-		        alert("申請期間の開始日が終了日より後になっています。");
-		        return false;
-		    }
+			if (fromDate > toDate) {
+				alert("申請期間の開始日が終了日より後になっています。");
+				return false;
+			}
 
-		    // ----------------------------
-		    // ② 申請期間 日数 < 出勤日数 チェック
-		    // ----------------------------
-		    const diff = toDate - fromDate;
-		    const periodDays = diff / (1000 * 60 * 60 * 24) + 1;
-		    const workDays = parseInt(work);
+			// ----------------------------
+			// ② 申請期間 日数 < 出勤日数 チェック
+			// ----------------------------
+			const diff = toDate - fromDate;
+			const periodDays = diff / (1000 * 60 * 60 * 24) + 1;
+			const workDays = parseInt(work);
 
-		    if (periodDays < workDays) {
-		        alert("申請期間日数が出勤日数より少なくなっています。");
-		        return false;
-		    }
+			if (periodDays < workDays) {
+				alert("申請期間日数が出勤日数より少なくなっています。");
+				return false;
+			}
 
-		    window.location.href = "/hiwariKinmuchi/kakunin";
+			window.location.href = "/hiwariKinmuchi/kakunin";
 		}
-		
-		
+
 		function updatePeriodDays() {
-		    const from = document.querySelector("input[name='periodFrom']").value.trim();
-		    const to   = document.querySelector("input[name='periodTo']").value.trim();
+			const from = document.querySelector("input[name='periodFrom']").value
+					.trim();
+			const to = document.querySelector("input[name='periodTo']").value
+					.trim();
 
-		    const display = document.getElementById("periodDays");
+			const display = document.getElementById("periodDays");
 
-		    // 入力値がなければ初期化
-		    if (from === "" || to === "") {
-		        display.textContent = "";
-		        return;
-		    }
+			// 入力値がなければ初期化
+			if (from === "" || to === "") {
+				display.textContent = "";
+				return;
+			}
 
-		    const fromDate = new Date(from);
-		    const toDate   = new Date(to);
+			const fromDate = new Date(from);
+			const toDate = new Date(to);
 
-		    // 日付パーシング失敗時
-		    if (isNaN(fromDate) || isNaN(toDate)) {
-		        display.textContent = "";
-		        return;
-		    }
+			// 日付パーシング失敗時
+			if (isNaN(fromDate) || isNaN(toDate)) {
+				display.textContent = "";
+				return;
+			}
 
-		    const diff = toDate - fromDate;
-		    const days = diff / (1000 * 60 * 60 * 24) + 1;
+			const diff = toDate - fromDate;
+			const days = diff / (1000 * 60 * 60 * 24) + 1;
 
-		    // 負の数または0の場合 → 表示しない
-		    if (days <= 0) {
-		        display.textContent = "";
-		        return;
-		    }
+			// 負の数または0の場合 → 表示しない
+			if (days <= 0) {
+				display.textContent = "";
+				return;
+			}
 
-		    display.textContent = days + "日間";
+			display.textContent = days + "日間";
 		}
 
 		$(document).on("change", "#startDate, #endDate", updatePeriodDays);
 
 		$(function() {
-		    updatePeriodDays();
+			updatePeriodDays();
 		});
-		
+
 		function buildKinmuTempJson() {
 
-		    const reason = document.querySelector("textarea[name='reason']").value.trim();
+			const reason = document.querySelector("textarea[name='reason']").value
+					.trim();
 
-		    return JSON.stringify({
+			return JSON.stringify({
 
-		        kigyoCd: null,
-		        shinseiNo: null,
-		        shinseiYmd: null,
-		        shinseiKbn: null,
-		        shinchokuKbn: null,
+				kigyoCd : null,
+				shinseiNo : null,
+				shinseiYmd : null,
+				shinseiKbn : null,
+				shinchokuKbn : null,
 
-		        genAddress: null,
-		        newAddress: null,
-		        genShozoku: null,
-		        newShozoku: null,
-		        genKinmuchi: null,
-		        newKinmuchi: null,
+				genAddress : null,
+				newAddress : null,
+				genShozoku : null,
+				newShozoku : null,
+				genKinmuchi : null,
+				newKinmuchi : null,
 
-		        riyu: reason,   
+				riyu : reason,
 
-		        idoYmd: null,
-		        itenYmd: null,
-		        tennyuYmd: null,
-		        riyoStartYmd: null,
-		        ssmdsYmd: null,
+				idoYmd : null,
+				itenYmd : null,
+				tennyuYmd : null,
+				riyoStartYmd : null,
+				ssmdsYmd : null,
 
-		        moComment: null,
-		        codeNm: null,
-		        shinseiName: null,
-		        keiro: null
-		    });
+				moComment : null,
+				codeNm : null,
+				shinseiName : null,
+				keiro : null
+			});
 		}
 
-		
-		document.addEventListener("DOMContentLoaded", function () {
+		document
+				.addEventListener(
+						"DOMContentLoaded",
+						function() {
 
-		    const hozonBtn = document.querySelector('img[alt="一時保存"]');
-		    const form = document.getElementById("riyuTempForm");
+							const hozonBtn = document
+									.querySelector('img[alt="一時保存"]');
+							const form = document
+									.getElementById("riyuTempForm");
 
-		    hozonBtn.addEventListener("click", function() {
+							hozonBtn
+									.addEventListener(
+											"click",
+											function() {
 
-		        const jsonString = buildKinmuTempJson();
-		        form.querySelector('input[name="commuteJson"]').value = jsonString;
+												const jsonString = buildKinmuTempJson();
+												form
+														.querySelector('input[name="commuteJson"]').value = jsonString;
 
-		        form.querySelector('input[name="redirectUrl"]').value = "";
+												form
+														.querySelector('input[name="redirectUrl"]').value = "";
 
-		        form.submit();
-		    });
-		});
+												form.submit();
+											});
+						});
 	</script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
+import org.cosmo.domain.HiwariRiyuVO;
 
 @Mapper
 public interface HiwariKinmuchiMapper {
@@ -30,6 +31,12 @@ public interface HiwariKinmuchiMapper {
 
     HiwariAddressVO getAddressPageDataBefore(@Param("kigyoCd") Integer kigyoCd, //서혜원
                   @Param("shainUid") Long shainUid);
+    
+    HiwariRiyuVO shinseiRiyuPage(
+            @Param("kigyoCd") Integer kigyoCd,
+            @Param("shainUid") Long shainUid,
+            @Param("shinseiNo") Long shinseiNo
+    ); //서혜원
 
     /** 所属  */
     List<String> getShozokuNames(@Param("kigyoCd") Integer kigyoCd); //서혜원

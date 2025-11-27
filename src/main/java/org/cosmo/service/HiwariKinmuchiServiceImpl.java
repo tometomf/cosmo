@@ -2,12 +2,12 @@ package org.cosmo.service;
 
 import java.util.List;
 
-import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
+import org.cosmo.domain.HiwariRiyuVO;
 import org.cosmo.mapper.HiwariKinmuchiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,12 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     public HiwariAddressVO getAddressPageDataBefore(Integer kigyoCd, Long shainUid) {
         return mapper.getAddressPageDataBefore(kigyoCd, shainUid);
     }
+    
+    @Override
+    public HiwariRiyuVO getRiyuPageAfter(Integer kigyoCd, Long shainUid, Long shinseiNo) {
+        return mapper.shinseiRiyuPage(kigyoCd, shainUid, shinseiNo);
+    }
+    
     //서혜원 끝
  
     
