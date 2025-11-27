@@ -239,11 +239,7 @@
 			<div class="transport-wrapper">
 				<c:set var="shudanType"
 					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
-				<c:set var="shudanLabel" value="自転車" />
-				<c:if test="${shudanType == '6'}">
-					<c:set var="shudanLabel" value="徒歩" />
-				</c:if>
-				<div class="transport">手段：${shudanLabel}</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 			<div class="content_Form1">
 				<div id="form_Text1">
@@ -520,7 +516,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // JSTL로 세팅된 값들
     const shudanType  = "${shudanType}";   // "2" or "7"
-    const shudanLabel = "${shudanLabel}";  // "バス" or "その他"
+    const shudanNm = "${shudanNm}";  // "バス" or "その他"
 
     /**
      * 서버에 넘길 신청 데이터(ShinseiIcDataVO 형식)
@@ -528,11 +524,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function buildCommuteJson() {
         // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
         const kbn        = shudanType || null;   // "2" 또는 "7"
-        const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
+        const shudanNm  = shudanNm || "";    // "バス" 또는 "その他"
  		
         const keiro =  {
                 tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
-                shudanName:   labelText,  // 예: "バス", "その他"
+                shudanName:   shudanNm,  // 예: "バス", "その他"
                 startPlace: homeFullAddress,
                 endPlace:  workFullAddress,
                 shinseiKm: distance 

@@ -233,14 +233,12 @@ input[type="text"]:disabled {
 			<div class="transport-wrapper">
 				<c:set var="shudanType"
 					value="${not empty param.shudanType ? param.shudanType : shudanType}" />
-				<c:set var="shudanLabel" value="バス" />
 				<c:set var="kuganLabel" value="バス停名" />
 				<c:if test="${shudanType == '7'}">
-					<c:set var="shudanLabel" value="その他" />
 					<c:set var="kuganLabel" value="区間" />
 				</c:if>
 
-				<div class="transport">手段：${shudanLabel}</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 
 			<div class="content_Form1">
@@ -394,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // JSTL로 세팅된 값들
     const shudanType  = "${shudanType}";   // "2" or "7"
-    const shudanLabel = "${shudanLabel}";  // "バス" or "その他"
+    const shudanNm = "${shudanNm}";   // "バス" or "その他"
     
     const busCompany   = document.getElementById("busCompany");
     const busStopFrom  = document.getElementById("busStopFrom");
@@ -419,11 +417,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function buildCommuteJson() {
         // 이 화면에서는 공통 정보는 일단 null, keiro만 세팅
         const kbn        = shudanType || null;   // "2" 또는 "7"
-        const labelText  = shudanLabel || "";    // "バス" 또는 "その他"
+        const shudanNm  = shudanNm || "";    // "バス" 또는 "その他"
  		
        const keiro = {
             tsukinShudan: kbn,       // 예: "2" (버스), "7" (기타)
-            shudanName:   labelText,  // 예: "バス", "その他"
+            shudanName:   shudanNm,  // 예: "バス", "その他"
             startPlace: busStopFrom.value,
             endPlace:  busStopTo.value,
             tsuki: pass1m.value

@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.sql.Timestamp;
 
+import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.KeiroInputDenshaDTO;
 import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShainKeiroDTO;
@@ -99,5 +100,10 @@ public class KeiroInputServiceImpl implements KeiroInputService {
 	        log.setUserTrack(userTrack);
 
 	        mapper.insertProcessLog(log);
+	    }
+	  
+	   @Override
+	    public CodeVO getCodeName(String codeSybtsu, String code) {
+	        return mapper.selectCodeName(codeSybtsu, code);
 	    }
 }

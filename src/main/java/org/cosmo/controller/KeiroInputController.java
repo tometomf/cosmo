@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainKeiroDTO;
 import org.cosmo.domain.ShainLocationVO;
@@ -173,11 +174,14 @@ public class KeiroInputController {
 				String busCompany = shinseiStartKeiro.getBusCorpNm();
 				String startPlace = shinseiStartKeiro.getStartPlace();
 				String endPlace = shinseiStartKeiro.getEndPlace();
+				String tsukinShudanKbn = shinseiStartKeiro.getTsukinShudanKbn();
 				Integer KatamichiKin = shinseiStartKeiro.getKatamichiKin();
 				Integer SanshoTeikiKin1 = shinseiStartKeiro.getSanshoTeikiKin1();
 				Integer SanshoTeikiKin2 = shinseiStartKeiro.getSanshoTeikiKin2();
 				Integer SanshoTeikiKin3 = shinseiStartKeiro.getSanshoTeikiKin3();
-
+				
+				shudanType = tsukinShudanKbn;
+				
 				model.addAttribute("busCompany", busCompany);
 				model.addAttribute("startPlace", startPlace);
 				model.addAttribute("endPlace", endPlace);
@@ -188,9 +192,13 @@ public class KeiroInputController {
 			}
 
 		}
-
+		
+		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
+		
+		
 		model.addAttribute("serverTime", formattedDate);
 		model.addAttribute("shudanType", shudanType);
+		model.addAttribute("shudanNm", shudanCode.getCodeNm());
 		model.addAttribute("shinseiNo", shinseiNo);
 		model.addAttribute("hozonUid", hozonUid);
 		model.addAttribute("keiroSeq", keiroSeq);
@@ -236,6 +244,10 @@ public class KeiroInputController {
 			e.printStackTrace();
 		}
 		
+		
+		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
+		
+		
 		model.addAttribute("startAddr", startAddr);
 		model.addAttribute("endAddr", endAddr);
 		model.addAttribute("startPos", startPos);
@@ -243,6 +255,7 @@ public class KeiroInputController {
 		
 		model.addAttribute("serverTime", formattedDate);
 		model.addAttribute("shudanType", shudanType);
+		model.addAttribute("shudanNm", shudanCode.getCodeNm());
 		model.addAttribute("shinseiNo", shinseiNo);
 		model.addAttribute("hozonUid", hozonUid);
 		model.addAttribute("keiroSeq", keiroSeq);
