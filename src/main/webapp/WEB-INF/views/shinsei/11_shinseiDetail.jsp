@@ -55,43 +55,43 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">${header.joutaiName}</div>
+					<div class="form_Normal">${detailheader.joutaiName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">${header.shinseiNo}</div>
+					<div class="form_Normal">${detailheader.shinseiNo}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">${header.shinseiYmd}</div>
+					<div class="form_Normal">${detailheader.shinseiYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">差戻し日</div>
-					<div class="form_Normal">${header.sashimodoshiYmd}</div>
+					<div class="form_Normal">${detailheader.sashimodoshiYmd}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">再申請日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.saishinseiDate}"
+						<fmt:formatDate value="${detailheader.saishinseiDate}"
 							pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">承認日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.shoninDate}" pattern="yyyy/MM/dd" />
+						<fmt:formatDate value="${detailheader.shoninDate}" pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">支給開始日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.shikyuuKaishiDate}"
+						<fmt:formatDate value="${detailheader.shikyuuKaishiDate}"
 							pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">本人申し送りコメント</div>
-					<div class="form_Normal">${header.honninComment}</div>
+					<div class="form_Normal">${detailheader.honninComment}</div>
 				</div>
 			</div>
 
@@ -99,7 +99,7 @@
 				test="${not empty header.shinchokuKbn and fn:trim(header.shinchokuKbn) ne '4'}">
 				<div class="button_Left">
 					<form action="<c:url value='/shinsei/hikimodosu' />" method="post">
-						<input type="hidden" name="shinseiNo" value="${header.shinseiNo}" />
+						<input type="hidden" name="shinseiNo" value="${detailheader.shinseiNo}" />
 						<div class="button_Left_Group">
 							<button type="submit"
 								style="border: 0; padding: 0; margin: 0; background: none; cursor: pointer;">
@@ -119,18 +119,18 @@
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
-					<div class="form_Normal">${header.genAddress}</div>
-					<div class="form_Normal">${header.newAddress}</div>
+					<div class="form_Normal">${detailheader.genAddress}</div>
+					<div class="form_Normal">${detailheader.newAddress}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${header.shozokuBeforeNm}</div>
-					<div class="form_Normal">${header.shozokuAfterNm}</div>
+					<div class="form_Normal">${detailheader.shozokuBeforeNm}</div>
+					<div class="form_Normal">${detailheader.shozokuAfterNm}</div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${header.kinmuchiBefore}</div>
-					<div class="form_Normal">${header.kinmuchiAfter}</div>
+					<div class="form_Normal">${detailheader.kinmuchiBefore}</div>
+					<div class="form_Normal">${detailheader.kinmuchiAfter}</div>
 				</div>
 			</div>
 
@@ -427,28 +427,28 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${header.shinseiKbnName}</div>
+					<div class="form_Normal">${detailheader.shinseiKbnName}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
-					<div class="form_Normal">${header.shinseiRiyu}</div>
+					<div class="form_Normal">${detailheader.shinseiRiyu}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">異動日/移動日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.idouDate}" pattern="yyyy/MM/dd" />
+						<fmt:formatDate value="${detailheader.idouDate}" pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.tennyuDate}" pattern="yyyy/MM/dd" />
+						<fmt:formatDate value="${detailheader.tennyuDate}" pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
 					<div class="form_Normal">
-						<fmt:formatDate value="${header.kaishiDate}" pattern="yyyy/MM/dd" />
+						<fmt:formatDate value="${detailheader.kaishiDate}" pattern="yyyy/MM/dd" />
 					</div>
 				</div>
 			</div>

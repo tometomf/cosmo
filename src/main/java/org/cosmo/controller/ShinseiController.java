@@ -388,7 +388,7 @@ public class ShinseiController {
 		ShinseiDetailVO header = detailList.get(0);
 
 		// 🔹 JSP에서 헤더/리스트 둘 다 쓰기 편하게
-		model.addAttribute("header", header); // 상단 공통 정보
+		model.addAttribute("detailheader", header); // 상단 공통 정보
 
 		System.out.println("### detailList size = " + (detailList == null ? 0 : detailList.size()));
 
