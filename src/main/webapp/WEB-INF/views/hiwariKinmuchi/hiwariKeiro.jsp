@@ -20,8 +20,8 @@
 }
 
 .route-actions img {
-    width: 25px;
-    height: 25px;
+    width: 15px;
+    height: 15px;
     vertical-align: middle;      /* 혹시 모를 baseline 문제 제거 */
 }
 
