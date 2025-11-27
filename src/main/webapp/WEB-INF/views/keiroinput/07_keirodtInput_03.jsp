@@ -1,3 +1,4 @@
+<!-- 지훈 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -476,10 +477,12 @@ p　{
             <input type="hidden" name="commuteJson" value="">
 
             <!-- 이 화면에서의 action 이름 (ICHIJI_HOZON.ACTION_NM) -->
-            <input type="hidden" name="actionUrl" value="TSUKIN_SHUDAN_TEMP_SAVE">
+            <input type="hidden" name="actionUrl" value="/keiroinput/07_keiroInput_03">
 
             <!-- 저장 후 이동할 URL (비워두면 /shinsei/ichiji?hozonUid=... 로 이동) -->
             <input type="hidden" name="redirectUrl" value="">
+            
+            <input type="hidden" name="hozonUid" value="${hozonUid}">
          </form>
 
          <%@ include file="/WEB-INF/views/common/footer.jsp"%>
@@ -506,6 +509,108 @@ p　{
       location.href = '/';
     });
   })();
+  
+	//=== 자동차 지급 계산용 상수 (전역) ===
+  	//  - 연비: 10km/L
+  	//  - 월 지급 일수: 24일
+  	//  - 휘발유 단가: 나중에 서버/마스터에서 내려줄 때까지 0으로 두고, 계산 결과는 JSON에 기록만 해둔다.
+  	var CAR_FUEL_EFFICIENCY_KM_PER_L = 10;
+ 	var CAR_MONTHLY_WORK_DAYS        = 24;
+  	var CAR_FUEL_UNIT_PRICE_PER_L    = 200; // TODO: 실제 단가 내려오면 이 값 교체
+
+  
+	//1ヶ月通勤費支給額 上限
+  	var CAR_MONTHLY_LIMIT_SHATAKU     = 13300; // 社宅利用者
+ 	var CAR_MONTHLY_LIMIT_NON_SHATAKU = 39700; // 社宅を利用されていない方
+ 	
+ 	var CAR_IS_SHATAKU = false;
+ 	
+  // === 자동차 1개월 금액 계산 함수 (전역) ===
+  //  - kmNumber: 편도 거리(km)
+  //  - tollOneWayFare: 유료도로 편도 요금(엔) (없으면 null)
+  //  - yuryoOfukuKbn: "1"(편도), "2"(왕복), 그 외(미설정)
+  function buildCarPaymentCalc(kmNumber, tollOneWayFare, yuryoOfukuKbn) {
+    var oneWayKm = (kmNumber != null && !isNaN(kmNumber)) ? kmNumber : null;
+
+    var fuelUnitPrice = CAR_FUEL_UNIT_PRICE_PER_L;
+    var fuelEff       = CAR_FUEL_EFFICIENCY_KM_PER_L;
+    var days          = CAR_MONTHLY_WORK_DAYS;
+
+    // ---- 1) 편도 기본 요금(유료도로 제외) ----
+    //  편도요금(엔) = 편도거리(km) × 휘발유 단가(엔/L) / 연비(km/L)
+    var oneWayBaseFare    = null;    // g. 편도요금
+    var monthlyBaseAmount = null;    // a. 연료 기반 월 지급 금액(유료도로 제외)
+
+    if (oneWayKm != null &&
+        fuelUnitPrice != null && fuelUnitPrice > 0 &&
+        fuelEff != null && fuelEff > 0 &&
+        days != null && days > 0) {
+
+      oneWayBaseFare = Math.round(oneWayKm * fuelUnitPrice / fuelEff);
+      // 월지급: 편도요금 × 2(왕복) × 월 지급 일수
+      monthlyBaseAmount = oneWayBaseFare * 2 * days;
+    }
+	
+    
+    var tollFare = (tollOneWayFare != null &&
+            !isNaN(tollOneWayFare) &&
+            Number(tollOneWayFare) > 0)
+			? Number(tollOneWayFare)
+			: null;
+
+    // 유료도로 이용 구분(편도/왕복)에 따른 계수
+    //   - 편도 이용: 하루에 1회
+    //   - 왕복 이용: 하루에 2회
+    var tollUseFactor = 0;
+    if (yuryoOfukuKbn === "1") {
+      tollUseFactor = 1;
+    } else if (yuryoOfukuKbn === "2") {
+      tollUseFactor = 2;
+    }
+
+    var monthlyTollAmount = null;   // a.식의 "(유료도로 거리 요금 × 이용구분 × 월지급일수)" 부분
+    if (tollFare != null && tollUseFactor > 0 && days != null && days > 0) {
+      monthlyTollAmount = tollFare * tollUseFactor * days;
+    }
+
+    // ---- 3) 월 지급 총액(연료 + 유료도로) ----
+    var monthlyTotalAmount = null;
+    if (monthlyBaseAmount != null || monthlyTollAmount != null) {
+      monthlyTotalAmount = (monthlyBaseAmount || 0) + (monthlyTollAmount || 0);
+    }
+    
+    if (monthlyTotalAmount != null) {
+        var limit = CAR_IS_SHATAKU
+          ? CAR_MONTHLY_LIMIT_SHATAKU
+          : CAR_MONTHLY_LIMIT_NON_SHATAKU;
+
+        if (limit != null && limit > 0 && monthlyTotalAmount > limit) {
+          monthlyTotalAmount = limit;
+        }
+      }
+
+    // ※ 최초 지급 금액은 대상일/월말 정보가 없어서 여기서는 계산하지 않고 null로 둔다.
+    var firstMonthAmount = null;
+
+    return {
+      oneWayKm:             oneWayKm,
+      fuelUnitPrice:        fuelUnitPrice,
+      fuelEfficiencyKmPerL: fuelEff,
+      monthlyWorkDays:      days,
+
+      oneWayBaseFare:       oneWayBaseFare,
+      monthlyBaseAmount:    monthlyBaseAmount,
+
+      tollOneWayFare:       tollFare,
+      tollUseFactor:        tollUseFactor,
+      monthlyTollAmount:    monthlyTollAmount,
+
+      monthlyTotalAmount:   monthlyTotalAmount,
+      firstMonthAmount:     firstMonthAmount
+    };
+  }
+  
+  
 
   var hasRouteSearched = false;
   // 초기처리 + 일시저장
@@ -523,6 +628,7 @@ p　{
     var hozonBtn = document.querySelector('img[alt="hozon_btn01"]');   // 일시저장
     var keiroBtn = document.querySelector('img[alt="keiro_btn02"]');   // 경로확정(지금은 같은 처리)
 
+  
     
     /**
      * 저장 전에 체크할 공통 검증
@@ -754,7 +860,7 @@ p　{
         var distanceLabel = document.getElementById('routeSummaryDistance');
         var tollUseLabel  = document.getElementById('routeSummaryTollUse');
 
-        // 1) 거리 요약 갱신
+        // 1) 거리 문자열 읽기
         var resultDistanceStr = resultDistanceInput ? resultDistanceInput.value.trim() : "";
         var km = null;
         if (resultDistanceStr) {
@@ -764,25 +870,47 @@ p　{
           }
         }
 
-        if (km != null && distanceLabel) {
-          // 상단 요약 거리
-          distanceLabel.textContent = km + 'km';
-          // 전역 distance도 이 값으로 덮어쓰기 (JSON 생성 시 사용)
-          distance = km;
-        }
-
-        // 2) 유료도로 이용 여부 판단 (IC 또는 요금이 있으면 "利用する")
+        // 2) IC / 요금 문자열 읽기
         var icS      = icStartInput ? icStartInput.value.trim() : "";
         var icE      = icEndInput   ? icEndInput.value.trim()   : "";
         var priceStr = tollPriceInput ? tollPriceInput.value.trim() : "";
 
-        var hasTollInfo = !!(icS || icE || priceStr);
-
-        if (tollUseLabel && hasTollInfo) {
-          tollUseLabel.textContent = '利用する';
+        // 3) “별도 루트에 뭔가라도 입력이 있는지” 판단
+        var hasAnyManualInput = !!(resultDistanceStr || icS || icE || priceStr);
+        if (hasAnyManualInput) {
+          // 별도 루트도 “경로를 정한 상태”로 본다
+          hasRouteSearched = true;
         }
 
-        // 3) IC / 片道料金 라벨 + 블록 표시 갱신
+        // 4) 상단 거리 요약 + 전역 distance 갱신
+        if (km != null && distanceLabel) {
+          distanceLabel.textContent = km + 'km';
+          distance = km;   // JSON 생성 시 사용할 최종 거리
+        }
+
+        // 5) 유료도로 이용 여부 요약
+        var hasTollInfo = !!(icS || icE || priceStr);
+        if (tollUseLabel) {
+          if (hasTollInfo) {
+            tollUseLabel.textContent = '利用する';
+          } else if (hasAnyManualInput) {
+            // 별도 루트는 있지만 IC/요금 정보는 없는 경우 → 일단 "利用しない"로 표기
+            tollUseLabel.textContent = '利用しない';
+          } else {
+            // 아무것도 없으면 초기표시
+            tollUseLabel.textContent = '-';
+          }
+        }
+
+        // 6) 별도 루트가 입력되면, 검색結果1/2 라디오는 해제
+        if (hasAnyManualInput) {
+          var r1 = document.getElementById('routeNoTollRadio');
+          var r2 = document.getElementById('routeTollRadio');
+          if (r1) r1.checked = false;
+          if (r2) r2.checked = false;
+        }
+
+        // 7) 상단 IC / 片道料金 라벨 + 블록 표시 갱신
         updateTollDetailSummaryFromInputs();
       }
     
@@ -920,182 +1048,304 @@ p　{
         });
       });
     })();
+    
+    
+    /**
+     * 유료도로 특례 / 거리하한 체크 플래그 계산
+     * - 인자:
+     *   kmNumber: 편도 거리(km, Number 또는 null)
+     *   yuryoRiyoKbn: "1"(유료 미이용) / "2"(유료 이용)
+     *   yuryoOfukuKbn: "1"(편도) / "2"(왕복) / null
+     *   isShataku: true=사택, false=사택 미이용
+     *
+     * - 반환:
+     *   { yuryoTokurei: "0" | "1", kyoriKagenTokurei: "0" | "1" | "2" }
+     *
+     * 설계서 요약:
+     *   kyoriKagenTokurei:
+     *     0: 정상
+     *     1: 사택 이용 편도 25km 이상 조건 미충족
+     *     2: 사택 미이용 편도 20km 이상 조건 미충족
+     *
+     *   yuryoTokurei:
+     *     0: 통상
+     *     1: 유료도로 특례 (거리 요건 미충족 등)
+     */
+    function buildCarTollFlags(kmNumber, yuryoRiyoKbn, yuryoOfukuKbn, isShataku) {
+      var result = {
+        yuryoTokurei: "0",
+        kyoriKagenTokurei: "0"
+      };
+
+      // 거리 정보 없거나, 유료도로 미이용이면 모두 0(정상/통상)
+      if (kmNumber == null || isNaN(kmNumber) || yuryoRiyoKbn !== "2") {
+        return result;
+      }
+
+      var oneWayKm = Number(kmNumber);
+
+      if (isShataku) {
+        // [사택 이용] 편도 25km 미만 → 특례 + 체크구분=1
+        if (oneWayKm < 25) {
+          result.yuryoTokurei = "1";
+          result.kyoriKagenTokurei = "1";
+        }
+      } else {
+        // [사택 미이용] 설계서:
+        //  - 왕복 이용이면 편도 25km 이상 필요
+        //  - 편도 이용이면 편도 20km 이상 필요
+        if (yuryoOfukuKbn === "2") {
+          if (oneWayKm < 25) {
+            result.yuryoTokurei = "1";
+            result.kyoriKagenTokurei = "2";
+          }
+        } else if (yuryoOfukuKbn === "1") {
+          if (oneWayKm < 20) {
+            result.yuryoTokurei = "1";
+            result.kyoriKagenTokurei = "2";
+          }
+        }
+      }
+
+      return result;
+    }
+
+   
 
     /**
      * 자동차 경로 화면의 "현재 상태"를
      * ShinseiIcDataVO + ShinseiStartKeiroVO 구조로 JSON 생성
      */
- 
-     function buildCarInitialJson() {
-       // JSP에서 내려온 주소/근무지 (초기처리 1,2번과 동일 데이터)
-       var homeAddress =
-         "${addr.newAddress1}${addr.newAddress2}${addr.newAddress3}";
-       var workAddress =
-         "${kinmuAddr.newKinmuAddress1}${kinmuAddr.newKinmuAddress2}${kinmuAddr.newKinmuAddress3}";
+    function buildCarInitialJson() {
+      // JSP에서 내려온 주소/근무지 (초기처리 1,2번과 동일 데이터)
+      var homeAddress =
+        "${addr.newAddress1}${addr.newAddress2}${addr.newAddress3}";
+      var workAddress =
+        "${kinmuAddr.newKinmuAddress1}${kinmuAddr.newKinmuAddress2}${kinmuAddr.newKinmuAddress3}";
 
-       // 1) 경유지 + 경유지 이유
-       var viaInput = document.getElementById("viaPlace1Input");
-       var viaPlace1 = viaInput ? viaInput.value.trim() : null;
+      // 1) 경유지 + 경유지 이유
+      var viaInput = document.getElementById("viaPlace1Input");
+      var viaPlace1 = viaInput ? viaInput.value.trim() : null;
 
-       var viaPlaceRiyuInput = document.getElementById("viaPlaceRiyuInput");
-       var viaPlaceRiyu = viaPlaceRiyuInput ? viaPlaceRiyuInput.value.trim() : null;
+      var viaPlaceRiyuInput = document.getElementById("viaPlaceRiyuInput");
+      var viaPlaceRiyu = viaPlaceRiyuInput ? viaPlaceRiyuInput.value.trim() : null;
 
-       // 2) 메인 루트(검색結果1/2) 선택 정보
-       //    name="routeSelect" / value="noToll" | "toll"
-       var selectedRouteRadio = document.querySelector('input[name="routeSelect"]:checked');
-       var routeType = selectedRouteRadio ? selectedRouteRadio.value : null; // "noToll" or "toll"
+      // 2) 메인 루트(검색結果1/2) 선택 정보
+      //    name="routeSelect" / value="noToll" | "toll"
+      var selectedRouteRadio = document.querySelector('input[name="routeSelect"]:checked');
+      var routeType = selectedRouteRadio ? selectedRouteRadio.value : null; // "noToll" or "toll"
 
-       // 1: 유료도로 미이용, 2: 유료도로 이용
-       var yuryoRiyoKbn = null;
-       if (routeType === "noToll") {
-         yuryoRiyoKbn = "1";
-       } else if (routeType === "toll") {
-         yuryoRiyoKbn = "2";
-       }
+      // 1: 유료도로 미이용, 2: 유료도로 이용
+      var yuryoRiyoKbn = null;
+      if (routeType === "noToll") {
+        yuryoRiyoKbn = "1";
+      } else if (routeType === "toll") {
+        yuryoRiyoKbn = "2";
+      }
 
-       // 3) 메인 루트 편도/왕복 (상단 라디오)
-       var ofukuSelected = document.querySelector('input[name="ofukuKbn"]:checked');
-       var ofukuMain = ofukuSelected ? ofukuSelected.value : null; // "1" or "2"
+      // 3) 메인 루트 편도/왕복 (상단 라디오)
+      var ofukuSelected = document.querySelector('input[name="ofukuKbn"]:checked');
+      var ofukuMain = ofukuSelected ? ofukuSelected.value : null; // "1" or "2"
 
-       // 4) 유료도로 이용 이유
-       var yuryoRiyoRiyuInput = document.getElementById("yuryoRiyoRiyuInput");
-       var yuryoRiyoRiyu = yuryoRiyoRiyuInput ? yuryoRiyoRiyuInput.value.trim() : null;
+      // 4) 유료도로 이용 이유
+      var yuryoRiyoRiyuInput = document.getElementById("yuryoRiyoRiyuInput");
+      var yuryoRiyoRiyu = yuryoRiyoRiyuInput ? yuryoRiyoRiyuInput.value.trim() : null;
 
-       // 5) 별도 루트 입력 영역 값들
-       
-       var resultCapturePathInput = document.getElementById("resultCapturePathInput");
-       var resultCapturePath      = resultCapturePathInput ? resultCapturePathInput.value.trim() : "";
-       
-       var resultDistanceEl   = document.getElementById("resultDistanceInput");
-       var resultDistanceStr  = resultDistanceEl ? resultDistanceEl.value.trim() : "";
-       var betsuKm            = resultDistanceStr ? parseFloat(resultDistanceStr) : null;
+      // 5) 별도 루트 입력 영역 값들
+      var resultCapturePathInput = document.getElementById("resultCapturePathInput");
+      var resultCapturePath      = resultCapturePathInput ? resultCapturePathInput.value.trim() : "";
 
-       var icStartInput       = document.getElementById("icStartInput");
-       var icEndInput         = document.getElementById("icEndInput");
-       var tollPriceInput     = document.getElementById("tollPriceInput");
-       var betsuRouteRiyuInput= document.getElementById("betsuRouteRiyuInput");
+      var resultDistanceEl   = document.getElementById("resultDistanceInput");
+      var resultDistanceStr  = resultDistanceEl ? resultDistanceEl.value.trim() : "";
+      var betsuKm            = resultDistanceStr ? parseFloat(resultDistanceStr) : null;
 
-       var yuryoIcS           = icStartInput ? icStartInput.value.trim() : null;
-       var yuryoIcE           = icEndInput   ? icEndInput.value.trim() : null;
-       var yuryoKatamichiKinStr = tollPriceInput ? tollPriceInput.value.trim() : "";
-       var yuryoKatamichiKin    = yuryoKatamichiKinStr ? parseInt(yuryoKatamichiKinStr, 10) : null;
+      var icStartInput       = document.getElementById("icStartInput");
+      var icEndInput         = document.getElementById("icEndInput");
+      var tollPriceInput     = document.getElementById("tollPriceInput");
+      var betsuRouteRiyuInput= document.getElementById("betsuRouteRiyuInput");
 
-       var betsuRouteRiyu     = betsuRouteRiyuInput ? betsuRouteRiyuInput.value.trim() : null;
+      var yuryoIcS           = icStartInput ? icStartInput.value.trim() : null;
+      var yuryoIcE           = icEndInput   ? icEndInput.value.trim() : null;
+      var yuryoKatamichiKinStr = tollPriceInput ? tollPriceInput.value.trim() : "";
+      var yuryoKatamichiKin    = yuryoKatamichiKinStr ? parseInt(yuryoKatamichiKinStr, 10) : null;
 
-   		// 별도 루트 입력이 있는지 여부
-       var hasBetsuRouteInput =
-         !!(resultCapturePath || resultDistanceStr || yuryoIcS || yuryoIcE || yuryoKatamichiKinStr || betsuRouteRiyu);
+      var betsuRouteRiyu     = betsuRouteRiyuInput ? betsuRouteRiyuInput.value.trim() : null;
 
-       var kekkaSelect = null;
-       if (hasBetsuRouteInput) {
-         kekkaSelect = "9";
-       } else if (routeType === "noToll") {
-         kekkaSelect = "1";
-       } else if (routeType === "toll") {
-         kekkaSelect = "2";
-       }
+      // 별도 루트 입력이 있는지 여부
+      var hasBetsuRouteInput =
+        !!(resultCapturePath || resultDistanceStr || yuryoIcS || yuryoIcE || yuryoKatamichiKinStr || betsuRouteRiyu);
 
-       
-       
-       // 6) 별도 루트 편도/왕복 (하단 라디오)
-       var resultOfukuSelected = document.querySelector('input[name="resultOfukuKbn"]:checked');
-       var ofukuBetsu = resultOfukuSelected ? resultOfukuSelected.value : null; // "1" or "2"
+      var kekkaSelect = null;
+      if (hasBetsuRouteInput) {
+        kekkaSelect = "9";
+      } else if (routeType === "noToll") {
+        kekkaSelect = "1";
+      } else if (routeType === "toll") {
+        kekkaSelect = "2";
+      }
+      
+      
+   		//  별도 루트 쪽에 IC/요금이 하나라도 있으면 유료도로 이용으로 판단
+      var hasTollInfoForBetsu =
+        !!(yuryoIcS ||
+           yuryoIcE ||
+           (yuryoKatamichiKin != null && !isNaN(yuryoKatamichiKin) && yuryoKatamichiKin > 0));
 
-       // 최종 편도/왕복 값 (별도 루트가 있으면 그것을 우선)
-       var yuryoOfukuKbn = null;
-       if (hasBetsuRouteInput && ofukuBetsu) {
-         yuryoOfukuKbn = ofukuBetsu;
-       } else if (!hasBetsuRouteInput && ofukuMain) {
-         yuryoOfukuKbn = ofukuMain;
-       }
+      if (hasBetsuRouteInput) {
+        // 별도 루트가 존재하면 그쪽 기준으로 유료도로 이용 여부를 세팅
+        yuryoRiyoKbn = hasTollInfoForBetsu ? "2" : "1";  // "2": 이용, "1": 미이용
+      }
 
-       // 7) 거리(km) 결정
-       var km = null;
-       if (hasBetsuRouteInput && betsuKm != null && !isNaN(betsuKm)) {
-         // 별도 루트 입력이 있으면 그 km를 우선 사용
-         km = betsuKm;
-       } else if (typeof distance !== "undefined" && distance != null && distance !== "") {
-         // 그렇지 않으면 지도에서 선택된 루트 distance 사용
-         km = parseFloat(distance);
-       }
-       var kmNumber = (km != null && !isNaN(km)) ? km : null;
+      // 6) 별도 루트 편도/왕복 (하단 라디오)
+      var resultOfukuSelected = document.querySelector('input[name="resultOfukuKbn"]:checked');
+      var ofukuBetsu = resultOfukuSelected ? resultOfukuSelected.value : null; // "1" or "2"
 
-       // ====== ShinseiKeiroVO (요약) ======
-       var keiro = {
-         tsukinShudan: "3",           // 자동차
-         shudanName:   "自動車",
-         startPlace:   homeAddress || null,
-         endPlace:     workAddress || null,
-         shinseiKm:    kmNumber       // 최종 적용 거리
-       };
+      // 최종 편도/왕복 값 (별도 루트가 있으면 그것을 우선)
+      var yuryoOfukuKbn = null;
+      if (hasBetsuRouteInput && ofukuBetsu) {
+        yuryoOfukuKbn = ofukuBetsu;
+      } else if (!hasBetsuRouteInput && ofukuMain) {
+        yuryoOfukuKbn = ofukuMain;
+      }
 
-       // ====== ShinseiStartKeiroVO (상세) ======
-       var startKeiro = {
-         tsukinShudanKbn: "3",                  // 自動車
-         startPlace:      homeAddress || null,
-         endPlace:        workAddress || null,
-         viaPlace1:       viaPlace1 || null,
+      // 7) 거리(km) 결정
+      var km = null;
+      if (hasBetsuRouteInput && betsuKm != null && !isNaN(betsuKm)) {
+        // 별도 루트 입력이 있으면 그 km를 우선 사용
+        km = betsuKm;
+      } else if (typeof distance !== "undefined" && distance != null && distance !== "") {
+        // 그렇지 않으면 지도에서 선택된 루트 distance 사용
+        km = parseFloat(distance);
+      }
+      var kmNumber = (km != null && !isNaN(km)) ? km : null;
 
-         kekkaSelect:     kekkaSelect,
-         kekkaUrl:        resultCapturePath || null,
-         
-         // 거리 / 유료도로 / 편도·왕복
-         shinseiKm:       kmNumber,            // SHINSEI_KM
-         yuryoRiyoKbn:    yuryoRiyoKbn,        // YURYO_RIYO_KBN (1: 미이용, 2: 이용)
-         yuryoOfukuKbn:   yuryoOfukuKbn,       // YURYO_OFUKU_KBN (1:片道, 2:往復)
+      // ==== 1개월 금액 관련 내부 계산 ====
+      //  - 편도요금, 월 지급 금액, 연료/유료도로 부분을 계산해서
+      //    ShinseiStartKeiroVO의 기존 필드에 매핑한다.
+      var carPayment = null;
+      var tollOneWayFareForCalc = null;
 
-         // IC / 편도요금: 별도 루트 입력이 있으면 그 값을 사용
-         yuryoIcS:          hasBetsuRouteInput ? (yuryoIcS || null) : null,  // YURYO_IC_S
-         yuryoIcE:          hasBetsuRouteInput ? (yuryoIcE || null) : null,  // YURYO_IC_E
-         yuryoKatamichiKin: hasBetsuRouteInput && yuryoKatamichiKin != null && !isNaN(yuryoKatamichiKin)
-                             ? yuryoKatamichiKin                              // YURYO_KATAMICHI_KIN
-                             : null,
+      if (yuryoKatamichiKin != null && !isNaN(yuryoKatamichiKin) && yuryoKatamichiKin > 0) {
+        tollOneWayFareForCalc = yuryoKatamichiKin;
+      }
 
-         // 이유 항목
-         yuryoRiyoRiyu:     yuryoRiyoRiyu || null,    // YURYO_RIYO_RIYU
-         viaPlaceRiyu:      viaPlaceRiyu || null,     // VIA_PLACE_RIYU
-         betsuRouteRiyu:    betsuRouteRiyu || null    // BETSU_ROUTE_RIYU
-       };
+      if (kmNumber != null && !isNaN(kmNumber)) {
+        carPayment = buildCarPaymentCalc(kmNumber, tollOneWayFareForCalc, yuryoOfukuKbn);
+      }
+      
+   		// 1개월 금액(월 지급 금액) 공통 변수
+      var monthlyAmount = null;
+      if (carPayment && carPayment.monthlyTotalAmount != null && !isNaN(carPayment.monthlyTotalAmount)) {
+        monthlyAmount = Number(carPayment.monthlyTotalAmount);
+      }
+      
+   		// ==== 유료도로 특례 / 거리하한 체크 플래그 ==== 
+      var tollFlags = buildCarTollFlags(kmNumber, yuryoRiyoKbn, yuryoOfukuKbn, CAR_IS_SHATAKU);
+   
+   
+   	
 
-       // ====== 최종 ShinseiIcDataVO 구조 ======
-       var data = {
-         // 상단 메타 정보 (지금은 전부 null, 필요시 다른 화면에서 채움)
-         kigyoCd:       null,
-         shinseiNo:     null,
-         shinseiYmd:    null,
-         shinseiKbn:    null,
-         shinchokuKbn:  null,
+      // ====== ShinseiKeiroVO (요약) ======
+      var keiro = {
+        tsukinShudan: "3",           // 자동차
+        shudanName:   "自動車",
+        startPlace:   homeAddress || null,
+        endPlace:     workAddress || null,
+        shinseiKm:    kmNumber,       // 최종 적용 거리
+        tsuki:        monthlyAmount
+      };
 
-         // 주소 관련
-         genAddress:    null,
-         newAddress:    homeAddress || null,
+      // ====== ShinseiStartKeiroVO (상세) ======
+      var startKeiro = {
+        tsukinShudanKbn: "3",                  // 自動車
+        startPlace:      homeAddress || null,
+        endPlace:        workAddress || null,
+        viaPlace1:       viaPlace1 || null,
 
-         // 소속/근무지 관련
-         genShozoku:    null,
-         newShozoku:    null,
-         genKinmuchi:   null,
-         newKinmuchi:   workAddress || null,
+        kekkaSelect:     kekkaSelect,
+        kekkaUrl:        resultCapturePath || null,
 
-         // 기타 공통 필드들
-         riyu:          null,
-         idoYmd:        null,
-         itenYmd:       null,
-         tennyuYmd:     null,
-         riyoStartYmd:  null,
-         ssmdsYmd:      null,
-         moComment:     null,
-         codeNm:        null,
-         shinseiName:   null,
+        // 거리 / 유료도로 / 편도·왕복
+        shinseiKm:       kmNumber,            // SHINSEI_KM
+        yuryoRiyoKbn:    yuryoRiyoKbn,        // YURYO_RIYO_KBN (1: 미이용, 2: 이용)
+        yuryoOfukuKbn:   yuryoOfukuKbn,       // YURYO_OFUKU_KBN (1:片道, 2:往復)
 
-         // 통근수단 요약 (ShinseiKeiroVO)
-         keiro: keiro,
+         //  설계서 ⑧-2: 유료도로 특례 / 거리하한 체크 결과
+         yuryoTokurei:        tollFlags.yuryoTokurei,        // YURYO_TOKUREI
+         kyoriKagenTokurei:   tollFlags.kyoriKagenTokurei,   // KYORI_KAGEN_TOKUREI
+        
+        // IC / 편도요금: 별도 루트 입력이 있으면 그 값을 사용
+        yuryoIcS:          hasBetsuRouteInput ? (yuryoIcS || null) : null,  // YURYO_IC_S
+        yuryoIcE:          hasBetsuRouteInput ? (yuryoIcE || null) : null,  // YURYO_IC_E
+        yuryoKatamichiKin: hasBetsuRouteInput && yuryoKatamichiKin != null && !isNaN(yuryoKatamichiKin)
+                            ? yuryoKatamichiKin                              // YURYO_KATAMICHI_KIN
+                            : null,
 
-         // 자동차 상세 경로 (ShinseiStartKeiroVO)
-         startKeiro: startKeiro
-       };
+        // ---- 1개월 금액 계산 결과를 기존 필드에 매핑 ----
+        // 편도 요금(유료도로 제외)
+        katamichiKin:   (carPayment && carPayment.oneWayBaseFare != null)
+                        ? carPayment.oneWayBaseFare
+                        : null,                              // KATAMICHI_KIN
 
-       return JSON.stringify(data);
-     }
+        // 월 지급 금액(연료 + 유료도로)  → TSUKI_SHIKYU_KIN
+        tsukiShikyuKin: monthlyAmount,
+
+        // 연료 부분 월액 → GASORIN_DAI_MAE
+        gasorinDaiMae:  (carPayment && carPayment.monthlyBaseAmount != null)
+                        ? carPayment.monthlyBaseAmount
+                        : null,
+
+        // 유료도로 부분 월액 → YURYO_DAI_MAE
+        yuryoDaiMae:    (carPayment && carPayment.monthlyTollAmount != null)
+                        ? carPayment.monthlyTollAmount
+                        : null,
+
+        // 이유 항목
+        yuryoRiyoRiyu:  yuryoRiyoRiyu || null,    // YURYO_RIYO_RIYU
+        viaPlaceRiyu:   viaPlaceRiyu || null,     // VIA_PLACE_RIYU
+        betsuRouteRiyu: betsuRouteRiyu || null    // BETSU_ROUTE_RIYU
+      };
+
+      // ====== 최종 ShinseiIcDataVO 구조 ======
+      var data = {
+        // 상단 메타 정보 (지금은 전부 null, 필요시 다른 화면에서 채움)
+        kigyoCd:       null,
+        shinseiNo:     null,
+        shinseiYmd:    null,
+        shinseiKbn:    null,
+        shinchokuKbn:  null,
+
+        // 주소 관련
+        genAddress:    null,
+        newAddress:    homeAddress || null,
+
+        // 소속/근무지 관련
+        genShozoku:    null,
+        newShozoku:    null,
+        genKinmuchi:   null,
+        newKinmuchi:   workAddress || null,
+
+        // 기타 공통 필드들
+        riyu:          null,
+        idoYmd:        null,
+        itenYmd:       null,
+        tennyuYmd:     null,
+        riyoStartYmd:  null,
+        ssmdsYmd:      null,
+        moComment:     null,
+        codeNm:        null,
+        shinseiName:   null,
+
+        // 통근수단 요약 (ShinseiKeiroVO)
+        keiro: keiro,
+
+        // 자동차 상세 경로 (ShinseiStartKeiroVO)
+        startKeiro: startKeiro
+      };
+
+      return JSON.stringify(data);
+    }
+
 
 
     // [일시저장] 버튼
@@ -1109,6 +1359,8 @@ p　{
           return;
         }
         commuteJsonInput.value = json;
+        
+     	
         
         console.log("=== [HOZON] commuteJson (raw string) ===");
         console.log(json);
@@ -1137,6 +1389,52 @@ p　{
         if (!json) {
           return;
         }
+        
+     // 경로확정 전 1ヶ月金額(월 지급액) 0원 체크
+        // 경로확정 전 1ヶ月金額(월 지급액) 0원 체크
+    try {
+      var obj = JSON.parse(json);
+      var startKeiro = obj && obj.startKeiro;
+      var tsukiShikyuKin    = startKeiro ? startKeiro.tsukiShikyuKin    : null;
+      var yuryoTokurei      = startKeiro ? startKeiro.yuryoTokurei      : null;
+      var kyoriKagenTokurei = startKeiro ? startKeiro.kyoriKagenTokurei : null;
+
+      // 숫자로 해석
+      var monthly = (tsukiShikyuKin != null && tsukiShikyuKin !== "")
+          ? Number(tsukiShikyuKin)
+          : 0;
+
+      // 거리 하한 특례인지 여부:
+      //  - buildCarTollFlags()에서 유료도로 + 거리요건 미충족일 때
+      //    yuryoTokurei = "1", kyoriKagenTokurei = "1" or "2" 로 세팅해 둠
+      var isDistanceLowerLimitSpecial =
+        (yuryoTokurei === "1" &&
+         kyoriKagenTokurei != null &&
+         kyoriKagenTokurei !== "" &&
+         kyoriKagenTokurei !== "0");
+
+      // ▶ 월 지급액이 0인데, "거리 하한 특례"도 아닌 경우만 에러로 막기
+      if (monthly <= 0 && !isDistanceLowerLimitSpecial) {
+        alert('1ヶ月金額が0円のため、経路を確定できません。');
+        return;
+      }
+
+      // ※ 거리 하한 특례(isDistanceLowerLimitSpecial === true)인 경우에는
+      //    0엔이어도 그대로 경로 확정을 허용한다.
+      //    (필요하면 여기서 안내 문구를 추가해도 됨)
+      //    예:
+      //    if (monthly <= 0 && isDistanceLowerLimitSpecial) {
+      //      alert('距離下限未満の有料道路特例のため、1ヶ月金額は0円で登録されます。');
+      //    }
+
+    } catch (e) {
+      console.error("경로확정 전 1ヶ月金額 체크 중 JSON 파싱 에러:", e);
+      // 파싱 에러 시에는 일단 막아두는 쪽이 안전
+      alert('経路情報の内部データ取得に失敗しました。再度やり直してください。');
+      return;
+    }
+        
+        
         commuteJsonInput.value = json;
         
         console.log("=== [KEIRO] commuteJson (raw string) ===");
@@ -1148,7 +1446,10 @@ p　{
           console.error("JSON parse error (KEIRO):", e);
         }
         
-        redirectUrlInput.value = "";
+        
+        const nextPath = "<c:url value='/idoconfirm/keiroInfo'/>";
+        //나중에 URL넣어주기
+        redirectUrlInput.value = nextPath;
         form.submit();
       });
     }
@@ -1199,6 +1500,8 @@ p　{
       var yuryoIcS      = "${startKeiro.yuryoIcS}";
       var yuryoIcE      = "${startKeiro.yuryoIcE}";
       var yuryoKatamichiKinStr = "${startKeiro.yuryoKatamichiKin}";
+      
+      var kekkaUrl      = "${startKeiro.kekkaUrl}";
 
       // 값이 하나도 없으면(신규 진입) 그냥 리턴
       if (!kekkaSelect && !kmStr && !yuryoOfukuKbn && !yuryoIcS && !yuryoIcE && !yuryoKatamichiKinStr) {
@@ -1261,6 +1564,12 @@ p　{
         var block = document.getElementById("betsuRouteBlock");
         if (block) {
           block.classList.remove("hidden");
+        }
+        
+     	// 검색결과 화면 경로(resultCapturePathInput) 복원
+        var resultCapturePathInput = document.getElementById("resultCapturePathInput");
+        if (resultCapturePathInput && kekkaUrl) {
+          resultCapturePathInput.value = kekkaUrl;
         }
 
         // 별도ルート 거리 입력에 km 채워넣기

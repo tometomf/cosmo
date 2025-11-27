@@ -1,3 +1,4 @@
+<!-- 하정 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -453,6 +454,8 @@
 
 			<!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 			<input type="hidden" name="redirectUrl" value="">
+			
+		    <input type="hidden" name="hozonUid" value="${hozonUid}">
 		</form>
 
 
@@ -473,18 +476,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const redirectUrlInput = document.querySelector('input[name="redirectUrl"]');
     const hozonBtn = document.getElementById("denshaHozonBtn");
 
+    const ichijiHozon = ${empty ichijiHozon ? '{}' : ichijiHozon};
+    
     function buildCommuteJson() {
 
         const fromStation = document.querySelector('input[name="From_station"]').value.trim();
         const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
-        const middles = [];
+        /* const middles = [];
         middleInputs.forEach(input => {
             const v = input.value.trim();
             if (v !== "") {
                 middles.push(v);
             }
-        });
+        }); */
         const toStation = document.querySelector('input[name="To_station"]').value.trim();
+
+        const middle01El = document.querySelector('input[name="middle_station_01"]');
+        const middle02El = document.querySelector('input[name="middle_station_02"]');
+        const middle03El = document.querySelector('input[name="middle_station_03"]');
+        const middle04El = document.querySelector('input[name="middle_station_04"]');
+        const middle05El = document.querySelector('input[name="middle_station_05"]');
+
+        const middleStation01 = middle01El ? middle01El.value.trim() : "";
+        const middleStation02 = middle02El ? middle02El.value.trim() : "";
+        const middleStation03 = middle03El ? middle03El.value.trim() : "";
+        const middleStation04 = middle04El ? middle04El.value.trim() : "";
+        const middleStation05 = middle05El ? middle05El.value.trim() : "";
+        
+        
+        
         const ikkagetsukingaku    = total1;
         
         if (total1 === 0) {
@@ -492,43 +512,30 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
-        const shinseiKin     = total1;
-        const tsukiShikyuKin = total1;
-        const teikiKikan     = "1";
 
-        const shinseiIcData = {
-            kigyoCd:   null,
-            shinseiNo: null,
-            shinseiYmd: null,
-            shinseiKbn: null,
-            shinchokuKbn: null,
-            genAddress: null,
-            newAddress: null,
-            genShozoku: null,
-            newShozoku: null,
-            genKinmuchi: null,
-            newKinmuchi: null,
-            riyu: null,
-            idoYmd: null,
-            itenYmd: null,
-            tennyuYmd: null,
-            riyoStartYmd: null,
-            ssmdsYmd: null,
-            moComment: null,
-            codeNm: null,
-            shinseiName: null,
-
+            const keiro = {
+                tsukinShudan : "1",
+                shudanName :   "電車",
+                startPlace :   fromStation,
+                endPlace :     toStation,
+                tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
+            }
             
-             keiro: {
-            tsukinShudan : "1",
-            shudanName :   "電車",
-            startPlace :   fromStation,
+            const startKeiro = {
+            startPlace :   fromStation, 
             endPlace :     toStation,
-            tsuki : ikkagetsukingaku //버스랑 같이 tsuki에 1개월 금액 넣어둠
-        }
-        };
+            viaPlace1: middleStation01,
+            viaPlace2:middleStation02,
+            viaPlace3:middleStation03,
+            viaPlace4:middleStation04,
+            viaPlace5:middleStation05
+            }
+        
 
-        return JSON.stringify(shinseiIcData);
+        ichijiHozon.keiro = keiro;
+        ichijiHozon.startKeiro = startKeiro;
+        
+        return JSON.stringify(ichijiHozon);
     }
 
     
