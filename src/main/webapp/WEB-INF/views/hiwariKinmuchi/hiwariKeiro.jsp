@@ -13,162 +13,196 @@
 
 <style>
 
+/* ===== 공통 레이아웃 ===== */
+
 .route-actions a {
-    display: inline-flex;        /* 아이콘 + 텍스트를 하나의 flex 박스로 */
-    align-items: center;         /* 수직 가운데 정렬 */
-    gap: 4px;                    /* 아이콘-텍스트 간격 */
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .route-actions img {
     width: 15px;
     height: 15px;
-    vertical-align: middle;      /* 혹시 모를 baseline 문제 제거 */
+    vertical-align: middle;
 }
 
 .page-width {
-	width: 950px;
-	margin: 0 auto;
+    width: 950px;
+    margin: 0 auto;
 }
 
 .hint-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin: 8px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 8px 0 10px;
 }
 
 .hint-text {
-	color: #333;
-	line-height: 1.9;
-	flex: 1;
+    color: #333;
+    line-height: 1.9;
+    flex: 1;
 }
 
 .map-btn img {
-	display: block;
+    display: block;
 }
 
 .route-section {
-	position: relative;
-	background: #f7f7f7;
-	border: 1px solid #ccc;
-	border-top: 3px solid #228B22;
-	padding: 20px 10px 18px;
-	margin-top: 8px;
+    position: relative;
+    background: #f7f7f7;
+    border: 1px solid #ccc;
+    border-top: 3px solid #228B22;
+    padding: 20px 10px 18px;
+    margin-top: 8px;
 }
 
 .route-section .content_Form1 {
-	width: 100%;
-	margin: 0 0 8px 0;
+    width: 100%;
+    margin: 0 0 8px 0;
 }
 
 .route-section .shudan-table .form_Column {
-	background-color: #4a4a4a !important;
-	color: white;
-}
-
-.route-section .hatsu-row {
-	background-color: #e8f5e9 !important;
+    background-color: #4a4a4a !important;
+    color: #fff;
 }
 
 .route-head {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .route-label {
-	position: relative;
-	top: -23px;
-	margin-left: -10px;
-	margin-top: 3px;
-	display: inline-block;
-	width: 106px;
-	height: 30px;
-	line-height: 30px;
-	text-align: center;
-	font-size: 15px;
-	color: #1f6b1f;
-	background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
-	background-size: 100% 100%;
-	border: 1px solid #64c764;
-	border-top-color: #46b946;
-	border-left: none;
-	border-radius: 0 0 6px 0;
+    position: relative;
+    top: -23px;
+    margin-left: -10px;
+    margin-top: 3px;
+    display: inline-block;
+    width: 106px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 15px;
+    color: #1f6b1f;
+    background: url("<c:url value='/resources/img/tn/bg_keirotitle.gif'/>") no-repeat center top;
+    background-size: 100% 100%;
+    border: 1px solid #64c764;
+    border-top-color: #46b946;
+    border-left: none;
+    border-radius: 0 0 6px 0;
 }
 
 .route-add {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	font-size: 13px;
-	color: #7d3fb2;
-	text-decoration: none;
-	cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #7d3fb2;
+    cursor: pointer;
 }
 
 .route-add img {
-	width: 14px;
-	height: 14px;
+    width: 14px;
+    height: 14px;
 }
 
 .route-add:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 .route-actions {
-	margin-top: -18px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 12px;
+    margin-top: -18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
 }
 
 .route-actions a {
-	color: #7d3fb2;
-	text-decoration: none;
+    color: #7d3fb2;
+    text-decoration: none;
 }
 
 .route-actions a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 #form_Text1 {
-	display: grid;
-	grid-template-columns: 120px 1fr;
+    display: grid;
+    grid-template-columns: 120px 1fr;
 }
 
 .route-section .form_Column {
-	padding: 8px 10px;
-	font-size: 13px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    padding: 8px 10px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .route-section .form_Normal {
-	padding: 8px 15px;
-	font-size: 13px;
+    padding: 8px 15px;
+    font-size: 13px;
 }
 
+/* ===== 전철 아님(버스/도보/자전거 등) ===== */
+
 .keiro-container {
-	display: flex;
-	flex-direction: column;
-	gap: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .keiro-item {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
 }
 
 .keiro-item img {
-	width: 20px;
-	height: 20px;
+    width: 20px;
+    height: 20px;
 }
+
+/* ===== 전철용 레이아웃 ===== */
+
+.form_Keiro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+/* 역이 표시되는 줄 (발/경유/도착역 줄) */
+.form_Keiro .form_Normal2 {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 0 5px 8px;
+    background-color: #ECFBEA;
+}
+
+/* 노선 줄 (세로선 + 노선명) */
+.form_Keiro .form_Normal3 {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 0 5px 5px;
+}
+
+/* 노선 줄 전용 세로줄 위치 및 간격 */
+.keiro-line-block {
+    border-left: 5px solid #999;
+    margin-left: 50px;
+    padding-left: 50px;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -218,89 +252,160 @@
 
 			<br>
 
-			<form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
+		<form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
 
-				<c:url var="keiroInputUrl" value="/hiwariKinmuchi/keiroInput" />
+    <c:url var="keiroInputUrl" value="/hiwariKinmuchi/keiroInput" />
 
-				<c:choose>
+    <%-- 1) keiroList가 있을 때만 DB 경로들 출력 --%>
+    <c:if test="${not empty keiroList}">
 
-					<c:when test="${empty keiroList}">
-						<div class="route-section">
-							<div class="route-head">
-								<span class="route-label">経路${maruDigits[repRouteNo]}</span>
-								<button type="button"
-								        class="route-add"
-								        style="border:none;background:none;padding:0;top:-15px;"
-								        onclick="location.href='${keiroInputUrl}'">
-									<img src="/resources/img/tuika_icon.gif" alt="追加">
-									追加する
-								</button>
-							</div>
-						</div>
-					</c:when>
+        <c:forEach var="row" items="${keiroList}" varStatus="st">
 
-					<c:otherwise>
+            <c:url var="editUrl" value="/hiwariKinmuchi/keiroInput">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
+            <c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
+                <c:param name="keiroSeq" value="${row.keiroSeq}"/>
+            </c:url>
 
-						<c:forEach var="row" items="${keiroList}" varStatus="st">
+            <div class="route-section">
 
-							<c:url var="editUrl" value="/hiwariKinmuchi/keiroInput">
-								<c:param name="keiroSeq" value="${row.keiroSeq}"/>
-							</c:url>
-							<c:url var="deleteUrl" value="/hiwariKinmuchi/keiro/delete">
-								<c:param name="keiroSeq" value="${row.keiroSeq}"/>
-							</c:url>
+                <div class="route-head">
+                    <span class="route-label">経路${maruDigits[st.index + 1]}</span>
 
-							<div class="route-section">
+                    <div class="route-actions">
+                        <a href="${editUrl}" class="route-edit-link">
+                            <img src="/resources/img/pencil_icon.gif"> 変更する
+                        </a>
+                        <span>｜</span>
+                        <a href="${deleteUrl}" class="route-delete-link"
+                           onclick="return confirm('この経路を削除しますか？');">
+                            <img src="/resources/img/clear_icon.gif"> 削除する
+                        </a>
+                    </div>
+                </div>
 
-								<div class="route-head">
-									<span class="route-label">経路${maruDigits[st.index + 1]}</span>
+                <div class="content_Form1 shudan-table">
+                    <div class="form_Text1" id="form_Text1">
+                        <div class="form_Column">通勤手段</div>
+                        <div class="form_Normal">
+                            <c:out value="${row.tsukinShudanNm}"/>
+                        </div>
+                    </div>
+                </div>
 
-									<div class="route-actions">
-										<a href="${editUrl}" class="route-edit-link">
-    									<img src="/resources/img/pencil_icon.gif"> 変更する</a>
-    									<span>｜</span>
-										  <a href="${deleteUrl}" class="route-delete-link"
-     										  onclick="return confirm('この経路を削除しますか？');">
-      										  <img src="/resources/img/clear_icon.gif"> 削除する </a>
-									</div>
-								</div>
+                <div class="content_Form1">
+                    <div class="form_Text1" id="form_Text1">
+                        <div class="form_Column">経路</div>
+                        <div class="form_Normal">
 
-								<div class="content_Form1 shudan-table">
-									<div class="form_Text1" id="form_Text1">
-										<div class="form_Column">通勤手段</div>
-										<div class="form_Normal">
-											<c:out value="${row.tsukinShudanNm}"/>
-										</div>
-									</div>
-								</div>
 
-								<div class="content_Form1">
-									<div class="form_Text1" id="form_Text1">
-										<div class="form_Column">経路</div>
-										<div class="form_Normal">
-											<div class="keiro-container">
-												<div class="keiro-item">
-													<img src="<c:url value='/resources/img/tn/icon_keiro_01.gif'/>" alt="発">
-													<span><c:out value="${row.startPlace}"/></span>
-												</div>
-												<div class="keiro-item">
-													<img src="<c:url value='/resources/img/tn/icon_keiro_02.gif'/>" alt="着">
-													<span><c:out value="${row.endPlace}"/></span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+                            <%-- ★ 전철 / 그 외 분기 --%>
+                            <c:choose>
+<c:when test="${row.tsukinShudanKbn == 1}">
+    <div class="form_Keiro">
 
-							</div>
+        <%-- ① 출발역 줄: 아이콘 + 출발역 --%>
+        <c:if test="${not empty row.startPlace}">
+            <div class="form_Normal2">
+                <img src="<c:url value='/resources/img/tn/icon_keiro_01.gif'/>" alt="発">
+                <c:out value="${row.startPlace}"/>
+            </div>
+        </c:if>
 
-						</c:forEach>
+        <%-- ② 출발역 아래 줄: 노선1 (東急田園都市線 같은 것) --%>
+        <c:if test="${not empty row.viaPlace1}">
+            <div class="form_Normal3 keiro-line-block">
+                <c:out value="${row.viaPlace1}"/>
+            </div>
+        </c:if>
 
-					</c:otherwise>
+        <%-- ③ 중간역1 줄 (渋谷駅 같은 것) --%>
+    <c:if test="${not empty row.viaPlace2}">
+    <div class="form_Normal2" style="padding-left: 25px;">
+        <c:out value="${row.viaPlace2}"/>
+    </div>
+</c:if>
+        <%-- ④ 중간역1 아래 줄: 노선2 (東京メトロ半蔵門線 등) --%>
+        <c:if test="${not empty row.viaPlace3}">
+            <div class="form_Normal3 keiro-line-block">
+                <c:out value="${row.viaPlace3}"/>
+            </div>
+        </c:if>
 
-				</c:choose>
+        <%-- ⑤ 중간역2 줄 --%>
+       <c:if test="${not empty row.viaPlace4}">
+    <div class="form_Normal2" style="padding-left: 25px;">
+        <c:out value="${row.viaPlace4}"/>
+    </div>
+</c:if>
 
-				<br><br>
+        <%-- ⑥ 중간역2 아래 줄: 노선3 (東京メトロ丸の内線 등) --%>
+        <c:if test="${not empty row.viaPlace5}">
+            <div class="form_Normal3 keiro-line-block">
+                <c:out value="${row.viaPlace5}"/>
+            </div>
+        </c:if>
+
+        <%-- ⑦ 마지막 줄: 도착역 + 아이콘 --%>
+        <c:if test="${not empty row.endPlace}">
+            <div class="form_Normal2">
+                <img src="<c:url value='/resources/img/tn/icon_keiro_02.gif'/>" alt="着">
+                <c:out value="${row.endPlace}"/>
+            </div>
+        </c:if>
+
+    </div>
+</c:when>
+
+
+
+
+                                <%-- ② 전철이 아닌 경우: 기존 2줄 구조 --%>
+                                <c:otherwise>
+                                    <div class="keiro-container">
+                                        <div class="keiro-item">
+                                            <img src="<c:url value='/resources/img/tn/icon_keiro_01.gif'/>" alt="発">
+                                            <span><c:out value="${row.startPlace}"/></span>
+                                        </div>
+                                        <div class="keiro-item">
+                                            <img src="<c:url value='/resources/img/tn/icon_keiro_02.gif'/>" alt="着">
+                                            <span><c:out value="${row.endPlace}"/></span>
+                                        </div>
+                                    </div>
+                                </c:otherwise>
+
+                            </c:choose>
+                            <%-- ★ 분기 끝 --%>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </c:forEach>
+
+    </c:if>
+
+    <%-- 2) 맨 아래에 항상 '경로追加' 박스 하나 --%>
+    <c:set var="nextRouteNo" value="${empty keiroList ? 1 : fn:length(keiroList) + 1}" />
+
+    <div class="route-section">
+        <div class="route-head">
+            <span class="route-label">経路${maruDigits[nextRouteNo]}</span>
+
+            <button type="button"
+                    class="route-add"
+                    style="border:none;background:none;padding:0;top:-15px;"
+                    onclick="location.href='${keiroInputUrl}'">
+                <img src="/resources/img/tuika_icon.gif" alt="追加">
+                追加する
+            </button>
+        </div>
+    </div>
+
+    <br><br>
 
 				<div class="button_Left">
 					<div class="button_Left_Group">
