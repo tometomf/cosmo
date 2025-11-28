@@ -409,36 +409,7 @@ public class HiwariKinmuchiController {
     }
 
 
- // 유지희
-    @GetMapping("/map")
-    public String showMapPage(HttpSession session, Model model) {
-
-        ShainVO shain = (ShainVO) session.getAttribute("shain");
-        if (shain == null) {
-            return "redirect:/"; 
-        }
-
-        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-        Long shainUid   = Long.valueOf(shain.getShain_Uid());
-
-        HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(kigyoCd, shainUid);
-
-        String kinmuchiName = "";
-        String kinmuchiAddress = "";
-        if (kinmuchi != null) {
-            kinmuchiName = kinmuchi.getGenKinmusakiNm() != null ? kinmuchi.getGenKinmusakiNm() : "";
-
-            if (kinmuchi.getGenKinmuAddress1() != null) kinmuchiAddress += kinmuchi.getGenKinmuAddress1();
-            if (kinmuchi.getGenKinmuAddress2() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress2();
-            if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
-        }
-
-        model.addAttribute("kinmuchi", kinmuchiName);
-        model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
-
-        return "hiwariKinmuchi/hiwariMap";
-    }
-
+ 
     @PostMapping("/submit")
     public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
 

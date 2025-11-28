@@ -236,20 +236,27 @@
 			</c:if>
 
 			<div class="hint-row">
+		
 				<div class="hint-text">
 					自転車・徒歩・自転車は、住所から勤務地まで、その手段のみを利用する場合に限ります。<br><br>
 					電車・バスは、複数手段の利用（乗り継ぎ）が可能です。<br>
 					複数手段を利用する場合、手段ごとに線路を分割して登録してください。
 				</div>
 
-				<div class="map-btn">
-					<br>
-					<a href="<c:url value='/hiwariKinmuchi/map'/>">
-						<img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
-					</a>
-				</div>
-			</div>
+			<div class="map-btn">
+    <br>
+    <a href="#" onclick="showMapInside(); return false;">
+        <img src="/resources/img/map_mini_btn01.gif" alt="地図を確認">
+    </a>
+</div>
 
+
+			</div>
+		<!-- ===== 지도 표시 영역 ===== -->
+<div id="mapArea"
+     style="width:100%; height:450px; display:none; margin:10px 0; border:1px solid #ccc;">
+</div>
+		
 			<br>
 
 		<form action="<c:url value='/hiwariKinmuchi/keiro'/>" method="post">
@@ -436,4 +443,32 @@
 	</div>
 </div>
 </body>
+
+<script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl" defer></script>
+
+<script>
+  // 지도 처음 로딩 여부 체크
+  let mapInited = false;
+  let mapObj = null;
+
+  // 지도 띄우기 함수
+  function showMapInside() {
+    const mapArea = document.getElementById("mapArea");
+    mapArea.style.display = "block";   // 지도 DIV 보이기
+
+    if (!mapInited) {
+      // 최초 1회만 지도 초기화
+      mapObj = new naver.maps.Map("mapArea", {
+        center: new naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 12
+      });
+      mapInited = true;
+    }
+  }
+
+  // 지도 닫기 함수
+  function hideMapInside() {
+    document.getElementById("mapArea").style.display = "none";
+  }
+</script>
 </html>
