@@ -397,7 +397,7 @@ public class ShinseiServiceImpl implements ShinseiService {
 		param.put("loginUserId", loginUserId);
 
 		int updated = shinseiMapper.updateEndKeiroForReapply(param);
-		
+
 	}
 
 	@Override
@@ -405,6 +405,13 @@ public class ShinseiServiceImpl implements ShinseiService {
 		return shinseiMapper.getNextShinseiNo(kigyoCd, todayYmd);
 	}
 
-	
-}
+	@Override
+	public List<ShinseiDetailVO> getKakuninJyohou(Long kigyoCd, Long shinseiNo) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
 
+		return shinseiMapper.getKakuninJyohou(param);
+	}
+
+}

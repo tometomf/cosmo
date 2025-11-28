@@ -842,21 +842,172 @@
 		SELECT
 		LPAD(TO_CHAR(#{kigyoCd}), 3, '0')
 		|| #{todayYmd}
-		|| LPAD(
+		||
+		LPAD(
 		NVL(
 		MAX( TO_NUMBER(SUBSTR(SHINSEI_NO, 12, 4)) ),
 		0
 		) + 1,
 		4,
 		'0'
-		) AS nextShinseiNo
+		) AS
+		nextShinseiNo
 		FROM SHINSEI
 		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_YMD = #{todayYmd}
+		AND SHINSEI_YMD =
+		#{todayYmd}
 	</select>
 
-	
+	<select id="getKakuninJyohou" parameterType="java.util.Map"
+		resultType="org.cosmo.domain.ShinseiDetailVO">
+		SELECT
+		a.kigyo_cd AS kigyoCd,
+		a.shinsei_no AS shinseiNo,
+		a.shinsei_ymd AS
+		shinseiYmd,
+		a.sashimodoshi_ymd AS ssmdsYmd,
+		a.shinsei_kigen_ymd AS
+		shinseiKigenYmd,
+		a.shinchoku_kbn AS shinchokuKbn,
+		a.moshiokuri_comment
+		AS moComment,
+		a.torikeshi_ymd AS torikeshiYmd,
 
+
+		<!-- ★ 住所 결합 -->
+		(a.gen_address_1 || ' ' || a.gen_address_2 || ' ' || a.gen_address_3)
+		AS genAddress,
+		(a.new_address_1 || ' ' || a.new_address_2 || ' ' ||
+		a.new_address_3) AS newAddress,
+
+		<!-- 개별 주소 필드도 유지 -->
+		a.gen_address_1 AS genAddress1,
+		a.gen_address_2 AS genAddress2,
+		a.gen_address_3 AS genAddress3,
+		a.new_zip_cd AS newZipCd,
+		a.new_address_1 AS newAddress1,
+		a.new_address_2 AS newAddress2,
+		a.new_address_3 AS newAddress3,
+
+		<!-- ★ 所属 코드 (나중에 코드명 조회용) -->
+		a.gen_shozoku_cd AS genShozoku,
+		a.new_shozoku_cd AS newShozoku,
+
+		<!-- ★ 勤務地 결합 -->
+		(a.gen_kinmu_address_1 || ' ' || a.gen_kinmu_address_2) AS
+		genKinmuchi,
+		(a.new_kinmu_address_1 || ' ' || a.new_kinmu_address_2) AS
+		newKinmuchi,
+
+		<!-- 개별 근무지 주소 필드도 유지 -->
+		a.gen_kinmu_address_1 AS genKinmuAddress1,
+		a.gen_kinmu_address_2 AS
+		genKinmuAddress2,
+		a.new_kinmu_zip_cd AS newKinmuZipCd,
+		a.new_kinmu_address_1 AS newKinmuAddress1,
+		a.new_kinmu_address_2 AS
+		newKinmuAddress2,
+		a.new_kinmu_address_3 AS newKinmuAddress3,
+
+		<!-- 申請情報 -->
+		a.shinsei_kbn AS shinseiKbn,
+		a.shinsei_riyu AS shinseiRiyu,
+		a.ido_ymd AS
+		idoYmd,
+		a.iten_ymd AS itenYmd,
+		a.tennyu_ymd AS tennyuYmd,
+		a.keiro_henko_ymd AS keiroHenkoYmd,
+		a.riyo_start_ymd AS riyoStartYmd,
+
+		<!-- 住所関連 추가 필드 -->
+		a.address_ido_keido AS addressIdoKeido,
+		a.address_chg_kbn AS
+		addressChgKbn,
+		a.kinmu_address_ido_keido AS kinmuAddressIdoKeido,
+		a.kinmu_address_chg_kbn AS kinmuAddressChgKbn,
+
+		<!-- その他ファイル -->
+		a.etc_file_uid_1 AS etcFileUid1,
+		a.etc_file_uid_2 AS etcFileUid2,
+		a.etc_file_uid_3 AS etcFileUid3,
+		a.etc_file_uid_4 AS etcFileUid4,
+		a.etc_file_uid_5 AS etcFileUid5,
+		a.etc_comment_1 AS etcComment1,
+		a.etc_comment_2 AS etcComment2,
+		a.etc_comment_3 AS etcComment3,
+		a.etc_comment_4 AS etcComment4,
+		a.etc_comment_5 AS etcComment5,
+
+		<!-- 経路情報 -->
+		b.keiro_seq AS keiroSeq,
+		b.tsukin_shudan_kbn AS tsukinShudanKbn,
+		d.code_nm AS shudanName,
+		b.start_place AS startPlace,
+		b.end_place AS
+		endPlace,
+		b.shinsei_km AS shinseiKm,
+		b.yuryo_ic_s AS yuryoIcS,
+		b.yuryo_ic_e AS yuryoIcE,
+		b.yuryo_katamichi_kin AS yuryoKatamichiKin,
+		b.jitsu_kinmu_nissu AS jitsuKinmuNissu,
+		b.sansho_teiki_tsuki_su_1 AS
+		sanshoTeikiTsukiSu1,
+		b.sansho_teiki_kin_1 AS sanshoTeikiKin1,
+		b.sansho_teiki_tsuki_su_2 AS sanshoTeikiTsukiSu2,
+		b.sansho_teiki_kin_2
+		AS sanshoTeikiKin2,
+		b.sansho_teiki_tsuki_su_3 AS sanshoTeikiTsukiSu3,
+		b.sansho_teiki_kin_3 AS sanshoTeikiKin3,
+		b.katamichi_kin AS katamichi,
+		b.tsuki_shikyu_kin AS tsuki,
+
+		<!-- 付随書類情報 -->
+		c.file_uid_1 AS etcFileUid1,
+		c.file_uid_2 AS etcFileUid2,
+		c.file_uid_3
+		AS etcFileUid3,
+		c.file_uid_4 AS etcFileUid4,
+		c.file_uid_5 AS
+		etcFileUid5,
+		TO_DATE(c.menkyo_yuko_kigen, 'YYYYMMDD') AS
+		menkyoYukoKigen,
+		c.menkyo_no AS menkyoNo,
+		c.shashu AS shashu,
+		c.toroku_no AS torokuNo,
+		c.haikiryo AS haikiryo,
+		TO_DATE(c.shaken_yuko_kigen, 'YYYYMMDD') AS shakenYukoKigen,
+		c.nenpi AS
+		nenpi,
+		TO_DATE(c.hoken_manryo_ymd, 'YYYYMMDD') AS hokenManryoDate,
+		c.taijin_baisho AS taijinBaisho,
+		c.taibutsu_baisho AS taibutsuBaisho,
+		c.jinshin_shogai AS jinshinShogai,
+		c.tojosha_shogai AS tojoshaShogai,
+		c.tokyu AS tokyu,
+		c.first_teiki_kikan AS firstTeikiKikan,
+		c.next_teiki_kikan AS nextTeikiKikan
+		FROM
+		shinsei a
+		INNER JOIN
+		shinsei_start_keiro b
+		ON a.kigyo_cd = b.kigyo_cd
+		AND a.shinsei_no =
+		b.shinsei_no
+		LEFT JOIN
+		shinsei_fuzui_shorui c
+		ON b.kigyo_cd = c.kigyo_cd
+		AND b.shinsei_no = c.shinsei_no
+		AND b.keiro_seq = c.keiro_seq
+		LEFT JOIN
+		code d
+		ON d.code_sybtsu = '103'
+		AND b.tsukin_shudan_kbn = d.code
+		WHERE
+		a.kigyo_cd = #{kigyoCd}
+		AND a.shinsei_no = #{shinseiNo}
+		ORDER BY
+		b.keiro_seq
+	</select>
 
 	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">

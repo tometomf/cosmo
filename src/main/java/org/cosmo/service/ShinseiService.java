@@ -79,6 +79,8 @@ public interface ShinseiService {
 	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
 	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
+	
+
 
 	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
@@ -92,5 +94,10 @@ public interface ShinseiService {
 	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
 	String getNextShinseiNo(Long kigyoCd, String todayYmd);
+	
+	List<ShinseiDetailVO> getKakuninJyohou(Long kigyoCd, Long shinseiNo);
+
+	
+	
 
 }

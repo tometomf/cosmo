@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class ShinseiDetailVO {
 
-
+	// ===== 상태 정보 =====
 	private Long shinseiNo;
 	private String shinchokuKbn;
 	private String joutaiName;
@@ -22,7 +22,7 @@ public class ShinseiDetailVO {
 	private String shinseiKbn;
 	private String tsukinShudanKbn;
 
-
+	// ===== 申請前 / 申請後 (쿼리에 추가된 항목) =====
 	private String genAddress;
 	private String newAddress;
 
@@ -32,7 +32,7 @@ public class ShinseiDetailVO {
 	private String kinmuchiBefore;
 	private String kinmuchiAfter;
 
-
+	// 쿼리에 있었던 원본 주소/소속 코드 필드
 	private String genShozokuCd;
 	private String newShozokuCd;
 
@@ -51,7 +51,7 @@ public class ShinseiDetailVO {
 	private String newKinmuAddress2;
 	private String newKinmuAddress3;
 
-
+	// ===== 経路情報 =====
 	private String tsukinShudanName;
 	private String keiro;
 
@@ -68,14 +68,14 @@ public class ShinseiDetailVO {
 	private String tojoshaShogai;
 	private Integer tokyu;
 
-
+	// ===== 申請情報 =====
 	private String shinseiKbnName;
 	private String shinseiRiyu;
 	private Date idouDate;
 	private Date tennyuDate;
 	private Date kaishiDate;
 
-
+	// 쿼리에 있었던 추가 날짜 필드
 	private String keiroHenkoYmd;
 	private String itenYmd;
 	private String ssmdsYmd;
@@ -189,6 +189,14 @@ public class ShinseiDetailVO {
 	private Integer updUserId;
 	private java.sql.Timestamp updDate;
 
+
+	private Long etcFileUid1;
+	private Long etcFileUid2;
+	private Long etcFileUid3;
+	private Long etcFileUid4;
+	private Long etcFileUid5;
+	
+			
 	private Long fileUid1;
 	private Long fileUid2;
 	private Long fileUid3;
@@ -201,4 +209,30 @@ public class ShinseiDetailVO {
 	private String torokuNo;
 	private String haikiryo;
 	private Date shakenYukoKigen;
+
+	private String shinseiName;
+
+	private String newKinmuZipCd; // 근무지 우편번호
+	private String addressIdoKeido; // 집 주소 위도경도
+	private String addressChgKbn; // 집 주소변경구분
+	private String kinmuAddressIdoKeido; // 근무지 주소 위도경도
+	private String kinmuAddressChgKbn; // 근무지 주소변경구분
+
+
+
+	private String genKinmuchi; // 申請前 勤務地 (결합)
+	private String newKinmuchi; // 申請後 勤務地 (결합)
+
+
+	private String codeNm; // 진행상태명
+
+	private String genShozoku; // 申請前 所属명
+	private String newShozoku; // 申請後 所属명
+
+	// etc_comment 필드 추가
+	private String etcComment1;
+	private String etcComment2;
+	private String etcComment3;
+	private String etcComment4;
+	private String etcComment5;
 }

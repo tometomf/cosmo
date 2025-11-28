@@ -3,7 +3,6 @@ package org.cosmo.controller;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
 import org.cosmo.domain.ShinseiIcHozonVO;
 import org.cosmo.domain.ShinseiJyohouVO;
-import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
 import org.cosmo.domain.ShinseiViewDTO;
@@ -372,13 +370,11 @@ public class ShinseiController {
 			return "redirect:/";
 		}
 
-		String todayYmd = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE); 
+		String todayYmd = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
 		String nextShinseiNo = shinseiService.getNextShinseiNo(kigyoCd, todayYmd);
 
-	
 		model.addAttribute("nextShinseiNo", nextShinseiNo);
 
-	
 		List<ShinseiDetailVO> detailList = shinseiService.getShinseiDetail(kigyoCd, shinseiNo);
 
 		model.addAttribute("detailList", detailList); // 경로별 상세
@@ -446,12 +442,24 @@ public class ShinseiController {
 	@GetMapping("/kakunin") // 제교
 	public String viewKakunin(@RequestParam("no") Long shinseiNo, Model model, RedirectAttributes rttr,
 			HttpServletRequest request, HttpSession session) {
-
 		session.setAttribute("subsystemId", "1103");
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		if (shain == null) {
+			rttr.addFlashAttribute("errorMsg", "ログイン情報が無効です。再度ログインしてください。");
+			return "redirect:/";
+		}
+		Long kigyoCd = null;
+		try {
+			kigyoCd = Long.valueOf(shain.getKigyo_Cd());
+		} catch (NumberFormatException e) {
+			rttr.addFlashAttribute("errorMsg", "企業情報が不正です。");
+			return "redirect:/";
+		}
 
-		ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNo);
+		List<ShinseiDetailVO> keiroList = shinseiService.getKakuninJyohou(kigyoCd, shinseiNo);
+	
 
-		if (jyohouVo == null) {
+		if (keiroList == null || keiroList.isEmpty()) {
 			rttr.addFlashAttribute("errorMsg", "対象の申請が存在しません。");
 			String referer = request.getHeader("Referer");
 			if (referer != null && !referer.isEmpty()) {
@@ -461,44 +469,27 @@ public class ShinseiController {
 			}
 		}
 
-		Long kigyoCd = null;
-		if (jyohouVo.getKigyoCd() != null) {
-			kigyoCd = Long.valueOf(jyohouVo.getKigyoCd());
+		ShinseiDetailVO kakuninheader = keiroList.get(0);
+
+		if (kakuninheader.getShinchokuKbn() != null) {
+			String codeNm = shinseiService.getCodeNm(kakuninheader.getShinchokuKbn());
+			kakuninheader.setCodeNm(codeNm);
 		}
 
-		List<ShinseiKeiroDetailVO> keiroList = new ArrayList<ShinseiKeiroDetailVO>();
-
-		if (kigyoCd != null) {
-			keiroList = shinseiService.getShinseiKeiroDetailList(kigyoCd, shinseiNo);
+		if (kakuninheader.getShinseiKbn() != null) {
+			String shinseiName = shinseiService.getShinseiName(kakuninheader.getShinseiKbn());
+			kakuninheader.setShinseiName(shinseiName);
 		}
 
-		for (ShinseiKeiroDetailVO keiro : keiroList) {
-			if (keiro != null && keiro.getTsukinShudanKbn() != null) {
-				String nm = shinseiService.getShudanName(keiro.getTsukinShudanKbn());
-				keiro.setShudanName(nm);
-			}
-		}
-
-		ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNo);
-
-		if (jyohouVo.getShinchokuKbn() != null) {
-			String codeNm = shinseiService.getCodeNm(jyohouVo.getShinchokuKbn());
-			jyohouVo.setCodeNm(codeNm);
-		}
-
-		if (jyohouVo.getShinseiKbn() != null) {
-			String shinseiName = shinseiService.getShinseiName(jyohouVo.getShinseiKbn());
-			jyohouVo.setShinseiName(shinseiName);
-		}
-
-		if ("3".equals(jyohouVo.getShinchokuKbn())) {
+		if ("3".equals(kakuninheader.getShinchokuKbn())) {
 			model.addAttribute("fixedMsg1", "申請内容に不備があったため差し戻されています。");
 			model.addAttribute("fixedMsg2", "不備内容を確認のうえ、再申請を行ってください。");
 		}
 
-		model.addAttribute("jyohou", jyohouVo);
+		model.addAttribute("kakuninheader", kakuninheader);
 		model.addAttribute("keiroList", keiroList);
-		model.addAttribute("shorui", shoruiVo);
+		
+		
 
 		return "shinsei/11_shinseiDetail_03";
 	}

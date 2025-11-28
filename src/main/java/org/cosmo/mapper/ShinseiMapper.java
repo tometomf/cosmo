@@ -138,4 +138,6 @@ public interface ShinseiMapper {
 
 	String getNextShinseiNo(@Param("kigyoCd") Long kigyoCd, @Param("todayYmd") String todayYmd);
 
+	List<ShinseiDetailVO> getKakuninJyohou(Map<String, Object> param);
+
 }
