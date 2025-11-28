@@ -837,6 +837,26 @@
 	</select>
 
 
+	<select id="getNextShinseiNo" parameterType="map"
+		resultType="string">
+		SELECT
+		LPAD(TO_CHAR(#{kigyoCd}), 3, '0')
+		|| #{todayYmd}
+		|| LPAD(
+		NVL(
+		MAX( TO_NUMBER(SUBSTR(SHINSEI_NO, 12, 4)) ),
+		0
+		) + 1,
+		4,
+		'0'
+		) AS nextShinseiNo
+		FROM SHINSEI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_YMD = #{todayYmd}
+	</select>
+
+	
+
 
 	<select id="getShinseiShorui" parameterType="Long"
 		resultType="org.cosmo.domain.ShinseiShoruiVO">

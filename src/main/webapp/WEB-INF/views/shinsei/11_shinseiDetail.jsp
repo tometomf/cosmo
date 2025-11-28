@@ -59,7 +59,7 @@
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">${detailheader.shinseiNo}</div>
+					<div class="form_Normal">${nextShinseiNo}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
@@ -96,7 +96,7 @@
 			</div>
 
 			<c:if
-				test="${not empty header.shinchokuKbn and fn:trim(header.shinchokuKbn) ne '4'}">
+				test="${not empty detailheader.shinchokuKbn and fn:trim(detailheader.shinchokuKbn) ne '4'}">
 				<div class="button_Left">
 					<form action="<c:url value='/shinsei/hikimodosu' />" method="post">
 						<input type="hidden" name="shinseiNo" value="${detailheader.shinseiNo}" />

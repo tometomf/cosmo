@@ -27,7 +27,7 @@ public interface ShinseiMapper {
 	ShinseiViewDTO getShinseiView(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
-	
+
 	Long getKigyoCdByShinseiNo(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") Long shinseiNo);
@@ -133,8 +133,9 @@ public interface ShinseiMapper {
 			@Param("userUid") String userUid, @Param("userTrack") String userTrack);
 
 	int updateEndKeiroForReapply(Map<String, Object> param);
-	
+
 	List<ShinseiDetailVO> selectShinseiDetail(Map<String, Object> param);
 
-	}
+	String getNextShinseiNo(@Param("kigyoCd") Long kigyoCd, @Param("todayYmd") String todayYmd);
 
+}

@@ -38,10 +38,10 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public ShinseiKeiroVO getShinseiKeiro(Long shinseiNo) {
 		return shinseiMapper.getShinseiKeiro(shinseiNo);
 	}
-	
+
 	@Override
 	public ShinseiViewDTO getShinseiView(Long kigyoCd, Long shinseiNo) {
-	    return shinseiMapper.getShinseiView(kigyoCd, shinseiNo);
+		return shinseiMapper.getShinseiView(kigyoCd, shinseiNo);
 	}
 
 	@Override
@@ -53,12 +53,11 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public String getShainUidByShinseiNo(String shinseiNo) {
 		return shinseiMapper.getShainUidByShinseiNo(shinseiNo);
 	}
-	
+
 	@Override
 	public Long getKigyoCdByShinseiNo(Long shinseiNo) {
-	    return shinseiMapper.getKigyoCdByShinseiNo(shinseiNo);
+		return shinseiMapper.getKigyoCdByShinseiNo(shinseiNo);
 	}
-
 
 	@Override
 	public ShainVO getShainByUid(String shainUid) {
@@ -284,8 +283,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 		param.put("keiroSeq", keiroSeq);
 		return shinseiMapper.getShinseiKeiroDetail(param);
 	}
-	
-	
 
 	@Override
 	public List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo) {
@@ -400,7 +397,14 @@ public class ShinseiServiceImpl implements ShinseiService {
 		param.put("loginUserId", loginUserId);
 
 		int updated = shinseiMapper.updateEndKeiroForReapply(param);
-
+		
 	}
 
+	@Override
+	public String getNextShinseiNo(Long kigyoCd, String todayYmd) {
+		return shinseiMapper.getNextShinseiNo(kigyoCd, todayYmd);
+	}
+
+	
 }
+

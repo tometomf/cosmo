@@ -21,11 +21,9 @@ public interface ShinseiService {
 
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
-	
 	ShinseiViewDTO getShinseiView(Long kigyoCd, Long shinseiNo);
 
 	Long getKigyoCdByShinseiNo(Long shinseiNo);
-
 
 	String getShainUidByShinseiNo(String shinseiNo);
 
@@ -88,11 +86,11 @@ public interface ShinseiService {
 
 	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
 			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
-	
+
 	void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId);
-	
+
 	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
-	
+	String getNextShinseiNo(Long kigyoCd, String todayYmd);
 
 }

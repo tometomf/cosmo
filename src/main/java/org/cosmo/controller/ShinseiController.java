@@ -1,6 +1,8 @@
 package org.cosmo.controller;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public class ShinseiController {
 			Long shinseiNoLong = Long.parseLong(shinseiNo);
 			Long kigyoCd = shinseiService.getKigyoCdByShinseiNo(shinseiNoLong);
 
-			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd,shinseiNoLong);
+			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd, shinseiNoLong);
 			String fileName = shinseiService.getFileName(shinseiNoLong);
 
 			if (view != null) {
@@ -370,9 +372,15 @@ public class ShinseiController {
 			return "redirect:/";
 		}
 
-		// 🔹 이제 List로 받기
+		String todayYmd = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE); 
+		String nextShinseiNo = shinseiService.getNextShinseiNo(kigyoCd, todayYmd);
+
+	
+		model.addAttribute("nextShinseiNo", nextShinseiNo);
+
+	
 		List<ShinseiDetailVO> detailList = shinseiService.getShinseiDetail(kigyoCd, shinseiNo);
-		
+
 		model.addAttribute("detailList", detailList); // 경로별 상세
 
 		if (detailList == null || detailList.isEmpty()) {
@@ -387,8 +395,7 @@ public class ShinseiController {
 
 		ShinseiDetailVO header = detailList.get(0);
 
-		// 🔹 JSP에서 헤더/리스트 둘 다 쓰기 편하게
-		model.addAttribute("detailheader", header); // 상단 공통 정보
+		model.addAttribute("detailheader", header);
 
 		System.out.println("### detailList size = " + (detailList == null ? 0 : detailList.size()));
 
