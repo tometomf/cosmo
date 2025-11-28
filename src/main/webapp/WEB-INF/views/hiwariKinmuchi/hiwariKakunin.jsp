@@ -165,14 +165,20 @@
         </div>
       </div>
 
-            <!-- 通勤経路一覧（SHINSEI_START_KEIRO 그대로 표시） -->
+              <!-- 通勤経路一覧（SHINSEI_START_KEIRO 그대로 표시） -->
       <c:if test="${not empty keiroList}">
-        <c:forEach var="r" items="${keiroList}" varStatus="st">
+        <!-- 목록 한 번만 정의 -->
+        <c:set var="circledNums" value="①,②,③,④,⑤,⑥,⑦,⑧,⑨,⑩" />
 
+        <c:forEach var="r" items="${keiroList}" varStatus="st">
           <div class="content_Form2">
             <div class="form_Title2">
-              <div>通勤経路<c:out value="${st.index + 1}"/></div>
-              <!-- 편집 버튼: 해당 경로의 KEIRO_SEQ를 붙여서 이동 -->
+              <div>
+                通勤経路
+                <!-- index 0부터 시작 -->
+                <c:out value="${fn:split(circledNums, ',')[st.index]}"/>
+              </div>
+              <
               <div class="edit-btn"
                    onclick="location.href='<c:url value="/hiwariKinmuchi/keiro/edit"/>?keiroSeq=${r.keiroSeq}'"></div>
             </div>
@@ -258,10 +264,8 @@
             </div>
 
           </div>
-
         </c:forEach>
       </c:if>
-
 
       <!-- 申請情報 -->
       <div class="content_Form1">
