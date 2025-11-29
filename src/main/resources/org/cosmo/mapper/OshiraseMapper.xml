@@ -27,7 +27,7 @@
         ) VALUES (
             #{kigyoCd},
             #{shainUid},
-            #{shainNo},
+            #{shainNo, jdbcType=VARCHAR},
             #{tsuchiYmd},
             #{tsuchiHm},
             #{tsuchishaKigyoCd},

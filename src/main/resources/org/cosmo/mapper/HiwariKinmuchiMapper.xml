@@ -414,14 +414,14 @@ LEFT JOIN CODE C103
         VIA_PLACE_4,
         VIA_PLACE_5,
         KEKKA_SELECT,
-        KIKAN_START_YMD,      <!-- ★ 기간 시작 -->
-        KIKAN_END_YMD,        <!-- ★ 기간 종료 -->
-        JITSU_KINMU_NISSU,    <!-- ★ 출勤일수 -->
-        KATAMICHI_KIN,        <!-- ★ 편도요금 -->
-        SHINSEI_KIN,          <!-- ★ 신청금액 -->
-        FIRST_TEIKI_TSUKI_SU, <!-- ★ 정기권 개월수(1/3/6) 필요 시 -->
-        TSUKI_SHIKYU_KIN,     <!-- ★ 월액(1개월 참고값) -->
-        HIWARI_ATO,           <!-- ★ 일할액 -->
+        KIKAN_START_YMD,
+        KIKAN_END_YMD,
+        JITSU_KINMU_NISSU,
+        KATAMICHI_KIN,
+        SHINSEI_KIN,
+        FIRST_TEIKI_TSUKI_SU,
+        TSUKI_SHIKYU_KIN,
+        HIWARI_ATO,
         ADD_USER_ID,
         ADD_DATE,
         UPD_USER_ID,
@@ -438,26 +438,35 @@ LEFT JOIN CODE C103
         #{tsukinShudanKbn},
         #{startPlace},
         #{endPlace},
-        #{viaPlace1},
-        #{viaPlace2},
-        #{viaPlace3},
-        #{viaPlace4},
-        #{viaPlace5},
-        #{kekkaSelect},
-        #{kikanStartYmd},      <!-- ★ VO에서 들어가는 값 -->
-        #{kikanEndYmd},
-        #{shukkinNissuu},
-        #{kataMichiKin},
-        #{shinseiKin},         <!-- ★ calcAmounts 결과 -->
-        #{firstTeikiTsukiSu},
-        #{tsukiShikyuKin},     <!-- ★ calcAmounts 결과 -->
-        #{hiwariAto},          <!-- ★ calcAmounts 결과 -->
+
+             #{viaPlace1, jdbcType=VARCHAR},
+        #{viaPlace2, jdbcType=VARCHAR},
+        #{viaPlace3, jdbcType=VARCHAR},
+        #{viaPlace4, jdbcType=VARCHAR},
+        #{viaPlace5, jdbcType=VARCHAR},
+
+        #{kekkaSelect, jdbcType=VARCHAR},
+
+        <!-- YYYYMMDD 문자형으로 보는 컬럼들 -->
+        #{kikanStartYmd, jdbcType=CHAR},
+        #{kikanEndYmd,   jdbcType=CHAR},
+
+        <!-- NUMBER 계열 (정수/금액) -->
+        #{shukkinNissuu,     jdbcType=INTEGER},
+        #{kataMichiKin,      jdbcType=DECIMAL},
+        #{shinseiKin,        jdbcType=DECIMAL},
+        #{firstTeikiTsukiSu, jdbcType=INTEGER},
+        #{tsukiShikyuKin,    jdbcType=DECIMAL},
+        #{hiwariAto,         jdbcType=DECIMAL},
+
+
         #{shainUid},
         SYSTIMESTAMP,
         #{shainUid},
         SYSTIMESTAMP
     )
 </insert>
+
 	<!-- 유지희 -->
 	<!-- 경로 1건 삭제 -->
 	<delete id="deleteOne">
