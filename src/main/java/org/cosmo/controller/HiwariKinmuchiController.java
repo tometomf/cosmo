@@ -327,23 +327,24 @@ public class HiwariKinmuchiController {
 	public String handleKeiro(
 	        @RequestParam("action") String action,
 	        HttpSession session,
-	        Model model) {
+	        Model model,
+	        RedirectAttributes rttr) {  
 
 	    System.out.println("=== DEBUG /keiro POST START ===");
 	    System.out.println("action = " + action);
 
 	    ShainVO shain = (ShainVO) session.getAttribute("shain");
 	    if (shain == null) {
-	        // 로그인 안 되어 있으면 루트로
+	      
 	        return "redirect:/";
 	    }
 
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-	    Long shainUid = Long.valueOf(shain.getShain_Uid());
+	    Long shainUid  = Long.valueOf(shain.getShain_Uid());
 
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
 	    if (keiroList == null) {
-	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 변경
+	        keiroList = new ArrayList<HiwariKeiroVO>();   
 	    }
 
 	    int repRouteNo = calcRepRouteNo(keiroList);
@@ -358,22 +359,22 @@ public class HiwariKinmuchiController {
 	            return "hiwariKinmuchi/hiwariKeiro";
 	        }
 
-	        // 경로가 1건 이상 있으면 확인 화면으로
 	        return "redirect:/hiwariKinmuchi/kakunin";
 	    }
 
 	    if ("temp".equals(action)) {
 
-	    	 service.saveTemp(kigyoCd, shainUid, keiroList); 
-	        return "redirect:/shinsei/11_shinseiDetail_02";
-	    }
+	        service.saveTemp(kigyoCd, shainUid, keiroList);
 
+	        rttr.addFlashAttribute("tempSaveMsg", "一時保存しました。");
+
+	        return "redirect:/hiwariKinmuchi/keiro";
+	    }
+	   
 	    model.addAttribute("keiroList", keiroList);
 	    model.addAttribute("repRouteNo", repRouteNo);
 	    return "hiwariKinmuchi/hiwariKeiro";
 	}
-
-
 
 	// 유지희
 	@GetMapping("/keiro/delete")

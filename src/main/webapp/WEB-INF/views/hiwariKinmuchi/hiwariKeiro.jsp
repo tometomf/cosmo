@@ -208,6 +208,13 @@
 </head>
 
 <body>
+
+<c:if test="${not empty tempSaveMsg}">
+    <script>
+        alert('${fn:escapeXml(tempSaveMsg)}');
+    </script>
+</c:if>
+
 <div class="layout">
 	<%@ include file="/WEB-INF/views/common/header.jsp"%>
 
@@ -444,7 +451,6 @@
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 </div>
-</body>
 </body>
 
 <script>
