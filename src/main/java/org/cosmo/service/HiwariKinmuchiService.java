@@ -43,6 +43,9 @@ public interface HiwariKinmuchiService {
     void deleteOne(Integer kigyoCd, Long shainUid, Integer keiroSeq);
     
     String getShainMailAddr(Integer kigyoCd, Long shainUid);
+    
+    Long getLatestShinseiNo(Integer kigyoCd, Long shainUid);
+
 
   //유지희 끝
 

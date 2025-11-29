@@ -225,6 +225,10 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         mapper.updateShinseiDetails(kigyoCd, shinseiNo); // 금액, 사유, 기타 반영
         mapper.updateShinseiStatus(kigyoCd, shinseiNo);  // 진행구분 변경
     }
+    @Override
+    public Long getLatestShinseiNo(Integer kigyoCd, Long shainUid) {
+        return mapper.findLatestShinseiNo(kigyoCd, shainUid);
+    }
 
 
     //유지희 끝

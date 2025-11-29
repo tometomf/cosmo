@@ -412,6 +412,7 @@ public class HiwariKinmuchiController {
   
         return keiroList.size();
     }
+ // import 추가 필요 없음 (기존 그대로)
 
     @PostMapping("/submit")
     public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
@@ -425,9 +426,22 @@ public class HiwariKinmuchiController {
 
         Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
         Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+        // 1) 세션에서 shinseiNo 꺼내기
         Long shinseiNo  = null;
         if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
-            shinseiNo = Long.valueOf(shain.getShinsei_No());
+            try {
+                shinseiNo = Long.valueOf(shain.getShinsei_No());
+            } catch (NumberFormatException e) {
+                System.out.println(">>> [SUBMIT] invalid shinsei_No in session: " + shain.getShinsei_No());
+            }
+        }
+
+        // 2) 세션에 없으면 DB에서 최신 신청번호 조회 (임시저장 때와 동일한 개념)
+        if (shinseiNo == null) {
+            Long latest = service.getLatestShinseiNo(kigyoCd, shainUid); // ★ 서비스에 메서드 하나 추가해서 mapper.findLatestShinseiNo() 호출
+            System.out.println(">>> [SUBMIT] fallback latest shinseiNo = " + latest);
+            shinseiNo = latest;
         }
 
         System.out.println(">>> [SUBMIT] kigyoCd=" + kigyoCd + ", shinseiNo=" + shinseiNo);
@@ -451,7 +465,7 @@ public class HiwariKinmuchiController {
             );
             System.out.println(">>> [SUBMIT] after addOshirase");
 
-            // ===== 여기서부터 메일 송신 =====
+            // ===== 메일 송신 =====
             String to = service.getShainMailAddr(kigyoCd, shainUid);
 
             try {
@@ -468,7 +482,7 @@ public class HiwariKinmuchiController {
             } catch (Exception e) {
                 System.out.println(">>> [SUBMIT] mail failed: " + e.getMessage());
             }
-            // ===== 메일 송신 끝 =====
+            // ===== 메일 끝 =====
 
             rttr.addAttribute("shinseiNo", shinseiNo);
             System.out.println(">>> [SUBMIT] redirect to kanryo");
