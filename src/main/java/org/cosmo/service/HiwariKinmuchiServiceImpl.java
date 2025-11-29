@@ -81,13 +81,6 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
 
    
     @Override
-    public void submitApplication(Integer kigyoCd, Long shinseiNo) {
-        // 承認状態('2')で更新
-        mapper.updateShinseiApproval(kigyoCd, shinseiNo, "2");
-     
-    }
-
-    @Override
     public List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Long shainUid) {
         if (kigyoCd == null) {
             kigyoCd = 100;
@@ -215,6 +208,14 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     @Override
     public String getShainMailAddr(Integer kigyoCd, Long shainUid) {
         return mapper.findMailAddr(kigyoCd, shainUid);
+    }
+    @Override
+    @Transactional
+    public void submitApplication(Integer kigyoCd, Long shinseiNo) {
+
+        mapper.updateShinseiSubmit(kigyoCd, shinseiNo);   // 신청일/구분/주소/기간 등 반영
+        mapper.updateShinseiDetails(kigyoCd, shinseiNo); // 금액, 사유, 기타 반영
+        mapper.updateShinseiStatus(kigyoCd, shinseiNo);  // 진행구분 변경
     }
 
 

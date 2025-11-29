@@ -474,5 +474,56 @@ LEFT JOIN CODE C103
     WHERE KIGYO_CD = #{kigyoCd}
       AND SHAIN_UID = #{shainUid}
 </select>
+<!-- ① 신청 기본 정보 반영 -->
+<update id="updateShinseiSubmit">
+    UPDATE SHINSEI
+    SET
+        SHINSEI_DATE        = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+        SHINSEI_KBN         = SHINSEI_KBN,        -- 이미 선택된 신청구분
+        GEN_ZIP_CD          = GEN_ZIP_CD,         -- 기존 GEN 값 유지
+        GEN_ADDRESS_1       = GEN_ADDRESS_1,
+        GEN_ADDRESS_2       = GEN_ADDRESS_2,
+        GEN_ADDRESS_3       = GEN_ADDRESS_3,
+        NEW_ZIP_CD          = NEW_ZIP_CD,         -- 신규 주소 반영 가능
+        NEW_ADDRESS_1       = NEW_ADDRESS_1,
+        NEW_ADDRESS_2       = NEW_ADDRESS_2,
+        NEW_ADDRESS_3       = NEW_ADDRESS_3,
+        UPD_DATE            = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+<!-- ② 신청금액/사유/기간 반영 -->
+<update id="updateShinseiDetails">
+    UPDATE SHINSEI
+    SET
+        SHINSEI_RIYU       = SHINSEI_RIYU,
+        RIYO_START_YMD     = RIYO_START_YMD,
+        RIYO_END_YMD       = RIYO_END_YMD,
+        KINGAKU_GOKEI      = (
+             SELECT SUM(HIWARI_ATO)
+             FROM SHINSEI_START_KEIRO
+             WHERE KIGYO_CD = #{kigyoCd}
+               AND SHINSEI_NO = #{shinseiNo}
+        ),
+        SHUKKIN_NISSUU     = (
+             SELECT SUM(JITSU_KINMU_NISSU)
+             FROM SHINSEI_START_KEIRO
+             WHERE KIGYO_CD = #{kigyoCd}
+               AND SHINSEI_NO = #{shinseiNo}
+        ),
+        UPD_DATE           = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+<!-- ③ 진행구분 변경 (신청완료) -->
+<update id="updateShinseiStatus">
+    UPDATE SHINSEI
+    SET
+        SHINCHOKU_KBN = '2',   -- 신청완료 상태코드
+        UPD_DATE      = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+
 	<!-- 유지희 끝 -->
 </mapper>

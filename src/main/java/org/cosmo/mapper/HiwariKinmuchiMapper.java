@@ -76,5 +76,21 @@ int updateShinseiApproval(
 //유지희 메일 주소 조회용
 String findMailAddr(@Param("kigyoCd") int kigyoCd,
                     @Param("shainUid") long shainUid);
+
+//③-1 신청 기본 정보 반영
+int updateShinseiSubmit(
+     @Param("kigyoCd") Integer kigyoCd,
+     @Param("shinseiNo") Long shinseiNo);
+
+//③-2 금액/사유/기간 반영
+int updateShinseiDetails(
+     @Param("kigyoCd") Integer kigyoCd,
+     @Param("shinseiNo") Long shinseiNo);
+
+//③-3 진행구분 변경(신청완료)
+int updateShinseiStatus(
+     @Param("kigyoCd") Integer kigyoCd,
+     @Param("shinseiNo") Long shinseiNo);
+
 }
 
