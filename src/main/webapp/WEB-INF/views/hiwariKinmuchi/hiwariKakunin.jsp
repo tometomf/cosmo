@@ -360,10 +360,29 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
- 
+
+ <script type="text/javascript">
   function saveTempFromKakunin() {
-   
+
+    // 1) 경로 리스트 → JS 배열로 변환
+    var routes = [];
+    <c:forEach var="r" items="${keiroList}">
+      routes.push({
+        keiroSeq:       "${r.keiroSeq}",
+        tsukinShudanNm: "${r.tsukinShudanNm}",
+        startPlace:     "${r.startPlace}",
+        endPlace:       "${r.endPlace}",
+        kikanStartYmd:  "${r.kikanStartYmd}",
+        kikanEndYmd:    "${r.kikanEndYmd}",
+        shukkinNissuu:  "${r.shukkinNissuu}",
+        kataMichiKin:   "${r.kataMichiKin}",
+        shinseiKin:     "${r.shinseiKin}",
+        tsukiShikyuKin: "${r.tsukiShikyuKin}",
+        hiwariAto:      "${r.hiwariAto}"
+      });
+    </c:forEach>
+
+    // 2) 화면 스냅샷 JSON 구성
     var data = {
       emp: {
         no:        "${emp.no}",
@@ -371,22 +390,7 @@
         workplace: "${emp.workplace}",
         address:   "${emp.address}"
       },
-      route1: {
-        transport:     "${route1.transport}",
-        route:         "${route1.route}",
-        workDays:      "${route1.workDays}",
-        oneWayFee:     "${route1.oneWayFee}",
-        amount:        "${route1.amount}",
-        amountMonthly: "${route1.amountMonthly}"
-      },
-      route2: {
-        transport:     "${route2.transport}",
-        route:         "${route2.route}",
-        workDays:      "${route2.workDays}",
-        oneWayFee:     "${route2.oneWayFee}",
-        amount:        "${route2.amount}",
-        amountMonthly: "${route2.amountMonthly}"
-      },
+      routes: routes,
       apply: {
         kind:        "${apply.kind}",
         reason:      "${apply.reason}",
@@ -396,6 +400,7 @@
       }
     };
 
+    // 3) tempSave로 POST 전송
     var form = document.createElement("form");
     form.method = "POST";
     form.action = "<c:url value='/hiwariKinmuchi/tempSave'/>";
@@ -409,17 +414,17 @@
     var actionInput = document.createElement("input");
     actionInput.type  = "hidden";
     actionInput.name  = "actionUrl";
-    actionInput.value = "/hiwariKakunin/kakunin";  
+    actionInput.value = "/hiwariKakunin/kakunin";  // 돌아올 화면
     form.appendChild(actionInput);
 
-    
     var redirectInput = document.createElement("input");
     redirectInput.type  = "hidden";
     redirectInput.name  = "redirectUrl";
-    redirectInput.value = "";
+    redirectInput.value = "";                       // 컨트롤러에서 처리
     form.appendChild(redirectInput);
 
     document.body.appendChild(form);
     form.submit();
   }
 </script>
+ 
