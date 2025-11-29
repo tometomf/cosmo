@@ -111,7 +111,6 @@
 </style>
 </head>
 <body>
-<p>DEBUG keiroList size = ${fn:length(keiroList)}</p>
 <div class="layout">
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
   
@@ -178,7 +177,6 @@
                 <!-- index 0부터 시작 -->
                 <c:out value="${fn:split(circledNums, ',')[st.index]}"/>
               </div>
-              <
               <div class="edit-btn"
                    onclick="location.href='<c:url value="/hiwariKinmuchi/keiro/edit"/>?keiroSeq=${r.keiroSeq}'"></div>
             </div>

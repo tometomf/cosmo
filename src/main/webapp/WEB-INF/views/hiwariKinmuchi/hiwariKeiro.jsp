@@ -443,32 +443,83 @@
 	</div>
 </div>
 </body>
-
-<script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=ki71dhiwnl" defer></script>
+</body>
 
 <script>
-  // 지도 처음 로딩 여부 체크
+  // 자택 / 근무지 좌표 (현재는 임시 더미 좌표)
+  let homePos = { lat: 35.681236, lng: 139.767125 }; 
+  let workPos = { lat: 35.628471, lng: 139.738760 }; 
+
+  // 지도 초기화 상태 플래그 + 객체
   let mapInited = false;
   let mapObj = null;
+  let directionsService = null;
+  let directionsRenderer = null;
 
-  // 지도 띄우기 함수
+  // 구글 지도 + 자택/근무지 마커 표시
+  function initMapAndRoute() {
+    if (!homePos || !workPos) {
+      alert('位置情報がまだ準備できていません。（위치 정보가 아직 준비되지 않았습니다）');
+      console.error('homePos / workPos 없음:', homePos, workPos);
+      return;
+    }
+
+    const centerPos = {
+      lat: (homePos.lat + workPos.lat) / 2,
+      lng: (homePos.lng + workPos.lng) / 2
+    };
+
+    const mapDiv = document.getElementById('mapArea');
+    if (!mapDiv) {
+      console.error('mapArea 요소를 찾을 수 없습니다.');
+      return;
+    }
+
+    mapObj = new google.maps.Map(mapDiv, {
+      center: centerPos,
+      zoom: 13
+    });
+
+    // 自宅 마커
+    new google.maps.Marker({
+      position: homePos,
+      map: mapObj,
+      title: '自宅（자택）'
+    });
+
+    // 勤務先 마커
+    new google.maps.Marker({
+      position: workPos,
+      map: mapObj,
+      title: '勤務先（근무지）'
+    });
+
+    // 경로 서비스(지금은 선을 안 그려도 설계서에는 문제 없음)
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(mapObj);
+  }
+
+  // 「地図を確認」 버튼 → 지도 열기
   function showMapInside() {
     const mapArea = document.getElementById("mapArea");
-    mapArea.style.display = "block";   // 지도 DIV 보이기
+    mapArea.style.display = "block";
 
     if (!mapInited) {
-      // 최초 1회만 지도 초기화
-      mapObj = new naver.maps.Map("mapArea", {
-        center: new naver.maps.LatLng(37.3595704, 127.105399),
-        zoom: 12
-      });
+      initMapAndRoute();
       mapInited = true;
     }
   }
 
-  // 지도 닫기 함수
+  // 지도 닫기 (필요하면 사용)
   function hideMapInside() {
     document.getElementById("mapArea").style.display = "none";
   }
 </script>
+
+<script
+ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVcLQp5Bph7NiWqwiYJUQEBMRyCOEsTnU&libraries=maps"
+   defer>
+</script>
+
 </html>
