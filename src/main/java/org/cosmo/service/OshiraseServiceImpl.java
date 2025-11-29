@@ -110,5 +110,45 @@ public class OshiraseServiceImpl implements OshiraseService {
             dto.setUpdDate(nowTs);
 
             oshiraseMapper.insertOshirase(dto);
-    }
+        }
+        
+     // 유지희
+        @Override
+        public void registHiwariTempSave(Integer kigyoCd,
+                                         Long shainUid,
+                                         Long shinseiNo) {
+
+            if (kigyoCd == null || shainUid == null || shinseiNo == null) {
+                return;   
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            String tsuchiYmd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String tsuchiHm  = now.format(DateTimeFormatter.ofPattern("HHmm"));
+            Timestamp nowTs  = Timestamp.valueOf(now);
+
+            OshiraseDTO dto = new OshiraseDTO();
+            dto.setKigyoCd(kigyoCd);
+            dto.setShainUid(shainUid.intValue()); 
+
+         
+            dto.setShainNo(null);
+
+            dto.setTsuchiYmd(tsuchiYmd);
+            dto.setTsuchiHm(tsuchiHm);
+
+            dto.setTsuchishaKigyoCd(kigyoCd);
+            dto.setTsuchishaCd(dto.getShainNo());  
+            dto.setShinseiNo(shinseiNo);
+            dto.setOshiraseNaiyo("通勤経路を一時保存しました。");  
+            dto.setKengen(null);
+            dto.setHaishinKbn(null);
+
+            dto.setAddUserId(shainUid.intValue());
+            dto.setAddDate(nowTs);
+            dto.setUpdUserId(shainUid.intValue());
+            dto.setUpdDate(nowTs);
+
+            oshiraseMapper.insertOshirase(dto);
+        }
 }

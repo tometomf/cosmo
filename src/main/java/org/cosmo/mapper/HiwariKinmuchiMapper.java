@@ -92,5 +92,8 @@ int updateShinseiStatus(
      @Param("kigyoCd") Integer kigyoCd,
      @Param("shinseiNo") Long shinseiNo);
 
+Long findLatestShinseiNo(
+	     @Param("kigyoCd") Integer kigyoCd,
+	     @Param("shainUid") Long shainUid);
 }
 

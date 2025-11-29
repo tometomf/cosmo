@@ -55,6 +55,9 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
  
     
   //유지희
+    @Autowired
+    private OshiraseService oshiraseService; 
+    
     /**
      * 確認画面 ヘッダー情報取得
      *  - 社員番号・社員名
@@ -148,7 +151,12 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
             vo.setKeiroSeq(seq++);
             mapper.insertKeiro(vo);
         }
-    }
+    
+    Long latestShinseiNo = mapper.findLatestShinseiNo(kigyoCd, shainUid);  
+    oshiraseService.registHiwariTempSave(kigyoCd, shainUid, latestShinseiNo);
+    // ↑ 이 한 줄이 “임시저장 알림 등록”
+
+}
 
     @Override
     @Transactional

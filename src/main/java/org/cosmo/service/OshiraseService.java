@@ -15,4 +15,8 @@ public interface OshiraseService {
             String shainNo,
             Long shinseiNo);
     
+    //유지희
+    void registHiwariTempSave(Integer kigyoCd,
+            Long shainUid,
+            Long shinseiNo);
 }

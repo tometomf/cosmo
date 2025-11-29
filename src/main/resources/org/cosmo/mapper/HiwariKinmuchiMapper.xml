@@ -388,6 +388,14 @@ LEFT JOIN CODE C103
 		AND SHAIN_UID = #{shainUid}
 		)
 	</delete>
+    <!-- 해당 사원의 최신 신청번호 조회 (임시저장 알림용) -->
+    <select id="findLatestShinseiNo" resultType="long">
+        SELECT MAX(SHINSEI_NO)
+        FROM SHINSEI
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND SHAIN_UID = #{shainUid}
+    </select>
+	
 	<!-- 유지희 -->
 	<!-- 경로 1건 저장 -->
 <insert id="insertKeiro"
