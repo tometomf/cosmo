@@ -496,6 +496,34 @@ public class HiwariKinmuchiController {
         }
     }
 
+    // 유지희 
+    @PostMapping("/tempSave")
+    public String tempSaveFromKakunin(
+            @RequestParam(value = "commuteJson", required = false) String commuteJson, // Kakunin에서 보낸 JSON (지금은 사용하지 않음)
+            HttpSession session,
+            RedirectAttributes rttr) {
+
+        System.out.println("=== DEBUG /hiwariKinmuchi/tempSave START ===");
+
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";
+        }
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid  = Long.valueOf(shain.getShain_Uid());
+
+        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+        if (keiroList == null) {
+            keiroList = new ArrayList<>();
+        }
+
+        service.saveTemp(kigyoCd, shainUid, keiroList);
+
+        rttr.addFlashAttribute("tempSaveMsg", "一時保存しました。");
+
+        return "redirect:/hiwariKinmuchi/kakunin";
+    }
 
 	// 유지희 끝
 

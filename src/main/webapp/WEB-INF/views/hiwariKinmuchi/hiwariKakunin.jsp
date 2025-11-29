@@ -111,6 +111,11 @@
 </style>
 </head>
 <body>
+<c:if test="${not empty tempSaveMsg}">
+  <div class="info-message">
+    ${tempSaveMsg}
+  </div>
+</c:if>
 <div class="layout">
   <%@ include file="/WEB-INF/views/common/header.jsp"%>
   
@@ -347,10 +352,14 @@
       </a>
     </form>
 
-           <!-- 一時保存: JS 호출 -->
-          <a href="javascript:void(0);" onclick="saveTempFromKakunin();">
-            <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
-          </a>
+           <!-- 一時保存：tempSave로 POST -->
+          <form id="tempForm" method="post"
+                action="<c:url value='/hiwariKinmuchi/tempSave'/>"
+                style="display:inline;">
+            <a href="javascript:void(0);" onclick="document.getElementById('tempForm').submit();">
+              <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
+              </a>
+              </form>>
         </div>
       </div>
 
@@ -360,71 +369,3 @@
     </div>
   </div>
 </div>
-
- <script type="text/javascript">
-  function saveTempFromKakunin() {
-
-    // 1) 경로 리스트 → JS 배열로 변환
-    var routes = [];
-    <c:forEach var="r" items="${keiroList}">
-      routes.push({
-        keiroSeq:       "${r.keiroSeq}",
-        tsukinShudanNm: "${r.tsukinShudanNm}",
-        startPlace:     "${r.startPlace}",
-        endPlace:       "${r.endPlace}",
-        kikanStartYmd:  "${r.kikanStartYmd}",
-        kikanEndYmd:    "${r.kikanEndYmd}",
-        shukkinNissuu:  "${r.shukkinNissuu}",
-        kataMichiKin:   "${r.kataMichiKin}",
-        shinseiKin:     "${r.shinseiKin}",
-        tsukiShikyuKin: "${r.tsukiShikyuKin}",
-        hiwariAto:      "${r.hiwariAto}"
-      });
-    </c:forEach>
-
-    // 2) 화면 스냅샷 JSON 구성
-    var data = {
-      emp: {
-        no:        "${emp.no}",
-        name:      "${emp.name}",
-        workplace: "${emp.workplace}",
-        address:   "${emp.address}"
-      },
-      routes: routes,
-      apply: {
-        kind:        "${apply.kind}",
-        reason:      "${apply.reason}",
-        periodText:  "${apply.periodText}",
-        workDays:    "${apply.workDays}",
-        totalAmount: "${apply.totalAmount}"
-      }
-    };
-
-    // 3) tempSave로 POST 전송
-    var form = document.createElement("form");
-    form.method = "POST";
-    form.action = "<c:url value='/hiwariKinmuchi/tempSave'/>";
-
-    var jsonInput = document.createElement("input");
-    jsonInput.type  = "hidden";
-    jsonInput.name  = "commuteJson";
-    jsonInput.value = JSON.stringify(data);
-    form.appendChild(jsonInput);
-
-    var actionInput = document.createElement("input");
-    actionInput.type  = "hidden";
-    actionInput.name  = "actionUrl";
-    actionInput.value = "/hiwariKakunin/kakunin";  // 돌아올 화면
-    form.appendChild(actionInput);
-
-    var redirectInput = document.createElement("input");
-    redirectInput.type  = "hidden";
-    redirectInput.name  = "redirectUrl";
-    redirectInput.value = "";                       // 컨트롤러에서 처리
-    form.appendChild(redirectInput);
-
-    document.body.appendChild(form);
-    form.submit();
-  }
-</script>
- 
