@@ -184,6 +184,7 @@
     width: 100%;
     padding: 5px 0 5px 8px;
     background-color: #ECFBEA;
+    box-sizing: border-box;
 }
 
 /* 노선 줄 (세로선 + 노선명) */
@@ -192,6 +193,7 @@
     align-items: center;
     width: 100%;
     padding: 5px 0 5px 5px;
+    box-sizing: border-box;
 }
 
 /* 노선 줄 전용 세로줄 위치 및 간격 */
