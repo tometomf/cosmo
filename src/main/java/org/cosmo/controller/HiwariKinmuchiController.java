@@ -278,13 +278,15 @@ public class HiwariKinmuchiController {
 		}
 		return String.format("%,d円", amount);
 	}
-
-	// 유지희
+	
 	@GetMapping("/kanryo")
 	public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
-		model.addAttribute("shinseiNo", shinseiNo);
-		return "hiwariKinmuchi/hiwariKanryo";
+	    System.out.println(">>> [KANRYO] GET /hiwariKinmuchi/kanryo, shinseiNo = " + shinseiNo);
+
+	    model.addAttribute("shinseiNo", shinseiNo);
+	    return "hiwariKinmuchi/hiwariKanryo";
 	}
+
 
 	@GetMapping("/keiro")
 	public String showKeiroPage(HttpSession session, Model model) {
@@ -413,18 +415,21 @@ public class HiwariKinmuchiController {
     @PostMapping("/submit")
     public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
 
+        System.out.println(">>> [SUBMIT] START");
+
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
             return "redirect:/";
         }
 
         Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-        Long shainUid   = Long.valueOf(shain.getShain_Uid());   // ★★ 이 줄 추가 ★★
-
-        Long shinseiNo = null;
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
+        Long shinseiNo  = null;
         if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
             shinseiNo = Long.valueOf(shain.getShinsei_No());
         }
+
+        System.out.println(">>> [SUBMIT] kigyoCd=" + kigyoCd + ", shinseiNo=" + shinseiNo);
 
         if (shinseiNo == null) {
             rttr.addFlashAttribute("error", "申請番号が取得できませんでした。");
@@ -432,26 +437,30 @@ public class HiwariKinmuchiController {
         }
 
         try {
-            // 1) 申請テーブル 갱신 (진척구분 2: 승인/신청완료 등)
+            System.out.println(">>> [SUBMIT] before submitApplication");
             service.submitApplication(kigyoCd, shinseiNo);
+            System.out.println(">>> [SUBMIT] after submitApplication");
 
-            // 2) お知らせ登録 ＋ アラートメール 발행 역할
+            System.out.println(">>> [SUBMIT] before addOshirase");
             oshiraseService.addHiwariShinseiOshirase(
-                kigyoCd,
-                shainUid,
-                shain.getShain_No(),  // 사원번호
-                shinseiNo
+                    kigyoCd,
+                    shainUid,
+                    shain.getShain_No(),
+                    shinseiNo
             );
+            System.out.println(">>> [SUBMIT] after addOshirase");
 
-            // 3) 完了画面으로 신청번호 전달
             rttr.addAttribute("shinseiNo", shinseiNo);
+            System.out.println(">>> [SUBMIT] redirect to kanryo");
             return "redirect:/hiwariKinmuchi/kanryo";
 
         } catch (Exception e) {
+            e.printStackTrace();
             rttr.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
             return "redirect:/hiwariKinmuchi/kakunin";
         }
     }
+
 
 	// 유지희 끝
 
