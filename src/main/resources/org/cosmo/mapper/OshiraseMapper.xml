@@ -31,7 +31,7 @@
             #{tsuchiYmd},
             #{tsuchiHm},
             #{tsuchishaKigyoCd},
-            #{tsuchishaCd},
+            #{tsuchishaCd,       jdbcType=VARCHAR},
             #{shinseiNo,      jdbcType=NUMERIC},
             #{oshiraseNaiyo,  jdbcType=CLOB},
             #{kengen,         jdbcType=VARCHAR},
