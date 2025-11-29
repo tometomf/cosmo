@@ -18,6 +18,7 @@ import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
+import org.cosmo.service.MailService;
 import org.cosmo.service.OshiraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,9 @@ public class HiwariKinmuchiController {
 	@Autowired
 	private IchijiHozonService ichijiHozonService;
 	
-	
+	@Autowired
+	private MailService mailService;
+
 
 	// 서혜원
 	@GetMapping("hiwariKinmuchi")
@@ -410,8 +413,6 @@ public class HiwariKinmuchiController {
         return keiroList.size();
     }
 
-
- 
     @PostMapping("/submit")
     public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
 
@@ -449,6 +450,25 @@ public class HiwariKinmuchiController {
                     shinseiNo
             );
             System.out.println(">>> [SUBMIT] after addOshirase");
+
+            // ===== 여기서부터 메일 송신 =====
+            String to = service.getShainMailAddr(kigyoCd, shainUid);
+
+            try {
+                if (to != null && !to.isEmpty()) {
+                    String subject = "【通勤マネージャー】日割申請が完了しました";
+                    String html = "<p>日割通勤申請が完了しました。</p>"
+                                + "<p>申請番号：" + shinseiNo + "</p>";
+
+                    mailService.sendHtmlMail(to, subject, html);
+                    System.out.println(">>> [SUBMIT] mail sent");
+                } else {
+                    System.out.println(">>> [SUBMIT] no mail address found");
+                }
+            } catch (Exception e) {
+                System.out.println(">>> [SUBMIT] mail failed: " + e.getMessage());
+            }
+            // ===== 메일 송신 끝 =====
 
             rttr.addAttribute("shinseiNo", shinseiNo);
             System.out.println(">>> [SUBMIT] redirect to kanryo");

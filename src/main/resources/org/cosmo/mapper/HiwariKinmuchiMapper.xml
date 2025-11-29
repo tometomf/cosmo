@@ -466,6 +466,13 @@ LEFT JOIN CODE C103
 		SHAIN_UID = #{shainUid}
 		AND KEIRO_SEQ = #{keiroSeq}
 	</delete>
-
+	
+<!-- 유지희 사원 메일 주소 조회 -->
+<select id="findMailAddr" resultType="string">
+    SELECT MAIL_ADDR
+    FROM SHAIN
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHAIN_UID = #{shainUid}
+</select>
 	<!-- 유지희 끝 -->
 </mapper>

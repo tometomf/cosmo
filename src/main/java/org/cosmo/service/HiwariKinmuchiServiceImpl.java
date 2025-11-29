@@ -211,6 +211,12 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         int tsuki = hiwari * 21;
         vo.setTsukiShikyuKin(tsuki);
     }
+    
+    @Override
+    public String getShainMailAddr(Integer kigyoCd, Long shainUid) {
+        return mapper.findMailAddr(kigyoCd, shainUid);
+    }
+
 
     //유지희 끝
 }

@@ -72,6 +72,9 @@ int updateShinseiApproval(
         @Param("kigyoCd") Integer kigyoCd,
         @Param("shinseiNo") Long shinseiNo,
         @Param("shinchoKbn") String shinchoKbn);
-}
 
+//유지희 메일 주소 조회용
+String findMailAddr(@Param("kigyoCd") int kigyoCd,
+                    @Param("shainUid") long shainUid);
+}
 
