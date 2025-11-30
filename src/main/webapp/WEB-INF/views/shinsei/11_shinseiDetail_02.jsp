@@ -497,7 +497,7 @@
 					<div class="content_Form2">
 						<div class="form_Title2">
 							<div>経路&#${9311 + 1};</div>
-
+						</div>
 						<div class="form_Text1" id="form_Text2">
 							<div class="form_Column">通勤手段</div>
 							<c:if test="${not empty ichiji.keiro.tsukinShudan}">

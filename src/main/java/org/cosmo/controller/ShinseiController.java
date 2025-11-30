@@ -169,11 +169,13 @@ public class ShinseiController {
 	}
 
 	@PostMapping("/updateTorikesu") // 하나
-	public String update(@RequestParam("tkComment") String tkComment,
-			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
-			@RequestParam("beforeKbn") String shinchokuKbn, @RequestParam("hozonUid") String hozonUid,
-			@RequestParam("shinseiKbn") String shinseiKbn, @RequestParam("shinseiYmd") String shinseiYmd,
-			HttpSession session, Model model) {
+	public String update( @RequestParam("tkComment") String tkComment,
+	        @RequestParam(value = "shinseiNo", required = false) String shinseiNo,
+	        @RequestParam(value = "beforeKbn", required = false) String shinchokuKbn,
+	        @RequestParam(value = "hozonUid", required = false) String hozonUid,
+	        @RequestParam(value = "shinseiKbn", required = false) String shinseiKbn,
+	        @RequestParam(value = "shinseiYmd", required = false) String shinseiYmd,
+	        HttpSession session, Model model) {
 
 		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());

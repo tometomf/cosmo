@@ -75,7 +75,15 @@
 						</div>
 						<div class="form_Text1" id="form_Text2">
 							<div class="form_Column">差戻し日</div>
-							<div class="form_Normal">${view.ssmdsYmd}</div>
+							<div class="form_Normal">
+								<c:if test="${not empty view.ssmdsYmd}">
+									<c:set var="ymd" value="${view.ssmdsYmd}" />
+									<c:set var="yyyy" value="${fn:substring(ymd, 0, 4)}" />
+									<c:set var="mm" value="${fn:substring(ymd, 4, 6)}" />
+									<c:set var="dd" value="${fn:substring(ymd, 6, 8)}" />
+            ${yyyy}/${mm}/${dd}
+        </c:if>
+							</div>
 						</div>
 						<div class="form_Text1" id="form_Text2">
 							<div class="form_Column">不備内容</div>
@@ -489,7 +497,7 @@
 				<c:otherwise>
 					<div class="content_Form2">
 						<div class="form_Title2">
-							<div>経路&#${9311 + 1};</div>
+							<div>経路①</div>
 						</div>
 
 						<div class="form_Text1" id="form_Text2">
@@ -549,6 +557,20 @@
 								${yyyy}/${mm}/${dd}
 							</div>
 						</div>
+						<form action="/shinsei/updateTorikesu" method="post" id="tkForm">
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">取消理由</div>
+								<div class="form_Normal">
+									<textarea name="tkCommentInput"
+										style="width: 100%; height: 80px; border: 2px solid #ccc; padding: 6px; background-color: #f8f8f8; overflow-y: auto;"></textarea>
+								</div>
+							</div>
+
+							<input type="hidden" name="tkComment" id="tkCommentForm">
+							<input type="hidden" name="hozonUid" value="${hozonUid}">
+							<input type="hidden" name="shinseiKbn" value="${view.shinseiKbn}">
+							<input type="hidden" name="shinseiYmd" value="${view.shinseiYmd}">
+						</form>
 					</div>
 				</c:otherwise>
 			</c:choose>
