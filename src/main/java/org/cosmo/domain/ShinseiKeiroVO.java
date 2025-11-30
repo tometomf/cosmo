@@ -21,6 +21,8 @@ public class ShinseiKeiroVO {
 
 
 	private String shudanName;
+	
+	
 
 	public Long getYuryo() {
 

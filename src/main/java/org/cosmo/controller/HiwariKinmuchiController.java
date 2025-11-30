@@ -1,14 +1,25 @@
 package org.cosmo.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.cosmo.domain.HiwariAddressVO;
+import org.cosmo.domain.HiwariKakuninRouteVO;
+import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
-import org.cosmo.service.HiwariKeiroService;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.ShainVO;
 import org.cosmo.service.HiwariKinmuchiService;
+import org.cosmo.service.IchijiHozonService;
+import org.cosmo.service.KeiroInputService;
+import org.cosmo.service.OshiraseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,162 +27,407 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hiwariKinmuchi")
 public class HiwariKinmuchiController {
 
-    @Autowired
-    private HiwariKeiroService hiwariKeiroService;
+	@Autowired
+	private IchijiHozonService ichijiHozonService;
 
-    @Autowired
-    private HiwariKinmuchiService service;
+	@Autowired
+	private OshiraseService oshiraseService;
 
-    // =========================
-    // ① 勤務地 입력 화면
-    // =========================
-    @GetMapping("hiwariKinmuchi")
-    public String showKinmuchiPage(HttpSession session, Model model) {
+	@Autowired
+	private HiwariKinmuchiService service;
+	
+	@Autowired
+	private KeiroInputService keiroInputservice;
+	
+	
 
-        Integer kigyoCd = (Integer) session.getAttribute("KIGYO_CD");
-        Long shainUid   = (Long) session.getAttribute("SHAIN_UID");
-        Long shinseiNo  = (Long) session.getAttribute("SHINSEI_NO");
+	// 서혜원
+	@GetMapping("hiwariKinmuchi")
+	public String showKinmuchiPage(HttpSession session, Model model) {
 
-        HiwariKinmuchiVO data;
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		if (shain == null) {
+			return "redirect:/";
+		}
 
-        if (shinseiNo == null) {
-            // 申請前
-            data = service.getBeforeShinsei(kigyoCd, shainUid);
-        } else {
-            // 申請後
-            data = service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
-        }
+		Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+		Long shainUid = Long.valueOf(shain.getShain_Uid());
 
-        model.addAttribute("initData", data);
-        return "hiwariKinmuchi/hiwariKinmuchi";
-    }
+		Long shinseiNo = null;
+		if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+			try {
+				shinseiNo = Long.valueOf(shain.getShinsei_No());
+			} catch (Exception e) {
+				shinseiNo = null;
+			}
+		}
 
-    @GetMapping("/address")
-    public String showHiwariAddressPage() {
-        return "hiwariKinmuchi/hiwariAddress";
-    }
+		HiwariKinmuchiVO data = (shinseiNo == null) ? service.getBeforeShinsei(kigyoCd, shainUid)
+				: service.getAfterShinsei(kigyoCd, shainUid, shinseiNo);
 
-    @GetMapping("/kakunin")
-    public String showKakuninPage(HttpSession session, Model model) {
 
-        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
-        if (keiroList == null) {
-            keiroList = new ArrayList<HiwariKeiroVO>();
-        }
+		model.addAttribute("initData", data);
+		model.addAttribute("shoList", service.getShozokuNames(kigyoCd));
 
-        int repRouteNo = calcRepRouteNo(keiroList);
+		return "hiwariKinmuchi/hiwariKinmuchi";
+	}
 
-        model.addAttribute("keiroList", keiroList);
-        model.addAttribute("repRouteNo", repRouteNo);
+	private boolean isNullOrEmpty(String s) {
+		return (s == null || s.trim().isEmpty());
+	}
 
-        return "hiwariKinmuchi/hiwariKakunin";
-    }
+	// 서혜원
+	@GetMapping("/address")
+	public String showHiwariAddressPage(HttpSession session, Model model) {
 
-    @GetMapping("/kanryo")
-    public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
-        model.addAttribute("shinseiNo", shinseiNo);
-        return "hiwariKinmuchi/hiwariKanryo";
-    }
+		ShainVO shain = (ShainVO) session.getAttribute("shain");
+		if (shain == null) {
+			return "redirect:/";
+		}
 
-    @GetMapping("/keiro")
-    public String showKeiroPage(HttpSession session, Model model) {
+		Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+		Long shainUid = Long.valueOf(shain.getShain_Uid());
 
-        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+		Long shinseiNo = null;
+		if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+			try {
+				shinseiNo = Long.valueOf(shain.getShinsei_No());
+			} catch (Exception e) {
+				shinseiNo = null;
+			}
+		}
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
-        if (keiroList == null) {
-            keiroList = new ArrayList<HiwariKeiroVO>();
-        }
+		HiwariAddressVO data = (shinseiNo == null) ? service.getAddressPageDataBefore(kigyoCd, shainUid)
+				: service.getAddressPageData(kigyoCd, shainUid, shinseiNo);
 
-        int repRouteNo = calcRepRouteNo(keiroList);
+		String genZip = data.getGenZip();
+		String genAddress1 = data.getGenAddress1();
+		String genAddress2 = data.getGenAddress2();
+		String genAddress3 = data.getGenAddress3();
 
-        model.addAttribute("keiroList", keiroList);
-        model.addAttribute("repRouteNo", repRouteNo);
+		if (isNullOrEmpty(genZip))
+			genZip = "1600023";
+		if (isNullOrEmpty(genAddress1))
+			genAddress1 = "東京都";
+		if (isNullOrEmpty(genAddress2))
+			genAddress2 = "千代田区丸の内1-1-1";
+		if (isNullOrEmpty(genAddress3))
+			genAddress3 = "A建物";
 
-        return "hiwariKinmuchi/hiwariKeiro";
-    }
+		data.setGenZip(genZip);
+		data.setGenAddress1(genAddress1);
+		data.setGenAddress2(genAddress2);
+		data.setGenAddress3(genAddress3);
 
-    @PostMapping("/keiro")
-    public String handleKeiro(
-            @RequestParam("action") String action,
-            HttpSession session,
-            Model model) {
+		String fullAddress = genAddress1 + genAddress2;
 
-        System.out.println("=== DEBUG /keiro POST START ===");
-        System.out.println("action = " + action);
+		if (isNullOrEmpty(fullAddress)) {
+			fullAddress = "大阪府大阪市東淀川区瑞光1-1-1 ハイツ瑞光302";
+		}
 
-        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+		data.setFullAddress(fullAddress);
 
-        List<HiwariKeiroVO> keiroList = hiwariKeiroService.getKeiroList(shainUid);
-        if (keiroList == null) {
-            keiroList = new ArrayList<HiwariKeiroVO>();
-        }
+		model.addAttribute("initData", data);
+		model.addAttribute("addressData", data);
 
-        int repRouteNo = calcRepRouteNo(keiroList);
-        System.out.println("keiroList size = " + keiroList.size());
+		return "hiwariKinmuchi/hiwariAddress";
+	}
 
-        if ("apply".equals(action)) {
+	// 서혜원
+	@GetMapping("/riyu")
+	public String showRiyuPage() {
+		return "hiwariKinmuchi/hiwariRiyu";
+	}
 
-            if (keiroList.isEmpty()) {
-                model.addAttribute("errorMsg", "経路が1件も登録されていません。");
-                model.addAttribute("keiroList", keiroList);
-                model.addAttribute("repRouteNo", repRouteNo);
-                return "hiwariKinmuchi/hiwariKeiro";
-            }
-            
-            hiwariKeiroService.saveApply(shainUid, keiroList);
-            return "redirect:/hiwariKinmuchi/kakunin";
-        }
+	//유지희
+	@GetMapping("/kakunin")
+	public String showKakuninPage(HttpSession session, Model model) {
 
-        if ("temp".equals(action)) {
-            hiwariKeiroService.saveTemp(shainUid, keiroList);
-            return "redirect:/hiwariKinmuchi/keiro";
-        }
-        
-        model.addAttribute("keiroList", keiroList);
-        model.addAttribute("repRouteNo", repRouteNo);
-        return "hiwariKinmuchi/hiwariKeiro";
-    }
-    
-    @GetMapping("/back")
-    public String backFromKeiro() {
-        return "redirect:/hiwariKinmuchi/riyu";
-    }
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
 
-    @GetMapping("/keiro/delete")
-    public String deleteKeiro(
-            @RequestParam("keiroSeq") Integer keiroSeq,
-            HttpSession session) {
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid   = Long.valueOf(shain.getShain_Uid());   // ★ 추가: 사원 UID
+	    Long shinseiNo  = null;
 
-        Integer shainUid = (Integer) session.getAttribute("SHAIN_UID");
+	    if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+	        shinseiNo = Long.valueOf(shain.getShinsei_No());
+	    }
 
-        hiwariKeiroService.deleteOne(shainUid, keiroSeq);
-        return "redirect:/hiwariKinmuchi/keiro";
-    }
+	    if (shinseiNo == null) {
+	        return "redirect:/";
+	    }
 
-    @GetMapping("/keiro/edit")
-    public String editKeiro(
-            @RequestParam("keiroSeq") Integer keiroSeq) {
+	    // ① 확인 헤더
+	    HiwariKakuninVO header = service.getHeader(kigyoCd, shinseiNo);
 
-        return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
-    }
+	    // ② 확인용 경로(집계 VO)
+	    List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
+	    if (routes == null) {
+	        routes = new ArrayList();
+	    }
+
+	    // ③ ★★ SHINSEI_START_KEIRO 원본 값(HiwariKeiroVO) 추가 ★★
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList();
+	    }
+	    model.addAttribute("keiroList", keiroList);   // ← 이걸 JSP에서 바로 쓸 수 있음
+
+	    // -------------------------------
+	    // 아래는 기존 emp / route1 / route2 / apply 만드는 부분 그대로 유지
+	    // -------------------------------
+	    Map<String, Object> emp = new HashMap<String, Object>();
+	    if (header != null) {
+	        emp.put("no", header.getEmpNo());
+	        emp.put("name", header.getEmpName());
+	        emp.put("workplace", header.getEmpWorkplace());
+	        emp.put("address", header.getEmpAddress());
+	    }
+	    model.addAttribute("emp", emp);
+
+	    HiwariKakuninRouteVO r1 = routes.size() > 0 ? routes.get(0) : null;
+	    Map<String, Object> route1 = new HashMap<String, Object>();
+	    if (r1 != null) {
+	        route1.put("transport", r1.getTsukinShudanNm());
+	        route1.put("route", r1.getKeiroSection());
+	        route1.put("workDays", r1.getShukkinNissuu() + "日間");
+	        route1.put("oneWayFee", formatAmount(r1.getKataMichiRyokin()));
+	        route1.put("amount", formatAmount(r1.getKingaku()));
+	        route1.put("amountMonthly", formatAmount(r1.getKingakuMonthly()));
+	    }
+	    model.addAttribute("route1", route1);
+
+	    HiwariKakuninRouteVO r2 = routes.size() > 1 ? routes.get(1) : null;
+	    Map<String, Object> route2 = new HashMap<String, Object>();
+	    if (r2 != null) {
+	        route2.put("transport", r2.getTsukinShudanNm());
+	        route2.put("route", r2.getKeiroSection());
+	        route2.put("workDays", r2.getShukkinNissuu() + "日間");
+	        route2.put("oneWayFee", formatAmount(r2.getKataMichiRyokin()));
+	        route2.put("amount", formatAmount(r2.getKingaku()));
+	        route2.put("amountMonthly", formatAmount(r2.getKingakuMonthly()));
+	    }
+	    model.addAttribute("route2", route2);
+
+	    Map<String, Object> apply = new HashMap<String, Object>();
+	    if (header != null) {
+	        apply.put("kind", header.getShinseiKbnNm());
+	        apply.put("reason", header.getShinseiRiyu());
+	        apply.put("periodText", header.getTaishoKikanFrom() + " ～ " + header.getTaishoKikanTo());
+	        apply.put("workDays", header.getShukkinNissuu() + "日間");
+	        apply.put("totalAmount", formatAmount(header.getKingakuGokei()));
+	    }
+	    model.addAttribute("apply", apply);
+
+	    return "hiwariKinmuchi/hiwariKakunin";
+	}
+
+
+	private String formatAmount(Integer amount) {
+		if (amount == null || amount == 0) {
+			return "―";
+		}
+		return String.format("%,d円", amount);
+	}
+
+	// 유지희
+	@GetMapping("/kanryo")
+	public String kanryo(@RequestParam("shinseiNo") Long shinseiNo, Model model) {
+		model.addAttribute("shinseiNo", shinseiNo);
+		return "hiwariKinmuchi/hiwariKanryo";
+	}
+
+	@GetMapping("/keiro")
+	public String showKeiroPage(HttpSession session, Model model) {
+
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
+
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
+	    
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 수정
+	    }
+
+	    int repRouteNo = calcRepRouteNo(keiroList);
+
+	    model.addAttribute("keiroList", keiroList);
+	    model.addAttribute("repRouteNo", repRouteNo);
+
+	    return "hiwariKinmuchi/hiwariKeiro";
+	}
+
+
+	// 유지희
+	@PostMapping("/keiro")
+	public String handleKeiro(
+	        @RequestParam("action") String action,
+	        HttpSession session,
+	        Model model) {
+
+	    System.out.println("=== DEBUG /keiro POST START ===");
+	    System.out.println("action = " + action);
+
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        // 로그인 안 되어 있으면 루트로
+	        return "redirect:/";
+	    }
+
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
+
+	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
+	    if (keiroList == null) {
+	        keiroList = new ArrayList<HiwariKeiroVO>();   // ★ 여기만 변경
+	    }
+
+	    int repRouteNo = calcRepRouteNo(keiroList);
+	    System.out.println("keiroList size = " + keiroList.size());
+
+	    if ("apply".equals(action)) {
+
+	        if (keiroList.isEmpty()) {
+	            model.addAttribute("errorMsg", "経路が1件も登録されていません。");
+	            model.addAttribute("keiroList", keiroList);
+	            model.addAttribute("repRouteNo", repRouteNo);
+	            return "hiwariKinmuchi/hiwariKeiro";
+	        }
+
+	        // 경로가 1건 이상 있으면 확인 화면으로
+	        return "redirect:/hiwariKinmuchi/kakunin";
+	    }
+
+	    if ("temp".equals(action)) {
+
+	    	 service.saveTemp(kigyoCd, shainUid, keiroList); 
+	        return "redirect:/shinsei/11_shinseiDetail_02";
+	    }
+
+	    model.addAttribute("keiroList", keiroList);
+	    model.addAttribute("repRouteNo", repRouteNo);
+	    return "hiwariKinmuchi/hiwariKeiro";
+	}
+
+
+
+	// 유지희
+	@GetMapping("/keiro/delete")
+	public String deleteKeiro(
+	        @RequestParam("keiroSeq") Integer keiroSeq,
+	        HttpSession session) {
+
+	    ShainVO shain = (ShainVO) session.getAttribute("shain");
+	    if (shain == null) {
+	        return "redirect:/";
+	    }
+
+	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+	    Long shainUid = Long.valueOf(shain.getShain_Uid());
+
+	    service.deleteOne(kigyoCd, shainUid, keiroSeq);
+
+	    return "redirect:/hiwariKinmuchi/keiro";
+	}
+
+	@GetMapping("/keiro/edit")
+	public String editKeiro(@RequestParam("keiroSeq") Integer keiroSeq) {
+	    return "redirect:/tsukinInput?mode=edit&keiroSeq=" + keiroSeq;
+	}
+
+	@GetMapping("/keiroInput")
+	public String showKeiroInputPage() {
+	    return "keiroinput/06_keiroInput";
+	}
 
     private int calcRepRouteNo(List<HiwariKeiroVO> keiroList) {
+
         if (keiroList == null || keiroList.isEmpty()) {
             return 1;
         }
+  
         return keiroList.size();
     }
 
-    @GetMapping("/riyu")
-    public String showRiyuPage() {
-        return "hiwariKinmuchi/hiwariRiyu";
+
+ // 유지희
+    @GetMapping("/map")
+    public String showMapPage(HttpSession session, Model model) {
+
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/"; 
+        }
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shainUid   = Long.valueOf(shain.getShain_Uid());
+
+        HiwariKinmuchiVO kinmuchi = service.getBeforeShinsei(kigyoCd, shainUid);
+
+        String kinmuchiName = "";
+        String kinmuchiAddress = "";
+        if (kinmuchi != null) {
+            kinmuchiName = kinmuchi.getGenKinmusakiNm() != null ? kinmuchi.getGenKinmusakiNm() : "";
+
+            if (kinmuchi.getGenKinmuAddress1() != null) kinmuchiAddress += kinmuchi.getGenKinmuAddress1();
+            if (kinmuchi.getGenKinmuAddress2() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress2();
+            if (kinmuchi.getGenKinmuAddress3() != null) kinmuchiAddress += " " + kinmuchi.getGenKinmuAddress3();
+        }
+
+        model.addAttribute("kinmuchi", kinmuchiName);
+        model.addAttribute("kinmuchiAddress", kinmuchiAddress.trim());
+
+        return "hiwariKinmuchi/hiwariMap";
     }
+
+    @PostMapping("/submit")
+    public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
+
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            return "redirect:/";
+        }
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+        Long shinseiNo = null;
+        if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
+            shinseiNo = Long.valueOf(shain.getShinsei_No());
+        }
+
+        if (shinseiNo == null) {
+            rttr.addFlashAttribute("error", "申請番号が取得できませんでした。");
+            return "redirect:/hiwariKinmuchi/kakunin";
+        }
+
+        try {
+         
+            service.submitApplication(kigyoCd, shinseiNo);
+
+            rttr.addAttribute("shinseiNo", shinseiNo);
+
+            return "redirect:/hiwariKinmuchi/kanryo";
+
+        } catch (Exception e) {
+            rttr.addFlashAttribute("error", "申請に失敗しました: " + e.getMessage());
+            return "redirect:/hiwariKinmuchi/kakunin";
+        }
+    }
+
+
+	// 유지희 끝
+
 }

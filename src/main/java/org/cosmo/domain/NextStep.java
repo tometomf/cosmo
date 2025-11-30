@@ -1,11 +1,10 @@
 package org.cosmo.domain;
 
-public class NextStep {
+    //조우진
 
-    // 다음으로 이동할 화면
+public class NextStep {
     private final NextScreen firstScreen;
 
-    // 自ら申請 패턴④일 때 true (통근경로는 반드시 변함)
     private final boolean mustChangeRoute;
 
     public NextStep(NextScreen firstScreen, boolean mustChangeRoute) {

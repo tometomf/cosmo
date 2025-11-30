@@ -1,5 +1,7 @@
 package org.cosmo.service;
 
+import java.util.List;
+
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
 import org.cosmo.domain.ShinseiIcDataDTO;
@@ -71,4 +73,14 @@ public interface ShinseiService {
 	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
 
 	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+
+	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
+
+	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+
+	void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid);
+
+	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
+
 }

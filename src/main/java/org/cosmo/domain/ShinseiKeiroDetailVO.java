@@ -25,12 +25,18 @@ public class ShinseiKeiroDetailVO {
     private String yuryoIcS;        // YURYO_IC_S
     private String yuryoIcE;        // YURYO_IC_E
 
-    // 버스/전철용 정기권 정보
-    private Integer sanshoTeikiTsukiSu1; // SANSHO_TEIKI_TSUKI_SU_1
-    private Integer sanshoTeikiTsukiSu2;
-    private Integer sanshoTeikiTsukiSu3;
-    private BigDecimal sanshoTeikiKin1;  // SANSHO_TEIKI_KIN_1
-    private BigDecimal sanshoTeikiKin2;
-    private BigDecimal sanshoTeikiKin3;
+
+    private String firstTeikiKikan;
+	private String nextTeikiKikan;
+	
+	private String sanshoTeikiTsukiSu1;
+	private String sanshoTeikiTsukiSu2;
+	private String sanshoTeikiTsukiSu3;
+	
+	private String sanshoTeikiKin1;
+	private String sanshoTeikiKin2;
+	private String sanshoTeikiKin3;
+	
+	
 
 }
