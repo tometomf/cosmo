@@ -140,8 +140,9 @@
 <form id="tokureiForm" method="post" action="/idoconfirm/tokureiSubmit">
 
 
-<input type="hidden" name="shinseiNo" value="1">
-<input type="hidden" name="tokureiType" value="${tokureiType}">			
+<input type="hidden" name="tokureiType" value="${tokureiType}">	
+<input type="hidden" name="shinseiNo" value="${shinseiNo}">
+		
 			
 <div class="wrapper">
   <!-- 노란 경고 박스 -->

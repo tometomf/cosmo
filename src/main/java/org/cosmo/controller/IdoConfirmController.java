@@ -20,6 +20,7 @@ import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.TokureiForm;
+import org.cosmo.domain.UploadResult;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
 import org.cosmo.service.FuzuiShoruiService;
@@ -29,6 +30,8 @@ import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.OshiraseService;
 import org.cosmo.service.ShozokuService;
 import org.cosmo.service.TokureiService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +40,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
@@ -366,7 +371,7 @@ public class IdoConfirmController {
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-       // oshiraseService.saveTempOshirase(shain);
+        oshiraseService.saveTempOshirase(shain, newUid);
 
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
@@ -394,6 +399,7 @@ public class IdoConfirmController {
 		// 0-1. 세션 데이터 시뮬레이션
 		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
 		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		String tsukinShudanKbn = (String) session.getAttribute("tsukinShudanKbn");
 		
 		// kigyoCd 처리 (int)
 		int kigyoCdValue = (kigyoCd == null) ? 0 : kigyoCd.intValue();
@@ -541,4 +547,68 @@ public class IdoConfirmController {
         rttr.addFlashAttribute("message", "特例申請を受け付けました。");
         return "redirect:/idoconfirm/kanryoPage";
     }
+    
+	// 윤종운
+	@PostMapping(value = "/api/upload/fuzuiShorui", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<UploadResult> uploadFuzuiShorui(
+			@RequestParam("uploadFile") MultipartFile uploadFile,
+			@RequestParam("fileType") String fileType,
+			HttpSession session) {
+		
+		// 1. 파일 유효성 검사
+		if (uploadFile.isEmpty()) {
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("업로드할 파일을 선택해주세요.")
+				.build();
+			// 400 Bad Request 상태 코드와 함께 응답 본문을 반환
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST); 
+		}
+		
+		// 2. 세션에서 ShainUid 추출 로직
+		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
+		
+		// 2-1. ShainUid 검증
+		if (shainUid == null || shainUid.intValue() == 0) {
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("세션에 사용자 정보가 없습니다.")
+				.build();
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED); // 401
+		}
+		// 2-2. KigyoCd 처리
+		// KigyoCd가 세션에 없거나 0인 경우, huzuikanri에서 설정했던 기본값(100)을 사용합니다.
+		if (kigyoCd == null || kigyoCd.intValue() == 0) {
+			kigyoCd = 100;
+		}
+		
+		try {
+			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
+			Long newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+			
+			// 4. 성공 응답 구성 및 반환
+			UploadResult result = UploadResult.builder()
+				.success(true)
+				.fileUid(newFileUid)
+				.message("파일 업로드 완료")
+				.build();
+			
+			return new ResponseEntity<>(result, HttpStatus.OK);
+				
+		} catch (Exception e) {
+			
+			// 5. 실패 응답 구성 및 반환
+			System.err.println("파일 업로드 중 서버 에러가 발생: " + e.getMessage());
+			e.printStackTrace();
+			
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("파일 업로드 처리중에 서버 에러가 발생했습니다.")
+				.build();
+			
+			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

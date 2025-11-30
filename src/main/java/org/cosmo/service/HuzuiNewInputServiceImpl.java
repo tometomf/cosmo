@@ -1,5 +1,6 @@
 package org.cosmo.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ProcessLogDTO;
@@ -27,11 +28,6 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		return huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
 	}
 
-	@Override
-	public void fileUpload(String kigyo_Cd, String shain_Uid, String fileNo, Long fileUid) {
-
-		huzuiNewInputMapper.fileUpload(kigyo_Cd, shain_Uid, fileNo, fileUid);
-	}
 
 	@Override
 	public void saveAll(ShinseiDTO shinsei, ShainVO shain, ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,
@@ -53,12 +49,17 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		huzuiNewInputMapper.addIchijiHozon(ichiji, shain);
 		
 	}
+	
 
 	@Override
-	public void addFile(UploadFileDTO UploadFile, ShainVO shain) {
+	public void addFile(UploadFileDTO UploadFile, String fNo, ShainVO shain) {
 		// TODO Auto-generated method stub
 		huzuiNewInputMapper.addFile(UploadFile, shain);
+		huzuiNewInputMapper.fileUpdate(UploadFile, fNo, shain);
 	}
+
+
+	
 
 	
 

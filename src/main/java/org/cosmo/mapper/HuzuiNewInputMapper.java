@@ -17,7 +17,6 @@ public interface HuzuiNewInputMapper {
 
 	ShainFuzuiShoruiVO getList(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid);
 	
-	void fileUpload(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid,@Param ("fileNo") String fileNo, @Param("fileUid") Long uniqueId);
 	
 	void addFuzuiShorui(@Param ("shinseiFuzuiShorui")ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,@Param ("shain")ShainVO shain);
 
@@ -40,5 +39,7 @@ public interface HuzuiNewInputMapper {
 	void addIchijiHozon(@Param ("ichiji")IchijiHozonDTO ichiji,@Param ("shain")ShainVO shain);
 	
 	void addFile(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("shain")ShainVO shain);
+	
+	void fileUpdate(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
 	
 }
