@@ -26,6 +26,10 @@ public interface ShinseiMapper {
 
 	ShinseiViewDTO getShinseiView(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
 
+	List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo);
+	
+	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo);
+
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
 
 	Long getKigyoCdByShinseiNo(@Param("shinseiNo") Long shinseiNo);

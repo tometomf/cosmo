@@ -1,6 +1,7 @@
 package org.cosmo.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import lombok.Data;
 public class ShinseiKeiroVO {
 	private String kigyoCd;
 	private String shinseiNo;
-	private String keiroSeq;
+	private Long keiroSeq;
 
 	private String shinseiKbn;
 	private String shinseiYmd;
@@ -37,6 +38,8 @@ public class ShinseiKeiroVO {
     private Integer sanshoTeikiKin1;
 
 	private String shudanName;
+	
+    private List<ShinseiShoruiVO> shoruiList;
 
 	public Long getYuryo() {
 
@@ -57,4 +60,12 @@ public class ShinseiKeiroVO {
 	public Long getTotal() {
 		return getTsuki() + getYuryo();
 	}
+	
+	public String getCircleNumber() {
+	    int base = 9311; 
+	    int seq = (this.keiroSeq != null) ? this.keiroSeq.intValue() : 1;
+	    return new String(Character.toChars(base + seq));
+	}
+
+
 }

@@ -50,37 +50,16 @@ public class ShinseiController {
 
 			Long shinseiNoLong = Long.parseLong(shinseiNo);
 			Long kigyoCd = shinseiService.getKigyoCdByShinseiNo(shinseiNoLong);
-
 			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd, shinseiNoLong);
-			String fileName = shinseiService.getFileName(shinseiNoLong);
 
 			if (view != null) {
 
 				String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
+				ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
 
-				ShainVO shinseiUser = null;
-				if (shainUid != null && !shainUid.trim().isEmpty()) {
-					shinseiUser = shinseiService.getShainByUid(shainUid);
-				}
-
-				if (view.getShinseiKbn() != null) {
-					view.setShinseiName(shinseiService.getShinseiName(view.getShinseiKbn()));
-				}
-
-				if (view != null && view.getTsukinShudan() != null) {
-					view.setShudanName(shinseiService.getShudanName(view.getTsukinShudan()));
-				}
-
-				if (view.getShinchokuKbn() != null) {
-					view.setCodeNm(shinseiService.getCodeNm(view.getShinchokuKbn()));
-				}
-
+				model.addAttribute("mode", "view");
 				model.addAttribute("view", view);
-				model.addAttribute("fileName", fileName);
 				model.addAttribute("shinseiUser", shinseiUser);
-				model.addAttribute("isIchiji", false);
-
-				System.out.println("VIEW = " + view);
 
 				return "shinsei/11_shinseiDetail_02";
 			}
@@ -96,11 +75,11 @@ public class ShinseiController {
 				shinseiUser = shinseiService.getShainByUid(ichiji.getShainUid());
 			}
 
+			model.addAttribute("mode", "ichiji");
 			model.addAttribute("ichiji", ichiji);
 			model.addAttribute("shinseiUser", shinseiUser);
 			model.addAttribute("hozonUid", hozonUid);
 			model.addAttribute("hozon", hozon);
-			model.addAttribute("isIchiji", true);
 
 			return "shinsei/11_shinseiDetail_02";
 		}
@@ -144,40 +123,22 @@ public class ShinseiController {
 		if (shinseiNo != null) {
 
 			Long shinseiNoLong = Long.parseLong(shinseiNo);
+			Long kigyoCd = shinseiService.getKigyoCdByShinseiNo(shinseiNoLong);
 
-			ShinseiJyohouVO jyohouVo = shinseiService.getShinseiJyohou(shinseiNoLong);
+			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd, shinseiNoLong);
+			String fileName = shinseiService.getFileName(shinseiNoLong);
+			
+			model.addAttribute("mode", "view");
+			model.addAttribute("view", view);
+			model.addAttribute("fileName", fileName);
 
-			if (jyohouVo != null) {
-
-				ShinseiKeiroVO keiroVo = shinseiService.getShinseiKeiro(shinseiNoLong);
-				ShinseiShoruiVO shoruiVo = shinseiService.getShinseiShorui(shinseiNoLong);
-				String fileName = shinseiService.getFileName(shinseiNoLong);
-
-				if (jyohouVo.getShinchokuKbn() != null) {
-					jyohouVo.setCodeNm(shinseiService.getCodeNm(jyohouVo.getShinchokuKbn()));
-				}
-
-				if (jyohouVo.getShinseiKbn() != null) {
-					jyohouVo.setShinseiName(shinseiService.getShinseiName(jyohouVo.getShinseiKbn()));
-				}
-
-				if (keiroVo != null && keiroVo.getTsukinShudan() != null) {
-					keiroVo.setShudanName(shinseiService.getShudanName(keiroVo.getTsukinShudan()));
-				}
-
-				model.addAttribute("jyohou", jyohouVo);
-				model.addAttribute("keiro", keiroVo);
-				model.addAttribute("shorui", shoruiVo);
-				model.addAttribute("fileName", fileName);
-				model.addAttribute("isIchiji", false); // 반려 상태
-				model.addAttribute("hozonUid", hozonUid);
-
-				return "shinsei/dummy_11_shinseiDetail_03";
-			}
+			return "shinsei/dummy_11_shinseiDetail_03";
 		}
 
 		// 임시저장번호(hozon_uid) ㅇ
-		if (hozonUid != null && !hozonUid.trim().isEmpty()) {
+		if (hozonUid != null && !hozonUid.trim().isEmpty())
+
+		{
 
 			ShinseiIcDataDTO ichiji = shinseiService.getIcData(hozonUid);
 			ShinseiIcHozonVO hozon = shinseiService.getIchijiHozon(hozonUid);
@@ -195,27 +156,28 @@ public class ShinseiController {
 				ichiji.getKeiro().setShudanName(shinseiService.getShudanName(ichiji.getKeiro().getTsukinShudan()));
 			}
 
+			model.addAttribute("mode", "ichiji");
 			model.addAttribute("ichiji", ichiji);
 			model.addAttribute("keiro", ichiji.getKeiro());
-			model.addAttribute("shorui", null);
-			model.addAttribute("isIchiji", true);
+
 			model.addAttribute("hozonUid", hozonUid);
 			model.addAttribute("hozon", hozon);
 
 			return "shinsei/dummy_11_shinseiDetail_03";
 		}
 
-		// 에러 처리
 		model.addAttribute("errorMessage", "申請番号または一時保存IDがありません。");
 		return "shinsei/dummy_11_shinseiDetail_03";
 	}
 
 	@PostMapping("/updateTorikesu") // 하나
-	public String update(@RequestParam("tkComment") String tkComment,
-			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
-			@RequestParam("beforeKbn") String shinchokuKbn, @RequestParam("hozonUid") String hozonUid,
-			@RequestParam("shinseiKbn") String shinseiKbn, @RequestParam("shinseiYmd") String shinseiYmd,
-			HttpSession session, Model model) {
+	public String update( @RequestParam("tkComment") String tkComment,
+	        @RequestParam(value = "shinseiNo", required = false) String shinseiNo,
+	        @RequestParam(value = "beforeKbn", required = false) String shinchokuKbn,
+	        @RequestParam(value = "hozonUid", required = false) String hozonUid,
+	        @RequestParam(value = "shinseiKbn", required = false) String shinseiKbn,
+	        @RequestParam(value = "shinseiYmd", required = false) String shinseiYmd,
+	        HttpSession session, Model model) {
 
 		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
@@ -225,7 +187,6 @@ public class ShinseiController {
 
 			shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
 
-			model.addAttribute("errorMessage", "保存データのみ削除しました。");
 			return "home";
 		}
 
@@ -238,10 +199,6 @@ public class ShinseiController {
 			shinseiService.updateTorikesu(shinseiNo, tkComment, loginUser.getShain_Uid());
 			shinseiService.insertOshirase(loginUser, shinseiUser, shinseiNo);
 			shinseiService.insertCancelLogs(shinseiNo, shinseiKbn, shinseiYmd, loginUser);
-
-			if (hasHozonUid) {
-				shinseiService.deleteIchijiHozonByHozonUid(hozonUid);
-			}
 
 			if (email != null && !email.trim().isEmpty()) {
 				SimpleMailMessage message = new SimpleMailMessage();
