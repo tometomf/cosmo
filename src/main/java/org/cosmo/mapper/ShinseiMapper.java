@@ -91,8 +91,6 @@ public interface ShinseiMapper {
 
 	// 제교
 
-	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
 	void updateForResubmit(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("shinseiRiyu") String shinseiRiyu, @Param("updUserId") String updUserId);
 
@@ -107,12 +105,6 @@ public interface ShinseiMapper {
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
 
 	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
-
-	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("updUserId") String updUserId);
-
-	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("loginUserId") String loginUserId);
 
 	void insertOshiraseHikimodosu(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
 			@Param("shinseiNo") String shinseiNo);
@@ -139,5 +131,19 @@ public interface ShinseiMapper {
 	String getNextShinseiNo(@Param("kigyoCd") Long kigyoCd, @Param("todayYmd") String todayYmd);
 
 	List<ShinseiDetailVO> getKakuninJyohou(Map<String, Object> param);
+
+	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("updUserId") String updUserId);
+
+	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void insertHikimodoshiLog(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	Map<String, Object> getShinseiStatusForLog(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void insertHikimodoshiProcessLog(Map<String, Object> param);
+
+	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("shainNo") String shainNo, @Param("updUserId") Integer updUserId);
 
 }

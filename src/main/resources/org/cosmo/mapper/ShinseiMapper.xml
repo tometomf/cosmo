@@ -607,8 +607,9 @@
 
 	<update id="updateShinseiToIchijihozon">
 		UPDATE SHINSEI
-		SET SHINCHOKU_KBN = '1', -- 一時保存中
-		UPD_USER_ID = #{updUserId, jdbcType=VARCHAR},
+		SET SHINCHOKU_KBN = '1',
+		UPD_USER_ID =
+		#{updUserId, jdbcType=VARCHAR},
 		UPD_DATE = SYSDATE
 		WHERE
 		KIGYO_CD =
@@ -616,16 +617,7 @@
 		AND SHINSEI_NO = #{shinseiNo}
 	</update>
 
-	<update id="updateAlertForHikimodoshi">
-		UPDATE ALERT
-		SET SHINSEI_YMD = NULL,
-		UPD_USER_ID =
-		#{loginUserId},
-		UPD_DATE = SYSDATE
-		WHERE KIGYO_CD = #{kigyoCd}
-		AND
-		SHINSEI_NO = #{shinseiNo}
-	</update>
+
 
 	<update id="clearHenkoFlags">
 		UPDATE SHINSEI
@@ -858,6 +850,109 @@
 		#{todayYmd}
 	</select>
 
+
+
+	<insert id="insertHikimodoshiLog">
+		INSERT INTO SHINSEI_LOG (
+		KIGYO_CD
+		, SHINSEI_NO
+		,
+		LOG_SEQ
+		, SYORI_KBN
+		, SHINSEI_KBN
+		, SHINSEI_YMD
+		, SHINSEI_RIYU
+		,
+		TOKU_SHINSEI_RIYU
+		, SHAIN_UID
+		, SHAIN_NO
+		, DAIRI_SHINSEISHA_CD
+		)
+		SELECT
+		a.KIGYO_CD
+		, a.SHINSEI_NO
+		, (
+		SELECT NVL(MAX(l.LOG_SEQ), 0) + 1
+		FROM
+		SHINSEI_LOG l
+		WHERE l.KIGYO_CD = a.KIGYO_CD
+		AND l.SHINSEI_NO =
+		a.SHINSEI_NO
+		) AS LOG_SEQ
+		, '6' AS SYORI_KBN
+		, a.SHINSEI_KBN
+		,
+		a.SHINSEI_YMD
+		, a.SHINSEI_RIYU
+		, a.TOKU_SHINSEI_RIYU
+		,
+		a.SHAIN_UID
+		,
+		a.SHAIN_NO
+		, a.DAIRI_SHINSEISHA_CD
+		FROM SHINSEI a
+		WHERE
+		a.KIGYO_CD =
+		#{kigyoCd}
+		AND a.SHINSEI_NO = #{shinseiNo}
+	</insert>
+
+
+	<insert id="insertHikimodoshiProcessLog" parameterType="map">
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		KEY5,
+		DATA,
+		USER_UID,
+		USER_TRACK
+		)
+		VALUES (
+		SYSTIMESTAMP,
+		#{subsystemId, jdbcType=VARCHAR},
+		'HIKIMODOSHI',
+		#{shinseiNo, jdbcType=NUMERIC},
+		#{shinseiKbn, jdbcType=VARCHAR},
+		#{beforeShinchokuKbn, jdbcType=VARCHAR},
+		#{afterShinchokuKbn, jdbcType=VARCHAR},
+		#{kigyoCd, jdbcType=NUMERIC},
+		NULL,
+		#{loginUserId, jdbcType=NUMERIC},
+		#{userIp, jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+
+	<update id="updateAlertForHikimodoshi">
+		UPDATE ALERT
+		SET SHINSEI_YMD = NULL,
+		UPD_USER_ID =
+		#{updUserId, jdbcType=NUMERIC},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE KIGYO_CD =
+		#{kigyoCd}
+		AND SHAIN_NO = #{shainNo}
+		AND SHINSEI_NO = #{shinseiNo}
+	</update>
+
+
+
+	<select id="getShinseiStatusForLog" resultType="map">
+		SELECT
+		SHINCHOKU_KBN AS shinchokuKbn,
+		SHINSEI_KBN AS shinseiKbn
+		FROM SHINSEI
+		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</select>
+
+
 	<select id="getKakuninJyohou" parameterType="java.util.Map"
 		resultType="org.cosmo.domain.ShinseiDetailVO">
 		SELECT
@@ -874,13 +969,12 @@
 		a.torikeshi_ymd AS torikeshiYmd,
 
 
-		<!-- ★ 住所 결합 -->
 		(a.gen_address_1 || ' ' || a.gen_address_2 || ' ' || a.gen_address_3)
 		AS genAddress,
 		(a.new_address_1 || ' ' || a.new_address_2 || ' ' ||
 		a.new_address_3) AS newAddress,
 
-		<!-- 개별 주소 필드도 유지 -->
+
 		a.gen_address_1 AS genAddress1,
 		a.gen_address_2 AS genAddress2,
 		a.gen_address_3 AS genAddress3,
@@ -889,79 +983,97 @@
 		a.new_address_2 AS newAddress2,
 		a.new_address_3 AS newAddress3,
 
-		<!-- ★ 所属 코드 (나중에 코드명 조회용) -->
 		a.gen_shozoku_cd AS genShozoku,
 		a.new_shozoku_cd AS newShozoku,
 
-		<!-- ★ 勤務地 결합 -->
+
 		(a.gen_kinmu_address_1 || ' ' || a.gen_kinmu_address_2) AS
 		genKinmuchi,
 		(a.new_kinmu_address_1 || ' ' || a.new_kinmu_address_2) AS
 		newKinmuchi,
 
-		<!-- 개별 근무지 주소 필드도 유지 -->
+
 		a.gen_kinmu_address_1 AS genKinmuAddress1,
 		a.gen_kinmu_address_2 AS
 		genKinmuAddress2,
-		a.new_kinmu_zip_cd AS newKinmuZipCd,
-		a.new_kinmu_address_1 AS newKinmuAddress1,
+		a.new_kinmu_zip_cd AS
+		newKinmuZipCd,
+		a.new_kinmu_address_1 AS
+		newKinmuAddress1,
 		a.new_kinmu_address_2 AS
 		newKinmuAddress2,
-		a.new_kinmu_address_3 AS newKinmuAddress3,
+		a.new_kinmu_address_3 AS
+		newKinmuAddress3,
 
-		<!-- 申請情報 -->
+
 		a.shinsei_kbn AS shinseiKbn,
-		a.shinsei_riyu AS shinseiRiyu,
+		a.shinsei_riyu AS
+		shinseiRiyu,
 		a.ido_ymd AS
 		idoYmd,
-		a.iten_ymd AS itenYmd,
-		a.tennyu_ymd AS tennyuYmd,
+		a.iten_ymd AS
+		itenYmd,
+		a.tennyu_ymd AS
+		tennyuYmd,
 		a.keiro_henko_ymd AS keiroHenkoYmd,
-		a.riyo_start_ymd AS riyoStartYmd,
+		a.riyo_start_ymd AS
+		riyoStartYmd,
 
-		<!-- 住所関連 추가 필드 -->
-		a.address_ido_keido AS addressIdoKeido,
-		a.address_chg_kbn AS
+
+		a.address_ido_keido AS
+		addressIdoKeido,
+		a.address_chg_kbn
+		AS
 		addressChgKbn,
 		a.kinmu_address_ido_keido AS kinmuAddressIdoKeido,
 		a.kinmu_address_chg_kbn AS kinmuAddressChgKbn,
 
-		<!-- その他ファイル -->
-		a.etc_file_uid_1 AS etcFileUid1,
+
+		a.etc_file_uid_1 AS
+		etcFileUid1,
 		a.etc_file_uid_2 AS etcFileUid2,
-		a.etc_file_uid_3 AS etcFileUid3,
+		a.etc_file_uid_3 AS
+		etcFileUid3,
 		a.etc_file_uid_4 AS etcFileUid4,
-		a.etc_file_uid_5 AS etcFileUid5,
+		a.etc_file_uid_5 AS
+		etcFileUid5,
 		a.etc_comment_1 AS etcComment1,
-		a.etc_comment_2 AS etcComment2,
+		a.etc_comment_2 AS
+		etcComment2,
 		a.etc_comment_3 AS etcComment3,
-		a.etc_comment_4 AS etcComment4,
+		a.etc_comment_4 AS
+		etcComment4,
 		a.etc_comment_5 AS etcComment5,
 
-		<!-- 経路情報 -->
+
 		b.keiro_seq AS keiroSeq,
 		b.tsukin_shudan_kbn AS tsukinShudanKbn,
 		d.code_nm AS shudanName,
 		b.start_place AS startPlace,
 		b.end_place AS
 		endPlace,
-		b.shinsei_km AS shinseiKm,
+		b.shinsei_km AS
+		shinseiKm,
 		b.yuryo_ic_s AS yuryoIcS,
 		b.yuryo_ic_e AS yuryoIcE,
 		b.yuryo_katamichi_kin AS yuryoKatamichiKin,
-		b.jitsu_kinmu_nissu AS jitsuKinmuNissu,
+		b.jitsu_kinmu_nissu AS
+		jitsuKinmuNissu,
 		b.sansho_teiki_tsuki_su_1 AS
 		sanshoTeikiTsukiSu1,
 		b.sansho_teiki_kin_1 AS sanshoTeikiKin1,
-		b.sansho_teiki_tsuki_su_2 AS sanshoTeikiTsukiSu2,
+		b.sansho_teiki_tsuki_su_2 AS
+		sanshoTeikiTsukiSu2,
 		b.sansho_teiki_kin_2
 		AS sanshoTeikiKin2,
 		b.sansho_teiki_tsuki_su_3 AS sanshoTeikiTsukiSu3,
-		b.sansho_teiki_kin_3 AS sanshoTeikiKin3,
+		b.sansho_teiki_kin_3
+		AS sanshoTeikiKin3,
 		b.katamichi_kin AS katamichi,
-		b.tsuki_shikyu_kin AS tsuki,
+		b.tsuki_shikyu_kin AS
+		tsuki,
 
-		<!-- 付随書類情報 -->
+
 		c.file_uid_1 AS etcFileUid1,
 		c.file_uid_2 AS etcFileUid2,
 		c.file_uid_3
@@ -1089,7 +1201,7 @@
 		UPD_USER_ID,
 		UPD_DATE
 		) VALUES (
-		#{shinseiUser.kigyo_Cd},
+		#{loginUser.kigyo_Cd},
 		#{shinseiUser.shain_Uid},
 		#{shinseiUser.shain_No},
 		TO_CHAR(SYSDATE,'YYYYMMDD'),
