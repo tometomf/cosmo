@@ -5,47 +5,53 @@
 
 <mapper namespace="org.cosmo.mapper.TokureiMapper">
 
-	<insert id="insertShinseiForTokurei" parameterType="org.cosmo.domain.ShinseiDTO">
-INSERT INTO SHINSEI (
-    KIGYO_CD,
-    SHINSEI_NO,
-    SHINSEI_RIYU,
-    TOKU_SHINSEI_RIYU,
-    SHINSEI_KBN,
-    SHAIN_UID,
-    SHINSEI_YMD,
-    SHAIN_NO,
-    SHINCHOKU_KBN,
-    GEN_TSUKINRO_END_KBN,
-    ADDRESS_CHG_KBN,
-    KINMU_ADDRESS_CHG_KBN,
-    KYUSHOKU_HUKKI_KBN
-)
-VALUES (
-    #{kigyoCd},
-    #{shinseiNo},
-    #{shinseiRiyu},
-    #{tokuShinseiRiyu},
-    #{shinseiKbn},
-    #{shainUid},
-    #{shinseiYmd},
-    #{shainNo},
-    #{shinchokuKbn},
-    #{genTsukinroEndKbn},
-    #{addressChgKbn},
-    #{kinmuAddressChgKbn},
-    #{kyushokuHukkiKbn}
-)
-</insert>
+	<!-- SHINSEI_NO 채번 -->
+    <select id="getNextShinseiNo" resultType="long">
+        SELECT NVL(MAX(SHINSEI_NO), 0) + 1
+        FROM SHINSEI
+        WHERE KIGYO_CD = #{kigyoCd}
+    </select>
 
-	
-	
-    <select id="getNextShinseiNo" resultType="int">
-    SELECT NVL(MAX(SHINSEI_NO),0) + 1
-    FROM SHINSEI
-	</select>
-
-
+    <!-- 특례 INSERT -->
+    <insert id="insertShinseiForTokurei"
+            parameterType="org.cosmo.domain.TokureiForm">
+        INSERT INTO SHINSEI (
+            KIGYO_CD,
+            SHINSEI_NO,
+            SHINSEI_KBN,
+            SHINSEI_YMD,
+            TOKU_SHINSEI_RIYU,
+            SHAIN_UID,
+            SHAIN_NO,
+            SHINCHOKU_KBN,
+            ADD_USER_ID,
+            ADD_DATE
+        )
+        VALUES (
+            #{kigyoCd},
+            #{shinseiNo},
+            '99',
+            TO_CHAR(SYSDATE, 'YYYYMMDD'),
+            #{tokureiReason},
+            #{shainUid},
+            #{shainNo},
+            '0',
+            #{shainUid},
+            SYSTIMESTAMP
+        )
+    </insert>
+    
+    <update id="updateTokurei" parameterType="org.cosmo.domain.TokureiForm">
+	UPDATE SHINSEI
+	SET
+   		 TOKU_SHINSEI_RIYU = #{tokureiReason},
+   		 UPD_USER_ID = #{shainUid},
+    	 UPD_DATE = SYSTIMESTAMP
+	WHERE
+    	 KIGYO_CD = #{kigyoCd}
+   		 AND SHINSEI_NO = #{shinseiNo}
+	</update>
+    
 </mapper>
 
 <!-- 作成者 : 권예성 -->

@@ -2,13 +2,14 @@
 
 package org.cosmo.mapper;
 
-import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.TokureiForm;
 
 public interface TokureiMapper {
 	
-	int insertShinseiForTokurei(ShinseiDTO dto);
+	Long getNextShinseiNo(Integer kigyoCd);
 
-    Integer getNextShinseiNo();
+    int insertShinseiForTokurei(TokureiForm form);
 
+    int updateTokurei(TokureiForm form);
 
 }
