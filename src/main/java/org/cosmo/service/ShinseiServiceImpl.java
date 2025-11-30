@@ -60,6 +60,16 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
+	public List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo) {
+		return shinseiMapper.getShinseiKeiroList(shinseiNo);
+	}
+
+	@Override
+	public 	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo){
+		return shinseiMapper.getShinseiShoruiList(shinseiNo);
+	}
+	
+	@Override
 	public ShainVO getShainByUid(String shainUid) {
 		return shinseiMapper.getShainByUid(shainUid);
 	}

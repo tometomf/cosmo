@@ -1,6 +1,7 @@
 package org.cosmo.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 
@@ -34,40 +35,13 @@ public class ShinseiViewDTO {
 	private String ssmdsYmd;
 	private String moComment;
 
-	private String keiroSeq;
-	private String tsukinShudan;
-	private BigDecimal shinseiKm;
-	private Long tsuki;
-	private String firstShikyuYmd;
-
-	private String startPlace;
-	private String endPlace;
-	private String viaPlace1;
-	private String viaPlace2;
-	private String viaPlace3;
-	private String viaPlace4;
-	private String viaPlace5;
-
-	private Long katamichi;
-	private Long jitsu;
-	private Integer firstTeikiTsukiSu;
-	private Integer nextTeikiTsukiSu;
-
-	private String idoShudanEtcNm;
-	private String busCorpNm;
-	private Integer sanshoTeikiKin1;
-
 	private String codeNm;
 	private String shinseiName;
 	private String shudanName;
+	
+	private List<ShinseiKeiroVO> keiroList;
+	private List<ShinseiShoruiVO> shoruiList;
 
-	private Long fileUid1;
-	private String manryoYmd;
-	private String taijin;
-	private String taibutsu;
-	private String jinshin;
-	private String tojosha;
-	private String tokyu;
 
 	public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();
@@ -122,25 +96,5 @@ public class ShinseiViewDTO {
 			sb.append(newKinmuchi3.trim());
 
 		return sb.toString();
-	}
-
-	public Long getYuryo() {
-
-		Long safeKatamichi = (katamichi == null ? 0L : katamichi);
-		Long safeJitsu = (jitsu == null ? 0L : jitsu);
-
-		return safeKatamichi * (safeJitsu * 2);
-	}
-
-	public Long getTsuki() {
-		return tsuki == null ? 0L : tsuki;
-	}
-
-	public BigDecimal getShinseiKm() {
-		return shinseiKm == null ? BigDecimal.ZERO : shinseiKm;
-	}
-
-	public Long getTotal() {
-		return getTsuki() + getYuryo();
 	}
 }

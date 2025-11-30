@@ -105,25 +105,21 @@
 	</select>
 
 	<select id="getShinseiView" parameterType="map"
-		resultType="org.cosmo.domain.ShinseiViewDTO">
-
+		resultMap="shinseiViewMap">
 		SELECT
 		a.KIGYO_CD AS kigyoCd,
 		a.SHINSEI_NO AS shinseiNo,
 		a.SHINSEI_YMD AS shinseiYmd,
 		a.SHINSEI_KBN AS shinseiKbn,
 		a.SHINCHOKU_KBN AS shinchokuKbn,
-
 		a.GEN_ADDRESS_1 AS genAddress1,
 		a.GEN_ADDRESS_2 AS genAddress2,
 		a.GEN_ADDRESS_3 AS genAddress3,
 		a.NEW_ADDRESS_1 AS newAddress1,
 		a.NEW_ADDRESS_2 AS newAddress2,
 		a.NEW_ADDRESS_3 AS newAddress3,
-
 		a.GEN_SHOZOKU_CD AS genShozoku,
 		a.NEW_SHOZOKU_CD AS newShozoku,
-
 		a.GEN_KINMU_ADDRESS_1 AS genKinmuchi1,
 		a.GEN_KINMU_ADDRESS_2 AS genKinmuchi2,
 		a.GEN_KINMU_ADDRESS_3 AS
@@ -142,7 +138,16 @@
 		a.SHINSEI_YMD AS shinseiYmd,
 		a.SASHIMODOSHI_YMD AS ssmdsYmd,
 		a.MOSHIOKURI_COMMENT AS moComment,
-
+		C.KEIRO_SEQ AS shoruiKeiroSeq,
+		c.FILE_UID_1 AS fileUid1,
+		c.HOKEN_MANRYO_YMD AS
+		manryoYmd,
+		c.TAIJIN_BAISHO AS taijin,
+		c.TAIBUTSU_BAISHO AS taibutsu,
+		c.JINSHIN_SHOGAI AS jinshin,
+		c.TOJOSHA_SHOGAI AS tojosha,
+		c.TOKYU AS
+		tokyu,
 		b.KEIRO_SEQ AS keiroSeq,
 		b.TSUKIN_SHUDAN_KBN AS tsukinShudan,
 		b.SHINSEI_KM AS shinseiKm,
@@ -152,7 +157,8 @@
 		b.END_PLACE AS endPlace,
 		b.VIA_PLACE_1 AS
 		viaPlace1,
-		b.VIA_PLACE_2 AS viaPlace2,
+		b.VIA_PLACE_2 AS
+		viaPlace2,
 		b.VIA_PLACE_3 AS viaPlace3,
 		b.VIA_PLACE_4 AS viaPlace4,
 		b.VIA_PLACE_5 AS viaPlace5,
@@ -166,50 +172,139 @@
 		b.BUS_CORP_NM AS busCorpNm,
 		b.SANSHO_TEIKI_KIN_1 AS sanshoTeikiKin1,
 
-		c.FILE_UID_1 AS fileUid1,
-		c.HOKEN_MANRYO_YMD AS manryoYmd,
-		c.TAIJIN_BAISHO AS taijin,
-		c.TAIBUTSU_BAISHO AS taibutsu,
-		c.JINSHIN_SHOGAI AS jinshin,
-		c.TOJOSHA_SHOGAI AS tojosha,
-		c.TOKYU AS tokyu,
-
 		d.CODE_NM AS shinseiName,
 		e.CODE_NM AS codeNm,
-		f.CODE_NM AS shudanName
+		f.CODE_NM AS
+		shudanName,
 
-		FROM SHINSEI a
+		uf.NAME AS ufName
+		FROM
+		SHINSEI a
 
 		LEFT JOIN
 		SHINSEI_START_KEIRO b
-		ON a.KIGYO_CD = b.KIGYO_CD
-		AND a.SHINSEI_NO =
+		ON a.KIGYO_CD =
+		b.KIGYO_CD
+		AND
+		a.SHINSEI_NO =
 		b.SHINSEI_NO
 
-		LEFT JOIN SHINSEI_FUZUI_SHORUI c
-		ON a.KIGYO_CD = c.KIGYO_CD
+		LEFT JOIN SHINSEI_FUZUI_SHORUI
+		c
+		ON a.KIGYO_CD
+		= c.KIGYO_CD
 		AND a.SHINSEI_NO = c.SHINSEI_NO
+		AND
+		c.KEIRO_SEQ =
+		b.KEIRO_SEQ
 
-		INNER JOIN CODE d
+		LEFT JOIN
+		CODE d
 		ON d.CODE_SYBTSU =
 		'101'
-		AND d.CODE = a.SHINSEI_KBN
+		AND
+		d.CODE =
+		a.SHINSEI_KBN
 
-		INNER JOIN CODE e
+		LEFT JOIN CODE e
 		ON e.CODE_SYBTSU =
 		'102'
-		AND e.CODE = a.SHINCHOKU_KBN
+		AND
+		e.CODE =
+		a.SHINCHOKU_KBN
 
-		INNER JOIN CODE f
-		ON f.CODE_SYBTSU =
+		LEFT JOIN CODE f
+		ON
+		f.CODE_SYBTSU =
 		'103'
-		AND f.CODE = b.TSUKIN_SHUDAN_KBN
+		AND
+		f.CODE =
+		b.TSUKIN_SHUDAN_KBN
 
-		WHERE a.KIGYO_CD = #{kigyoCd}
+		LEFT JOIN UPLOAD_FILE uf
+		ON c.FILE_UID_1 =
+		uf.FILE_UID
+
+		WHERE a.KIGYO_CD =
+		#{kigyoCd}
 		AND
 		a.SHINSEI_NO = #{shinseiNo}
-
+		ORDER BY b.KEIRO_SEQ
 	</select>
+
+	<resultMap id="shinseiViewMap"
+		type="org.cosmo.domain.ShinseiViewDTO">
+
+		<id property="shinseiNo" column="shinseiNo" />
+
+		<result property="kigyoCd" column="kigyoCd" />
+		<result property="shinseiYmd" column="shinseiYmd" />
+		<result property="shinseiKbn" column="shinseiKbn" />
+		<result property="shinchokuKbn" column="shinchokuKbn" />
+		<result property="genAddress1" column="genAddress1" />
+		<result property="genAddress2" column="genAddress2" />
+		<result property="genAddress3" column="genAddress3" />
+		<result property="newAddress1" column="newAddress1" />
+		<result property="newAddress2" column="newAddress2" />
+		<result property="newAddress3" column="newAddress3" />
+		<result property="genShozoku" column="genShozoku" />
+		<result property="newShozoku" column="newShozoku" />
+		<result property="genKinmuchi1" column="genKinmuchi1" />
+		<result property="genKinmuchi2" column="genKinmuchi2" />
+		<result property="genKinmuchi3" column="genKinmuchi3" />
+		<result property="newKinmuchi1" column="newKinmuchi1" />
+		<result property="newKinmuchi2" column="newKinmuchi2" />
+		<result property="newKinmuchi3" column="newKinmuchi3" />
+		<result property="riyu" column="riyu" />
+		<result property="idoYmd" column="idoYmd" />
+		<result property="itenYmd" column="itenYmd" />
+		<result property="tennyuYmd" column="tennyuYmd" />
+		<result property="riyoStartYmd" column="riyoStartYmd" />
+		<result property="ssmdsYmd" column="ssmdsYmd" />
+		<result property="moComment" column="moComment" />
+
+		<result property="shinseiName" column="shinseiName" />
+		<result property="codeNm" column="codeNm" />
+		<result property="shudanName" column="shudanName" />
+
+		<collection property="shoruiList"
+			ofType="org.cosmo.domain.ShinseiShoruiVO">
+			<id property="keiroSeq" column="shoruiKeiroSeq" />
+			<result property="fileUid1" column="fileUid1" />
+			<result property="manryoYmd" column="manryoYmd" />
+			<result property="taijin" column="taijin" />
+			<result property="taibutsu" column="taibutsu" />
+			<result property="jinshin" column="jinshin" />
+			<result property="tojosha" column="tojosha" />
+			<result property="tokyu" column="tokyu" />
+		</collection>
+
+		<collection property="keiroList"
+			ofType="org.cosmo.domain.ShinseiKeiroVO">
+			<id property="keiroSeq" column="keiroSeq" />
+			<result property="tsukinShudan" column="tsukinShudan" />
+			<result property="shinseiKm" column="shinseiKm" />
+			<result property="tsuki" column="tsuki" />
+			<result property="firstShikyuYmd" column="firstShikyuYmd" />
+			<result property="startPlace" column="startPlace" />
+			<result property="endPlace" column="endPlace" />
+			<result property="viaPlace1" column="viaPlace1" />
+			<result property="viaPlace2" column="viaPlace2" />
+			<result property="viaPlace3" column="viaPlace3" />
+			<result property="viaPlace4" column="viaPlace4" />
+			<result property="viaPlace5" column="viaPlace5" />
+			<result property="katamichi" column="katamichi" />
+			<result property="jitsu" column="jitsu" />
+			<result property="firstTeikiTsukiSu"
+				column="firstTeikiTsukiSu" />
+			<result property="nextTeikiTsukiSu" column="nextTeikiTsukiSu" />
+			<result property="idoShudanEtcNm" column="idoShudanEtcNm" />
+			<result property="busCorpNm" column="busCorpNm" />
+			<result property="sanshoTeikiKin1" column="sanshoTeikiKin1" />
+			<result property="shudanName" column="shudanName" />
+		</collection>
+
+	</resultMap>
 
 	<select id="getShainUidByShinseiNo" parameterType="String"
 		resultType="String">
@@ -225,6 +320,61 @@
 		WHERE SHINSEI_NO = #{shinseiNo}
 	</select>
 
+	<select id="getShinseiKeiroList" parameterType="Long"
+		resultType="org.cosmo.domain.ShinseiKeiroVO">
+		SELECT
+		KIGYO_CD AS kigyoCd,
+		SHINSEI_NO AS shinseiNo,
+		KEIRO_SEQ AS keiroSeq,
+		TSUKIN_SHUDAN_KBN AS tsukinShudan,
+		KATAMICHI_KIN
+		AS katamichi,
+		JITSU_KINMU_NISSU AS jitsu,
+		TSUKI_SHIKYU_KIN AS tsuki,
+		SHINSEI_KM AS shinseiKm,
+		START_PLACE AS startPlace,
+		END_PLACE AS
+		endPlace,
+		VIA_PLACE_1 AS viaPlace1,
+		VIA_PLACE_2 AS viaPlace2,
+		VIA_PLACE_3 AS viaPlace3,
+		VIA_PLACE_4 AS viaPlace4,
+		VIA_PLACE_5 AS
+		viaPlace5
+		FROM SHINSEI_START_KEIRO
+		WHERE SHINSEI_NO = #{shinseiNo}
+		ORDER
+		BY KEIRO_SEQ
+	</select>
+
+	<select id="getShinseiShoruiList" parameterType="Long"
+		resultType="org.cosmo.domain.ShinseiShoruiVO">
+
+		SELECT
+		s.KIGYO_CD AS kigyoCd,
+		s.SHINSEI_NO AS shinseiNo,
+		s.KEIRO_SEQ AS keiroSeq,
+		s.HOKEN_MANRYO_YMD AS manryoYmd,
+		s.TAIJIN_BAISHO AS taijin,
+		s.TAIBUTSU_BAISHO AS taibutsu,
+		s.JINSHIN_SHOGAI AS jinshin,
+		s.TOJOSHA_SHOGAI AS tojosha,
+		s.TOKYU AS
+		tokyu,
+		s.FILE_UID_1 AS fileUid1,
+		s.FILE_UID_2 AS fileUid2,
+		s.FILE_UID_3
+		AS fileUid3,
+		s.FILE_UID_4 AS fileUid4,
+		s.FILE_UID_5 AS fileUid5
+		FROM
+		SHINSEI_FUZUI_SHORUI s
+		WHERE s.SHINSEI_NO = #{shinseiNo}
+		ORDER BY
+		s.KEIRO_SEQ
+
+	</select>
+
 
 	<select id="getShainByUid" parameterType="String"
 		resultType="org.cosmo.domain.ShainVO">
@@ -234,21 +384,29 @@
 		SHAIN_NO
 		AS shain_No,
 		SHAIN_NM AS shain_Nm,
-		SHOZOKU_CD AS shozoku_Cd
+		SHOZOKU_CD AS shozoku_Cd,
+		ADDRESS_1 AS
+		address1,
+		ADDRESS_2 AS address2,
+		ADDRESS_3 AS address3,
+		KINMU_ADDRESS_1
+		AS kinmuAddress1,
+		KINMU_ADDRESS_2 AS kinmuAddress2,
+		KINMU_ADDRESS_3 AS
+		kinmuAddress3
 		FROM SHAIN
 		WHERE SHAIN_UID = #{shainUid}
 	</select>
 
-
-
 	<select id="getFileName" parameterType="Long"
 		resultType="String">
 		SELECT f.NAME
-		FROM SHINSEI s
-		JOIN UPLOAD_FILE f
-		ON
-		s.ETC_FILE_UID_1 = f.FILE_UID
-		WHERE s.SHINSEI_NO = #{shinseiNo}
+		FROM SHINSEI_FUZUI_SHORUI s
+		LEFT JOIN
+		UPLOAD_FILE f
+		ON s.FILE_UID_1 = f.FILE_UID
+		WHERE s.SHINSEI_NO =
+		#{shinseiNo}
 	</select>
 
 

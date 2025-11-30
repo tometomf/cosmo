@@ -25,6 +25,10 @@ public interface ShinseiService {
 
 	Long getKigyoCdByShinseiNo(Long shinseiNo);
 
+	List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo);
+	
+	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo);
+
 	String getShainUidByShinseiNo(String shinseiNo);
 
 	ShinseiIcHozonVO getIchijiHozon(String hozonUid);

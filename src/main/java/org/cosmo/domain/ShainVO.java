@@ -19,4 +19,11 @@ public class ShainVO {
 	private String shinsei_No;
 	private String shinsei_Ymd;
 	private String shinchoku_kbn;
+	
+	private String address1;
+	private String address2;
+	private String address3;
+	private String kinmuAddress1;
+	private String kinmuAddress2;
+	private String kinmuAddress3;
 }
