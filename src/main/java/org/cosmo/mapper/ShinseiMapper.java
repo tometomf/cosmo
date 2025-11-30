@@ -94,13 +94,6 @@ public interface ShinseiMapper {
 	void updateForResubmit(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("shinseiRiyu") String shinseiRiyu, @Param("updUserId") String updUserId);
 
-	void updateShinseiForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("shinseiRiyu") String shinseiRiyu, @Param("newZipCd") String newZipCd,
-			@Param("newAddress1") String newAddress1, @Param("newAddress2") String newAddress2,
-			@Param("newAddress3") String newAddress3, @Param("addressIdoKeido") String addressIdoKeido,
-			@Param("addressChgKbn") String addressChgKbn, @Param("kinmuAddressIdoKeido") String kinmuAddressIdoKeido,
-			@Param("kinmuAddressChgKbn") String kinmuAddressChgKbn, @Param("updUserId") Integer updUserId);
-
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
 
@@ -124,8 +117,6 @@ public interface ShinseiMapper {
 			@Param("key4") String key4, @Param("key5") String key5, @Param("data") String data,
 			@Param("userUid") String userUid, @Param("userTrack") String userTrack);
 
-	int updateEndKeiroForReapply(Map<String, Object> param);
-
 	List<ShinseiDetailVO> selectShinseiDetail(Map<String, Object> param);
 
 	String getNextShinseiNo(@Param("kigyoCd") Long kigyoCd, @Param("todayYmd") String todayYmd);
@@ -145,5 +136,13 @@ public interface ShinseiMapper {
 
 	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("shainNo") String shainNo, @Param("updUserId") Integer updUserId);
+
+	void updateShinseiForReapply(Map<String, Object> param);
+
+	void updateStartKeiroForReapply(Map<String, Object> param);
+
+	void updateEndKeiroForReapply(Map<String, Object> param);
+
+	void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param);
 
 }

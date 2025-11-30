@@ -640,67 +640,311 @@
 		#{shinseiNo}
 	</update>
 
-
 	<update id="updateShinseiForReapply" parameterType="map">
 		UPDATE
 		SHINSEI
-		SET SHINSEI_RIYU = #{shinseiRiyu},
-		NEW_ZIP_CD = #{newZipCd},
-		NEW_ADDRESS_1 = #{newAddress1},
-		NEW_ADDRESS_2 = #{newAddress2},
-		NEW_ADDRESS_3 = #{newAddress3},
-		ADDRESS_IDO_KEIDO = #{addressIdoKeido},
-		ADDRESS_CHG_KBN = #{addressChgKbn},
-		KINMU_ADDRESS_IDO_KEIDO =
-		#{kinmuAddressIdoKeido},
-		KINMU_ADDRESS_CHG_KBN = #{kinmuAddressChgKbn},
+		SET
+		SHINSEI_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		SHINSEI_RIYU =
+		#{shinseiRiyu, jdbcType=VARCHAR},
+		TOKU_SHINSEI_RIYU = NULL,
 		SHINCHOKU_KBN = '2',
+
+		NEW_SHOZOKU_CD = #{newShozoku, jdbcType=VARCHAR},
+		NEW_ZIP_CD = #{newZipCd, jdbcType=CHAR},
+		NEW_ADDRESS_1 = #{newAddress1,
+		jdbcType=VARCHAR},
+		NEW_ADDRESS_2 = #{newAddress2, jdbcType=VARCHAR},
+		NEW_ADDRESS_3 = #{newAddress3, jdbcType=VARCHAR},
+
+
+		ADDRESS_IDO_KEIDO =
+		#{addressIdoKeido, jdbcType=VARCHAR},
+		ADDRESS_CHG_KBN =
+		#{addressChgKbn, jdbcType=CHAR},
+		KINMU_ADDRESS_IDO_KEIDO =
+		#{kinmuAddressIdoKeido, jdbcType=VARCHAR},
+		KINMU_ADDRESS_CHG_KBN =
+		#{kinmuAddressChgKbn, jdbcType=CHAR},
+
+
+		NEW_KINMU_ZIP_CD =
+		#{newKinmuZipCd, jdbcType=CHAR},
+		NEW_KINMU_ADDRESS_1 =
+		#{newKinmuAddress1, jdbcType=VARCHAR},
+		NEW_KINMU_ADDRESS_2 =
+		#{newKinmuAddress2, jdbcType=VARCHAR},
+		NEW_KINMU_ADDRESS_3 =
+		#{newKinmuAddress3, jdbcType=VARCHAR},
+		NEW_KINMU_PREF_CD =
+		#{newKinmuPrefCd, jdbcType=CHAR},
+
+		ETC_FILE_UID_1 =
+		#{etcFileUid1,
+		jdbcType=NUMERIC},
+		ETC_FILE_UID_2 = #{etcFileUid2,
+		jdbcType=NUMERIC},
+		ETC_FILE_UID_3 = #{etcFileUid3, jdbcType=NUMERIC},
+		ETC_FILE_UID_4 =
+		#{etcFileUid4, jdbcType=NUMERIC},
+		ETC_FILE_UID_5 =
+		#{etcFileUid5,
+		jdbcType=NUMERIC},
+
+		ETC_COMMENT_1 = #{etcComment1,
+		jdbcType=VARCHAR},
+		ETC_COMMENT_2 = #{etcComment2, jdbcType=VARCHAR},
+		ETC_COMMENT_3 =
+		#{etcComment3, jdbcType=VARCHAR},
+		ETC_COMMENT_4 =
+		#{etcComment4,
+		jdbcType=VARCHAR},
+		ETC_COMMENT_5 = #{etcComment5,
+		jdbcType=VARCHAR},
+
+		RIYO_END_YMD = NULL,
+		IDO_YMD = #{idoYmd,
+		jdbcType=CHAR},
+		ITEN_YMD =
+		#{itenYmd, jdbcType=CHAR},
+		TENNYU_YMD =
+		#{tennyuYmd, jdbcType=CHAR},
+		KEIRO_HENKO_YMD = #{keiroHenkoYmd,
+		jdbcType=CHAR},
+		HAISHIN_YMD = NULL,
+
+		KIGYO_SHONIN_YMD = NULL,
+		LL_SHONIN_YMD = NULL,
+		TSUKINRO_NO = NULL,
+		SASHIMODOSHI_YMD = NULL,
+		MOSHIOKURI_COMMENT = NULL,
+		BIBO_COMMENT = NULL,
+		TORIKESHI_YMD = NULL,
+		TORIKESHI_RIYU = NULL,
+		ICHIJI_HOZON_ID = NULL,
+
 		UPD_USER_ID =
 		#{updUserId, jdbcType=NUMERIC},
 		UPD_DATE = SYSTIMESTAMP
-		WHERE KIGYO_CD =
-		#{kigyoCd}
+		WHERE
+		KIGYO_CD = #{kigyoCd, jdbcType=NUMERIC}
 		AND SHINSEI_NO =
-		#{shinseiNo}
-	</update>
-
-
-
-
-
-
-
-	<update id="updateStartKeiroForReapply">
-		UPDATE SHINSEI_START_KEIRO
-		SET JITSU_KINMU_NISSU =
-		#{jitsuKinmuNissu, jdbcType=NUMERIC}
-		, UPD_USER_ID = #{updUserId,
+		#{shinseiNo,
 		jdbcType=NUMERIC}
-		,
-		UPD_DATE =
-		SYSTIMESTAMP
-		WHERE KIGYO_CD = #{kigyoCd}
-		AND SHINSEI_NO =
-		#{shinseiNo}
 	</update>
 
+	<update id="updateStartKeiroForReapply" parameterType="map">
+		UPDATE
+		SHINSEI_START_KEIRO
+		SET
+		TSUKIN_SHUDAN_KBN = #{tsukinShudanKbn,
+		jdbcType=VARCHAR},
+		TOKUREI_KBN =
+		#{tokureiKbn, jdbcType=VARCHAR},
+		KIKAN_START_YMD = #{kikanStartYmd,
+		jdbcType=VARCHAR},
+		KIKAN_END_YMD =
+		#{kikanEndYmd, jdbcType=VARCHAR},
+
+		JITSU_KINMU_NISSU =
+		#{jitsuKinmuNissu, jdbcType=NUMERIC},
+
+		IDO_SHUDAN_KBN = NULL,
+		IDO_SHUDAN_ETC_NM = #{idoShudanEtcNm,
+		jdbcType=VARCHAR},
+
+		START_PLACE =
+		#{startPlace, jdbcType=VARCHAR},
+		END_PLACE = #{endPlace,
+		jdbcType=VARCHAR},
+		VIA_PLACE_1 = #{viaPlace1,
+		jdbcType=VARCHAR},
+		VIA_PLACE_2 = #{viaPlace2, jdbcType=VARCHAR},
+		VIA_PLACE_3 =
+		#{viaPlace3, jdbcType=VARCHAR},
+		VIA_PLACE_4 =
+		#{viaPlace4,
+		jdbcType=VARCHAR},
+		VIA_PLACE_5 = #{viaPlace5,
+		jdbcType=VARCHAR},
+		KEKKA_URL = #{kekkaUrl, jdbcType=VARCHAR},
+
+		SHINSEI_KIN = #{shinseiKin,
+		jdbcType=NUMERIC},
+		FIRST_TEIKI_TSUKI_SU =
+		#{firstTeikiTsukiSu,
+		jdbcType=NUMERIC},
+		FIRST_SHIKYU_YMD = NULL,
+		FIRST_SHIKYU_KIN =
+		#{firstShikyuKin, jdbcType=NUMERIC},
+		NEXT_TEIKI_TSUKI_SU =
+		#{nextTeikiTsukiSu, jdbcType=NUMERIC},
+		REGULAR_SHIKYU_KIN =
+		#{regularShikyuKin, jdbcType=NUMERIC},
+		TSUKI_SHIKYU_KIN =
+		#{tsukiShikyuKin, jdbcType=NUMERIC},
+		KATAMICHI_KIN =
+		#{katamichiKin,
+		jdbcType=NUMERIC},
+
+		SHINKANSEN_RIYO_KBN =
+		#{shinkansenRiyoKbn,
+		jdbcType=VARCHAR},
+		TOKKYU_RIYO_KBN =
+		#{tokkyuRiyoKbn, jdbcType=VARCHAR},
+		YURO_RIYO_KBN = #{yuroRiyoKbn,
+		jdbcType=VARCHAR},
+		KEKKA_SELECT =
+		#{kekkaSelect, jdbcType=VARCHAR},
+
+		SANSHO_TEIKI_TSUKI_SU_1 =
+		#{sanshoTeikiTsukiSu1, jdbcType=NUMERIC},
+		SANSHO_TEIKI_KIN_1 =
+		#{sanshoTeikiKin1, jdbcType=NUMERIC},
+		SANSHO_TEIKI_TSUKI_SU_2 =
+		#{sanshoTeikiTsukiSu2, jdbcType=NUMERIC},
+		SANSHO_TEIKI_KIN_2 =
+		#{sanshoTeikiKin2, jdbcType=NUMERIC},
+		SANSHO_TEIKI_TSUKI_SU_3 =
+		#{sanshoTeikiTsukiSu3, jdbcType=NUMERIC},
+		SANSHO_TEIKI_KIN_3 =
+		#{sanshoTeikiKin3, jdbcType=NUMERIC},
+
+		SHINSEI_KM =
+		#{shinseiKm,
+		jdbcType=NUMERIC},
+		YURO_IC_S = #{yuroIcS,
+		jdbcType=VARCHAR},
+		YURO_IC_E =
+		#{yuroIcE, jdbcType=VARCHAR},
+		YURO_KATAMICHI_KIN = #{yuroKatamichiKin,
+		jdbcType=NUMERIC},
+
+		BETSU_ROUTE_RIYU = #{betsuRouteRiyu,
+		jdbcType=VARCHAR},
+		YURO_RIYO_RIYU
+		= #{yuroRiyoRiyu, jdbcType=VARCHAR},
+		VIA_PLACE_RIYU = #{viaPlaceRiyu,
+		jdbcType=VARCHAR},
+
+		NENPI = #{nenpi,
+		jdbcType=NUMERIC},
+
+		UPD_USER_ID =
+		#{updUserId, jdbcType=NUMERIC},
+		UPD_DATE = SYSTIMESTAMP
+		WHERE
+		KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO =
+		#{shinseiNo}
+		AND KEIRO_SEQ =
+		#{keiroSeq}
+	</update>
 
 	<update id="updateEndKeiroForReapply" parameterType="map">
 		UPDATE
 		SHINSEI_END_KEIRO
-		SET KIKAN_START_YMD = NULL,
+		SET
+		FUBI_UMU_KBN = NULL,
+		RIYO_END_YMD = NULL,
+		KIKAN_START_YMD = NULL,
 		KIKAN_END_YMD = NULL,
 		JITSU_KINMU_NISSU = NULL,
 		SHINSEI_KIN = NULL,
 		JR_MODOSHI_KBN = NULL,
 		MODOSHI_KIN = NULL,
 		MODOSHI_FILE_UID = NULL,
-		UPD_USER_ID =
-		#{loginUserId},
-		UPD_DATE = SYSDATE
+		UPD_USER_ID = #{loginUserId},
+		UPD_DATE =
+		SYSDATE
 		WHERE KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
 		AND
-		SHINSEI_NO = #{shinseiNo}
+		KEIRO_SEQ = #{keiroSeq}
+	</update>
+
+
+	<update id="updateShinseiFuzuiShoruiForReapply"
+		parameterType="map">
+		UPDATE SHINSEI_FUZUI_SHORUI
+		SET
+		MENKYO_YUKO_KIGEN = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{menkyoYukoKigen}
+		ELSE NULL
+		END,
+		MENKYO_NO = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN
+		#{menkyoNo}
+		ELSE NULL
+		END,
+		SHASHU = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN
+		('3','4') THEN #{shashu}
+		ELSE NULL
+		END,
+		TOROKU_NO = CASE
+		WHEN
+		TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{torokuNo}
+		ELSE NULL
+		END,
+		HAIKIRYO =
+		CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{haikiryo}
+		ELSE NULL
+		END,
+		SHAKEN_YUKO_KIGEN = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN
+		#{shakenYukoKigen}
+		ELSE NULL
+		END,
+
+
+		NENPI = NULL,
+
+		HOKEN_MANNYO_YMD = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{hokenMannyoYmd}
+		ELSE NULL
+		END,
+		TAIJIN_BAISYO = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN
+		#{taijinBaisho}
+		ELSE NULL
+		END,
+		TAIBUTSU_BAISYO = CASE
+		WHEN
+		TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{taibutsuBaisho}
+		ELSE NULL
+		END,
+		JINSHIN_SHOGAI = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN
+		#{jinshinShogai}
+		ELSE NULL
+		END,
+		TOJOSHA_SHOGAI = CASE
+		WHEN
+		TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{tojoshaShogai}
+		ELSE NULL
+		END,
+		TOKYU = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{tokyu}
+		ELSE NULL
+		END,
+		FIRST_TEIKI_KIKAN = CASE
+		WHEN TSUKIN_SHUDAN_KBN IN ('3','4') THEN
+		#{firstTeikiKikan}
+		ELSE NULL
+		END,
+		NEXT_TEIKI_KIKAN = CASE
+		WHEN
+		TSUKIN_SHUDAN_KBN IN ('3','4') THEN #{nextTeikiKikan}
+		ELSE NULL
+		END,
+		UPD_USER_ID = #{updUserId},
+		UPD_DATE = SYSDATE
+		WHERE
+		KIGYO_CD =
+		#{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
 		AND KEIRO_SEQ = #{keiroSeq}
 	</update>
 
@@ -899,7 +1143,8 @@
 
 
 	<insert id="insertHikimodoshiProcessLog" parameterType="map">
-		INSERT INTO PROCESS_LOG (
+		INSERT
+		INTO PROCESS_LOG (
 		PROCESS_TIMESTAMP,
 		SUBSYSTEM_ID,
 		PROCESS_COL,
@@ -916,13 +1161,16 @@
 		SYSTIMESTAMP,
 		#{subsystemId, jdbcType=VARCHAR},
 		'HIKIMODOSHI',
-		#{shinseiNo, jdbcType=NUMERIC},
+		#{shinseiNo,
+		jdbcType=NUMERIC},
 		#{shinseiKbn, jdbcType=VARCHAR},
 		#{beforeShinchokuKbn, jdbcType=VARCHAR},
-		#{afterShinchokuKbn, jdbcType=VARCHAR},
+		#{afterShinchokuKbn,
+		jdbcType=VARCHAR},
 		#{kigyoCd, jdbcType=NUMERIC},
 		NULL,
-		#{loginUserId, jdbcType=NUMERIC},
+		#{loginUserId,
+		jdbcType=NUMERIC},
 		#{userIp, jdbcType=VARCHAR}
 		)
 	</insert>

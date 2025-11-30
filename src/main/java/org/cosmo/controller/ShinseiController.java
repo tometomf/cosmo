@@ -3,7 +3,9 @@ package org.cosmo.controller;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -258,7 +260,6 @@ public class ShinseiController {
 	@PostMapping("/saishinsei") // 제교
 	public String saishinsei(@RequestParam("kigyoCd") Long paramKigyoCd, @RequestParam("shinseiNo") Long shinseiNo,
 			@RequestParam("shinseiRiyu") String shinseiRiyu,
-
 			@RequestParam(value = "newZipCd", required = false) String newZipCd,
 			@RequestParam(value = "newAddress1", required = false) String newAddress1,
 			@RequestParam(value = "newAddress2", required = false) String newAddress2,
@@ -268,25 +269,31 @@ public class ShinseiController {
 			@RequestParam(value = "addressChgKbn", required = false) String addressChgKbn,
 			@RequestParam(value = "kinmuAddressIdoKeido", required = false) String kinmuAddressIdoKeido,
 			@RequestParam(value = "kinmuAddressChgKbn", required = false) String kinmuAddressChgKbn,
-
 			HttpSession session, HttpServletRequest request, RedirectAttributes rttr) {
 
 		ShainVO loginShain = (ShainVO) session.getAttribute("shain");
-
 		if (loginShain == null) {
 			rttr.addFlashAttribute("errorMsg", "ログイン情報が無効です。再度ログインしてください。");
 			return "redirect:/";
 		}
 
-		Long kigyoCd = Long.parseLong(loginShain.getKigyo_Cd());
+		Long kigyoCd = (paramKigyoCd != null) ? paramKigyoCd : Long.parseLong(loginShain.getKigyo_Cd());
+
 		String loginUserId = loginShain.getShain_Uid();
 		String userIp = request.getRemoteAddr();
+
+		Integer updUserId = null;
+		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
+			try {
+				updUserId = Integer.valueOf(loginUserId.trim());
+			} catch (NumberFormatException e) {
+			}
+		}
 
 		ShinseiJyohouVO beforeJyohou = shinseiService.getShinseiJyohou(shinseiNo);
 
 		String shinseiKbn = null;
 		String beforeShinchokuKbn = null;
-
 		if (beforeJyohou != null) {
 			shinseiKbn = beforeJyohou.getShinseiKbn();
 			beforeShinchokuKbn = beforeJyohou.getShinchokuKbn();
@@ -342,7 +349,15 @@ public class ShinseiController {
 
 		Long keiroSeq = 1L;
 
-		shinseiService.updateEndKeiroForReapply(kigyoCd, shinseiNo, keiroSeq, loginUserId);
+		Map<String, Object> keiroParam = new HashMap<String, Object>();
+		keiroParam.put("kigyoCd", kigyoCd);
+		keiroParam.put("shinseiNo", shinseiNo);
+		keiroParam.put("keiroSeq", keiroSeq);
+		keiroParam.put("updUserId", updUserId);
+
+		shinseiService.updateStartKeiroForReapply(keiroParam);
+		shinseiService.updateEndKeiroForReapply(keiroParam);
+		shinseiService.updateShinseiFuzuiShoruiForReapply(keiroParam);
 
 		rttr.addFlashAttribute("message", "再申請が完了しました。");
 		return "redirect:/";

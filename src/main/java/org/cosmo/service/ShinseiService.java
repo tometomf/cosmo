@@ -67,11 +67,6 @@ public interface ShinseiService {
 
 	void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId);
 
-	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
-			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
-			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
-			String userIp);
-
 	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
 
 	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
@@ -85,8 +80,6 @@ public interface ShinseiService {
 	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
 			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
 
-	void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId);
-
 	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
 	String getNextShinseiNo(Long kigyoCd, String todayYmd);
@@ -94,5 +87,16 @@ public interface ShinseiService {
 	List<ShinseiDetailVO> getKakuninJyohou(Long kigyoCd, Long shinseiNo);
 
 	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp, String shainNo);
+
+	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
+			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
+			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
+			String userIp);
+
+	void updateStartKeiroForReapply(Map<String, Object> param);
+
+	void updateEndKeiroForReapply(Map<String, Object> param);
+
+	void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param);
 
 }
