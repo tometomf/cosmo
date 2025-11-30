@@ -12,6 +12,7 @@ import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.IdoCheckForm;
+import org.cosmo.domain.IdoConfirmViewDto;
 import org.cosmo.domain.KinmuForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
@@ -59,11 +60,33 @@ public class IdoConfirmController {
     private final FuzuiShoruiService fuzuiShoruiService;
 
     
-    @GetMapping("/idoconfirm")	//02조우진
+ // 02조우진
+    @GetMapping("/idoconfirm")
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
-            Model model) {
+            @RequestParam(name = "shinseiNo", required = false) String shinseiNo, // 신청번호 파라미터 추가
+            Model model,
+            HttpSession session) { // 세션 추가
 
+        // ---------------------------------------------------------
+        // 1. 세션 및 파라미터 처리 (로그인 기능 완성 전 하드코딩)
+        // ---------------------------------------------------------
+        String kigyoCd = "100";     // (가정) 세션에서 기업코드
+        String shainUid = "30000001"; // (가정) 세션에서 사원ID
+        
+        // ---------------------------------------------------------
+        // 2. DB 데이터 조회 (Service 호출)
+        // ---------------------------------------------------------
+        // 신청번호(shinseiNo)가 null이면 마스터, 값이 있으면 신청테이블을 조회해옴
+        IdoConfirmViewDto viewDto = idoConfirmService.loadDisplayData(kigyoCd, shainUid, shinseiNo);
+        
+        // 화면(JSP)으로 전달
+        model.addAttribute("view", viewDto); 
+
+
+        // ---------------------------------------------------------
+        // 3. 기존 로직 (AlertType 처리 및 Form 초기화)
+        // ---------------------------------------------------------
         if (alertType == null) {
             alertType = AlertType.JISHIN;
         }
@@ -73,12 +96,12 @@ public class IdoConfirmController {
         if (alertType == AlertType.IDOU_ITEN) {
             form.setKinmuChange("Y");
         }
+        
         model.addAttribute("alertType", alertType);
         model.addAttribute("form", form);
 
         return "idoconfirm/02_idoConfirm";
     }
-    
     @PostMapping("/next") //02조우진
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
@@ -86,7 +109,7 @@ public class IdoConfirmController {
             RedirectAttributes rttr) {
 
         if (alertType == null) {
-            alertType = AlertType.SONOHOKA;
+            alertType = AlertType.JISHIN;
         }
         boolean kinmu = form.isKinmuChanged();
         boolean jusho = form.isJushoChanged();

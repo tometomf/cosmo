@@ -5,22 +5,17 @@
 <mapper namespace="org.cosmo.mapper.AddressInputMapper">
 
    <select id="selectShainAddress" resultType="org.cosmo.domain.AddressViewDto">
-        SELECT 
-            /* 현주소 (여기는 1,2,3 다 있음) */
-            ZIP_CD      AS currentZip,
-            ADDRESS_1   AS currentPref,
-            ADDRESS_2   AS currentAddr1,
-            ADDRESS_3   AS currentAddr2,
-            
-            /* 중간주소 (여기는 1,2만 있음!) */
-            DB_ZIP_CD     AS middleZip,
-            DB_ADDRESS_1  AS middlePref,   /* 도도부현 */
-            DB_ADDRESS_2  AS middleAddr1,  /* 시구정촌+건물명 */
-            
-            
-            NULL          AS middleAddr2   
-        FROM SHAIN
-        WHERE SHAIN_UID = #{shainUid}
+       SELECT 
+    /* 현주소 (여기는 1,2,3 다 있음) */
+    ZIP_CD      AS currentZip,
+    ADDRESS_1   AS currentPref,
+    ADDRESS_2   AS currentAddr1,
+    ADDRESS_3   AS currentAddr2,
+    
+    /* 중간주소 (DB 컬럼명 KINMU_ 로 수정해야 함) */
+    KINMU_ZIP_CD     AS middleZip,    KINMU_ADDRESS_1  AS middlePref,   KINMU_ADDRESS_2  AS middleAddr1,  NULL             AS middleAddr2
+FROM SHAIN
+WHERE SHAIN_UID = #{shainUid}
     </select>
 
     <insert id="saveIchijiHozon">
