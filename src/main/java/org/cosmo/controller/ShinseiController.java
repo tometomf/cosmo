@@ -370,28 +370,38 @@ public class ShinseiController {
 			RedirectAttributes redirectAttributes) {
 
 		ShainVO shain = (ShainVO) session.getAttribute("shain");
-
 		if (shain == null) {
 			redirectAttributes.addFlashAttribute("msg", "ログイン情報が無効です。");
 			return "redirect:/";
 		}
 
-		Long kigyoCd = Long.parseLong(shain.getKigyo_Cd());
+		Long kigyoCd;
+		try {
+			kigyoCd = Long.parseLong(shain.getKigyo_Cd());
+		} catch (NumberFormatException e) {
+			redirectAttributes.addFlashAttribute("msg", "企業コードが不正です。");
+			return "redirect:/";
+		}
 
 		String loginUserId = shain.getShain_Uid();
-
 		String userIp = request.getRemoteAddr();
+		String shainNo = shain.getShain_No();
 
-		shinseiService.hikimodosu(kigyoCd, shinseiNo, loginUserId, userIp);
+		try {
 
-		ShainVO loginUser = shain;
-		ShainVO shinseiUser = shain;
+			shinseiService.hikimodosu(kigyoCd, shinseiNo, loginUserId, userIp, shainNo);
 
-		shinseiService.insertOshiraseHikimodosu(loginUser, shinseiUser, String.valueOf(shinseiNo));
+			ShainVO loginUser = shain;
+			ShainVO shinseiUser = shain;
+			shinseiService.insertOshiraseHikimodosu(loginUser, shinseiUser, String.valueOf(shinseiNo));
 
-		redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
+			redirectAttributes.addFlashAttribute("msg", "引戻ししました。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("msg", "引戻し処理に失敗しました。");
+		}
 
-		return "home";
+		return "redirect:/";
 	}
 
 	@GetMapping("/kakunin") // 제교
