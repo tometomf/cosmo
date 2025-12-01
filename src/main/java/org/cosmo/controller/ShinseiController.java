@@ -125,10 +125,14 @@ public class ShinseiController {
 
 			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd, shinseiNoLong);
 			String fileName = shinseiService.getFileName(shinseiNoLong);
-			
+			String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
+	        ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
+	        
 			model.addAttribute("mode", "view");
 			model.addAttribute("view", view);
 			model.addAttribute("fileName", fileName);
+	        model.addAttribute("shinseiUser", shinseiUser);
+
 
 			return "shinsei/dummy_11_shinseiDetail_03";
 		}
