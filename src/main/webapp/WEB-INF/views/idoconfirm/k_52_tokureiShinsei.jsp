@@ -371,6 +371,97 @@ window.onload = function() {
     "tsukinShudanKbn": "01",       // 교통수단
     "shinseiKm": 30.2              // 신청거리
 };
+    
+ // ============================================================
+    // [2] 경로 정보 (ShinseiStartKeiroVO 매핑용) - ★전체 컬럼★
+    // ============================================================
+    const startKeiroData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,               // 경로 순번 (필수)
+        // "shinseiNo": 0,           // (자동 채번되므로 생략하거나 0)
+
+        // [신청 공통]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",     // (Integer지만 빈값 보내면 null처리됨)
+
+        // [경로 기본]
+        "tsukinShudanKbn": "01",     // 01:전철
+        "startPlace": "横浜",        // 출발지
+        "endPlace": "東京",          // 도착지
+        "shinseiKm": 30.5,           // 거리
+        
+        // [특례 플래그]
+        "yuryoTokurei": "0",         
+        "kyoriKagenTokurei": "0",
+        "jougenKingakuTokurei": "0",
+        "jougenCut": "0",
+        "fubiUmuKbn": "0",
+
+        // [기간]
+        "kikanStartYmd": "20240401",
+        "kikanEndYmd": "20240930",
+        "jitsuKinmuNissu": 20,       // 근무일수
+
+        // [수단 상세]
+        "busCorpNm": "",             // 버스회사
+        "idoShudanKbn": "",          
+        "idoShudanEtcNm": "",
+
+        // [경유지 (최대 5개)]
+        "viaPlace1": "", "viaPlace2": "", "viaPlace3": "", "viaPlace4": "", "viaPlace5": "",
+        "viaPlaceEkicd1": "", "viaPlaceEkicd2": "", "viaPlaceEkicd3": "", "viaPlaceEkicd4": "", "viaPlaceEkicd5": "",
+        "viaPlaceRiyu": "",
+
+        // [좌표/역코드]
+        "startIdoKeido": "",
+        "startEkicd": "",
+        "endEkicd": "",
+        "kekkaUrl": "",
+
+        // [금액 관련]
+        "shinseiKin": 0,
+        "katamichiKin": 500,         // 편도
+        "tsukiShikyuKin": 15000,     // 월지급액
+        "regularShikyuKin": 15000,   // 정기지급액
+        
+        // [정기권 기간]
+        "firstTeikiTsukiSu": 6,      // 6개월
+        "firstShikyuYmd": "20240325",
+        "firstShikyuKin": 90000,
+        "nextTeikiTsukiSu": 6,
+
+        // [이용 구분]
+        "shinkansenRiyoKbn": "0",
+        "tokkyuRiyoKbn": "0",
+        "yuryoRiyoKbn": "0",
+        "kekkaSelect": "1",
+
+        // [참조 정기권]
+        "sanshoTeikiTsukiSu1": 1, "sanshoTeikiKin1": 15000,
+        "sanshoTeikiTsukiSu2": 3, "sanshoTeikiKin2": 44000,
+        "sanshoTeikiTsukiSu3": 6, "sanshoTeikiKin3": 85000,
+
+        // [유료도로/기타]
+        "yuryoIcS": "",
+        "yuryoIcE": "",
+        "yuryoOfukuKbn": "0",
+        "yuryoKatamichiKin": 0,
+        "betsuRouteRiyu": "",
+        "yuryoRiyoRiyu": "",
+
+        // [차량 연비 계산]
+        "nenpi": 0,
+        "gasorinDaiMae": 0, "yuryoDaiMae": 0, "goukeiMae": 0, "hiwariMae": 0,
+        "gasorinDaiAto": 0, "yuryoDaiAto": 0, "goukeiAto": 0, "hiwariAto": 0,
+
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -397,27 +488,34 @@ window.onload = function() {
                 return;
             }
 
-         // ★ [수정] 중복 방지 로직 (A,A 문제 완벽 해결!)
+         // ============================================================
+            // ★ [핵심] 데이터 집어넣는 기계(함수)를 만듭니다.
             // ============================================================
-            for (let key in shinseiData) {
-                
-                // 1. 폼 안에 이미 똑같은 이름의 input이 있나 찾는다.
-                let oldInput = form.querySelector('input[name="' + key + '"]');
-                
-                // 2. 있으면 지워버린다! (이게 핵심)
-                if (oldInput) {
-                    form.removeChild(oldInput);
-                }
+            function addHiddenData(dataObj) {
+                for (let key in dataObj) {
+                    // 1. 기존에 있는 태그 삭제 (중복 방지)
+                    let oldInput = form.querySelector('input[name="' + key + '"]');
+                    if (oldInput) {
+                        form.removeChild(oldInput);
+                    }
 
-                // 3. 깨끗한 상태에서 새로 만든다.
-                let input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;           
-                input.value = shinseiData[key];
-                form.appendChild(input);
+                    // 2. 새 태그 생성해서 넣기
+                    let input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;           
+                    input.value = dataObj[key];
+                    form.appendChild(input);
+                }
             }
 
-            // (3) 전송
+            
+            // 1. 신청 정보 넣기
+            addHiddenData(shinseiData);
+
+            // 2. 경로 정보 넣기            
+            addHiddenData(startKeiroData); 
+
+            // (3) 최종 전송
             form.submit();
         };
     };
