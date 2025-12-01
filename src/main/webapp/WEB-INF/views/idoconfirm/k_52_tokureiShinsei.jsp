@@ -255,7 +255,7 @@ window.onload = function() {
     // [1] PK 및 기본 정보
     // ==================================================
     "kigyoCd": 1,
-    "shinseiNo": "${shinseiNo}" === "" ? "0" : "${shinseiNo}",
+    "shinseiNo": "${shinseiNo}" == "" ? "0" : "${shinseiNo}",
     
     "shinseiKbn": "A",             // A:신규 (2자리 이내 OK)
     "shinseiYmd": "20231201",      // (8자리 숫자)
