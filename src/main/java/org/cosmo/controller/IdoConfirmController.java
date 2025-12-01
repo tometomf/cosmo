@@ -510,7 +510,7 @@ public class IdoConfirmController {
             type = "A";
         }
         if (shinseiNo == null || shinseiNo.trim().isEmpty()) {
-            shinseiNo = "1";
+            shinseiNo = "0";
         }
 
         model.addAttribute("tokureiType", type);

@@ -12,34 +12,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TokureiServiceImpl implements TokureiService {
 
-	// 매퍼 연결 (Lombok이 생성자 만들어줌)
-    private final TokureiMapper tokureiMapper;
+	private final TokureiMapper tokureiMapper;
 
     @Override
+    // (인터페이스도 파라미터 1개로 다시 돌려놓으세요: void registerShinsei(ShinseiDTO dto);)
     public void registerShinsei(ShinseiDTO dto) {
-    	// 1. DTO에 신청번호(PK)가 들어있는지 확인
-        // (long 타입이라 null 체크 대신 0보다 큰지 확인하면 됩니다)
-        long no = dto.getShinseiNo();
+        
+        Long no = dto.getShinseiNo();
+        System.out.println(">>> [Service] 전달받은 번호: " + no);
 
-        System.out.println(">>> Service 진입. 신청번호 확인: " + no);
-
-        // 2. 번호가 있으면 [수정], 없으면 [신규]
-        if (no > 0) {
-            // ------------------------------------------------
-            // [CASE A] 수정 (Update)
-            // ------------------------------------------------
-            System.out.println(">>> 기존 번호(" + no + ")가 존재함 -> UPDATE 실행");
-            tokureiMapper.updateShinsei(dto); // (Mapper에 이거 만들었죠?)
+        if (no != null && no > 0) {
+            // [수정] 번호가 있다 -> UPDATE
+            System.out.println(">>> 기존 번호 존재 -> UPDATE 실행");
+            tokureiMapper.updateShinsei(dto);
             
         } else {
-            // ------------------------------------------------
-            // [CASE B] 신규 (Insert)
-            // ------------------------------------------------
+            // [신규] 번호가 없다(0) -> INSERT
             System.out.println(">>> 번호 없음(0) -> INSERT 실행");
             tokureiMapper.insertShinsei(dto);
+            
+            System.out.println(">>> 채번된 새 번호: " + dto.getShinseiNo());
         }
-        
-        System.out.println(">>> Service: 처리 완료!");
     }
     
 }

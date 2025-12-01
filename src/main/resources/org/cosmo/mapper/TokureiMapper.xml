@@ -8,71 +8,63 @@
 	<insert id="insertShinsei" parameterType="org.cosmo.domain.ShinseiDTO">	
 	
 		<selectKey keyProperty="shinseiNo" resultType="long" order="BEFORE">
-      		  SELECT NVL(MAX(SHINSEI_NO), 20231201000) + 1 
+      		 SELECT NVL(MAX(SHINSEI_NO), 1000) + 1 
        		 FROM SHINSEI
        		 WHERE KIGYO_CD = #{kigyoCd}
     	</selectKey>
 	
         INSERT INTO SHINSEI (
-            KIGYO_CD,
-            SHINSEI_NO,
-            SHAIN_NO,
-            SHAIN_UID,
-            SHINSEI_KBN,
-            SHINSEI_YMD,
-            RIYO_START_YMD,
-            RIYO_END_YMD,
-            GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2,
-            NEW_ZIP_CD, NEW_ADDRESS_1, NEW_ADDRESS_2, ADDRESS_CHG_KBN,
-            TSUKINRO_NO, JITSU_KM, SHINCHOKU_KBN, 
-            TOKU_SHINSEI_RIYU,  -- DB 컬럼명
-            ALERT_UMU
+            KIGYO_CD, SHINSEI_NO, SHAIN_NO, SHAIN_UID,
+            SHINSEI_KBN, SHINSEI_YMD, RIYO_START_YMD, RIYO_END_YMD,
+            GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2, GEN_ADDRESS_3,
+            NEW_ZIP_CD, NEW_ADDRESS_1, NEW_ADDRESS_2, NEW_ADDRESS_3,
+            ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
+            GEN_SHOZOKU_CD, NEW_SHOZOKU_CD,
+            GEN_KINMU_ZIP_CD, GEN_KINMU_ADDRESS_1, GEN_KINMU_ADDRESS_2, GEN_KINMU_ADDRESS_3, GEN_KINMU_PREF_CD,
+            NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1, NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, NEW_KINMU_PREF_CD,
+            TSUKINRO_NO, JITSU_KM, SHINCHOKU_KBN, JUTAKU_KBN, ALERT_UMU,
+            TOKU_SHINSEI_RIYU, SHINSEI_RIYU,
+            ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
         ) VALUES (
-            #{kigyoCd},
-            #{shinseiNo},
-            #{shainNo},
-            #{shainUid},
-            #{shinseiKbn},
-            #{shinseiYmd},
-            #{riyoStartYmd},
-            #{riyoEndYmd},
-            #{genZipCd}, #{genAddress1}, #{genAddress2},
-            #{newZipCd}, #{newAddress1}, #{newAddress2}, #{addressChgKbn},
-            #{tsukinroNo}, #{jitsuKm}, #{shinchokuKbn}, 
-            #{tokuShinseiRiyu}, -- DTO 변수명 (이게 중요!!)
-            #{alertUmu}
+            #{kigyoCd}, #{shinseiNo}, #{shainNo}, #{shainUid},
+            #{shinseiKbn}, #{shinseiYmd}, #{riyoStartYmd}, #{riyoEndYmd},
+            #{genZipCd}, #{genAddress1}, #{genAddress2}, #{genAddress3},
+            #{newZipCd}, #{newAddress1}, #{newAddress2}, #{newAddress3},
+            #{addressChgKbn}, #{kinmuAddressChgKbn}, #{kyushokuHukkiKbn},
+            #{genShozokuCd}, #{newShozokuCd},
+            #{genKinmuZipCd}, #{genKinmuAddress1}, #{genKinmuAddress2}, #{genKinmuAddress3}, #{genKinmuPrefCd},
+            #{newKinmuZipCd}, #{newKinmuAddress1}, #{newKinmuAddress2}, #{newKinmuAddress3}, #{newKinmuPrefCd},
+            #{tsukinroNo}, #{jitsuKm}, #{shinchokuKbn}, #{jutakuKbn}, #{alertUmu},
+            #{tokuShinseiRiyu}, #{shinseiRiyu},
+            #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
         )
     </insert>
-    
+
     <update id="updateShinsei" parameterType="org.cosmo.domain.ShinseiDTO">
-    UPDATE SHINSEI
-    SET
-        SHINSEI_KBN = #{shinseiKbn},
-        SHINSEI_YMD = #{shinseiYmd},
-        RIYO_START_YMD = #{riyoStartYmd},
-        RIYO_END_YMD = #{riyoEndYmd},
-        
-        GEN_ZIP_CD = #{genZipCd},
-        GEN_ADDRESS_1 = #{genAddress1},
-        GEN_ADDRESS_2 = #{genAddress2},
-        
-        NEW_ZIP_CD = #{newZipCd},
-        NEW_ADDRESS_1 = #{newAddress1},
-        NEW_ADDRESS_2 = #{newAddress2},
-        ADDRESS_CHG_KBN = #{addressChgKbn},
-        
-        TSUKINRO_NO = #{tsukinroNo},
-        JITSU_KM = #{jitsuKm},
-        SHINCHOKU_KBN = #{shinchokuKbn},
-        TOKU_SHINSEI_RIYU = #{tokuShinseiRiyu}, -- 특례사유 수정
-        ALERT_UMU = #{alertUmu},
-        
-        UPD_USER_ID = #{shainUid}, -- 수정자 ID
-        UPD_DATE = SYSTIMESTAMP    -- 수정시간
-    WHERE
-        KIGYO_CD = #{kigyoCd}
-        AND SHINSEI_NO = #{shinseiNo} -- ★ 핵심: 번호가 맞는 놈만 수정해라!
-</update>
+        UPDATE SHINSEI
+        SET
+            SHINSEI_KBN = #{shinseiKbn},
+            SHINSEI_YMD = #{shinseiYmd},
+            RIYO_START_YMD = #{riyoStartYmd},
+            RIYO_END_YMD = #{riyoEndYmd},
+            
+            GEN_ZIP_CD = #{genZipCd}, GEN_ADDRESS_1 = #{genAddress1}, GEN_ADDRESS_2 = #{genAddress2},
+            NEW_ZIP_CD = #{newZipCd}, NEW_ADDRESS_1 = #{newAddress1}, NEW_ADDRESS_2 = #{newAddress2},
+            ADDRESS_CHG_KBN = #{addressChgKbn},
+            
+            TSUKINRO_NO = #{tsukinroNo},
+            JITSU_KM = #{jitsuKm},
+            SHINCHOKU_KBN = #{shinchokuKbn},
+            
+            TOKU_SHINSEI_RIYU = #{tokuShinseiRiyu}, -- 특례사유 수정
+            ALERT_UMU = #{alertUmu},
+            
+            UPD_USER_ID = #{updUserId},
+            UPD_DATE = SYSTIMESTAMP
+        WHERE
+            KIGYO_CD = #{kigyoCd}
+            AND SHINSEI_NO = #{shinseiNo}
+    </update>
 
 </mapper>
 
