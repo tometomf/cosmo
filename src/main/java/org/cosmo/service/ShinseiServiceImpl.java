@@ -256,36 +256,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	@Transactional
-	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
-			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
-			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
-			String userIp) {
-
-		Integer updUserId = null;
-		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
-			try {
-				updUserId = Integer.valueOf(loginUserId.trim());
-			} catch (NumberFormatException e) {
-
-			}
-		}
-
-		shinseiMapper.updateShinseiForReapply(kigyoCd, shinseiNo, shinseiRiyu, newZipCd, newAddress1, newAddress2,
-				newAddress3, addressIdoKeido, addressChgKbn, kinmuAddressIdoKeido, kinmuAddressChgKbn, updUserId);
-
-		Integer jitsu = null;
-		if (jitsuKinmuNissu != null && !jitsuKinmuNissu.trim().isEmpty()) {
-			try {
-				jitsu = Integer.valueOf(jitsuKinmuNissu.trim());
-			} catch (NumberFormatException e) {
-			}
-		}
-
-		shinseiMapper.updateStartKeiroForReapply(kigyoCd, shinseiNo, jitsu, updUserId);
-	}
-
-	@Override
 	public ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq) {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("kigyoCd", kigyoCd);
@@ -351,19 +321,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public void updateEndKeiroForReapply(Long kigyoCd, Long shinseiNo, Long keiroSeq, String loginUserId) {
-
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("kigyoCd", kigyoCd);
-		param.put("shinseiNo", shinseiNo);
-		param.put("keiroSeq", keiroSeq);
-		param.put("loginUserId", loginUserId);
-
-		int updated = shinseiMapper.updateEndKeiroForReapply(param);
-
-	}
-
-	@Override
 	public String getNextShinseiNo(Long kigyoCd, String todayYmd) {
 		return shinseiMapper.getNextShinseiNo(kigyoCd, todayYmd);
 	}
@@ -416,4 +373,53 @@ public class ShinseiServiceImpl implements ShinseiService {
 		shinseiMapper.insertHikimodoshiProcessLog(logParam);
 	}
 
+	@Override
+	@Transactional
+	public void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
+			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
+			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
+			String userIp) {
+
+		Integer updUserId = null;
+		if (loginUserId != null && !loginUserId.trim().isEmpty()) {
+			try {
+				updUserId = Integer.valueOf(loginUserId.trim());
+			} catch (NumberFormatException e) {
+
+			}
+		}
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+		param.put("shinseiRiyu", shinseiRiyu);
+		param.put("newZipCd", newZipCd);
+		param.put("newAddress1", newAddress1);
+		param.put("newAddress2", newAddress2);
+		param.put("newAddress3", newAddress3);
+		param.put("jitsuKinmuNissu", jitsuKinmuNissu);
+		param.put("addressIdoKeido", addressIdoKeido);
+		param.put("addressChgKbn", addressChgKbn);
+		param.put("kinmuAddressIdoKeido", kinmuAddressIdoKeido);
+		param.put("kinmuAddressChgKbn", kinmuAddressChgKbn);
+		param.put("updUserId", updUserId);
+
+		shinseiMapper.updateShinseiForReapply(param);
+
+	}
+
+	@Override
+	public void updateStartKeiroForReapply(Map<String, Object> param) {
+		shinseiMapper.updateStartKeiroForReapply(param);
+	}
+
+	@Override
+	public void updateEndKeiroForReapply(Map<String, Object> param) {
+		shinseiMapper.updateEndKeiroForReapply(param);
+	}
+
+	@Override
+	public void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param) {
+		shinseiMapper.updateShinseiFuzuiShoruiForReapply(param);
+	}
 }
