@@ -287,9 +287,7 @@
 		var addr2 = document.getElementById("address2Input").value.trim();
 
 		document.getElementById("newAddress1Hidden").value = pref;
-
 		document.getElementById("newAddress2Hidden").value = addr1;
-
 		document.getElementById("newAddress3Hidden").value = addr2;
 
 		var jitsuInput = document.getElementById("jitsuKinmuInput");
@@ -301,6 +299,10 @@
 		var addressChgKbn = document.getElementById("addressChgKbnHidden").value;
 		var addressIdoKeido = document.getElementById("addressIdoKeidoHidden").value;
 
+		// ★ 추가: 勤務地 変更フラグ도 같이 읽기
+		var kinmuAddressChgKbn = document
+				.getElementById("kinmuAddressChgKbnHidden").value;
+
 		console.log('=== 送信データ確認 ===');
 		console.log('NEW_ZIP_CD:', zip1 + zip2);
 		console.log('NEW_ADDRESS_1 (都道府県):', pref);
@@ -308,6 +310,14 @@
 		console.log('NEW_ADDRESS_3 (住所2):', addr2);
 		console.log('ADDRESS_CHG_KBN:', addressChgKbn);
 		console.log('ADDRESS_IDO_KEIDO:', addressIdoKeido);
+		console.log('KINMU_ADDRESS_CHG_KBN:', kinmuAddressChgKbn);
+
+		// ★ 요구사항: 플래그가 서 있으면 경고 메시지 표시
+		if (addressChgKbn === "1" || kinmuAddressChgKbn === "1") {
+			alert("住所または勤務地が変更されていますので通勤経路情報を修正してください。");
+			// 재신청 자체를 막으려면 여기서 return; 추가하면 됨
+			// return;
+		}
 
 		if (pref.length > 8) {
 			alert('都道府県が長すぎます。(最大8文字)');
@@ -1059,12 +1069,14 @@
 
 	<form id="backForm" action="/shinsei/backFromConfirm" method="post">
 		<input type="hidden" name="kigyoCd" value="${kakuninheader.kigyoCd}">
-		<input type="hidden" name="shinseiNo" value="${kakuninheader.shinseiNo}">
+		<input type="hidden" name="shinseiNo"
+			value="${kakuninheader.shinseiNo}">
 	</form>
 
 	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
 		<input type="hidden" name="kigyoCd" value="${kakuninheader.kigyoCd}">
-		<input type="hidden" name="shinseiNo" value="${kakuninheader.shinseiNo}">
+		<input type="hidden" name="shinseiNo"
+			value="${kakuninheader.shinseiNo}">
 
 
 
