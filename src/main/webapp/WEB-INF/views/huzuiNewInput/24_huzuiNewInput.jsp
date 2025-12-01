@@ -437,7 +437,7 @@ input[type="file"] {
 		    const formElements = document.getElementById("shainForm").elements;
 		    
 		    // 3. file_Uid_X 패턴을 가진 필드를 찾아 값을 초기화합니다.
-		   /*  for (let i = 0; i < formElements.length; i++) {
+		    for (let i = 0; i < formElements.length; i++) {
 		        const element = formElements[i];
 		        
 		        // name이 'file_Uid_'로 시작하는 필드를 찾습니다.
@@ -447,7 +447,7 @@ input[type="file"] {
 		                element.value = ""; 
 		            }
 		            
-		        } */
+		        } 
 		    
 			document.getElementById("shainForm").submit();
 		});

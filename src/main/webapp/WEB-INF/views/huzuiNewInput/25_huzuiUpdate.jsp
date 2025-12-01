@@ -223,16 +223,16 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 				     updDate: upd_Date	
 		    },
 		    shinseiDTO : {
-		    		etcFileUid1:etc_File_Uid1,
-		    		etcFileUid2:etc_File_Uid2,
-		    		etcFileUid3:etc_File_Uid3,
-		    		etcFileUid4:etc_File_Uid4,
-		    		etcFileUid5:etc_File_Uid5,
-		    		etcComment1:etc_Comment1,
-		    		etcComment2:etc_Comment2,
-		    		etcComment3:etc_Comment3,
-		    		etcComment4:etc_Comment4,
-		    		etcComment5:etc_Comment5, 
+		    		etcFileUid1:etc_File_Uid_1,
+		    		etcFileUid2:etc_File_Uid_2,
+		    		etcFileUid3:etc_File_Uid_3,
+		    		etcFileUid4:etc_File_Uid_4,
+		    		etcFileUid5:etc_File_Uid_5,
+		    		etcComment1:etc_Comment_1,
+		    		etcComment2:etc_Comment_2,
+		    		etcComment3:etc_Comment_3,
+		    		etcComment4:etc_Comment_4,
+		    		etcComment5:etc_Comment_5, 
 		    		addUserId: add_User_Id,
 				    addDate: add_Date,
 				    updUserId: upd_User_Id,
@@ -250,17 +250,6 @@ document.getElementById("shincou").addEventListener("click", function(e) {
 		    	processLogDTO : {
 		    		key5:kigyoCd,
 		    		userUid:shainUid
-		    	},
-		    	uploadFileDTO : {
-		    		/* fileUid : ,
-		    		title : ,
-		    		name : ,
-		    		contentType : ,
-		    		data : , */
-		    		addUserId: add_User_Id,
-					addDate: add_Date,
-					updUserId: upd_User_Id,
-					updDate: upd_Date	
 		    	}
 		    		
 		    };

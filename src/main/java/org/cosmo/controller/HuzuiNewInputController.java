@@ -1,17 +1,19 @@
 package org.cosmo.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -71,70 +73,18 @@ public class HuzuiNewInputController {
 	        try {
 	            ShainVO shain = (ShainVO) session.getAttribute("shain");
 	            if(shain != null) {
-	                // ⭐ 1. 파일이 저장될 디렉토리 경로 정의 (C:/cosmo/upload/files) ⭐
-	                String uploadPath = "C:/cosmo/upload/files"; // 안전한 절대 경로 (슬래시 사용)
-
-	                // 2. 디렉토리가 존재하는지 확인하고, 없다면 생성
-	                File uploadDirectory = new File(uploadPath);
-	                if (!uploadDirectory.exists()) {
-	                    boolean result = uploadDirectory.mkdirs(); 
-	                    if (!result) {
-	                        System.err.println("업로드 디렉토리 생성 실패: " + uploadPath);
-	                        throw new RuntimeException("업로드 디렉토리 생성 실패: " + uploadPath);
-	                    }
-	                }
-	                
-	                // ... (사원 정보 및 DTO 설정 로직) ...
-	                LocalDate today1 = LocalDate.now();
-	           	 	LocalTime now = LocalTime.now();
-
-	
-		           	 // 시간 포맷을 "HHmm"으로 설정
-		           	 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		           	 String time = now.format(timeFormatter);
-	
-		           	 // 날짜와 시간을 결합하여 "yyyy-MM-dd HH:mm:ss" 형식의 문자열을 만듭니다.
-		           	 String dateTimeString = today1.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " " + time;
-	
-		           	 // Timestamp 객체로 변환
-		           	 Timestamp timestamp = Timestamp.valueOf(dateTimeString);
-		           	 
-	                UploadFileDTO UploadFile = new UploadFileDTO();
-	                Random rand = new Random();
-	                StringBuilder sb = new StringBuilder();
-
-	                // 첫 자리 1~9 (0으로 시작하면 18자리 안됨)
-	                sb.append(rand.nextInt(9) + 1);
-
-	                // 나머지 17자리 0~9
-	                for (int i = 0; i < 17; i++) {
-	                    sb.append(rand.nextInt(10));
-	                }
-
-	                // 문자열을 long으로 변환
-	                Long positiveLong = Long.parseLong(sb.toString());
-	                Long fileUid = positiveLong;
-	                
-	                UploadFile.setTitle(fileNo);
-	                UploadFile.setName(file.getOriginalFilename());
-	                UploadFile.setContentType(file.getContentType());
-	                UploadFile.setData(file.getBytes());
-	                UploadFile.setFileUid(fileUid);
-	                UploadFile.setAddDate(timestamp);
-	                UploadFile.setUpdDate(timestamp);
-	                // ⭐ 3. 최종 파일 이름을 만듭니다. ⭐
-	                String savedFileName = positiveLong + "-" + file.getOriginalFilename();
 	               
+	            	UploadFileDTO dto = huzuiNewInputService.saveTempFile(file,fileNo,fNo,session);
+
+	                List<UploadFileDTO> tempFiles =
+	                        (List<UploadFileDTO>) session.getAttribute("tempFiles");
+	                if (tempFiles == null) tempFiles = new ArrayList<>();
+	                tempFiles.add(dto);
+	                session.setAttribute("tempFiles", tempFiles);
+	                
 	               
-	                // ⭐ 4. 파일을 저장할 최종 File 객체를 생성합니다. ⭐
-	                // File destination = new File(uploadPath, savedFileName);
-	                // 위 코드는 아래와 동일합니다. 
-	                File destination = new File(uploadPath + File.separator + savedFileName);
-	                fNo.toUpperCase();
-	                // 5. 파일 저장
-	                file.transferTo(destination);
-	                huzuiNewInputService.addFile(UploadFile, fNo,shain);
-	                return ResponseEntity.ok(Collections.singletonMap("uid", positiveLong));
+	                
+	                return ResponseEntity.ok(Collections.singletonMap("uid", dto.getFileUid()));
 	            } else {
 	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사원 정보가 없습니다.");
 	            }
@@ -146,7 +96,7 @@ public class HuzuiNewInputController {
 	        return ResponseEntity.badRequest().body("파일을 선택해주세요");
 	    }
 	}
-			
+		
 	//김민수
 	@RequestMapping(value = "/updateForm", method = RequestMethod.POST)
 	public String update(@RequestParam("uploadedFiles") List<MultipartFile> fileList,ShainFuzuiShoruiVO vo, Model model, HttpSession session) {
@@ -162,6 +112,7 @@ public class HuzuiNewInputController {
 			model.addAttribute("shainHuzuiShorui", data);
 			
 		}
+		
 		
 		model.addAttribute("shainHuzui", vo);
 		System.out.print(vo);
@@ -258,6 +209,8 @@ public class HuzuiNewInputController {
  	        oshiraseDTO.setOshiraseNaiyo("申請");
  	        oshiraseDTO.setTsuchiYmd(toDay);
  	        
+ 	        session.setAttribute("shinseiNo", shinseiNo);
+ 	        
  	        LocalTime now = LocalTime.now();
  	        String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
  	        
@@ -272,10 +225,28 @@ public class HuzuiNewInputController {
  	      oshiraseDTO.setAddDate(timestamp);
           oshiraseDTO.setUpdDate(timestamp);
  	       
- 	      
- 	      
- 	      
- 	      
+          Map<String, Path> uploadedFiles = (Map<String, Path>) session.getAttribute("uploadedFiles");
+          
+          
+          
+          List<UploadFileDTO> tempFiles =
+                  (List<UploadFileDTO>) session.getAttribute("tempFiles");
+          if(uploadedFiles != null && tempFiles != null) {
+        	  Map.Entry<String, Path>[] entries =
+          	        uploadedFiles.entrySet().toArray(new Map.Entry[0]);
+          for(int i=0; i < tempFiles.size(); i++) {
+        	  UploadFileDTO fileDTO = tempFiles.get(i);
+        	  Map.Entry<String, Path> entry = entries[i];
+        	  
+        	  String fNo = entry.getKey();
+        	  Path value = entry.getValue();
+
+        	  byte[] data = Files.readAllBytes(value);
+        	  fileDTO.setData(data);
+        	  
+        	  huzuiNewInputService.addFile(fileDTO, fNo, shain);
+          }
+          }
  	     huzuiNewInputService.saveAll(shinseiDTO, shain, shinseiFuzuiShorui, oshiraseDTO,processLogDTO);
             return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
         } catch (Exception e) {
@@ -286,7 +257,9 @@ public class HuzuiNewInputController {
 	
 	//김민수
 	@RequestMapping(value = "/finalForm", method = RequestMethod.GET)
-	public String kanryo() {
+	public String kanryo(HttpSession session, Model model) {
+		 String shinseiNo = (String) session.getAttribute("lastShinseiNo");
+		    model.addAttribute("shinseiNo", shinseiNo);
 		
 		return "/huzuiNewInput/26_huzuiKanryo";
 	}

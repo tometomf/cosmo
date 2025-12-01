@@ -1,6 +1,9 @@
 package org.cosmo.service;
 
-import org.apache.ibatis.annotations.Param;
+import java.io.IOException;
+
+import javax.servlet.http.HttpSession;
+
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ProcessLogDTO;
@@ -10,6 +13,7 @@ import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.UploadFileDTO;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 //김민수
 public interface HuzuiNewInputService {
@@ -25,6 +29,8 @@ public interface HuzuiNewInputService {
     
     @Transactional
     public void addFile(UploadFileDTO UploadFile,String fNo,ShainVO shain);
+    
+    public UploadFileDTO saveTempFile(MultipartFile file,String fileNo,String fNo,HttpSession session) throws IOException;
     
 }  
 
