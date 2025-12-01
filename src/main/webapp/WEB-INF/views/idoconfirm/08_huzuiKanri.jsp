@@ -111,7 +111,7 @@
 	// 서류명 링크 클릭 시, 등록되어있는 서류를 팝업으로 표시
 	function showDocument(fileUidFieldName) {
 		// 해당 입력 필드의 File UID 값 가져오기
-		var fileUidInput = document.getElementsByName(fileUidFiledName)[0];
+		var fileUidInput = document.getElementsByName(fileUidFieldName)[0];
 		
 		if (!fileUidInput) {
 			alert('파일 ID 필드를 찾을 수 없습니다.');
@@ -126,7 +126,7 @@
 		}
 		
 		// 파일 뷰어 팝업 URL 구성 (Controller의 뷰어 엔드포인트 호출)
-		var viewerUrl = '/idoconfirm/viewDocument?fileUid' + fileUid;
+		var viewerUrl = '/idoconfirm/viewDocument?fileUid=' + fileUid;
 
 		window.open(viewerUrl, 'documentViewer', 'width=800, height=600, scrollbars=yes, resizable=yes');
 	}
@@ -348,7 +348,7 @@
 							</div>
 							<div class="form_Normal">
 								<div id="menkyoInput1" style="display: none;">
-									<input type="hidden" id="hiddenFileUidField_FILE_UID_4" name="shinseiFuzuiShoruiList[0].fileUid4"/>
+									<input type="hidden" id="hiddenFileUidField_FILE_UID_4" name="shainFuzuiShoruiList[0].fileUid4"/>
 									<input type="text" id="selectedFileName_FILE_UID_4" readonly>
 									<input type="file" id="realFileInput_FILE_UID_4" name="menkyoCopyFile" style="display: none;"
 										onchange="updateFileNameDisplay('realFileInput_FILE_UID_4', 'selectedFileName_FILE_UID_4')">

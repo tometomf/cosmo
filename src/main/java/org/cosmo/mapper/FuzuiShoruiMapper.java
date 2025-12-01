@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.KigyoKiteiDTO;
 import org.cosmo.domain.OshiraseDTO;
@@ -73,4 +74,7 @@ public interface FuzuiShoruiMapper {
 	
 	// 11. [조회] 현재 면허증 만료일 조회 (SHAIN_UID 기준)
 	String selectCurrentMenkyoKigen(Integer shainUid);
+	
+	// 12. [조회] 파일 데이터 조회
+	FileViewDTO selectFileByFileUid(String fileUid);
 }

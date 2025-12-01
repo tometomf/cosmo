@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.util.List;
 
+import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.SearchCriteriaDTO;
@@ -23,5 +24,8 @@ public interface FuzuiShoruiService {
 	void tempSave(IchijiHozonDTO hozonData);
 
 	// 4. 파일 업로드
-	Long saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType); 
+	String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType);
+	
+	// 5. 파일 뷰어용 데이터 조회
+	FileViewDTO getFileForView(String fileUid);
 }

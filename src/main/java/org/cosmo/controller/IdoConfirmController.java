@@ -1,5 +1,7 @@
 package org.cosmo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -38,7 +41,9 @@ import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.OshiraseService;
 import org.cosmo.service.ShozokuService;
 import org.cosmo.service.TokureiService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -605,7 +610,7 @@ public class IdoConfirmController {
 		
 		try {
 			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
-			Long newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
 			
 			// 4. 성공 응답 구성 및 반환
 			UploadResult result = UploadResult.builder()
@@ -629,5 +634,61 @@ public class IdoConfirmController {
 			
 			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@GetMapping("/viewDocument")
+	public ResponseEntity<byte[]> viewDocument(@RequestParam("fileUid") String fileUid) {
+		// 1. Service를 통해 파일 데이터 및 메타 정보 조회
+		FileViewDTO fileData = fuzuiShoruiService.getFileForView(fileUid);
+		
+		if (fileData == null) {
+			// 등록된 파일이 없을 경우 404 또는 204 No Content 반환
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		String contentType = fileData.getContentType();
+		
+		System.out.println("DEBUG: 조회된 ContentType (DB 값): [" + contentType + "]");
+		
+		// DB에서 조회한 값이 null이거나 빈 문자열인지 확인
+		if (contentType == null || contentType.trim().isEmpty()) {
+			System.err.println("ERROR: DB에서 조회된 ContentType이 NULL 또는 비어 있습니다. 파일 UID: " + fileUid);
+
+			// **방어 로직**: 기본값 설정
+			// 오류를 막기 위해 알 수 없는 바이너리 파일 타입인 'application/octet-stream'으로 대체
+			contentType = "application/octet-stream";
+			System.out.println("DEBUG: ContentType을 기본값 [application/octet-stream]으로 대체합니다.");
+		}
+		
+		// 2. Content Type 설정 (HTTP Header)
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0L);
+		
+		// 3. 파일 이름 설정 (Content-Disposition을 'inline' 으로 하여 팝업/브라우저에 표시)
+		String fileName = fileData.getName(); 
+		String encodedFileName = "file"; // 파일 이름이 null이거나 비어있을 경우 사용할 기본값
+
+		// 파일 이름이 null이 아닐 때만 인코딩을 시도합니다.
+		if (fileName != null && !fileName.isEmpty()) {
+			try {
+				// 파일명에 포함된 공백, 한글 등을 UTF-8로 인코딩
+				encodedFileName = URLEncoder.encode(fileName, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				System.err.println("UTF-8 인코딩을 지원하지 않아 파일명을 인코딩할 수 없습니다.");
+				// 인코딩 실패 시 (매우 드물지만) 안전한 이름으로 대체
+				encodedFileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_"); 
+			}
+		} else {
+			System.err.println("ERROR: DB에서 조회된 파일 이름(NAME)이 NULL 또는 비어 있습니다. 기본 이름 'file' 사용.");
+		}
+
+		// Content-Disposition을 'inline'으로 설정하여 브라우저에서 바로 표시하도록 합니다.
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + encodedFileName + "\"");
+		
+		// 4. ResponseEntity로 파일 데이터와 HTTP 헤더 반환
+		return new ResponseEntity<>(fileData.getData(), headers, HttpStatus.OK);
 	}
 }
