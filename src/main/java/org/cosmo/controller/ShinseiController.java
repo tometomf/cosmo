@@ -128,13 +128,12 @@ public class ShinseiController {
 			ShinseiViewDTO view = shinseiService.getShinseiView(kigyoCd, shinseiNoLong);
 			String fileName = shinseiService.getFileName(shinseiNoLong);
 			String shainUid = shinseiService.getShainUidByShinseiNo(shinseiNo);
-	        ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
-	        
+			ShainVO shinseiUser = shinseiService.getShainByUid(shainUid);
+
 			model.addAttribute("mode", "view");
 			model.addAttribute("view", view);
 			model.addAttribute("fileName", fileName);
-	        model.addAttribute("shinseiUser", shinseiUser);
-
+			model.addAttribute("shinseiUser", shinseiUser);
 
 			return "shinsei/dummy_11_shinseiDetail_03";
 		}
@@ -175,13 +174,12 @@ public class ShinseiController {
 	}
 
 	@PostMapping("/updateTorikesu") // 하나
-	public String update( @RequestParam("tkComment") String tkComment,
-	        @RequestParam(value = "shinseiNo", required = false) String shinseiNo,
-	        @RequestParam(value = "beforeKbn", required = false) String shinchokuKbn,
-	        @RequestParam(value = "hozonUid", required = false) String hozonUid,
-	        @RequestParam(value = "shinseiKbn", required = false) String shinseiKbn,
-	        @RequestParam(value = "shinseiYmd", required = false) String shinseiYmd,
-	        HttpSession session, Model model) {
+	public String update(@RequestParam("tkComment") String tkComment,
+			@RequestParam(value = "shinseiNo", required = false) String shinseiNo,
+			@RequestParam(value = "beforeKbn", required = false) String shinchokuKbn,
+			@RequestParam(value = "hozonUid", required = false) String hozonUid,
+			@RequestParam(value = "shinseiKbn", required = false) String shinseiKbn,
+			@RequestParam(value = "shinseiYmd", required = false) String shinseiYmd, HttpSession session, Model model) {
 
 		ShainVO loginUser = (ShainVO) session.getAttribute("shain");
 		boolean hasShinseiNo = (shinseiNo != null && !shinseiNo.trim().isEmpty());
@@ -266,8 +264,7 @@ public class ShinseiController {
 
 		ShainVO loginUser = loginShain;
 		ShainVO shinseiUser = loginShain;
-
-		shinseiService.insertOshiraseReapply(loginUser, shinseiUser, String.valueOf(shinseiNo));
+		shinseiService.insertOshiraseForSaishinsei(loginUser, shinseiUser, shinseiNo);
 
 		if (loginShain.getShain_Uid() != null) {
 
@@ -291,7 +288,8 @@ public class ShinseiController {
 		}
 
 		String shainUid = loginShain.getShain_Uid();
-		shinseiService.insertReapplyLog(kigyoCd, shinseiNo, shainUid);
+
+		shinseiService.insertShinseiLogForReapply(kigyoCd, shinseiNo);
 
 		String afterShinchokuKbn = "2";
 
@@ -305,9 +303,8 @@ public class ShinseiController {
 		String userUid = loginShain.getShain_Uid();
 		String userTrack = request.getRemoteAddr();
 
-		shinseiService.insertSaishinseiProcessLog(subsystemId, kigyoCd, shinseiNo, shinseiKbn, beforeShinchokuKbn,
+		shinseiService.insertProcessLogForReapply(subsystemId, kigyoCd, shinseiNo, shinseiKbn, beforeShinchokuKbn,
 				afterShinchokuKbn, userUid, userTrack);
-
 		Long keiroSeq = 1L;
 
 		Map<String, Object> keiroParam = new HashMap<String, Object>();

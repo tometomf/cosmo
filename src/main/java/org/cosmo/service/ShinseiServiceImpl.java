@@ -65,10 +65,10 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	public 	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo){
+	public List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo) {
 		return shinseiMapper.getShinseiShoruiList(shinseiNo);
 	}
-	
+
 	@Override
 	public ShainVO getShainByUid(String shainUid) {
 		return shinseiMapper.getShainByUid(shainUid);
@@ -292,35 +292,6 @@ public class ShinseiServiceImpl implements ShinseiService {
 	}
 
 	@Override
-	@Transactional
-	public void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid) {
-
-		Long logSeq = shinseiMapper.getNextShinseiLogSeq(kigyoCd, shinseiNo);
-
-		String syoriKbn = "4";
-
-		shinseiMapper.insertReapplyLog(kigyoCd, shinseiNo, logSeq, syoriKbn, shainUid);
-	}
-
-	@Override
-	@Transactional
-	public void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
-			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack) {
-
-		String key1 = String.valueOf(shinseiNo);
-		String key2 = shinseiKbn;
-		String key3 = beforeShinchokuKbn;
-		String key4 = afterShinchokuKbn;
-		String key5 = String.valueOf(kigyoCd);
-		String data = null;
-
-		String process = "再申請";
-
-		shinseiMapper.insertSaishinseiProcessLog(subsystemId, process, key1, key2, key3, key4, key5, data, userUid,
-				userTrack);
-	}
-
-	@Override
 	public String getNextShinseiNo(Long kigyoCd, String todayYmd) {
 		return shinseiMapper.getNextShinseiNo(kigyoCd, todayYmd);
 	}
@@ -422,4 +393,60 @@ public class ShinseiServiceImpl implements ShinseiService {
 	public void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param) {
 		shinseiMapper.updateShinseiFuzuiShoruiForReapply(param);
 	}
+
+	@Override
+	public void insertOshiraseForSaishinsei(ShainVO loginUser, ShainVO shinseiUser, Long shinseiNo) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+
+		param.put("kigyoCd", loginUser.getKigyo_Cd());
+		param.put("shainUid", shinseiUser.getShain_Uid());
+		param.put("shainNo", shinseiUser.getShain_No());
+
+		param.put("tsuchishaKigyoCd", loginUser.getKigyo_Cd());
+		param.put("tsuchishaCd", loginUser.getShain_Uid());
+
+		param.put("shinseiNo", shinseiNo);
+
+		param.put("addUserId", loginUser.getShain_Uid());
+		param.put("updUserId", loginUser.getShain_Uid());
+
+		shinseiMapper.insertOshiraseForSaishinsei(param);
+	}
+
+	@Override
+	public void insertShinseiLogForReapply(Long kigyoCd, Long shinseiNo) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("kigyoCd", kigyoCd);
+		param.put("shinseiNo", shinseiNo);
+
+		shinseiMapper.insertShinseiLogForReapply(param);
+	}
+
+	@Override
+	public void insertProcessLogForReapply(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("subsystemId", subsystemId);
+
+		param.put("key1", (shinseiNo != null) ? shinseiNo.toString() : "0");
+
+		if (shinseiKbn != null && !shinseiKbn.isEmpty()) {
+			param.put("key2", shinseiKbn);
+		} else {
+			param.put("key2", "O");
+		}
+
+		param.put("key3", beforeShinchokuKbn);
+		param.put("key4", afterShinchokuKbn);
+
+		param.put("key5", (kigyoCd != null) ? kigyoCd.toString() : null);
+
+		param.put("userUid", userUid);
+		param.put("userTrack", userTrack);
+
+		shinseiMapper.insertProcessLogForReapply(param);
+	}
+
 }

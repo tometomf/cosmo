@@ -26,7 +26,7 @@ public interface ShinseiService {
 	Long getKigyoCdByShinseiNo(Long shinseiNo);
 
 	List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo);
-	
+
 	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo);
 
 	String getShainUidByShinseiNo(String shinseiNo);
@@ -79,11 +79,6 @@ public interface ShinseiService {
 
 	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
 
-	void insertReapplyLog(Long kigyoCd, Long shinseiNo, String shainUid);
-
-	void insertSaishinseiProcessLog(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
-			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
-
 	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
 
 	String getNextShinseiNo(Long kigyoCd, String todayYmd);
@@ -102,5 +97,12 @@ public interface ShinseiService {
 	void updateEndKeiroForReapply(Map<String, Object> param);
 
 	void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param);
+
+	void insertOshiraseForSaishinsei(ShainVO loginUser, ShainVO shinseiUser, Long shinseiNo);
+
+	void insertShinseiLogForReapply(Long kigyoCd, Long shinseiNo);
+
+	void insertProcessLogForReapply(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
 
 }
