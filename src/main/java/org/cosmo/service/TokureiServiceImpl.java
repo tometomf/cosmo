@@ -2,6 +2,7 @@
 
 package org.cosmo.service;
 
+import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
@@ -24,7 +25,8 @@ public class TokureiServiceImpl implements TokureiService {
             ShinseiStartKeiroVO startVo, 
             ShinseiEndKeiroVO endVo,
             ShinseiFuzuiShoruiDTO fuzuiDto,
-            UploadFileDTO fileDto) { 
+            UploadFileDTO fileDto,
+            AlertVO alertVo) { 
         
         Long no = mainDto.getShinseiNo();
 
@@ -83,7 +85,20 @@ public class TokureiServiceImpl implements TokureiService {
             }
             
             tokureiMapper.insertFuzuiShorui(fuzuiDto);
-        }
+            
+            // 5. 알림 정보 저장 (Alert)
+            if (newNo != null) {
+                alertVo.setShinseiNo(newNo); // 신청번호 연결
+            }
+            alertVo.setKigyoCd(kigyoCd);
+            alertVo.setShainUid(userId);
+            alertVo.setShainNo(mainDto.getShainNo()); // 사원번호 필수
+            
+            alertVo.setAddUserId(userId);
+            alertVo.setUpdUserId(userId);
+            
+            tokureiMapper.insertAlert(alertVo);
+        }        
         
         System.out.println(">>> Service 처리 완료!");
     }

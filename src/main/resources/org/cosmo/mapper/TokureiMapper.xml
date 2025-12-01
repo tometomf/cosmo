@@ -239,6 +239,37 @@
     )
 </insert>
 
+<insert id="insertAlert" parameterType="org.cosmo.domain.AlertVO">
+    <selectKey keyProperty="alertNo" resultType="long" order="BEFORE">
+        SELECT NVL(MAX(ALERT_NO), 0) + 1 
+        FROM ALERT 
+        WHERE KIGYO_CD = #{kigyoCd} AND SHAIN_NO = #{shainNo}
+    </selectKey>
+
+    INSERT INTO ALERT (
+        KIGYO_CD, SHAIN_NO, ALERT_NO, ALERT_SEQ,
+        SHAIN_UID, KANRI_ID, SHAIN_NM, MAIL_ADDR,
+        HAISHIN_KBN, HAISHIN_RIYU, KEY_YMD,
+        SYORUI_KIGEN_MENKYO, SYORUI_KIGEN_SHAKEN, SYORUI_KIGEN_HOKEN,
+        HAISHIN_HINDO, SHINSEI_YOHI,
+        HAISHIN_KAISHI_YMD, HAISHIN_SYURYO_YMD, JIKAI_HAISHIN_YMD, HAISHIN_KAISUU,
+        SHINSEI_TITLE, SHINSEI_SHOSAI,
+        SHINSEI_NO, SHINSEI_YMD, KIGYO_SHONIN_YMD, LL_SHONIN_YMD,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shainNo}, #{alertNo}, 
+        1, -- SEQ는 1로 고정 (필요시 수정)
+        #{shainUid}, #{kanriId}, #{shainNm}, #{mailAddr},
+        #{haishinKbn}, #{haishinRiyu}, #{keyYmd},
+        #{syoruiKigenMenkyo}, #{syoruiKigenShaken}, #{syoruiKigenHoken},
+        #{haishinHindo}, #{shinseiYohi},
+        #{haishinKaishiYmd}, #{haishinSyuryoYmd}, #{jikaiHaishinYmd}, #{haishinKaisuu},
+        #{shinseiTitle}, #{shinseiShosai},
+        #{shinseiNo}, #{shinseiYmd}, #{kigyoShoninYmd}, #{llShoninYmd},
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
 
 </mapper>
 

@@ -526,6 +526,41 @@ window.onload = function() {
         "contentType": "application/pdf",
         // kigyoCd, addUserId 등은 자바에서 세팅
     };
+ 	
+	 // [7] 알림 정보 (AlertVO 매핑용)
+    const alertData = {
+        // [PK]
+        "kigyoCd": 1,
+        "shainNo": "202301",
+        
+        // [필수값]
+        "haishinRiyu": "01",      // 배신사유 (2자리 필수)
+        "keyYmd": "20231201",     // 기준일자 (필수)
+
+        // [나머지]
+        "shainUid": 100,
+        "kanriId": "admin",
+        "shainNm": "테스트사원",
+        "mailAddr": "test@test.com",
+        "haishinKbn": "1",
+        "syoruiKigenMenkyo": "0",
+        "syoruiKigenShaken": "0",
+        "syoruiKigenHoken": "0",
+        "haishinHindo": "1",
+        "shinseiYohi": "1",
+        "haishinKaishiYmd": "20231201",
+        "haishinSyuryoYmd": "20231231",
+        "jikaiHaishinYmd": "",
+        "haishinKaisuu": "0",
+        "shinseiTitle": "특례신청알림",
+        "shinseiShosai": "내용입니다.",
+        "shinseiYmd": "20231201",
+        "kigyoShoninYmd": "",
+        "llShoninYmd": "",
+        
+        "addUserId": 100,
+        "updUserId": 100
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -585,6 +620,9 @@ window.onload = function() {
       	    
             // 5. 파일 정보
             addHiddenData(fileData);
+            
+      	    // 6. 알림 정보
+            addHiddenData(alertData);
 
             form.submit();
         };

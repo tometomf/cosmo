@@ -2,6 +2,7 @@
 
 package org.cosmo.service;
 
+import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
@@ -14,7 +15,8 @@ public interface TokureiService {
 						 ShinseiStartKeiroVO startVo, 
 						 ShinseiEndKeiroVO endVo, 
 						 ShinseiFuzuiShoruiDTO fuzuiDto,
-						 UploadFileDTO fileDto);
+						 UploadFileDTO fileDto,
+						 AlertVO alertVo);
 	
 
 }

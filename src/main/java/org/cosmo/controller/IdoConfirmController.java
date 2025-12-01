@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -531,6 +532,7 @@ public class IdoConfirmController {
             @ModelAttribute ShinseiEndKeiroVO endVo,  
             @ModelAttribute ShinseiFuzuiShoruiDTO fuzuiDto,
             @ModelAttribute UploadFileDTO fileDto,
+            @ModelAttribute AlertVO alertVo,
             RedirectAttributes rttr) {
 
     	// 1. 로그 확인
@@ -553,7 +555,7 @@ public class IdoConfirmController {
         }
         
         // 3. 서비스 호출
-        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto);
+        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto, alertVo);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
