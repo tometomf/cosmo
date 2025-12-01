@@ -609,6 +609,27 @@ window.onload = function() {
         "updUserId": 100           // 수정자 ID
         // addDate, updDate는 DB 자동생성
     };
+    
+    // [10] 프로세스 로그 정보 (ProcessLogDTO 매핑용)
+    const processLogData = {
+        // [PK - TIMESTAMP는 DB에서 넣음]
+        "subsystemId": "T01",       // 서브시스템ID (임의)
+        "processCol": "INSERT",     // 프로세스명
+        
+        // [키 값 - 나중에 Service에서 덮어쓸 수도 있음]
+        "key1": "1",                // 기업코드
+        "key2": "202301",           // 사원번호
+        "key3": "",                 // (신청번호는 Service에서 넣음)
+        "key4": "",
+        "key5": "",
+        
+        // [데이터]
+        "data": "특례신청 등록 프로세스 시작", // 로그 내용
+        "userUid": 100,             // 사용자UID
+        "userTrack": "192.168.0.1"  // 접속IP 등
+        
+        // (주의: DB 테이블에 ADD_USER_ID 컬럼이 없어서 생략함)
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -677,6 +698,9 @@ window.onload = function() {
       	    
             // 8. 통지 정보
             addHiddenData(oshiraseData);
+            
+      	    // 9. 프로세스 로그
+            addHiddenData(processLogData);
 
             form.submit();
         };

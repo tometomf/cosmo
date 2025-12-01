@@ -4,6 +4,7 @@ package org.cosmo.service;
 
 import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
@@ -30,7 +31,8 @@ public class TokureiServiceImpl implements TokureiService {
             UploadFileDTO fileDto,
             AlertVO alertVo,
             ShinseiLogDTO shinseiLogDto,
-            OshiraseDTO oshiraseDto) { 
+            OshiraseDTO oshiraseDto,
+            ProcessLogDTO processLogDto) { 
         
         Long no = mainDto.getShinseiNo();
 
@@ -69,6 +71,7 @@ public class TokureiServiceImpl implements TokureiService {
                 alertVo.setShinseiNo(newNo);            // (Long)
                 shinseiLogDto.setShinseiNo(newNo);      // (Long)
                 oshiraseDto.setShinseiNo(newNo);        // (Long)
+                processLogDto.setKey3(String.valueOf(newNo)); // KEY3에 신청번호 저장
             }
 
             // 기업코드 & 유저ID 연결
@@ -78,6 +81,7 @@ public class TokureiServiceImpl implements TokureiService {
             alertVo.setKigyoCd(kigyoCd);    alertVo.setAddUserId(userId);
             shinseiLogDto.setKigyoCd(kigyoCd); shinseiLogDto.setAddUserId(userId);
             oshiraseDto.setKigyoCd(kigyoCd); oshiraseDto.setAddUserId(userId);
+            processLogDto.setKey1(String.valueOf(kigyoCd)); processLogDto.setUserUid(userId);
             
             // 경고 전용 추가 세팅
             alertVo.setShainUid(userId);    
@@ -101,6 +105,7 @@ public class TokureiServiceImpl implements TokureiService {
             tokureiMapper.insertAlert(alertVo);
             tokureiMapper.insertShinseiLog(shinseiLogDto);
             tokureiMapper.insertOshirase(oshiraseDto);
+            tokureiMapper.insertProcessLog(processLogDto);
         
         }        
         
