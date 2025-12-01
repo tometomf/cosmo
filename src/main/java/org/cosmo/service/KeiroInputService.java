@@ -11,25 +11,25 @@ import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface KeiroInputService {
 
-	//재환
+	//�옱�솚
 	ShainKeiroDTO getShainKeiro(Integer kigyoCd, Long shainUid, Integer keiroSeq);
 
-	//지훈
+	//吏��썕
 	ShinseiDTO getShinseiAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
-	//지훈
+	//吏��썕
 	ShinseiDTO getShinseiKinmuAddress(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
-	//재환
+	//�옱�솚
 	ShainLocationVO getShainLocation(Long kigyoCd, Long shainUid);
 
-	//하정
+	//�븯�젙
 	KeiroInputDenshaDTO getDenshaKeiroDetail(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
-	//지훈
-	ShinseiStartKeiroVO getViaPlace1(Integer kigyoCd, Long shainUid);
+	//吏��썕
+	ShinseiStartKeiroVO getCarRouteDetail(Integer kigyoCd, Long shainUid, Integer shinseiNo, Integer keiroSeq);
 
-	//하정
+	//�븯�젙
 	ShinseiStartKeiroVO getStartKeiroOne(Integer kigyoCd, Integer shainUid, Integer shinseiNo, Integer keiroSeq);
 	
     void writeProcessLog(String subsystemId,

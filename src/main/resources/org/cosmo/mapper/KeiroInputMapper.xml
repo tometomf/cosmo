@@ -230,38 +230,61 @@
 		AND SHAIN_UID = #{shainUid}
 	</select>
 
-	<resultMap id="ShinseiStartKeiroResultMap"
-		type="org.cosmo.domain.ShinseiStartKeiroVO">
-		<result property="kigyoCd" column="KIGYO_CD" />
-		<result property="shinseiNo" column="SHINSEI_NO" />
-		<result property="keiroSeq" column="KEIRO_SEQ" />
-		<result property="shainUid" column="SHAIN_UID" />
-		<result property="viaPlace1" column="VIA_PLACE_1" />
+	<resultMap id="ShinseiStartKeiroDetailResultMap"
+           type="org.cosmo.domain.ShinseiStartKeiroVO">
+    <result property="kigyoCd"           column="KIGYO_CD" />
+    <result property="shinseiNo"         column="SHINSEI_NO" />
+    <result property="keiroSeq"          column="KEIRO_SEQ" />
+    <result property="shainUid"          column="SHAIN_UID" />
+
+    <result property="shinseiKm"         column="SHINSEI_KM" />
+    <result property="yuryoRiyoKbn"      column="YURYO_RIYO_KBN" />
+    <result property="yuryoOfukuKbn"     column="YURYO_OFUKU_KBN" />
+    <result property="yuryoIcS"          column="YURYO_IC_S" />
+    <result property="yuryoIcE"          column="YURYO_IC_E" />
+    <result property="yuryoKatamichiKin" column="YURYO_KATAMICHI_KIN" />
+    <result property="yuryoRiyoRiyu"     column="YURYO_RIYO_RIYU" />
+    <result property="viaPlace1"         column="VIA_PLACE_1" />
+    <result property="viaPlaceRiyu"      column="VIA_PLACE_RIYU" />
 	</resultMap>
 
 	<!-- 지훈 -->
-	<select id="selectViaPlace1" parameterType="map"
-		resultMap="ShinseiStartKeiroResultMap">
+	<select id="selectCarRouteDetail"
+        parameterType="map"
+        resultMap="ShinseiStartKeiroDetailResultMap">
 
-		SELECT
-		s.KIGYO_CD
-		, s.SHINSEI_NO
-		, s.KEIRO_SEQ
-		, s.SHAIN_UID
-		,
-		s.VIA_PLACE_1
-		FROM SHINSEI_START_KEIRO s
-		WHERE s.KIGYO_CD = #{kigyoCd}
-		AND s.SHAIN_UID = #{shainUid}
-		AND s.SHINSEI_NO = (
-		SELECT
-		MAX(s2.SHINSEI_NO)
-		FROM SHINSEI_START_KEIRO s2
-		WHERE s2.KIGYO_CD =
-		#{kigyoCd}
-		AND s2.SHAIN_UID = #{shainUid}
-		)
-		AND s.KEIRO_SEQ = 1
+    	SELECT
+        h.KIGYO_CD,
+        s.SHINSEI_NO,
+        sk.KEIRO_SEQ,
+        h.SHAIN_UID,
+ 
+        sk.SHINSEI_KM,
+        sk.YURYO_RIYO_KBN,
+        sk.YURYO_OFUKU_KBN,
+        sk.YURYO_IC_S,
+        sk.YURYO_IC_E,
+        sk.YURYO_KATAMICHI_KIN,
+        sk.YURYO_RIYO_RIYU,
+        sk.VIA_PLACE_1,
+        sk.VIA_PLACE_RIYU
+    	FROM SHAIN h
+    	LEFT JOIN SHINSEI s
+      	ON s.KIGYO_CD  = h.KIGYO_CD
+     	AND s.SHAIN_UID = h.SHAIN_UID
+      	<!-- shinseiNo가 넘어온 경우에만 필터 -->
+      	<if test="shinseiNo != null">
+        AND s.SHINSEI_NO = #{shinseiNo}
+     	</if>
+    	LEFT JOIN SHINSEI_START_KEIRO sk
+     	ON sk.KIGYO_CD  = s.KIGYO_CD
+     	AND sk.SHINSEI_NO = s.SHINSEI_NO
+      	<!-- keiroSeq가 넘어온 경우에만 필터 -->
+      	<if test="keiroSeq != null">
+        AND sk.KEIRO_SEQ = #{keiroSeq}
+      	</if>
+    	WHERE h.KIGYO_CD  = #{kigyoCd}
+      	AND h.SHAIN_UID = #{shainUid}
 
 	</select>
 

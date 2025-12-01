@@ -13,45 +13,47 @@ import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface KeiroInputMapper {
 
-	//재환
+	//�옱�솚
     ShainKeiroDTO selectShainKeiroWithCode(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid,
             @Param("keiroSeq") Integer keiroSeq);
 
-  //지훈
+  //吏��썕
     ShinseiDTO selectAddressWithFallback(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid,
             @Param("shinseiNo") Integer shinseiNo,
             @Param("keiroSeq") Integer keiroSeq);
-    //지훈
+    //吏��썕
     ShinseiDTO selectKinmuAddressWithFallback(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid,
             @Param("shinseiNo") Integer shinseiNo,
             @Param("keiroSeq") Integer keiroSeq);
     
-    //재환
+    //�옱�솚
     ShainLocationVO selectShainLocationByUid(
         @Param("kigyoCd") Long kigyoCd,
         @Param("shainUid") Long shainUid
     );
     
-    //하정
+    //�븯�젙
     KeiroInputDenshaDTO selectDenshaKeiroDetail(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Long shainUid,
             @Param("shinseiNo") Integer shinseiNo,
             @Param("keiroSeq") Integer keiroSeq);
     
-    //지훈
-    ShinseiStartKeiroVO selectViaPlace1(
+    //吏��썕
+    ShinseiStartKeiroVO selectCarRouteDetail(
             @Param("kigyoCd") Integer kigyoCd,
-            @Param("shainUid") Long shainUid
-    );
+            @Param("shainUid") Long shainUid,
+            @Param("shinseiNo") Integer shinseiNo,
+            @Param("keiroSeq") Integer keiroSeq);
     
-    //하정
+    
+    //�븯�젙
     ShinseiStartKeiroVO selectStartKeiro(
             @Param("kigyoCd") Integer kigyoCd,
             @Param("shainUid") Integer shainUid,
