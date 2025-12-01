@@ -18,8 +18,8 @@ import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
 import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShozokuVO;
-import org.cosmo.domain.TokureiForm;
 import org.cosmo.domain.UploadResult;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
@@ -519,32 +519,29 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
-    // 作成者 : 권예성
-    // 특례 신청 Submit
+ // 作成者 : 권예성
     @PostMapping("/tokureiSubmit")
-    public String tokureiSubmit(@ModelAttribute TokureiForm form,
+    public String tokureiSubmit(@ModelAttribute ShinseiDTO dto, // Form 말고 DTO로 받음
                                 RedirectAttributes rttr) {
 
-        System.out.println("===== TokureiForm =====");
-        System.out.println("신청번호   : " + form.getShinseiNo());
-        System.out.println("특례타입   : " + form.getTokureiType());
-        System.out.println("동의 여부  : " + form.getAgree());
-        System.out.println("특례 사유  : " + form.getTokureiReason());
-        System.out.println("======================");
+        System.out.println("===== [DEBUG] ShinseiDTO データ到着 =====");
+        System.out.println("신청번호 : " + dto.getShinseiNo());
+        System.out.println("기업코드 : " + dto.getKigyoCd());
+        System.out.println("사원번호 : " + dto.getShainNo());
+        System.out.println("주소1   : " + dto.getGenAddress1());
+        System.out.println("특례사유 : " + dto.getTokuShinseiRiyu());
+        System.out.println("========================================");
 
-        if (form.getAgree() == null) {
-            rttr.addFlashAttribute("errorMessage",
-                    "特例について内容を理解した上で申請にチェックしてください。");
+        // 유효성 체크        
+        if (dto.getTokuShinseiRiyu() == null || dto.getTokuShinseiRiyu().trim().isEmpty()) {
+            rttr.addFlashAttribute("errorMessage", "特例申請事由を入力してください");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
+        
+     // DB에 저장 명령 내리기
+        tokureiService.registerShinsei(dto);
 
-        if (form.getTokureiReason() == null || form.getTokureiReason().trim().isEmpty()) {
-            rttr.addFlashAttribute("errorMessage", "特例申請理由を入力してください。");
-            return "redirect:/idoconfirm/tokureiShinsei";
-        }
-
-        tokureiService.saveTokurei(form);
-        rttr.addFlashAttribute("message", "特例申請を受け付けました。");
+        rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
     }
     

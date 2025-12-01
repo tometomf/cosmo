@@ -139,9 +139,6 @@
 			
 <form id="tokureiForm" method="post" action="/idoconfirm/tokureiSubmit">
 
-
-<input type="hidden" name="tokureiType" value="${tokureiType}">	
-<input type="hidden" name="shinseiNo" value="${shinseiNo}">
 		
 			
 <div class="wrapper">
@@ -210,7 +207,7 @@
 <div class="reason_wrapper" id="reasonBox" style="display:none;">
   <div class="reason_label">特例申請理由</div>
   <div class="reason_field">
-    <textarea class="reason_textarea"  name="tokureiReason" id="reason"></textarea>
+    <textarea class="reason_textarea"  name="tokuShinseiRiyu" id="reason"></textarea>
   </div>
 </div>
 
@@ -243,41 +240,187 @@
 <script>
 window.onload = function() {
 
+    // 1. 화면 요소 가져오기
     const radio = document.getElementById("agreeRadio");
     const reasonBox = document.getElementById("reasonBox");
     const submitBtn = document.getElementById("submitBtn");
-    const form = document.getElementById("tokureiForm");
+    const form = document.getElementById("tokureiForm"); // 이 ID는 안 바꿔도 됨!
     const reason = document.getElementById("reason");
 
-    // 라디오 체크되면 textarea + 신청버튼 활성화
-    radio.addEventListener("change", function() {
-        if (radio.checked) {
-            reasonBox.style.display = "grid";
-            submitBtn.style.display = "inline";
-            submitBtn.style.cursor = "pointer";
-        }
-    });
+    // ==========================================================
+    // [2] 엑셀 데이터 (ShinseiDTO에 있는 변수명으로 적어야 함)
+    // ==========================================================
+    const shinseiData = {
+    // ==================================================
+    // [1] PK 및 기본 정보
+    // ==================================================
+    "kigyoCd": 1,
+    "shinseiNo": "${shinseiNo}" === "" ? "0" : "${shinseiNo}",
+    
+    "shinseiKbn": "A",             // A:신규 (2자리 이내 OK)
+    "shinseiYmd": "20231201",      // (8자리 숫자)
+    
+    // ★ 사유: 너무 길면 안 되니 적당히
+    "shinseiRiyu": "転居",         // (짧게 수정)
 
-    // 신청 버튼 클릭 시 유효성 체크 후 form submit
-    submitBtn.onclick = function() {
+    "shainUid": 100,
+    "shainNo": "202301",           // (6자리 OK)
+    "dairiShinseishaCd": null,     // (Integer라 null 가능)
+    "shinchokuKbn": "1",           // (1자리 OK)
+    "genTsukinroEndKbn": "0",      // (1자리 OK)
 
-        // 1) 라디오 체크 여부
-        if (!radio.checked) {
-            alert("特例について内容を理解した上で申請にチェックしてください。");
-            return;
-        }
+    // ==================================================
+    // [2] 변경/이동 정보
+    // ==================================================
+    "addressChgKbn": "1",
+    "kinmuAddressChgKbn": "0",
+    "kyushokuHukkiKbn": "0",
 
-        // 2) 특례사유 입력 여부
-        if (reason.value.trim() === "") {
-            alert("特例申請理由を入力してください。");
-            reason.focus();
-            return;
-        }
+    // ==================================================
+    // [3] 현재 주소/소속 (★ 길이 주의 ★)
+    // ==================================================
+    "genShozokuCd": "DEP01",       // (짧게)
+    "genZipCd": "1638001",         // ★ 하이픈 제거 필수 (7자리)
+    "genAddress1": "東京",         // ★ 한자 2글자 (6byte - 8byte 이내 OK)
+    "genAddress2": "新宿",         // (짧게)
+    "genAddress3": "西新宿",       // (짧게)
 
-        // 3) 조건 통과 시 제출
-        form.submit();
-    };
+    // ==================================================
+    // [4] 신규 주소/소속 (★ 길이 주의 ★)
+    // ==================================================
+    "newShozokuCd": "DEP01",
+    "newZipCd": "2200011",         // ★ 하이픈 제거 필수
+    "newAddress1": "千葉",         // ★ '카나가와'는 9byte라 에러남 -> '치바'(6byte)로 수정
+    "newAddress2": "千葉",
+    "newAddress3": "千葉",
+    "addressIdoKeido": "",
+    "addressCorrect": "0",
+
+    // ==================================================
+    // [5] 현재/신규 근무지 주소 (★ 길이 주의 ★)
+    // ==================================================
+    "genKinmuZipCd": "1000001",    // ★ 하이픈 제거
+    "genKinmuAddress1": "東京",    // OK
+    "genKinmuAddress2": "千代田",  // OK
+    "genKinmuAddress3": "千代田",  // OK
+    "genKinmuPrefCd": "13",
+
+    "newKinmuZipCd": "1000001",    // ★ 하이픈 제거
+    "newKinmuAddress1": "東京",
+    "newKinmuAddress2": "千代田",
+    "newKinmuAddress3": "千代田",
+    "kinmuAddressIdoKeido": "",
+    "kinmuAddressCorrect": "0",
+    "newKinmuPrefCd": "13",
+    "jutakuKbn": "1",
+
+    // ==================================================
+    // [6] 부속 정보 (일단 비움)
+    // ==================================================
+    // null이나 빈값은 에러 안 남
+    "etcFileUid1": null, "etcFileUid2": null, "etcFileUid3": null,
+    "etcFileUid4": null, "etcFileUid5": null,
+    "etcComment1": "", "etcComment2": "", "etcComment3": "",
+    "etcComment4": "", "etcComment5": "",
+
+    // ==================================================
+    // [7] 날짜 정보 (하이픈 뺀 8자리 문자열 추천)
+    // ==================================================
+    "riyoStartYmd": "20240401",
+    "riyoEndYmd": "20240930",
+    "shikyTeishiKbn": "0",
+    "kanriId": "admin",            // (짧게)
+    
+    "idoYmd": "20240331",
+    "itenYmd": "20240330",
+    "tennyuYmd": "20240330",
+    "haishinYmd": "",
+    "keiroHenkoYmd": "",
+    
+    "firstShinseiYmd": "20231201",
+    "kigyoShoninYmd": "",
+    "llShoninYmd": "",
+    
+    "tsukinroNo": 1,
+    "sashimodoshiYmd": "",
+    "shinseiKigenYmd": "20231231",
+    
+    "moshiokuriComment": "",
+    "biboComment": "",
+    "alertUmu": "0",
+    
+    "torikeshiYmd": "",
+    "torikeshiRiyu": "",
+    "ichijiHozonId": "",
+    
+    "jitsuKm": 28.5,
+    "navitimeViewCnt": 1,
+    
+    // ==================================================
+    // [8] Audit
+    // ==================================================
+    "addUserId": 100,
+    "updUserId": 100,
+    
+    
+    // ==================================================
+    // [9] 경로 정보 (StartKeiroVO 매핑용)
+    // ==================================================
+    "startPlace": "横浜",          // 출발지
+    "endPlace": "東京",            // 도착지
+    "tsukinShudanKbn": "01",       // 교통수단
+    "shinseiKm": 30.2              // 신청거리
 };
+
+        // [3] 라디오 버튼 이벤트
+        radio.addEventListener("change", function() {
+            if (radio.checked) {
+                reasonBox.style.display = "grid";
+                submitBtn.style.display = "inline";
+                submitBtn.style.cursor = "pointer";
+            }
+        });
+
+        // [4] 신청 버튼 클릭 이벤트
+        submitBtn.onclick = function() {
+            
+            // (1) 라디오 체크 확인
+            if (!radio.checked) {
+                alert("特例について内容を理解した上で申請にチェックしてください。");
+                return;
+            }
+
+            // (2) 사유 입력 확인
+            if (reason.value.trim() === "") {
+                alert("特例申請理由を入力してください。");
+                reason.focus();
+                return;
+            }
+
+         // ★ [수정] 중복 방지 로직 (A,A 문제 완벽 해결!)
+            // ============================================================
+            for (let key in shinseiData) {
+                
+                // 1. 폼 안에 이미 똑같은 이름의 input이 있나 찾는다.
+                let oldInput = form.querySelector('input[name="' + key + '"]');
+                
+                // 2. 있으면 지워버린다! (이게 핵심)
+                if (oldInput) {
+                    form.removeChild(oldInput);
+                }
+
+                // 3. 깨끗한 상태에서 새로 만든다.
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;           
+                input.value = shinseiData[key];
+                form.appendChild(input);
+            }
+
+            // (3) 전송
+            form.submit();
+        };
+    };
 </script>
 
 	

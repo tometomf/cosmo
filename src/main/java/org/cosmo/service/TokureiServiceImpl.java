@@ -2,7 +2,7 @@
 
 package org.cosmo.service;
 
-import org.cosmo.domain.TokureiForm;
+import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.mapper.TokureiMapper;
 import org.springframework.stereotype.Service;
 
@@ -12,35 +12,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TokureiServiceImpl implements TokureiService {
 
-    private final TokureiMapper mapper;
+	// 매퍼 연결 (Lombok이 생성자 만들어줌)
+    private final TokureiMapper tokureiMapper;
 
     @Override
-    public void saveTokurei(TokureiForm form) {
-    	
-    	// 현재 form 안에 들어온 shinseiNo 기준으로 분기
-        Long shinseiNo = form.getShinseiNo();
+    public void registerShinsei(ShinseiDTO dto) {
+    	// 1. DTO에 신청번호(PK)가 들어있는지 확인
+        // (long 타입이라 null 체크 대신 0보다 큰지 확인하면 됩니다)
+        long no = dto.getShinseiNo();
 
-        // ① 신규: 신청번호 없음 → INSERT
-        if (shinseiNo == null || shinseiNo == 0L) {
+        System.out.println(">>> Service 진입. 신청번호 확인: " + no);
 
-            // 1) 신청번호 채번
-            Long nextNo = mapper.getNextShinseiNo(form.getKigyoCd());
-            form.setShinseiNo(nextNo);
-
-            // 2) INSERT 실행
-            mapper.insertShinseiForTokurei(form);
-
-            System.out.println(">>> 特例申請 INSERT 실행, shinseiNo = " + nextNo);
-
-        // ② 기존: 신청번호 있음 → UPDATE
+        // 2. 번호가 있으면 [수정], 없으면 [신규]
+        if (no > 0) {
+            // ------------------------------------------------
+            // [CASE A] 수정 (Update)
+            // ------------------------------------------------
+            System.out.println(">>> 기존 번호(" + no + ")가 존재함 -> UPDATE 실행");
+            tokureiMapper.updateShinsei(dto); // (Mapper에 이거 만들었죠?)
+            
         } else {
-
-            // 3) UPDATE 실행
-            mapper.updateTokurei(form);
-
-            System.out.println(">>> 特例申請 UPDATE 실행, shinseiNo = " + shinseiNo);
+            // ------------------------------------------------
+            // [CASE B] 신규 (Insert)
+            // ------------------------------------------------
+            System.out.println(">>> 번호 없음(0) -> INSERT 실행");
+            tokureiMapper.insertShinsei(dto);
         }
-
+        
+        System.out.println(">>> Service: 처리 완료!");
     }
     
 }
