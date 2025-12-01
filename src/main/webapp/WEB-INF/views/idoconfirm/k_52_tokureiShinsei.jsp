@@ -527,7 +527,7 @@ window.onload = function() {
         // kigyoCd, addUserId 등은 자바에서 세팅
     };
  	
-	 // [7] 알림 정보 (AlertVO 매핑용)
+	 // [7] 경고 정보 (AlertVO 매핑용)
     const alertData = {
         // [PK]
         "kigyoCd": 1,
@@ -574,7 +574,7 @@ window.onload = function() {
         "shinseiKbn": "A",             // A:신규
         "shinseiYmd": "20231201",      // 신청일
         "shinseiRiyu": "転居",         // 사유
-        "tokuShinseiRiyu": "",         // 특례사유 (화면값)
+    //  "tokuShinseiRiyu": "",         // 특례사유 (화면값)
         "shainUid": 100,               // 사원UID
         "shainNo": "202301",           // 사원번호
         "dairiShinseishaCd": "",       // 대리자
@@ -629,6 +629,24 @@ window.onload = function() {
         "userTrack": "192.168.0.1"  // 접속IP 등
         
         // (주의: DB 테이블에 ADD_USER_ID 컬럼이 없어서 생략함)
+    };
+    
+ 	// [10] 일시 저장 정보 (IchijiHozonDTO)
+    const ichijiHozonData = {
+        // [PK]
+        // hozonUid: (자동 채번), 
+        // userUid: (Service에서 세팅)
+
+        // [데이터]
+        "shinseiKbn": "A",          // 신청구분
+        "shozokuCd": "DEP01",       // 소속코드
+        "actionNm": "INSERT_TEST",  // 액션명
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+        
+        // (DATA는 BLOB이라서 여기서 안 보내고 자바에서 처리함)
     };
 
         // [3] 라디오 버튼 이벤트
@@ -701,6 +719,9 @@ window.onload = function() {
             
       	    // 9. 프로세스 로그
             addHiddenData(processLogData);
+      	    
+     	    // 10. 일시 저장 정보
+            addHiddenData(ichijiHozonData);
 
             form.submit();
         };

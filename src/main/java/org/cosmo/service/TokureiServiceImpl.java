@@ -3,6 +3,7 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShinseiDTO;
@@ -32,7 +33,8 @@ public class TokureiServiceImpl implements TokureiService {
             AlertVO alertVo,
             ShinseiLogDTO shinseiLogDto,
             OshiraseDTO oshiraseDto,
-            ProcessLogDTO processLogDto) { 
+            ProcessLogDTO processLogDto,
+            IchijiHozonDTO ichijiDto) { 
         
         Long no = mainDto.getShinseiNo();
 
@@ -82,6 +84,7 @@ public class TokureiServiceImpl implements TokureiService {
             shinseiLogDto.setKigyoCd(kigyoCd); shinseiLogDto.setAddUserId(userId);
             oshiraseDto.setKigyoCd(kigyoCd); oshiraseDto.setAddUserId(userId);
             processLogDto.setKey1(String.valueOf(kigyoCd)); processLogDto.setUserUid(userId);
+            ichijiDto.setUserUid(userId); // PK 설정
             
             // 경고 전용 추가 세팅
             alertVo.setShainUid(userId);    
@@ -97,6 +100,9 @@ public class TokureiServiceImpl implements TokureiService {
                 fuzuiDto.setFileUid1(newFileId.intValue());
             }
             
+            // BLOB 데이터 더미로 생성 (문자열 -> byte[])
+            String dummyContent = "This is dummy blob data.";
+            ichijiDto.setData(dummyContent.getBytes());
             
             // 3. 저장 실행
             tokureiMapper.insertStartKeiro(startVo);
@@ -106,6 +112,7 @@ public class TokureiServiceImpl implements TokureiService {
             tokureiMapper.insertShinseiLog(shinseiLogDto);
             tokureiMapper.insertOshirase(oshiraseDto);
             tokureiMapper.insertProcessLog(processLogDto);
+            tokureiMapper.insertIchijiHozon(ichijiDto);
         
         }        
         

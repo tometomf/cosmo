@@ -544,6 +544,7 @@ public class IdoConfirmController {
             @ModelAttribute ShinseiLogDTO shinseiLogDto,
             @ModelAttribute OshiraseDTO oshiraseDto,
             @ModelAttribute ProcessLogDTO processLogDto,
+            @ModelAttribute IchijiHozonDTO ichijiDto,
             RedirectAttributes rttr) {
 
     	// 1. 로그 확인
@@ -566,7 +567,7 @@ public class IdoConfirmController {
         }
         
         // 3. 서비스 호출
-        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto, alertVo, shinseiLogDto, oshiraseDto, processLogDto);
+        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto, alertVo, shinseiLogDto, oshiraseDto, processLogDto, ichijiDto);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";

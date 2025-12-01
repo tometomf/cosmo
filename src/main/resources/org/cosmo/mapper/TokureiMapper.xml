@@ -324,6 +324,24 @@
     )
 </insert>
 
+<insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
+    <selectKey keyProperty="hozonUid" resultType="int" order="BEFORE">
+        SELECT NVL(MAX(HOZON_UID), 0) + 1 FROM ICHIJI_HOZON
+    </selectKey>
+
+    INSERT INTO ICHIJI_HOZON (
+        HOZON_UID, USER_UID,
+        SHINSEI_KBN, SHOZOKU_CD, ACTION_NM,
+        DATA, -- BLOB 데이터
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{hozonUid}, #{userUid},
+        #{shinseiKbn}, #{shozokuCd}, #{actionNm},
+        #{data, jdbcType=BLOB}, -- BLOB 처리
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
 
 </mapper>
 

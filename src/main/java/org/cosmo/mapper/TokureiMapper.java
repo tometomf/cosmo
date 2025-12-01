@@ -3,6 +3,7 @@
 package org.cosmo.mapper;
 
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShinseiDTO;
@@ -34,5 +35,7 @@ public interface TokureiMapper {
     void insertOshirase(OshiraseDTO dto);
     
     void insertProcessLog(ProcessLogDTO dto);
+    
+    void insertIchijiHozon(IchijiHozonDTO dto);
 
 }

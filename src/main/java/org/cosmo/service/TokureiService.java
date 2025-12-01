@@ -3,6 +3,7 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShinseiDTO;
@@ -22,7 +23,8 @@ public interface TokureiService {
 						 AlertVO alertVo,
 						 ShinseiLogDTO shinseiLogDto,
 						 OshiraseDTO oshiraseDto,
-						 ProcessLogDTO processLogDto);
+						 ProcessLogDTO processLogDto,
+						 IchijiHozonDTO ichijiDto);
 	
 
 }
