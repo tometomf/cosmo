@@ -6,6 +6,7 @@ import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.UploadFileDTO;
 
@@ -25,5 +26,7 @@ public interface TokureiMapper {
     void insertUploadFile(UploadFileDTO dto);
     
     void insertAlert(AlertVO vo);
+    
+    void insertShinseiLog(ShinseiLogDTO dto);
 
 }

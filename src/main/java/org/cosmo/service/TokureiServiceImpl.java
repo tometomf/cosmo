@@ -6,6 +6,7 @@ import org.cosmo.domain.AlertVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.mapper.TokureiMapper;
@@ -26,7 +27,8 @@ public class TokureiServiceImpl implements TokureiService {
             ShinseiEndKeiroVO endVo,
             ShinseiFuzuiShoruiDTO fuzuiDto,
             UploadFileDTO fileDto,
-            AlertVO alertVo) { 
+            AlertVO alertVo,
+            ShinseiLogDTO shinseiLogDto) { 
         
         Long no = mainDto.getShinseiNo();
 
@@ -43,7 +45,7 @@ public class TokureiServiceImpl implements TokureiService {
         // [신규]
             System.out.println(">>> [신규] 전체 INSERT 시작");
             
-            // 0. 파일 정보 먼저 저장 (FILE_UID 따기 위함)
+            // 1. 파일 저장 (ID 확보용)
             fileDto.setKigyoCd(String.valueOf(kigyoCd)); // 기업코드
             fileDto.setAddUserId(userId);                // 등록자
             tokureiMapper.insertUploadFile(fileDto);     // 저장
@@ -51,42 +53,32 @@ public class TokureiServiceImpl implements TokureiService {
             Long newFileId = fileDto.getFileUid();       // 따온 파일 ID
             System.out.println(">>> 생성된 파일 ID: " + newFileId);
             
-            // 1. 메인 신청 정보 저장 (SHINSEI_NO 따기 위함)
+            // 2. 메인 신청서 저장 (번호 채번)
             tokureiMapper.insertShinsei(mainDto);
             Long newNo = mainDto.getShinseiNo();         // 따온 신청 번호
             System.out.println(">>> 생성된 신청 번호: " + newNo);
             
-            // 2. 시작 경로 정보 저장
+            // [시작 경로]
             if (newNo != null) {
                 startVo.setShinseiNo(newNo.intValue()); // (Integer 변환)
             }
             startVo.setKigyoCd(kigyoCd);
-            startVo.setAddUserId(userId);
-            tokureiMapper.insertStartKeiro(startVo);
+            startVo.setAddUserId(userId);           
 
-            // 3. 종료 경로 정보 저장
+            // [종료 경로]
             if (newNo != null) {
                 endVo.setShinseiNo(newNo); // (Long 가능)
             }
             endVo.setKigyoCd(kigyoCd);
             endVo.setAddUserId(userId);
-            tokureiMapper.insertEndKeiro(endVo);
             
-            // 4. 부수 서류 정보 저장 (파일 ID 연결)
-            if (newNo != null) {
-                fuzuiDto.setShinseiNo(newNo); // (Long 가능)
-            }
+            // [부수 서류]
+            if (newNo != null) fuzuiDto.setShinseiNo(newNo);
+            if (newFileId != null) fuzuiDto.setFileUid1(newFileId.intValue()); 
             fuzuiDto.setKigyoCd(kigyoCd);
             fuzuiDto.setAddUserId(userId);
             
-            // 아까 딴 파일 ID를 여기에 연결!
-            if (newFileId != null) {
-                fuzuiDto.setFileUid1(newFileId.intValue()); 
-            }
-            
-            tokureiMapper.insertFuzuiShorui(fuzuiDto);
-            
-            // 5. 알림 정보 저장 (Alert)
+            // [알림]
             if (newNo != null) {
                 alertVo.setShinseiNo(newNo); // 신청번호 연결
             }
@@ -97,7 +89,19 @@ public class TokureiServiceImpl implements TokureiService {
             alertVo.setAddUserId(userId);
             alertVo.setUpdUserId(userId);
             
+            // [신청 로그]
+            if (newNo != null) shinseiLogDto.setShinseiNo(newNo); 
+            shinseiLogDto.setKigyoCd(kigyoCd);
+            shinseiLogDto.setAddUserId(userId);
+            
+            
+            // 4. 저장 실행
+            tokureiMapper.insertStartKeiro(startVo);
+            tokureiMapper.insertEndKeiro(endVo);
+            tokureiMapper.insertFuzuiShorui(fuzuiDto);
             tokureiMapper.insertAlert(alertVo);
+            tokureiMapper.insertShinseiLog(shinseiLogDto);
+        
         }        
         
         System.out.println(">>> Service 처리 완료!");

@@ -561,6 +561,28 @@ window.onload = function() {
         "addUserId": 100,
         "updUserId": 100
     };
+	 
+    // [8] 신청 로그 정보 (ShinseiLogDTO 매핑용)
+    const shinseiLogData = {
+        // [PK]
+        "kigyoCd": 1,
+        // "shinseiNo": (자동),
+        // "logSeq": (자동),
+        
+        // [데이터]
+        "syoriKbn": "1",               // 1:신청
+        "shinseiKbn": "A",             // A:신규
+        "shinseiYmd": "20231201",      // 신청일
+        "shinseiRiyu": "転居",         // 사유
+        "tokuShinseiRiyu": "",         // 특례사유 (화면값)
+        "shainUid": 100,               // 사원UID
+        "shainNo": "202301",           // 사원번호
+        "dairiShinseishaCd": "",       // 대리자
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -623,6 +645,9 @@ window.onload = function() {
             
       	    // 6. 알림 정보
             addHiddenData(alertData);
+      	    
+      	    // 7. 신청 로그 정보
+            addHiddenData(shinseiLogData);
 
             form.submit();
         };
