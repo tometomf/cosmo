@@ -3,6 +3,7 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
@@ -28,7 +29,8 @@ public class TokureiServiceImpl implements TokureiService {
             ShinseiFuzuiShoruiDTO fuzuiDto,
             UploadFileDTO fileDto,
             AlertVO alertVo,
-            ShinseiLogDTO shinseiLogDto) { 
+            ShinseiLogDTO shinseiLogDto,
+            OshiraseDTO oshiraseDto) { 
         
         Long no = mainDto.getShinseiNo();
 
@@ -45,7 +47,7 @@ public class TokureiServiceImpl implements TokureiService {
         // [신규]
             System.out.println(">>> [신규] 전체 INSERT 시작");
             
-            // 1. 파일 저장 (ID 확보용)
+            // 1. 파일 저장 (ID 확보)
             fileDto.setKigyoCd(String.valueOf(kigyoCd)); // 기업코드
             fileDto.setAddUserId(userId);                // 등록자
             tokureiMapper.insertUploadFile(fileDto);     // 저장
@@ -58,49 +60,47 @@ public class TokureiServiceImpl implements TokureiService {
             Long newNo = mainDto.getShinseiNo();         // 따온 신청 번호
             System.out.println(">>> 생성된 신청 번호: " + newNo);
             
-            // [시작 경로]
+            // 공통 데이터 세팅
             if (newNo != null) {
-                startVo.setShinseiNo(newNo.intValue()); // (Integer 변환)
+                // 번호 연결 (VO 타입에 따라 형변환)
+                startVo.setShinseiNo(newNo.intValue()); // (Integer)
+                endVo.setShinseiNo(newNo);              // (Long)
+                fuzuiDto.setShinseiNo(newNo);           // (Long)
+                alertVo.setShinseiNo(newNo);            // (Long)
+                shinseiLogDto.setShinseiNo(newNo);      // (Long)
+                oshiraseDto.setShinseiNo(newNo);        // (Long)
             }
-            startVo.setKigyoCd(kigyoCd);
-            startVo.setAddUserId(userId);           
 
-            // [종료 경로]
-            if (newNo != null) {
-                endVo.setShinseiNo(newNo); // (Long 가능)
+            // 기업코드 & 유저ID 연결
+            startVo.setKigyoCd(kigyoCd);    startVo.setAddUserId(userId);
+            endVo.setKigyoCd(kigyoCd);      endVo.setAddUserId(userId);
+            fuzuiDto.setKigyoCd(kigyoCd);   fuzuiDto.setAddUserId(userId);
+            alertVo.setKigyoCd(kigyoCd);    alertVo.setAddUserId(userId);
+            shinseiLogDto.setKigyoCd(kigyoCd); shinseiLogDto.setAddUserId(userId);
+            oshiraseDto.setKigyoCd(kigyoCd); oshiraseDto.setAddUserId(userId);
+            
+            // 경고 전용 추가 세팅
+            alertVo.setShainUid(userId);    
+            alertVo.setShainNo(mainDto.getShainNo());
+            
+            // 통지 전용 추가 세팅
+            oshiraseDto.setShainUid(userId); 
+            oshiraseDto.setShainNo(mainDto.getShainNo());
+            oshiraseDto.setUpdUserId(userId);
+
+            // 파일 ID 연결
+            if (newFileId != null) {
+                fuzuiDto.setFileUid1(newFileId.intValue());
             }
-            endVo.setKigyoCd(kigyoCd);
-            endVo.setAddUserId(userId);
-            
-            // [부수 서류]
-            if (newNo != null) fuzuiDto.setShinseiNo(newNo);
-            if (newFileId != null) fuzuiDto.setFileUid1(newFileId.intValue()); 
-            fuzuiDto.setKigyoCd(kigyoCd);
-            fuzuiDto.setAddUserId(userId);
-            
-            // [알림]
-            if (newNo != null) {
-                alertVo.setShinseiNo(newNo); // 신청번호 연결
-            }
-            alertVo.setKigyoCd(kigyoCd);
-            alertVo.setShainUid(userId);
-            alertVo.setShainNo(mainDto.getShainNo()); // 사원번호 필수
-            
-            alertVo.setAddUserId(userId);
-            alertVo.setUpdUserId(userId);
-            
-            // [신청 로그]
-            if (newNo != null) shinseiLogDto.setShinseiNo(newNo); 
-            shinseiLogDto.setKigyoCd(kigyoCd);
-            shinseiLogDto.setAddUserId(userId);
             
             
-            // 4. 저장 실행
+            // 3. 저장 실행
             tokureiMapper.insertStartKeiro(startVo);
             tokureiMapper.insertEndKeiro(endVo);
             tokureiMapper.insertFuzuiShorui(fuzuiDto);
             tokureiMapper.insertAlert(alertVo);
             tokureiMapper.insertShinseiLog(shinseiLogDto);
+            tokureiMapper.insertOshirase(oshiraseDto);
         
         }        
         

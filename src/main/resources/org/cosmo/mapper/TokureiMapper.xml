@@ -294,6 +294,22 @@
     )
 </insert>
 
+<insert id="insertOshirase" parameterType="org.cosmo.domain.OshiraseDTO">
+    INSERT INTO OSHIRASE (
+        KIGYO_CD, SHAIN_UID, SHAIN_NO,
+        TSUCHI_YMD, TSUCHI_HM, -- (오늘 날짜, 현재 시간 자동 입력)
+        TSUCHISHA_KIGYO_CD, TSUCHISHA_CD,
+        SHINSEI_NO, OSHIRASE_NAIYO, KENGEN,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shainUid}, #{shainNo},
+        TO_CHAR(SYSDATE, 'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MI'),
+        #{tsuchishaKigyoCd}, #{tsuchishaCd},
+        #{shinseiNo}, #{oshiraseNaiyo}, #{kengen},
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
 
 </mapper>
 

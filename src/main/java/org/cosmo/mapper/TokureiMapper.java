@@ -3,6 +3,7 @@
 package org.cosmo.mapper;
 
 import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.OshiraseDTO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
@@ -28,5 +29,7 @@ public interface TokureiMapper {
     void insertAlert(AlertVO vo);
     
     void insertShinseiLog(ShinseiLogDTO dto);
+    
+    void insertOshirase(OshiraseDTO dto);
 
 }

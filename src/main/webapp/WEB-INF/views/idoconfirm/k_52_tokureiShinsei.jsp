@@ -583,6 +583,32 @@ window.onload = function() {
         "addUserId": 100,
         "updUserId": 100
     };
+    
+    // [9] 통지 정보 (OshiraseDTO)
+    const oshiraseData = {
+        // [PK 및 기본]
+        "kigyoCd": 1,              // 기업코드
+        "shainUid": 100,           // 사원UID
+        
+        // [날짜/시간 - DB에서 SYSDATE로 들어가지만 형식상 적어둠]
+        "tsuchiYmd": "",           // (XML에서 TO_CHAR(SYSDATE)로 처리됨)
+        "tsuchiHm": "",            // (XML에서 처리됨)
+        
+        // [통지 대상 및 내용]
+        "shainNo": "202301",       // 사원번호
+        "tsuchishaKigyoCd": 1,     // 통지자 기업코드
+        "tsuchishaCd": "admin",    // 통지자 코드
+        
+        // "shinseiNo": 0,         // (Service에서 자동 연결되므로 0 또는 생략)
+        
+        "oshiraseNaiyo": "特例申請が正常に登録されました。", // 알림 내용 (CLOB)
+        "kengen": "1",             // 권한
+        
+        // [Audit - 등록자 정보]
+        "addUserId": 100,          // 등록자 ID
+        "updUserId": 100           // 수정자 ID
+        // addDate, updDate는 DB 자동생성
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -643,11 +669,14 @@ window.onload = function() {
             // 5. 파일 정보
             addHiddenData(fileData);
             
-      	    // 6. 알림 정보
+      	    // 6. 경고 정보
             addHiddenData(alertData);
       	    
       	    // 7. 신청 로그 정보
             addHiddenData(shinseiLogData);
+      	    
+            // 8. 통지 정보
+            addHiddenData(oshiraseData);
 
             form.submit();
         };
