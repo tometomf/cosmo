@@ -475,9 +475,7 @@ window.onload = function() {
         "updUserId": 100
     };
  	
- // ============================================================
     // [5] 부수 서류 정보 (ShinseiFuzuiShoruiDTO 매핑용)
-    // ============================================================
     const fuzuiShoruiData = {
         // [PK]
         "kigyoCd": 1,
@@ -519,6 +517,14 @@ window.onload = function() {
         // [Audit]
         "addUserId": 100,
         "updUserId": 100
+    };
+ 
+ 	// [6] 파일 정보 (UploadFileDTO 매핑용) - 가짜 데이터
+    const fileData = {
+        "title": "定期券コピー",
+        "name": "dummy.pdf",
+        "contentType": "application/pdf",
+        // kigyoCd, addUserId 등은 자바에서 세팅
     };
 
         // [3] 라디오 버튼 이벤트
@@ -576,6 +582,9 @@ window.onload = function() {
             
       	    // 4. 부수 서류 정보
             addHiddenData(fuzuiShoruiData);
+      	    
+            // 5. 파일 정보
+            addHiddenData(fileData);
 
             form.submit();
         };

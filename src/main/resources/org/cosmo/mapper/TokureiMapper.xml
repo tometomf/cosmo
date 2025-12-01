@@ -219,6 +219,25 @@
     #{addUserId}, SYSTIMESTAMP
 )
     </insert>
+    
+    <insert id="insertUploadFile" parameterType="org.cosmo.domain.UploadFileDTO">
+    <selectKey keyProperty="fileUid" resultType="long" order="BEFORE">
+        SELECT UPLOAD_FILE_SEQUENCE.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO UPLOAD_FILE (
+        FILE_UID, SEQ, TITLE, NAME, CONTENT_TYPE, DATA, KIGYO_CD,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{fileUid}, 
+        1,  -- SEQ는 1로 고정
+        #{title}, #{name}, #{contentType}, 
+        EMPTY_BLOB(), -- 더미 데이터니까 내용은 비움
+        #{kigyoCd},
+        #{addUserId}, SYSTIMESTAMP, 
+        #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
 
 
 </mapper>

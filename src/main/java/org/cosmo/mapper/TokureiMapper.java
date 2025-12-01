@@ -6,6 +6,7 @@ import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
+import org.cosmo.domain.UploadFileDTO;
 
 public interface TokureiMapper {
 	
@@ -19,5 +20,7 @@ public interface TokureiMapper {
     void insertEndKeiro(ShinseiEndKeiroVO vo);
     
     void insertFuzuiShorui(ShinseiFuzuiShoruiDTO dto);
+    
+    void insertUploadFile(UploadFileDTO dto);
 
 }
