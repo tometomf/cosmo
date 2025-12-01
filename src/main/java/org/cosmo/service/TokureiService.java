@@ -3,10 +3,10 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.ShinseiDTO;
-import org.cosmo.mapper.TokureiMapper;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface TokureiService {
 	
-	void registerShinsei(ShinseiDTO dto);
+	void registerShinsei(ShinseiDTO mainDto, ShinseiStartKeiroVO keiroVo);
 
 }

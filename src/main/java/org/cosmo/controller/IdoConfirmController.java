@@ -19,6 +19,7 @@ import org.cosmo.domain.NextStep;
 import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.UploadResult;
 import org.cosmo.service.AddressInputService;
@@ -521,25 +522,27 @@ public class IdoConfirmController {
 
  // 作成者 : 권예성
     @PostMapping("/tokureiSubmit")
-    public String tokureiSubmit(@ModelAttribute ShinseiDTO dto, // Form 말고 DTO로 받음
-                                RedirectAttributes rttr) {
+    public String tokureiSubmit(
+            @ModelAttribute ShinseiDTO mainDto,           // 1. 신청 기본 정보 (필수)
+            @ModelAttribute ShinseiStartKeiroVO keiroVo,  // 2. ★ 경로 정보 (이게 추가돼야 함!)
+            RedirectAttributes rttr) {
 
-        System.out.println("===== [DEBUG] ShinseiDTO データ到着 =====");
-        System.out.println("신청번호 : " + dto.getShinseiNo());
-        System.out.println("기업코드 : " + dto.getKigyoCd());
-        System.out.println("사원번호 : " + dto.getShainNo());
-        System.out.println("주소1   : " + dto.getGenAddress1());
-        System.out.println("특례사유 : " + dto.getTokuShinseiRiyu());
-        System.out.println("========================================");
+        // 1. 로그 확인
+        System.out.println("===== [DEBUG] 데이터 도착 =====");
+        System.out.println("신청번호(JSP) : " + mainDto.getShinseiNo()); 
+        System.out.println("특례사유 : " + mainDto.getTokuShinseiRiyu());
+        System.out.println("출발지 : " + keiroVo.getStartPlace()); // 이게 찍혀야 함!
+        System.out.println("=============================");
 
-        // 유효성 체크        
-        if (dto.getTokuShinseiRiyu() == null || dto.getTokuShinseiRiyu().trim().isEmpty()) {
+        // 2. 유효성 체크 (이건 꼭 있어야 합니다!)
+        // (특례 사유가 비어있으면 빠꾸시킴)
+        if (mainDto.getTokuShinseiRiyu() == null || mainDto.getTokuShinseiRiyu().trim().isEmpty()) {
             rttr.addFlashAttribute("errorMessage", "特例申請事由を入力してください");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
         
-     // DB에 저장 명령 내리기
-        tokureiService.registerShinsei(dto);
+        // 3. 서비스 호출 (두 덩어리 다 넘기기)
+        tokureiService.registerShinsei(mainDto, keiroVo);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";

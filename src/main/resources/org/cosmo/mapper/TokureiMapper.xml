@@ -65,6 +65,106 @@
             KIGYO_CD = #{kigyoCd}
             AND SHINSEI_NO = #{shinseiNo}
     </update>
+    
+    
+    <insert id="insertStartKeiro" parameterType="org.cosmo.domain.ShinseiStartKeiroVO">
+        INSERT INTO SHINSEI_START_KEIRO (
+            KIGYO_CD,
+            SHINSEI_NO,
+            KEIRO_SEQ,
+            
+            TSUKIN_SHUDAN_KBN,
+            START_PLACE,
+            END_PLACE,
+            SHINSEI_KM,
+            
+            -- (필요한 컬럼들 추가)
+            YURYO_TOKUREI,
+            KYORI_KAGEN_TOKUREI,
+            JOUGEN_KINGAKU_TOKUREI,
+            JOUGEN_CUT,
+            FUBI_UMU_KBN,
+            
+            KIKAN_START_YMD,
+            KIKAN_END_YMD,
+            JITSU_KINMU_NISSU,
+            
+            KEKKA_SELECT,
+            
+            FIRST_TEIKI_TSUKI_SU,
+            FIRST_SHIKYU_YMD,
+            FIRST_SHIKYU_KIN,
+            NEXT_TEIKI_TSUKI_SU,
+            REGULAR_SHIKYU_KIN,
+            TSUKI_SHIKYU_KIN,
+            KATAMICHI_KIN,
+            
+            SHINKANSEN_RIYO_KBN,
+            TOKKYU_RIYO_KBN,
+            YURYO_RIYO_KBN,
+            
+            SANSHO_TEIKI_TSUKI_SU_1, SANSHO_TEIKI_KIN_1,
+            SANSHO_TEIKI_TSUKI_SU_2, SANSHO_TEIKI_KIN_2,
+            SANSHO_TEIKI_TSUKI_SU_3, SANSHO_TEIKI_KIN_3,
+            
+            YURYO_OFUKU_KBN,
+            YURYO_KATAMICHI_KIN,
+            
+            NENPI,
+            GASORIN_DAI_MAE, YURYO_DAI_MAE, GOUKEI_MAE, HIWARI_MAE,
+            GASORIN_DAI_ATO, YURYO_DAI_ATO, GOUKEI_ATO, HIWARI_ATO,
+            
+            ADD_USER_ID,
+            ADD_DATE
+        ) VALUES (
+            #{kigyoCd},
+            #{shinseiNo},   -- Service에서 넣어준 번호가 들어감
+            1,              -- 순번 1번 고정
+            
+            #{tsukinShudanKbn},
+            #{startPlace},
+            #{endPlace},
+            #{shinseiKm},
+            
+            #{yuryoTokurei},
+            #{kyoriKagenTokurei},
+            #{jougenKingakuTokurei},
+            #{jougenCut},
+            #{fubiUmuKbn},
+            
+            #{kikanStartYmd},
+            #{kikanEndYmd},
+            #{jitsuKinmuNissu},
+            
+            #{kekkaSelect},
+            
+            #{firstTeikiTsukiSu},
+            #{firstShikyuYmd},
+            #{firstShikyuKin},
+            #{nextTeikiTsukiSu},
+            #{regularShikyuKin},
+            #{tsukiShikyuKin},
+            #{katamichiKin},
+            
+            #{shinkansenRiyoKbn},
+            #{tokkyuRiyoKbn},
+            #{yuryoRiyoKbn},
+            
+            #{sanshoTeikiTsukiSu1}, #{sanshoTeikiKin1},
+            #{sanshoTeikiTsukiSu2}, #{sanshoTeikiKin2},
+            #{sanshoTeikiTsukiSu3}, #{sanshoTeikiKin3},
+            
+            #{yuryoOfukuKbn},
+            #{yuryoKatamichiKin},
+            
+            #{nenpi},
+            #{gasorinDaiMae}, #{yuryoDaiMae}, #{goukeiMae}, #{hiwariMae},
+            #{gasorinDaiAto}, #{yuryoDaiAto}, #{goukeiAto}, #{hiwariAto},
+            
+            #{addUserId},
+            SYSTIMESTAMP
+        )
+    </insert>
 
 </mapper>
 
