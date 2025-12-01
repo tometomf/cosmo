@@ -185,6 +185,42 @@
     )
 </insert>
 
+<insert id="insertFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+        INSERT INTO SHINSEI_FUZUI_SHORUI (
+            KIGYO_CD, SHINSEI_NO, KEIRO_SEQ,
+            SHINSEI_KBN, SHINSEI_YMD, SHAIN_UID, SHAIN_NO, DAIRI_SHINSEISHA_CD,
+            TSUKIN_SHUDAN_KBN,
+            FILE_UID_1, FILE_UID_2, FILE_UID_3, FILE_UID_4, FILE_UID_5,
+            MENKYO_YUKO_KIGEN, MENKYO_NO, SHASHU, TOROKU_NO, HAIKIRYO, SHAKEN_YUKO_KIGEN, NENPI,
+            HOKEN_MANRYO_YMD, TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOJOSHA_SHOGAI, TOKYU,
+            FIRST_TEIKI_KIKAN, NEXT_TEIKI_KIKAN,
+            ADD_USER_ID, ADD_DATE
+        ) VALUES (
+    #{kigyoCd}, #{shinseiNo}, 1,
+    #{shinseiKbn, jdbcType=VARCHAR}, 
+    #{shinseiYmd, jdbcType=VARCHAR}, 
+    #{shainUid}, #{shainNo}, 
+    #{dairiShinseishaCd, jdbcType=INTEGER}, 
+    #{tsukinShudanKbn, jdbcType=VARCHAR},
+    
+    #{fileUid1, jdbcType=INTEGER}, #{fileUid2, jdbcType=INTEGER}, 
+    #{fileUid3, jdbcType=INTEGER}, #{fileUid4, jdbcType=INTEGER}, #{fileUid5, jdbcType=INTEGER},
+    
+    #{menkyoYukoKigen, jdbcType=VARCHAR}, #{menkyoNo, jdbcType=VARCHAR}, 
+    #{shashu, jdbcType=VARCHAR}, #{torokuNo, jdbcType=VARCHAR}, 
+    #{haikiryo, jdbcType=INTEGER}, #{shakenYukoKigen, jdbcType=VARCHAR}, #{nenpi, jdbcType=DECIMAL},
+    
+    #{hokenManryoYmd, jdbcType=VARCHAR}, #{taijinBaisho, jdbcType=VARCHAR}, 
+    #{taibutsuBaisho, jdbcType=VARCHAR}, #{jinshinShogai, jdbcType=VARCHAR}, 
+    #{tojoshaShogai, jdbcType=VARCHAR}, #{tokyu, jdbcType=INTEGER},
+    
+    #{firstTeikiKikan, jdbcType=VARCHAR}, #{nextTeikiKikan, jdbcType=VARCHAR},
+    
+    #{addUserId}, SYSTIMESTAMP
+)
+    </insert>
+
+
 </mapper>
 
 <!-- 作成者 : 권예성 -->

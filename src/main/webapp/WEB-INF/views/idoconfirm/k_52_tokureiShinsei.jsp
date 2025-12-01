@@ -474,6 +474,52 @@ window.onload = function() {
         "addUserId": 100,
         "updUserId": 100
     };
+ 	
+ // ============================================================
+    // [5] 부수 서류 정보 (ShinseiFuzuiShoruiDTO 매핑용)
+    // ============================================================
+    const fuzuiShoruiData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,               // 순번 1
+        // "shinseiNo": 0,          // (자동 연결)
+
+        // [공통 정보]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",     // (빈값 = null)
+        "tsukinShudanKbn": "01",     // 01:전철
+
+        // [파일 UID (일단 비움)]
+        "fileUid1": "", "fileUid2": "", "fileUid3": "", "fileUid4": "", "fileUid5": "",
+
+        // [면허/차량 정보]
+        "menkyoYukoKigen": "",       // 면허유효기간
+        "menkyoNo": "",              // 면허번호
+        "shashu": "",                // 차종
+        "torokuNo": "",              // 등록번호
+        "haikiryo": "",              // 배기량
+        "shakenYukoKigen": "",       // 차검유효기간
+        "nenpi": 0,                  // 연비
+
+        // [보험 정보]
+        "hokenManryoYmd": "",        // 보험만료일
+        "taijinBaisho": "",          // 대인배상
+        "taibutsuBaisho": "",        // 대물배상
+        "jinshinShogai": "",         // 인신상해
+        "tojoshaShogai": "",         // 탑승자상해
+        "tokyu": "",                 // 등급
+
+        // [정기권]
+        "firstTeikiKikan": "",
+        "nextTeikiKikan": "",
+
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -527,6 +573,9 @@ window.onload = function() {
             
             // 3. 종료 경로
             addHiddenData(endKeiroData);
+            
+      	    // 4. 부수 서류 정보
+            addHiddenData(fuzuiShoruiData);
 
             form.submit();
         };

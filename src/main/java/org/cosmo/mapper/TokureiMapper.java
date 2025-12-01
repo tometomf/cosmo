@@ -4,6 +4,7 @@ package org.cosmo.mapper;
 
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 
 public interface TokureiMapper {
@@ -16,5 +17,7 @@ public interface TokureiMapper {
     void insertStartKeiro(ShinseiStartKeiroVO vo);
     
     void insertEndKeiro(ShinseiEndKeiroVO vo);
+    
+    void insertFuzuiShorui(ShinseiFuzuiShoruiDTO dto);
 
 }

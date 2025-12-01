@@ -20,6 +20,7 @@ import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.UploadResult;
@@ -526,7 +527,8 @@ public class IdoConfirmController {
     public String tokureiSubmit(
     		@ModelAttribute ShinseiDTO mainDto,
             @ModelAttribute ShinseiStartKeiroVO startVo,
-            @ModelAttribute ShinseiEndKeiroVO endVo,    
+            @ModelAttribute ShinseiEndKeiroVO endVo,  
+            @ModelAttribute ShinseiFuzuiShoruiDTO fuzuiDto,
             RedirectAttributes rttr) {
 
     	// 1. 로그 확인
@@ -549,7 +551,7 @@ public class IdoConfirmController {
         }
         
         // 3. 서비스 호출
-        tokureiService.registerShinsei(mainDto, startVo, endVo);
+        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
