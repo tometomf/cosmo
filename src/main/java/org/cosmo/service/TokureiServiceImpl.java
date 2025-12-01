@@ -3,6 +3,7 @@
 package org.cosmo.service;
 
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.mapper.TokureiMapper;
 import org.springframework.stereotype.Service;
@@ -15,42 +16,38 @@ public class TokureiServiceImpl implements TokureiService {
 
 	private final TokureiMapper tokureiMapper;
 
-    @Override
-public void registerShinsei(ShinseiDTO mainDto, ShinseiStartKeiroVO keiroVo) {
+	@Override
+    public void registerShinsei(ShinseiDTO mainDto, ShinseiStartKeiroVO startVo, ShinseiEndKeiroVO endVo) {
         
-        // 1. 번호 확인 (수정/신규 판단용)
         Long no = mainDto.getShinseiNo();
-        System.out.println(">>> [Service] 전달받은 번호: " + no);
 
         if (no != null && no > 0) {
-            // [수정 모드] (UPDATE)
-            System.out.println(">>> 기존 번호 존재 -> UPDATE 실행");
+            // [수정 모드] 
+            System.out.println(">>> [수정] 메인 정보만 업데이트");
             tokureiMapper.updateShinsei(mainDto);
             
-            // (경로 정보 수정 로직은 나중에... 일단 패스)
-
         } else {
-            // INSERT
-            System.out.println(">>> 번호 없음(0) -> INSERT 실행");
+            // [신규 모드]
+            System.out.println(">>> [신규] 전체 INSERT 시작");
             
-            // 1) 신청 정보 저장 (번호 자동 채번)
+            // 1. 메인 저장 (번호 채번)
             tokureiMapper.insertShinsei(mainDto);
-            
-            // 2) 채번된 번호 꺼내기
             Long newNo = mainDto.getShinseiNo();
-            System.out.println(">>> 채번된 새 번호: " + newNo);
             
-            // 3) ★ 경로 정보에 번호 심어주기 (연결)
-            // (만약 VO의 shinseiNo가 Integer면 .intValue() 붙이세요)
+            // 2. 시작 경로 저장 (번호 연결)
+            // intValue() 추가
             if (newNo != null) {
-                keiroVo.setShinseiNo(newNo.intValue()); 
+                startVo.setShinseiNo(newNo.intValue()); 
             }
-            
-            keiroVo.setKigyoCd(mainDto.getKigyoCd());
-            keiroVo.setAddUserId(mainDto.getShainUid());
-            
-            // 4) ★ 경로 정보 저장 명령! (이게 있어야 함)
-            tokureiMapper.insertStartKeiro(keiroVo);
+            startVo.setKigyoCd(mainDto.getKigyoCd());
+            startVo.setAddUserId(mainDto.getShainUid());
+            tokureiMapper.insertStartKeiro(startVo);
+
+            // 3. 종료 경로 저장 (번호 연결)
+            endVo.setShinseiNo(newNo);
+            endVo.setKigyoCd(mainDto.getKigyoCd());
+            endVo.setAddUserId(mainDto.getShainUid());
+            tokureiMapper.insertEndKeiro(endVo);
         }
         
         System.out.println(">>> Service 처리 완료!");

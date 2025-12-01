@@ -247,20 +247,16 @@ window.onload = function() {
     const form = document.getElementById("tokureiForm"); // 이 ID는 안 바꿔도 됨!
     const reason = document.getElementById("reason");
 
-    // ==========================================================
     // [2] 엑셀 데이터 (ShinseiDTO에 있는 변수명으로 적어야 함)
-    // ==========================================================
     const shinseiData = {
-    // ==================================================
     // [1] PK 및 기본 정보
-    // ==================================================
     "kigyoCd": 1,
     "shinseiNo": "${shinseiNo}" == "" ? "0" : "${shinseiNo}",
     
     "shinseiKbn": "A",             // A:신규 (2자리 이내 OK)
     "shinseiYmd": "20231201",      // (8자리 숫자)
     
-    // ★ 사유: 너무 길면 안 되니 적당히
+    // 사유: 너무 길면 안 되니 적당히
     "shinseiRiyu": "転居",         // (짧게 수정)
 
     "shainUid": 100,
@@ -269,43 +265,35 @@ window.onload = function() {
     "shinchokuKbn": "1",           // (1자리 OK)
     "genTsukinroEndKbn": "0",      // (1자리 OK)
 
-    // ==================================================
     // [2] 변경/이동 정보
-    // ==================================================
     "addressChgKbn": "1",
     "kinmuAddressChgKbn": "0",
     "kyushokuHukkiKbn": "0",
 
-    // ==================================================
     // [3] 현재 주소/소속 (★ 길이 주의 ★)
-    // ==================================================
     "genShozokuCd": "DEP01",       // (짧게)
-    "genZipCd": "1638001",         // ★ 하이픈 제거 필수 (7자리)
-    "genAddress1": "東京",         // ★ 한자 2글자 (6byte - 8byte 이내 OK)
+    "genZipCd": "1638001",         // 하이픈 제거 필수 (7자리)
+    "genAddress1": "東京",         // 한자 2글자 (6byte - 8byte 이내)
     "genAddress2": "新宿",         // (짧게)
     "genAddress3": "西新宿",       // (짧게)
 
-    // ==================================================
     // [4] 신규 주소/소속 (★ 길이 주의 ★)
-    // ==================================================
     "newShozokuCd": "DEP01",
-    "newZipCd": "2200011",         // ★ 하이픈 제거 필수
-    "newAddress1": "千葉",         // ★ '카나가와'는 9byte라 에러남 -> '치바'(6byte)로 수정
+    "newZipCd": "2200011",         
+    "newAddress1": "千葉",         // '카나가와'는 9byte라 에러남 -> '치바'(6byte)로 수정
     "newAddress2": "千葉",
     "newAddress3": "千葉",
     "addressIdoKeido": "",
     "addressCorrect": "0",
 
-    // ==================================================
-    // [5] 현재/신규 근무지 주소 (★ 길이 주의 ★)
-    // ==================================================
-    "genKinmuZipCd": "1000001",    // ★ 하이픈 제거
-    "genKinmuAddress1": "東京",    // OK
-    "genKinmuAddress2": "千代田",  // OK
-    "genKinmuAddress3": "千代田",  // OK
+    // [5] 현재/신규 근무지 주소 (길이 주의)
+    "genKinmuZipCd": "1000001",    
+    "genKinmuAddress1": "東京",    
+    "genKinmuAddress2": "千代田",  
+    "genKinmuAddress3": "千代田",  
     "genKinmuPrefCd": "13",
 
-    "newKinmuZipCd": "1000001",    // ★ 하이픈 제거
+    "newKinmuZipCd": "1000001",    
     "newKinmuAddress1": "東京",
     "newKinmuAddress2": "千代田",
     "newKinmuAddress3": "千代田",
@@ -314,18 +302,14 @@ window.onload = function() {
     "newKinmuPrefCd": "13",
     "jutakuKbn": "1",
 
-    // ==================================================
     // [6] 부속 정보 (일단 비움)
-    // ==================================================
     // null이나 빈값은 에러 안 남
     "etcFileUid1": null, "etcFileUid2": null, "etcFileUid3": null,
     "etcFileUid4": null, "etcFileUid5": null,
     "etcComment1": "", "etcComment2": "", "etcComment3": "",
     "etcComment4": "", "etcComment5": "",
 
-    // ==================================================
-    // [7] 날짜 정보 (하이픈 뺀 8자리 문자열 추천)
-    // ==================================================
+    // [7] 날짜 정보 (하이픈 뺀 8자리 문자열)
     "riyoStartYmd": "20240401",
     "riyoEndYmd": "20240930",
     "shikyTeishiKbn": "0",
@@ -356,25 +340,19 @@ window.onload = function() {
     "jitsuKm": 28.5,
     "navitimeViewCnt": 1,
     
-    // ==================================================
     // [8] Audit
-    // ==================================================
     "addUserId": 100,
     "updUserId": 100,
     
     
-    // ==================================================
     // [9] 경로 정보 (StartKeiroVO 매핑용)
-    // ==================================================
     "startPlace": "横浜",          // 출발지
     "endPlace": "東京",            // 도착지
     "tsukinShudanKbn": "01",       // 교통수단
     "shinseiKm": 30.2              // 신청거리
 };
     
- // ============================================================
-    // [2] 경로 정보 (ShinseiStartKeiroVO 매핑용) - ★전체 컬럼★
-    // ============================================================
+    // [2] 경로 정보 (ShinseiStartKeiroVO 매핑용) 
     const startKeiroData = {
         // [PK]
         "kigyoCd": 1,
@@ -462,6 +440,40 @@ window.onload = function() {
         "addUserId": 100,
         "updUserId": 100
     };
+ 
+ 	// [4] 종료 경로 정보 (ShinseiEndKeiroVO 매핑용)
+    const endKeiroData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,              // 순번 1
+        // "shinseiNo": 0,          // (자동 연결되므로 생략)
+
+        // [공통 정보]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",
+        "tsukinShudanKbn": "01",    // 01:전철
+
+        // [종료 경로 전용 컬럼]
+        "fubiUmuKbn": "0",          // 불비유무
+        "genTsukinroNo": 1,         // 기존 통근로 번호
+        "riyoEndYmd": "20240331",   // 이용 종료일
+        
+        "kikanStartYmd": "20231001",// 기간 시작
+        "kikanEndYmd": "20240331",  // 기간 종료
+        "jitsuKinmuNissu": 20,      // 실제 근무일수
+        
+        "shinseiKin": 12000,        // 신청 금액
+        "jrModoshiKbn": "0",        // JR 환불 구분
+        "modoshiKin": 0,            // 환불 금액
+        "modoshiFileUid": "",       // 환불 파일 UID
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
 
         // [3] 라디오 버튼 이벤트
         radio.addEventListener("change", function() {
@@ -488,9 +500,7 @@ window.onload = function() {
                 return;
             }
 
-         // ============================================================
-            // ★ [핵심] 데이터 집어넣는 기계(함수)를 만듭니다.
-            // ============================================================
+            // 데이터 집어넣는 기계(함수)를 만든다
             function addHiddenData(dataObj) {
                 for (let key in dataObj) {
                     // 1. 기존에 있는 태그 삭제 (중복 방지)
@@ -509,13 +519,15 @@ window.onload = function() {
             }
 
             
-            // 1. 신청 정보 넣기
+            // 1. 신청 정보 
             addHiddenData(shinseiData);
 
-            // 2. 경로 정보 넣기            
+            // 2. 시작 경로
             addHiddenData(startKeiroData); 
+            
+            // 3. 종료 경로
+            addHiddenData(endKeiroData);
 
-            // (3) 최종 전송
             form.submit();
         };
     };

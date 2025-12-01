@@ -165,6 +165,25 @@
             SYSTIMESTAMP
         )
     </insert>
+    
+    
+    <insert id="insertEndKeiro" parameterType="org.cosmo.domain.ShinseiEndKeiroVO">
+    INSERT INTO SHINSEI_END_KEIRO (
+        KIGYO_CD, SHINSEI_NO, KEIRO_SEQ,
+        TSUKIN_SHUDAN_KBN, FUBI_UMU_KBN, GEN_TSUKINRO_NO,
+        RIYO_END_YMD, KIKAN_START_YMD, KIKAN_END_YMD,
+        JITSU_KINMU_NISSU, SHINSEI_KIN,
+        JR_MODOSHI_KBN, MODOSHI_KIN, MODOSHI_FILE_UID,
+        ADD_USER_ID, ADD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shinseiNo}, 1,
+        #{tsukinShudanKbn}, #{fubiUmuKbn}, #{genTsukinroNo},
+        #{riyoEndYmd}, #{kikanStartYmd}, #{kikanEndYmd},
+        #{jitsuKinmuNissu}, #{shinseiKin},
+        #{jrModoshiKbn}, #{modoshiKin}, #{modoshiFileUid},
+        #{addUserId}, SYSTIMESTAMP
+    )
+</insert>
 
 </mapper>
 

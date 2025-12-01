@@ -19,6 +19,7 @@ import org.cosmo.domain.NextStep;
 import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiEndKeiroVO;
 import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.ShozokuVO;
 import org.cosmo.domain.UploadResult;
@@ -523,26 +524,32 @@ public class IdoConfirmController {
  // 作成者 : 권예성
     @PostMapping("/tokureiSubmit")
     public String tokureiSubmit(
-            @ModelAttribute ShinseiDTO mainDto,           // 1. 신청 기본 정보 (필수)
-            @ModelAttribute ShinseiStartKeiroVO keiroVo,  // 2. ★ 경로 정보 (이게 추가돼야 함!)
+    		@ModelAttribute ShinseiDTO mainDto,
+            @ModelAttribute ShinseiStartKeiroVO startVo,
+            @ModelAttribute ShinseiEndKeiroVO endVo,    
             RedirectAttributes rttr) {
 
-        // 1. 로그 확인
+    	// 1. 로그 확인
         System.out.println("===== [DEBUG] 데이터 도착 =====");
         System.out.println("신청번호(JSP) : " + mainDto.getShinseiNo()); 
-        System.out.println("특례사유 : " + mainDto.getTokuShinseiRiyu());
-        System.out.println("출발지 : " + keiroVo.getStartPlace()); // 이게 찍혀야 함!
+        
+        // 시작 경로에는 '출발지'
+        System.out.println("출발지 : " + startVo.getStartPlace()); 
+        
+        // 종료 경로에는 '장소'가 없으니 '금액'이나 '종료일'
+        System.out.println("신청금액 : " + endVo.getShinseiKin()); 
+        
         System.out.println("=============================");
 
-        // 2. 유효성 체크 (이건 꼭 있어야 합니다!)
-        // (특례 사유가 비어있으면 빠꾸시킴)
+        // 2. 유효성 체크 (이건 꼭 있어야 함)
+        // (특례 사유가 비어있으면 신청 불가)
         if (mainDto.getTokuShinseiRiyu() == null || mainDto.getTokuShinseiRiyu().trim().isEmpty()) {
             rttr.addFlashAttribute("errorMessage", "特例申請事由を入力してください");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
         
-        // 3. 서비스 호출 (두 덩어리 다 넘기기)
-        tokureiService.registerShinsei(mainDto, keiroVo);
+        // 3. 서비스 호출
+        tokureiService.registerShinsei(mainDto, startVo, endVo);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
