@@ -1,3 +1,5 @@
+// 作成者 : 권예성
+
 package org.cosmo.service;
 
 import java.util.List;
@@ -16,5 +18,5 @@ public class ShozokuService {
 
     public List<ShozokuVO> findShozokuList(int kigyoCd) {
         return shozokuMapper.findShozokuList(kigyoCd);
-    }
+}
 }

@@ -1,3 +1,5 @@
+// 作成者 : 권예성
+
 package org.cosmo.mapper;
 
 import java.util.List;
@@ -22,4 +24,7 @@ public interface ShozokuMapper {
         "ORDER BY SHOZOKU_CD"
     )
     List<ShozokuVO> findShozokuList(@Param("kigyoCd") int kigyoCd);
+
 }
+
+

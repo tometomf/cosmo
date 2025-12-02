@@ -10,7 +10,7 @@
 <body>
 
 	<div class = "layout">
-		<%-- <%@ include file="/WEB-INF/views/common/header.jsp" %> --%>
+		<%@ include file="/WEB-INF/views/common/header.jsp" %>
 		<div class = "main">
 			<div class = "main_title">
 				<!-- 진척도 예제 -->
@@ -19,7 +19,7 @@
 				</div>	
 				<div>
 					<div style="margin: 5%; text-align: center;">
-					書類の更新申請が完了しました。<br>「申請番号：１２３０００６４」
+					書類の更新申請が完了しました。<br>「申請番号：${shinseiNo}」
 					<br><br>お問い合わせの際は、上記の申請番号をお伝えください。<br>
 					申請番号はメールでもお送りしております。		
 					</div>
@@ -35,4 +35,9 @@
 		<%@ include file="/WEB-INF/views/common/footer.jsp" %>	
 	</div>	
 </body>
+<script type="text/javascript">
+	document.querySelector(".button_Center_Group").addEventListener("click",function(e){
+		location.href = "/";
+	})
+</script>
 </html>

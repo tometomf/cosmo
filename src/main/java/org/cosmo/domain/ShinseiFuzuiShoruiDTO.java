@@ -8,7 +8,7 @@ public class ShinseiFuzuiShoruiDTO {
 
 	// PK
 	private int kigyoCd;            // KIGYO_CD (기업 코드)
-	private int shinseiNo;          // SHINSEI_NO (신청 번호)
+	private long shinseiNo;          // SHINSEI_NO (신청 번호)
 	private int keiroSeq;           // KEIRO_SEQ (경로 순번)
 
 	// 신청/사원 기본 정보 (신청 테이블에서 복제된 값으로 보임)
@@ -20,11 +20,11 @@ public class ShinseiFuzuiShoruiDTO {
 	private String tsukinShudanKbn; // TSUKIN_SHUDAN_KBN (통근 수단 구분)
 
 	// 첨부 파일 관련 정보
-	private Integer fileUid1;       // FILE_UID_1 (파일 UID 1 - nullable)
-	private Integer fileUid2;       // FILE_UID_2
-	private Integer fileUid3;       // FILE_UID_3
-	private Integer fileUid4;       // FILE_UID_4
-	private Integer fileUid5;       // FILE_UID_5
+	private Long fileUid1;       // FILE_UID_1 (파일 UID 1 - nullable)
+	private Long fileUid2;       // FILE_UID_2
+	private Long fileUid3;       // FILE_UID_3
+	private Long fileUid4;       // FILE_UID_4
+	private Long fileUid5;       // FILE_UID_5
 
 	// 운전 면허 및 차량 정보
 	private String menkyoYukoKigen; // MENKYO_YUKO_KIGEN (면허 유효 기한)
@@ -52,4 +52,7 @@ public class ShinseiFuzuiShoruiDTO {
 	private Timestamp addDate;      // ADD_DATE
 	private Integer updUserId;      // UPD_USER_ID
 	private Timestamp updDate;      // UPD_DATE
+	
+	private String tsukinShudanName; // 통근 수단 코드(tsukinShudanKbn)에 해당하는 이름
+	private String menkyoTempFileId; // 임시 저장 파일 ID를 저장하기 위한 필드
 }

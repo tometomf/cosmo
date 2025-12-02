@@ -2,7 +2,7 @@ package org.cosmo.domain;
 
 import lombok.Data;
 
-//ú±˜ë‚˜
+//í•˜ë‚˜
 @Data
 public class ShinseiIcDataDTO {
 
@@ -38,7 +38,7 @@ public class ShinseiIcDataDTO {
 	private String codeNm;
 	private String shinseiName;
     private ShinseiKeiroVO keiro; 
- 
+    
     private ShinseiStartKeiroVO startKeiro;
     
     public String getGenAddress() {

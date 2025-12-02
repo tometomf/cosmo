@@ -4,73 +4,543 @@
 
 <mapper namespace="org.cosmo.mapper.HiwariKinmuchiMapper">
 
-    <!-- ============================================================
-         日割勤務地 初期表示（申請前）
-         SHAIN + SHOZOKU からデータ取得
-         ============================================================ -->
-    <select id="selectBeforeShinsei"
-            parameterType="map"
-            resultType="org.cosmo.domain.HiwariKinmuchiVO">
 
+	<!-- 서혜원 시작 -->
+	<!-- 여기부터 킨무지 -->
+	<!-- 申請前：SHAIN + SHOZOKU -->
+	<select id="getBeforeShinsei"
+		resultType="org.cosmo.domain.HiwariKinmuchiVO">
+		SELECT
+		s.SHOZOKU_CD AS genKinmusakiCd,
+		z.SHOZOKU_NM AS genKinmusakiNm,
+		s.KINMU_ZIP_CD AS genKinmuZip,
+		s.KINMU_ADDRESS_1 AS genKinmuAddress1,
+		s.KINMU_ADDRESS_2 AS genKinmuAddress2,
+		s.KINMU_ADDRESS_3 AS
+		genKinmuAddress3
+		FROM SHAIN s
+		INNER JOIN SHOZOKU z
+		ON s.KIGYO_CD = z.KIGYO_CD
+		AND s.SHOZOKU_CD = z.SHOZOKU_CD
+		WHERE s.KIGYO_CD = #{kigyoCd}
+		AND s.SHAIN_UID = #{shainUid}
+	</select>
+
+	<!-- 申請後：SHINSEI + SHOZOKU -->
+	<select id="getAfterShinsei"
+		resultType="org.cosmo.domain.HiwariKinmuchiVO">
+		SELECT
+		-- GEN 
+		a.GEN_shozoku_cd AS genKinmusakiCd,
+		(SELECT shozoku_nm
+		FROM SHOZOKU
+		WHERE kigyo_cd = a.kigyo_cd
+		AND shozoku_cd = a.gen_shozoku_cd) AS genKinmusakiNm,
+
+		a.GEN_KINMU_ZIP_CD AS genKinmuZip,
+		a.GEN_KINMU_ADDRESS_1 AS genKinmuAddress1,
+		a.GEN_KINMU_ADDRESS_2 AS genKinmuAddress2,
+		a.GEN_KINMU_ADDRESS_3 AS genKinmuAddress3,
+
+		-- NEW 
+		a.NEW_shozoku_cd AS hiwariKinmusakiCd,
+		(SELECT shozoku_nm
+		FROM SHOZOKU
+		WHERE kigyo_cd = a.kigyo_cd
+		AND shozoku_cd = a.new_shozoku_cd) AS hiwariKinmusakiNm,
+
+		a.NEW_KINMU_ZIP_CD AS hiwariKinmuZip,
+		a.NEW_KINMU_ADDRESS_1 AS hiwariKinmuAddress1,
+		a.NEW_KINMU_ADDRESS_2 AS hiwariKinmuAddress2,
+		a.NEW_KINMU_ADDRESS_3 AS hiwariKinmuAddress3
+
+		FROM SHINSEI a
+		WHERE a.KIGYO_CD = #{kigyoCd}
+		AND a.SHAIN_UID = #{shainUid}
+		AND a.SHINSEI_NO = #{shinseiNo}
+	</select>
+
+
+	<!-- 所属 리스트 -->
+	<select id="getShozokuNames" resultType="string">
+		SELECT SHOZOKU_NM
+		FROM
+		SHOZOKU
+		WHERE KIGYO_CD = #{kigyoCd}
+		ORDER BY SHOZOKU_NM
+	</select>
+
+	<!-- 여기까지 킨무지 -->
+
+
+	<!-- 여기부터 어드레스 -->
+	<!-- 日割住所 페이지 데이터 조회 -->
+	<select id="getAddressPageDataBefore"
+		resultType="org.cosmo.domain.HiwariAddressVO">
+		SELECT
+		-- 社宅住所 바
+		TRIM(s.DB_ADDRESS_1) || ' ' ||
+		TRIM(s.DB_ADDRESS_2) AS fullAddress,
+
+		s.ZIP_CD AS genZip,
+		s.ADDRESS_1 AS genAddress1,
+		s.ADDRESS_2 AS genAddress2,
+		s.ADDRESS_3 AS genAddress3
+		FROM
+		SHAIN s
+		INNER JOIN SHOZOKU z
+		ON s.KIGYO_CD = z.KIGYO_CD
+		AND s.SHOZOKU_CD = z.SHOZOKU_CD
+		WHERE s.KIGYO_CD = #{kigyoCd}
+		AND s.SHAIN_UID = #{shainUid}
+
+	</select>
+
+
+	<select id="getAddressPageData"
+		resultType="org.cosmo.domain.HiwariAddressVO">
+		SELECT
+		-- 상단 社宅住所 바
+		TRIM(s.DB_ADDRESS_1) || ' ' ||
+		TRIM(s.DB_ADDRESS_2) AS fullAddress,
+
+		-- 現住所 (신청 후 → SHINSEI.GEN_*)
+		sh.GEN_ZIP_CD AS genZip,
+		sh.GEN_ADDRESS_1 AS genAddress1,
+		sh.GEN_ADDRESS_2 AS genAddress2,
+		sh.GEN_ADDRESS_3 AS genAddress3,
+
+		-- 日割期間住所 (신청 후 → SHINSEI.NEW_*)
+		sh.NEW_ZIP_CD AS newZip,
+		sh.NEW_ADDRESS_1 AS newAddress1,
+		sh.NEW_ADDRESS_2 AS newAddress2,
+		sh.NEW_ADDRESS_3 AS newAddress3,
+
+		-- この住所を反映 用
+		s.DB_ZIP_CD AS dbZip,
+		s.DB_ADDRESS_1 AS dbAddress1,
+		s.DB_ADDRESS_2 AS dbAddress2
+
+		FROM SHINSEI sh
+		INNER JOIN SHAIN s
+		ON sh.KIGYO_CD = s.KIGYO_CD
+		AND sh.SHAIN_UID = s.SHAIN_UID
+
+		WHERE sh.KIGYO_CD = #{kigyoCd}
+		AND sh.SHINSEI_NO = #{shinseiNo}
+	</select>
+
+	<!-- 여기까지 어드레스 -->
+	
+	
+	<!-- 여기부터 리유 -->
+	
+	<select id="shinseiRiyuPage"
+		resultType="org.cosmo.domain.HiwariRiyuVO">
+		SELECT
+		
+		sh.SHINSEI_RIYU AS shinseiriyu,
+		sh.RIYO_START_YMD AS shinseigigan1,
+		sh.RIYO_END_YMD AS shinseigigan2,
+		ssk.JITSU_KINMU_NISSU AS shukkinnissu
+		
+		FROM SHINSEI sh
+		INNER JOIN SHINSEI_START_KEIRO ssk
+		ON sh.KIGYO_CD = ssk.KIGYO_CD
+		AND sh.SHINSEI_NO = ssk.SHINSEI_NO
+		AND ssk.KEIRO_SEQ = 1
+		
+		WHERE sh.KIGYO_CD = #{kigyoCd}
+		AND sh.SHAIN_UID = #{shainUid}
+		AND sh.SHINSEI_NO = #{shinseiNo}
+		
+	</select>
+	
+	<!-- 여기까지 리유 -->
+	
+	<!-- 서혜원 끝 -->
+
+
+	<!-- 유지희 -->
+	<resultMap id="HiwariKakuninHeaderMap"
+		type="org.cosmo.domain.HiwariKakuninVO">
+		<id property="shinseiNo" column="SHINSEI_NO" />
+
+		<result property="kigyoCd" column="KIGYO_CD" />
+		<result property="shainUid" column="SHAIN_UID" />
+		<result property="empNo" column="EMP_NO" />
+		<result property="empName" column="EMP_NAME" />
+		<result property="empWorkplace" column="EMP_WORKPLACE" />
+		<result property="empAddress" column="EMP_ADDRESS" />
+
+		<result property="shinseiKbn" column="SHINSEI_KBN" />
+		<result property="shinseiKbnNm" column="SHINSEI_KBN_NM" />
+		<result property="shinseiRiyu" column="SHINSEI_RIYU" />
+
+		<result property="taishoKikanFrom" column="TAISHO_KIKAN_FROM" />
+		<result property="taishoKikanTo" column="TAISHO_KIKAN_TO" />
+		<result property="shukkinNissuu" column="SHUKKIN_NISSUU" />
+		<result property="kingakuGokei" column="KINGAKU_GOKEI" />
+	</resultMap>
+
+
+	<resultMap id="HiwariKakuninRouteMap"
+		type="org.cosmo.domain.HiwariKakuninRouteVO">
+		<id property="keiroSeq" column="KEIRO_SEQ" />
+
+		<result property="tsukinShudanKbn" column="TSUKIN_SHUDAN_KBN" />
+		<result property="tsukinShudanNm" column="TSUKIN_SHUDAN_NM" />
+
+		<result property="keiroSection" column="KEIRO_SECTION" />
+
+		<result property="shukkinNissuu" column="SHUKKIN_NISSUU" />
+		<result property="kataMichiRyokin" column="KATAMICHI_RYOKIN" />
+
+		<result property="kingaku" column="KINGAKU" />
+		<result property="kingakuMonthly" column="KINGAKU_MONTHLY" />
+	</resultMap>
+
+	<!-- 유지희 -->
+	<select id="selectKakuninHeader"
+		resultMap="HiwariKakuninHeaderMap">
+
+		SELECT
+		S.KIGYO_CD AS KIGYO_CD
+		, S.SHINSEI_NO AS SHINSEI_NO
+		,
+		S.SHAIN_UID AS SHAIN_UID
+		, H.SHAIN_NO AS EMP_NO
+		, H.SHAIN_NM AS EMP_NAME
+		, (KJ.JIGYOSHO_NM || ' ' || SZ.SHOZOKU_NM) AS EMP_WORKPLACE
+		,
+		(H.ADDRESS_1 || ' ' || H.ADDRESS_2 || ' ' || H.ADDRESS_3) AS
+		EMP_ADDRESS
+		, S.SHINSEI_KBN AS SHINSEI_KBN
+		, CKBN.CODE_NM AS
+		SHINSEI_KBN_NM
+		, MAX(DBMS_LOB.SUBSTR(S.SHINSEI_RIYU, 4000, 1)) AS
+		SHINSEI_RIYU
+		, MIN(SK.KIKAN_START_YMD) AS TAISHO_KIKAN_FROM
+		,
+		MAX(SK.KIKAN_END_YMD) AS TAISHO_KIKAN_TO
+		, SUM(SK.JITSU_KINMU_NISSU) AS
+		SHUKKIN_NISSUU
+		, SUM(SK.HIWARI_ATO) AS KINGAKU_GOKEI
+		FROM
+		SHINSEI S
+		JOIN
+		SHAIN H ON H.KIGYO_CD = S.KIGYO_CD
+		AND H.SHAIN_UID = S.SHAIN_UID
+		LEFT
+		JOIN KIGYO_JIGYOSHO KJ
+		ON KJ.KIGYO_CD = H.KIGYO_CD
+		AND KJ.JIGYOSHO_CD =
+		H.JIGYOSHO_CD
+		LEFT JOIN SHOZOKU SZ
+		ON SZ.KIGYO_CD = H.KIGYO_CD
+		AND
+		SZ.SHOZOKU_CD = H.SHOZOKU_CD
+		LEFT JOIN CODE CKBN
+  ON CKBN.CODE_SYBTSU = '101'
+AND LPAD(TRIM(CKBN.CODE), 2, '0') = LPAD(TO_CHAR(S.SHINSEI_KBN), 2, '0')
+		LEFT JOIN SHINSEI_START_KEIRO SK
+		ON
+		SK.KIGYO_CD = S.KIGYO_CD
+		AND SK.SHINSEI_NO = S.SHINSEI_NO
+		WHERE
+		S.KIGYO_CD = #{kigyoCd}
+		AND S.SHINSEI_NO = #{shinseiNo}
+		GROUP BY
+		S.KIGYO_CD
+		, S.SHINSEI_NO
+		, S.SHAIN_UID
+		, H.SHAIN_NO
+		, H.SHAIN_NM
+		,
+		(KJ.JIGYOSHO_NM || ' ' || SZ.SHOZOKU_NM)
+		, (H.ADDRESS_1 || ' ' ||
+		H.ADDRESS_2 || ' ' || H.ADDRESS_3)
+		, S.SHINSEI_KBN
+		, CKBN.CODE_NM
+
+	</select>
+
+	<!-- 유지희 -->
+	<select id="selectKakuninRoutes"
+		resultMap="HiwariKakuninRouteMap">
+
+		SELECT
+		SK.KEIRO_SEQ AS KEIRO_SEQ
+		, SK.TSUKIN_SHUDAN_KBN AS
+		TSUKIN_SHUDAN_KBN
+		, C103.CODE_NM AS TSUKIN_SHUDAN_NM
+		, (SK.START_PLACE
+		|| ' ～ ' || SK.END_PLACE) AS KEIRO_SECTION
+		, SK.JITSU_KINMU_NISSU AS
+		SHUKKIN_NISSUU
+		, SK.KATAMICHI_KIN AS KATAMICHI_RYOKIN
+		, SK.HIWARI_ATO AS
+		KINGAKU
+		, SK.TSUKI_SHIKYU_KIN AS KINGAKU_MONTHLY
+		FROM
+		SHINSEI_START_KEIRO SK
+LEFT JOIN CODE C103
+  ON C103.CODE_SYBTSU = '103'
+ AND LPAD(TRIM(C103.CODE), 2, '0') = LPAD(TO_CHAR(SK.TSUKIN_SHUDAN_KBN), 2, '0')
+		WHERE
+		SK.KIGYO_CD = #{kigyoCd}
+		AND
+		SK.SHINSEI_NO = #{shinseiNo}
+		ORDER BY
+		SK.KEIRO_SEQ
+
+	</select>
+	<!-- 유지희 -->
+	<!-- 申請を承認状態に更新 -->
+	<update id="updateShinseiApproval">
+		UPDATE SHINSEI
+		SET
+		SHINCHOKU_KBN = #{shinchoKbn},
+		KIGYO_SHONIN_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+		UPD_DATE = SYSDATE
+		WHERE
+		KIGYO_CD = #{kigyoCd}
+		AND SHINSEI_NO = #{shinseiNo}
+	</update>
+	<!-- 유지희 -->
+	<!-- 経路VO 매핑 -->
+	<resultMap id="HiwariKeiroMap"
+		type="org.cosmo.domain.HiwariKeiroVO">
+		<result column="KIGYO_CD" property="kigyoCd" />
+		<result column="SHINSEI_NO" property="shinseiNo" />
+		<result column="KEIRO_SEQ" property="keiroSeq" />
+		<result column="SHAIN_UID" property="shainUid" />
+		<result column="TSUKIN_SHUDAN_KBN" property="tsukinShudanKbn" />
+		<result column="TSUKIN_SHUDAN_NM" property="tsukinShudanNm" />  <!-- ★ 추가 -->
+		<result column="START_PLACE" property="startPlace" />
+		<result column="END_PLACE" property="endPlace" />
+		<result column="VIA_PLACE_1" property="viaPlace1" />       <!-- ★ 추가 -->
+		<result column="VIA_PLACE_2" property="viaPlace2" />       <!-- ★ 추가 -->
+		<result column="VIA_PLACE_3" property="viaPlace3" />       <!-- ★ 추가 -->
+		<result column="VIA_PLACE_4" property="viaPlace4" />       <!-- ★ 추가 -->
+		<result column="VIA_PLACE_5" property="viaPlace5" />       <!-- ★ 추가 -->
+		<result column="KEKKA_SELECT" property="kekkaSelect" />
+
+		<result column="KIKAN_START_YMD" property="kikanStartYmd" />
+		<result column="KIKAN_END_YMD" property="kikanEndYmd" />
+		<result column="JITSU_KINMU_NISSU" property="shukkinNissuu" />
+		<result column="KATAMICHI_KIN" property="kataMichiKin" />
+		<result column="SHINSEI_KIN" property="shinseiKin" />
+		<result column="FIRST_TEIKI_TSUKI_SU"
+			property="firstTeikiTsukiSu" />
+		<result column="TSUKI_SHIKYU_KIN" property="tsukiShikyuKin" />
+		<result column="HIWARI_ATO" property="hiwariAto" />
+	</resultMap>
+	    <!-- 유지희 -->
+    <select id="findByUser" resultMap="HiwariKeiroMap">
         SELECT
-              s.SHOZOKU_CD      AS shozokuCd        <!-- 所属コード -->
-            , z.SHOZOKU_NM      AS shozokuNm        <!-- 所属名 -->
-
-            , s.KINMU_ZIP_CD    AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
-            , s.KINMU_PREF_CD   AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
-            , s.KINMU_ADDRESS_1 AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
-            , s.KINMU_ADDRESS_2 AS kinmuAddress2    <!-- 現勤務地 建物 -->
-
-            , NULL AS newKinmuAddress1              <!-- 新勤務地（申請前なのでNULL） -->
-            , NULL AS newKinmuAddress2
-
-            , NULL AS shinseiNo                     <!-- 申請番号（申請前なのでNULL） -->
-
-        FROM SHAIN s
-        JOIN SHOZOKU z
-          ON s.KIGYO_CD   = z.KIGYO_CD
-         AND s.SHOZOKU_CD = z.SHOZOKU_CD
-
-        WHERE s.KIGYO_CD  = #{kigyoCd}
-          AND s.SHAIN_UID = #{shainUid}
-
+            SSK.KIGYO_CD,
+            SSK.SHINSEI_NO,
+            SSK.KEIRO_SEQ,
+            SSK.SHAIN_UID,
+            SSK.TSUKIN_SHUDAN_KBN,
+            C.CODE_NM AS TSUKIN_SHUDAN_NM,
+            SSK.START_PLACE,
+            SSK.END_PLACE,
+            SSK.VIA_PLACE_1,
+            SSK.VIA_PLACE_2,
+            SSK.VIA_PLACE_3,
+            SSK.VIA_PLACE_4,
+            SSK.VIA_PLACE_5,
+            SSK.KEKKA_SELECT,
+            -- 여기부터 계산용 컬럼
+            SSK.KIKAN_START_YMD,
+            SSK.KIKAN_END_YMD,
+            SSK.JITSU_KINMU_NISSU,
+            SSK.KATAMICHI_KIN,
+            SSK.SHINSEI_KIN,
+            SSK.FIRST_TEIKI_TSUKI_SU,
+            SSK.TSUKI_SHIKYU_KIN,
+            SSK.HIWARI_ATO
+        FROM
+            SHINSEI_START_KEIRO SSK
+       LEFT JOIN CODE C
+  ON C.CODE_SYBTSU = '103'
+ AND LPAD(TRIM(C.CODE), 2, '0') = LPAD(TO_CHAR(SSK.TSUKIN_SHUDAN_KBN), 2, '0')
+		 WHERE
+            SSK.KIGYO_CD = #{kigyoCd}
+            AND SSK.SHAIN_UID = #{shainUid}
+        ORDER BY
+            SSK.KEIRO_SEQ
     </select>
 
-    <!-- ============================================================
-         日割勤務地 初期表示（申請後）
-         SHAIN + SHOZOKU + SHINSEI からデータ取得
-         ============================================================ -->
-    <select id="selectAfterShinsei"
-            parameterType="map"
-            resultType="org.cosmo.domain.HiwariKinmuchiVO">
 
-        SELECT
-              s.SHOZOKU_CD           AS shozokuCd        <!-- 所属コード -->
-            , z.SHOZOKU_NM           AS shozokuNm        <!-- 所属名 -->
-
-            , s.KINMU_ZIP_CD         AS kinmuZipCd       <!-- 現勤務地 郵便番号 -->
-            , s.KINMU_PREF_CD        AS kinmuPrefCd      <!-- 現勤務地 都道府県 -->
-            , s.KINMU_ADDRESS_1      AS kinmuAddress1    <!-- 現勤務地 市区町村・番地 -->
-            , s.KINMU_ADDRESS_2      AS kinmuAddress2    <!-- 現勤務地 建物 -->
-
-            , si.NEW_KINMU_ADDRESS_2 AS newKinmuAddress1 <!-- 新勤務地 市区町村・番地 -->
-            , si.NEW_KINMU_ADDRESS_3 AS newKinmuAddress2 <!-- 新勤務地 建物 -->
-
-            , si.SHINSEI_NO          AS shinseiNo        <!-- 申請番号 -->
-
-        FROM SHINSEI si
-        JOIN SHAIN s
-          ON si.KIGYO_CD  = s.KIGYO_CD
-         AND si.SHAIN_UID = s.SHAIN_UID
-
-        JOIN SHOZOKU z
-          ON s.KIGYO_CD   = z.KIGYO_CD
-         AND s.SHOZOKU_CD = z.SHOZOKU_CD
-
-        WHERE si.KIGYO_CD  = #{kigyoCd}
-          AND si.SHAIN_UID = #{shainUid}
-          AND si.SHINSEI_NO = #{shinseiNo}
-
+	<!-- 유지희 -->
+	<!-- 해당 사원의 최신 신청에 대한 경로 전체 삭제 -->
+	<delete id="deleteByUser">
+		DELETE FROM SHINSEI_START_KEIRO
+		WHERE KIGYO_CD =
+		#{kigyoCd} -- ★ 수정
+		AND SHINSEI_NO = (
+		SELECT MAX(SHINSEI_NO)
+		FROM SHINSEI
+		WHERE KIGYO_CD = #{kigyoCd} -- ★ 수정
+		AND SHAIN_UID = #{shainUid}
+		)
+	</delete>
+    <!-- 해당 사원의 최신 신청번호 조회 (임시저장 알림용) -->
+    <select id="findLatestShinseiNo" resultType="long">
+        SELECT MAX(SHINSEI_NO)
+        FROM SHINSEI
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND SHAIN_UID = #{shainUid}
     </select>
+	
+	<!-- 유지희 -->
+	<!-- 경로 1건 저장 -->
+<insert id="insertKeiro"
+        parameterType="org.cosmo.domain.HiwariKeiroVO">
+    INSERT INTO SHINSEI_START_KEIRO (
+        KIGYO_CD,
+        SHINSEI_NO,
+        KEIRO_SEQ,
+        SHAIN_UID,
+        TSUKIN_SHUDAN_KBN,
+        START_PLACE,
+        END_PLACE,
+        VIA_PLACE_1,
+        VIA_PLACE_2,
+        VIA_PLACE_3,
+        VIA_PLACE_4,
+        VIA_PLACE_5,
+        KEKKA_SELECT,
+        KIKAN_START_YMD,
+        KIKAN_END_YMD,
+        JITSU_KINMU_NISSU,
+        KATAMICHI_KIN,
+        SHINSEI_KIN,
+        FIRST_TEIKI_TSUKI_SU,
+        TSUKI_SHIKYU_KIN,
+        HIWARI_ATO,
+        ADD_USER_ID,
+        ADD_DATE,
+        UPD_USER_ID,
+        UPD_DATE
+    )
+    VALUES (
+        #{kigyoCd},
+        (SELECT MAX(SHINSEI_NO)
+         FROM SHINSEI
+         WHERE KIGYO_CD = #{kigyoCd}
+           AND SHAIN_UID = #{shainUid}),
+        #{keiroSeq},
+        #{shainUid},
+        #{tsukinShudanKbn},
+        #{startPlace},
+        #{endPlace},
 
+             #{viaPlace1, jdbcType=VARCHAR},
+        #{viaPlace2, jdbcType=VARCHAR},
+        #{viaPlace3, jdbcType=VARCHAR},
+        #{viaPlace4, jdbcType=VARCHAR},
+        #{viaPlace5, jdbcType=VARCHAR},
+
+        #{kekkaSelect, jdbcType=VARCHAR},
+
+        <!-- YYYYMMDD 문자형으로 보는 컬럼들 -->
+        #{kikanStartYmd, jdbcType=CHAR},
+        #{kikanEndYmd,   jdbcType=CHAR},
+
+        <!-- NUMBER 계열 (정수/금액) -->
+        #{shukkinNissuu,     jdbcType=INTEGER},
+        #{kataMichiKin,      jdbcType=DECIMAL},
+        #{shinseiKin,        jdbcType=DECIMAL},
+        #{firstTeikiTsukiSu, jdbcType=INTEGER},
+        #{tsukiShikyuKin,    jdbcType=DECIMAL},
+        #{hiwariAto,         jdbcType=DECIMAL},
+
+
+        #{shainUid},
+        SYSTIMESTAMP,
+        #{shainUid},
+        SYSTIMESTAMP
+    )
+</insert>
+
+	<!-- 유지희 -->
+	<!-- 경로 1건 삭제 -->
+	<delete id="deleteOne">
+		DELETE FROM SHINSEI_START_KEIRO
+		WHERE KIGYO_CD =
+		#{kigyoCd} -- ★ 수정
+		AND SHINSEI_NO = (
+		SELECT MAX(SHINSEI_NO)
+		FROM SHINSEI
+		WHERE KIGYO_CD = #{kigyoCd} -- ★ 수정
+		AND SHAIN_UID = #{shainUid}
+		)
+		AND
+		SHAIN_UID = #{shainUid}
+		AND KEIRO_SEQ = #{keiroSeq}
+	</delete>
+	
+<!-- 유지희 사원 메일 주소 조회 -->
+<select id="findMailAddr" resultType="string">
+    SELECT MAIL_ADDR
+    FROM SHAIN
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHAIN_UID = #{shainUid}
+</select>
+<!-- ① 신청 기본 정보 반영 -->
+<update id="updateShinseiSubmit">
+    UPDATE SHINSEI
+    SET
+        SHINSEI_DATE        = TO_CHAR(SYSDATE, 'YYYYMMDD'),
+        SHINSEI_KBN         = SHINSEI_KBN,        -- 이미 선택된 신청구분
+        GEN_ZIP_CD          = GEN_ZIP_CD,         -- 기존 GEN 값 유지
+        GEN_ADDRESS_1       = GEN_ADDRESS_1,
+        GEN_ADDRESS_2       = GEN_ADDRESS_2,
+        GEN_ADDRESS_3       = GEN_ADDRESS_3,
+        NEW_ZIP_CD          = NEW_ZIP_CD,         -- 신규 주소 반영 가능
+        NEW_ADDRESS_1       = NEW_ADDRESS_1,
+        NEW_ADDRESS_2       = NEW_ADDRESS_2,
+        NEW_ADDRESS_3       = NEW_ADDRESS_3,
+        UPD_DATE            = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+<!-- ② 신청금액/사유/기간 반영 -->
+<update id="updateShinseiDetails">
+    UPDATE SHINSEI
+    SET
+        SHINSEI_RIYU       = SHINSEI_RIYU,
+        RIYO_START_YMD     = RIYO_START_YMD,
+        RIYO_END_YMD       = RIYO_END_YMD,
+        KINGAKU_GOKEI      = (
+             SELECT SUM(HIWARI_ATO)
+             FROM SHINSEI_START_KEIRO
+             WHERE KIGYO_CD = #{kigyoCd}
+               AND SHINSEI_NO = #{shinseiNo}
+        ),
+        SHUKKIN_NISSUU     = (
+             SELECT SUM(JITSU_KINMU_NISSU)
+             FROM SHINSEI_START_KEIRO
+             WHERE KIGYO_CD = #{kigyoCd}
+               AND SHINSEI_NO = #{shinseiNo}
+        ),
+        UPD_DATE           = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+<!-- ③ 진행구분 변경 (신청완료) -->
+<update id="updateShinseiStatus">
+    UPDATE SHINSEI
+    SET
+        SHINCHOKU_KBN = '2',   -- 신청완료 상태코드
+        UPD_DATE      = SYSDATE
+    WHERE KIGYO_CD = #{kigyoCd}
+      AND SHINSEI_NO = #{shinseiNo}
+</update>
+
+	<!-- 유지희 끝 -->
 </mapper>

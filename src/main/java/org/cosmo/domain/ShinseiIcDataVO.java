@@ -30,5 +30,14 @@ public class ShinseiIcDataVO {
     private ShinseiKeiroVO keiro; 
     
     private ShinseiStartKeiroVO startKeiro;
+    
+    private String shozokuCd;
+    private String zip1;
+    private String zip2;
+    private String pref;
+    private String address1;
+    private String address2;
+    private String diff;
+
  
 }

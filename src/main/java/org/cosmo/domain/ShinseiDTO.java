@@ -10,7 +10,7 @@ public class ShinseiDTO {
 	
 	// PK
 	private int kigyoCd; // KIGYO_CD (기업 코드)
-	private int shinseiNo; // SHINSEI_NO (신청 번호)
+	private long shinseiNo; // SHINSEI_NO (신청 번호)
 	
 	// 신청 기본 정보
 	private String shinseiKbn; // SHINSEI_KBN (신청 구분)
@@ -62,11 +62,11 @@ public class ShinseiDTO {
 	private String jutakuKbn; // JUTAKU_KBN (주택 구분)
 	
 	// 부속 정보 (첨부 파일 및 코멘트)
-	private Integer etcFileUid1; // ETC_FILE_UID_1
-	private Integer etcFileUid2; // ETC_FILE_UID_2
-	private Integer etcFileUid3; // ETC_FILE_UID_3
-	private Integer etcFileUid4; // ETC_FILE_UID_4
-	private Integer etcFileUid5; // ETC_FILE_UID_5
+	private Long etcFileUid1; // ETC_FILE_UID_1
+	private Long etcFileUid2; // ETC_FILE_UID_2
+	private Long etcFileUid3; // ETC_FILE_UID_3
+	private Long etcFileUid4; // ETC_FILE_UID_4
+	private Long etcFileUid5; // ETC_FILE_UID_5
 	private String etcComment1; // ETC_COMMENT_1 (CLOB)
 	private String etcComment2; // ETC_COMMENT_2 (CLOB)
 	private String etcComment3; // ETC_COMMENT_3 (CLOB)

@@ -6,12 +6,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>title</title>
+<title>住所入力</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
 
 <style>
-
-/* 무시 영역 */
 .btn_List {
 	display: flex;
 	align-items: center;
@@ -35,28 +34,23 @@
 	grid-template-columns: 1fr 3fr 1fr;
 }
 
-#form_Text2 {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-}
-
 #form_Text4 {
 	display: grid;
 	grid-template-columns: 2fr 3fr;
 }
 
 .zipcode {
-	width: 50px; /* 우편번호 입력칸 폭 */
+	width: 50px;
 }
 
 .userInfo_Text {
 	flex: 1;
-	word-break: break-all; /* 일본어 긴 주소 줄바꿈 방지용 */
+	word-break: break-all;
 }
 
 .wrapper {
 	width: 800px;
-	margin-left: 40px; /* ← 왼쪽 정렬 + 약간의 여백 */
+	margin-left: 40px;
 }
 
 .info-table {
@@ -71,11 +65,6 @@
 	text-align: left;
 }
 
-/* 테이블 구분선 */
-.info-table tr+tr th, .info-table tr+tr td {
-	border-top: 1px solid #ccc;
-}
-
 .zipcode2 {
 	width: 100%;
 	box-sizing: border-box;
@@ -83,11 +72,7 @@
 
 .new {
 	text-indent: 40px;
-	margin-bottom: 20px; /* 상단과 wrapper 간격 */
-}
-
-.info-table td {
-	position: relative;
+	margin-bottom: 20px;
 }
 
 .hanei_mini_btn02 {
@@ -96,22 +81,24 @@
 }
 
 .content_Form1 {
-	margin-top: 20px; /* form과 버튼 그룹 사이 간격 */
+	margin-top: 20px;
 	margin-bottom: 20px;
+	margin-top: 30px !important;
 }
 
 .content_Form3 {
-    width: 400px;
-    margin-left: 35px;
-    border: solid 1px #a0a0a0;
+	width: 400px;
+	margin-left: 35px;
+	border: solid 1px #a0a0a0;
+	margin-top: 30px !important;
 }
 
 .button_Left {
-    display: flex;
-    gap: 5px;          /* 버튼 간 간격 */
-    margin-top: 20px;   /* 위와의 간격 */
-    margin-left: auto;  /* 왼쪽 여백 자동 → 오른쪽으로 이동 */
-    margin-right: 30px; /* 오른쪽 끝에서 30px 떨어짐 */
+	display: flex;
+	gap: 10px;
+	margin-top: 20px;
+	margin-right: 30px;
+	margin-top: 30px !important;
 }
 
 .form_Column {
@@ -128,18 +115,32 @@
 	justify-content: center;
 }
 
+/* 알림/에러 메시지 스타일 */
+.error-msg {
+	color: red;
+	font-weight: bold;
+	margin-left: 40px;
+	margin-bottom: 10px;
+}
+
+.info-msg {
+	color: blue;
+	font-weight: bold;
+	margin-left: 40px;
+	margin-bottom: 10px;
+}
 </style>
 </head>
 
 <body>
 	<div class="layout">
+
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 
 		<div class="main">
+
 			<div class="main_title">
-				<!-- 진척도 -->
 				<div class="flow">
-					
 					<div class="flow_others">勤務地入力</div>
 					<div class="flow_current">住所入力</div>
 					<div class="flow_others">経路入力</div>
@@ -147,148 +148,213 @@
 					<div class="flow_others">確認</div>
 					<div class="flow_others">完了</div>
 				</div>
-
-				<div class="subtitle">住所　 入力</div>
+				<div class="subtitle">住所 入力</div>
 			</div>
-			<div></div>
+
 			<div class="new">新住所を入力してください。</div>
 
-			<!-- 상단: 住所 -->
-			<div class="content_Form1">
-				<div class="form_Text1" id="form_Text3">
-					<div class="form_Column2">
-						住所
-					</div>
-					<div class="form_Normal">
-						大阪府大阪市東淀川区瑞光1－1－1ハイツ瑞光３０２
-					</div>
-					<div class="form_Normal">
-						<img src="/resources/img/tn/hanei_mini_btn02.gif" alt="hanei_mini_btn02" class="hanei_mini_btn02">
-					</div>
-				</div>
-			</div>
+			<c:if test="${not empty errorMessage}">
+				<div class="error-msg">${errorMessage}</div>
+			</c:if>
+			<c:if test="${not empty message}">
+				<div class="info-msg">${message}</div>
+			</c:if>
 
-			<!-- form 영역 (지금은 단순 표시/입력만, 별도 form 태그 없음) -->
-			<div class="content_Form1">
-				<div class="form_Title1" id="form_Title1">
-					<div></div>
-					<div>現住所</div>
-					<div>新住所</div>
-				</div>
+			<form action="<c:url value='/idoconfirm/addressinput' />"
+				method="post">
 
-				<div class="form_Text1" id="form_Text1">
-					<div class="form_Column">郵便番号</div>
-					<div class="form_Normal">213-0001</div>
-					<div class="form_Normal">
-						<input type="text" value="211" class="zipcode">
-						<div>-</div>
-						<input type="text" value="0001" class="zipcode">
-						<button class="search_btn">検索</button>
-					</div>
-				</div>
+				<div class="content_Form1">
+					<div class="form_Text1" id="form_Text3">
+						<div class="form_Column2">住所</div>
 
-				<div class="form_Text1" id="form_Text1">
-					<div class="form_Column">郵便番号</div>
-					<div class="form_Normal">神奈川県</div>
-					<div class="form_Normal">
-						<input type="text" value="神奈川県">
-					</div>
-				</div>
+						<div class="form_Normal">
+							${view.middlePref} ${view.middleAddr1} ${view.middleAddr2} <input
+								type="hidden" id="h_middleZip" value="${view.middleZip}" /> <input
+								type="hidden" id="h_middlePref" value="${view.middlePref}" /> <input
+								type="hidden" id="h_middleAddr1" value="${view.middleAddr1}" />
+							<input type="hidden" id="h_middleAddr2"
+								value="${view.middleAddr2}" />
+						</div>
 
-				<div class="form_Text1" id="form_Text1">
-					<div class="form_Column">市区町村～番地</div>
-					<div class="form_Normal">川崎市高津区上作延1-2-3</div>
-					<div class="form_Normal">
-						<input type="text" value="川崎市高津区上作延1-2-3" class="zipcode2">
-					</div>
-				</div>
-
-				<div class="form_Text1" id="form_Text1">
-					<div class="form_Column">建物名～号室</div>
-					<div class="form_Normal">レオパレス溝の口103</div>
-					<div class="form_Normal_mid">
-						<input type="text" value="レオパレス新丸子201" class="zipcode2">
-					</div>
-				</div>
-
-			</div>
-
-			<div class="content_Form3">
-				<div class="form_Text1" id="form_Text4">
-					<div class="form_Column">転入日</div>
-					<div class="form_Normal">
-						
-						<input type="date">
-							<img src="/resources/img/cal_icon.gif" alt="cal_icon.gif" style="cursor:pointer;">
+						<div class="form_Normal">
+							<button type="button" onclick="reflectAddress()"
+								style="border: none; background: none; cursor: pointer;">
+								<img src="/resources/img/tn/hanei_mini_btn02.gif" alt="この住所を反映">
+							</button>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<!-- 버튼 그룹 -->
-			<div class="button_Left">
-				<div class="button_Left_Group" style="display:flex; gap:10px;">
-					<!-- 뒤로가기 -->
-					<button type="button"
-						style="border:none; background:none; padding:0; cursor:pointer;"
-						onclick="goBack()">
-						<img src="/resources/img/back_btn01.gif" alt="back_btn01">
-					</button>
+				<div class="content_Form1">
 
-					<!-- 다음 -->
-					<button type="button"
-						style="border:none; background:none; padding:0; cursor:pointer;"
-						onclick="goNext()">
-						<img src="/resources/img/next_btn01.gif" alt="next_btn01">
-					</button>
+					<div class="form_Title1" id="form_Title1">
+						<div></div>
+						<div>現住所</div>
+						<div>新住所</div>
+					</div>
 
-					<!-- 일시보존 -->
-					<button type="button"
-						style="border:none; background:none; padding:0; cursor:pointer;"
-						onclick="goTempSave()">
-						<img src="/resources/img/hozon_btn01.gif" alt="hozon_btn01">
-					</button>
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">郵便番号</div>
+						<div class="form_Normal">${view.currentZip}</div>
+
+						<div class="form_Normal">
+							<input type="text" name="zip1" id="newZip1"
+								value="${addressInputForm.zip1}" class="zipcode" size="4"
+								maxlength="3"> - <input type="text" name="zip2"
+								id="newZip2" value="${addressInputForm.zip2}" class="zipcode"
+								size="5" maxlength="4">
+
+							<button type="button" class="search_btn"
+								onclick="AjaxZip3.zip2addr('zip1','zip2','pref','addr1');">
+								検索</button>
+						</div>
+					</div>
+					<div></div>
+
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">都道府県</div>
+						<div class="form_Normal">${view.currentPref}</div>
+
+						<div class="form_Normal">
+							<input type="text" name="pref" id="newPref"
+								value="${addressInputForm.pref}" class="zipcode2">
+						</div>
+					</div>
+
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">市区町村～番地</div>
+						<div class="form_Normal">${view.currentAddr1}</div>
+						<div class="form_Normal">
+							<input type="text" name="addr1" id="newAddr1"
+								value="${addressInputForm.addr1}" class="zipcode2">
+						</div>
+					</div>
+
+					<div class="form_Text1" id="form_Text1">
+						<div class="form_Column">建物名～号室</div>
+						<div class="form_Normal">${view.currentAddr2}</div>
+						<div class="form_Normal_mid">
+							<input type="text" name="addr2" id="newAddr2"
+								value="${addressInputForm.addr2}" class="zipcode2">
+						</div>
+					</div>
+
 				</div>
-			</div>
 
+				<div class="content_Form3">
+					<div class="form_Text1" id="form_Text4">
+						<div class="form_Column">転入日</div>
+						<div class="form_Normal">
+							<input type="date" name="tenyuDate" id="tenyuDateInput"
+								value="${addressInputForm.tenyuDate}" style="display: none;">
+
+							<input type="text" id="tenyuDateText" readonly> <img
+								src="/resources/img/cal_icon.gif" id="calendarIcon"
+								style="cursor: pointer;" alt="Calendar Icon">
+						</div>
+					</div>
+				</div>
+				<div class="button_Left">
+					<div class="button_Left_Group" style="display: flex; gap: 10px;">
+						<button type="button"
+							style="border: none; background: none; padding: 0; cursor: pointer;"
+							onclick="goBack()">
+							<img src="/resources/img/back_btn01.gif" alt="戻る">
+						</button>
+
+						<button type="submit" name="action" value="next"
+							style="border: none; background: none; padding: 0; cursor: pointer;">
+							<img src="/resources/img/next_btn01.gif" alt="次へ">
+						</button>
+
+						<button type="submit" name="action" value="tempsave"
+							style="border: none; background: none; padding: 0; cursor: pointer;">
+							<img src="/resources/img/hozon_btn01.gif" alt="一時保存">
+						</button>
+					</div>
+				</div>
 		</div>
-		<!-- main 끝 -->
 
-		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
+		</form>
+
 	</div>
-	<!-- layout 끝 -->
+
+
+	<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 
 	<script>
-		
+		// ==========================================
+		// ★ [핵심 3] 주소 반영 스크립트 (이 주소를 반영 버튼 클릭 시) ★
+		// ==========================================
+		function reflectAddress() {
+			// 1. 숨겨둔 값 가져오기 (DB에서 온 중간주소)
+			var zip = document.getElementById("h_middleZip").value;
+			var pref = document.getElementById("h_middlePref").value;
+			var addr1 = document.getElementById("h_middleAddr1").value;
+			var addr2 = document.getElementById("h_middleAddr2").value;
+
+			// 2. 우편번호 처리 (하이픈 제거 후 앞3/뒤4 분리)
+			if (zip) {
+				var cleanZip = zip.replace(/-/g, ""); // 하이픈 제거
+				if (cleanZip.length >= 3) {
+					document.getElementById("newZip1").value = cleanZip
+							.substring(0, 3);
+					document.getElementById("newZip2").value = cleanZip
+							.substring(3);
+				} else {
+					document.getElementById("newZip1").value = cleanZip;
+				}
+			}
+
+			// 3. 나머지 주소 값 채워넣기 (신주소 입력란)
+			document.getElementById("newPref").value = pref; // 도도부현
+			document.getElementById("newAddr1").value = addr1; // 시구정촌
+			document.getElementById("newAddr2").value = addr2; // 건물명
+
+			// (선택사항) 반영되었다는 알림
+			// alert("住所が反映されました。");
+		}
+
+		// ==========================================
+		// 날짜 처리 스크립트
+		// ==========================================
+		var dateInput = document.getElementById("tenyuDateInput");
+		var dateText = document.getElementById("tenyuDateText");
+		var calendarIcon = document.getElementById("calendarIcon");
+
+		// 1. 페이지 로드 시: 저장된 날짜가 있으면 텍스트 박스에도 보여주기
+		window.onload = function() {
+			var v = dateInput.value; // YYYY-MM-DD
+			if (v) {
+				var parts = v.split("-");
+				// YYYY/MM/DD 형식으로 변환해서 보여줌
+				dateText.value = parts[0] + "/" + parts[1] + "/" + parts[2];
+			}
+		};
+
+		// 2. 달력 아이콘 클릭 시
+		calendarIcon.onclick = function() {
+			if (dateInput.showPicker) {
+				dateInput.showPicker(); // 브라우저 달력 띄우기
+			} else {
+				dateInput.focus();
+			}
+		};
+
+		// 3. 달력에서 날짜를 선택했을 때
+		dateInput.addEventListener("change", function() {
+			var v = this.value; // YYYY-MM-DD
+			if (v) {
+				var parts = v.split("-");
+				dateText.value = parts[0] + "/" + parts[1] + "/" + parts[2];
+			} else {
+				dateText.value = "";
+			}
+		});
+
 		function goBack() {
 			history.back();
 		}
-
-		
-		function goNext() {
-			
-			location.href = "<c:url value='/idoconfirm/keiroInfo' />";
-		}
-
-		function goTempSave() {
-			alert("一時保存しました。");
-		}
-
-		// 4. 캘린더 아이콘 → 날짜 input 포커스
-		 document.addEventListener('DOMContentLoaded', function () {
-            const moveInInput = document.getElementById('moveInDate');
-            const calendarBtn = document.getElementById('calendarBtn');
-
-            if (moveInInput && calendarBtn) {
-                calendarBtn.addEventListener('click', function () {
-                    if (moveInInput.showPicker) {
-                        moveInInput.showPicker();
-                    } else {
-                        moveInInput.focus();
-                    }
-                });
-            }
-        });
-    </script>
+	</script>
 </body>
 </html>
