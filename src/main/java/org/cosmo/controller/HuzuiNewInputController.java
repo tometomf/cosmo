@@ -127,34 +127,38 @@ public class HuzuiNewInputController {
 
 	    // 1. Service를 통해 DB에서 파일 정보 (BLOB 데이터, 원본 파일명, MIME 타입) 조회
 	    // 예: FileVO fileData = fileDownloadService.getFileData(fileId);
+		UploadFileDTO fileData = huzuiNewInputService.getFile(fileUid);
 	    
-	    // 가정된 데이터
-	    String originalFilename = "첨부_서류_원본.pdf";
-	    //byte[] fileBytes = /* DB에서 읽어온 BLOB 데이터 */; 
-	    
+		
+		if (fileData == null || fileData.getData() == null) {
+	        try {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "파일을 찾을 수 없습니다.");
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        return;
+	    }
+
+	    String originalFilename = fileData.getName();
+	    byte[] fileBytes = fileData.getData();
+	    String mimeType = fileData.getContentType() != null ? fileData.getContentType() : "application/octet-stream";
+
 	    try {
-	        // 2. HTTP 헤더 설정 (가장 중요)
-	        
-	        // 파일명 인코딩 (한글 깨짐 방지)
-	        String encodedFilename = new String(originalFilename.getBytes("UTF-8"), "ISO-8859-1");
+	        // 한글 파일명 인코딩 (브라우저 호환)
+	        String encodedFilename = java.net.URLEncoder.encode(originalFilename, "UTF-8").replaceAll("\\+", "%20");
 
-	        // 다운로드 유도 헤더 설정
-	        response.setContentType("application/octet-stream"); // 또는 fileData.getMimeType()
-	        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
-	        response.setHeader("Content-Transfer-Encoding", "binary");
-	        
-	        // 파일 크기 설정 (선택 사항이지만 권장)
-	        //response.setContentLength(fileBytes.length); 
+	        // 헤더 설정
+	        response.setContentType(mimeType);
+	        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename);
+	        response.setContentLength(fileBytes.length);
 
-	        // 3. 데이터 전송
-	        OutputStream out = response.getOutputStream();
-	       // out.write(fileBytes);
-	        out.flush();
-	        out.close();
+	        // 파일 전송 (스트림)
+	        try (OutputStream out = response.getOutputStream()) {
+	            out.write(fileBytes);
+	        }
 
-	    } catch (Exception e) {
-	        // 에러 처리 (예: 파일이 DB에 없는 경우, IOException 등)
-	        e.printStackTrace(); 
+	    } catch (IOException e) {
+	        e.printStackTrace();
 	    }
 	}
 	
@@ -209,7 +213,7 @@ public class HuzuiNewInputController {
  	        oshiraseDTO.setOshiraseNaiyo("申請");
  	        oshiraseDTO.setTsuchiYmd(toDay);
  	        
- 	        session.setAttribute("shinseiNo", shinseiNo);
+ 	       
  	        
  	        LocalTime now = LocalTime.now();
  	        String time = now.format(DateTimeFormatter.ofPattern("HHmm"));
@@ -225,6 +229,13 @@ public class HuzuiNewInputController {
  	      oshiraseDTO.setAddDate(timestamp);
           oshiraseDTO.setUpdDate(timestamp);
  	       
+          
+  	     huzuiNewInputService.saveAll(shinseiDTO, shain, shinseiFuzuiShorui, oshiraseDTO,processLogDTO);
+
+          
+  	     Long findShinseiNo = huzuiNewInputService.findShinseiNo(shain);
+  	     session.setAttribute("shinseiNo", findShinseiNo);
+  	     
           Map<String, Path> uploadedFiles = (Map<String, Path>) session.getAttribute("uploadedFiles");
           
           
@@ -244,10 +255,10 @@ public class HuzuiNewInputController {
         	  byte[] data = Files.readAllBytes(value);
         	  fileDTO.setData(data);
         	  
-        	  huzuiNewInputService.addFile(fileDTO, fNo, shain);
+        	  huzuiNewInputService.addFile(fileDTO, fNo, shain,shinseiDTO,findShinseiNo);
           }
           }
- 	     huzuiNewInputService.saveAll(shinseiDTO, shain, shinseiFuzuiShorui, oshiraseDTO,processLogDTO);
+          
             return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
         } catch (Exception e) {
         	e.printStackTrace();

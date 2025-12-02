@@ -65,10 +65,23 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 	
 
 	@Override
-	public void addFile(UploadFileDTO UploadFile, String fNo, ShainVO shain) {
+	public void addFile(UploadFileDTO UploadFile, String fNo, ShainVO shain,ShinseiDTO shinsei, Long findShinseiNo) {
 		// TODO Auto-generated method stub
 		huzuiNewInputMapper.addFile(UploadFile, shain);
 		huzuiNewInputMapper.fileUpdate(UploadFile, fNo, shain);
+
+		    if (fNo.startsWith("ETC_FILE_UID_")) {
+		        // ETC_FILE_UID_로 시작하면 shinseiFileUpdate 실행
+		        huzuiNewInputMapper.shinseiFileUpdate(UploadFile, fNo, shain, findShinseiNo);
+		        
+		        String numberPart = fNo.substring("ETC_FILE_UID_".length());
+		        
+		        // ETC_COMMENT_숫자 형태로 변경
+		        fNo = "ETC_COMMENT_" + numberPart;
+		        huzuiNewInputMapper.commentUpdate(shinsei, fNo, shain);
+		        
+		        return;   // 종료
+		    }
 	}
 
 
@@ -139,6 +152,20 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
          session.setAttribute("uploadedFiles", uploadedFiles);
          
          return UploadFile;
+	}
+
+
+	@Override
+	public Long findShinseiNo(ShainVO shain) {
+		// TODO Auto-generated method stub
+		return huzuiNewInputMapper.findShinseiNo(shain);
+	}
+
+
+	@Override
+	public UploadFileDTO getFile(Long fileUid) {
+		// TODO Auto-generated method stub
+		return huzuiNewInputMapper.getFile(fileUid);
 	}
 
 

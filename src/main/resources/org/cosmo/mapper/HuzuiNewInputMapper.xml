@@ -15,11 +15,10 @@
 		    AND a.SHAIN_UID = #{shain_Uid}
 	</select>
 	
-	<select id="getFile">
+	<select id="getFile" resultType="org.cosmo.domain.UploadFileDTO">
 		SELECT * 
 		FROM UPLOAD_FILE
 		WHERE FILE_UID = #{fileUid}
-		
 	</select>
 	
 	<select id="getFiles">
@@ -59,11 +58,35 @@
 	    and a.SHAIN_UID = #{shain_Uid}
 	</select>
 	
+	<select id="findShinseiNo" resultType="Long">
+	SELECT * 
+	FROM (SELECT SHINSEI_NO 
+		  FROM SHINSEI 
+		  WHERE KIGYO_CD = #{shain.kigyo_Cd} AND SHAIN_UID = #{shain.shain_Uid}
+		  ORDER BY SHINSEI_NO DESC) 
+	WHERE ROWNUM = 1
+	</select>
+	
 	<update id="fileUpdate">
 		update SHAIN_FUZUI_SHORUI 
 		set ${fNo} = #{UploadFile.fileUid} 
 		where KIGYO_CD = #{shain.kigyo_Cd} 
 		and SHAIN_UID = #{shain.shain_Uid}
+	</update>
+	
+	<update id="commentUpdate">
+		update SHAIN_FUZUI_SHORUI 
+		set ${fNo} = #{shinsei.etcComment1, jdbcType=NUMERIC} 
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
+	</update>
+	
+	<update id="shinseiFileUpdate">
+		update shinsei 
+		set ${fNo} = #{UploadFile.fileUid} 
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
+		and SHINSEI_NO = #{findShinseiNo}
 	</update>
 	
 	<insert id="addFuzuiShorui">
