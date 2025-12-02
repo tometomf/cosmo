@@ -2,13 +2,29 @@
 
 package org.cosmo.service;
 
-import org.cosmo.domain.TokureiForm;
+import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
+import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
+import org.cosmo.domain.UploadFileDTO;
 
 public interface TokureiService {
 	
-	/**
-     * 특례 신청 내용을 SHINSEI 테이블에 반영
-     */
-    void saveTokurei(TokureiForm form);
+	void registerShinsei(ShinseiDTO mainDto, 
+						 ShinseiStartKeiroVO startVo, 
+						 ShinseiEndKeiroVO endVo, 
+						 ShinseiFuzuiShoruiDTO fuzuiDto,
+						 UploadFileDTO fileDto,
+						 AlertVO alertVo,
+						 ShinseiLogDTO shinseiLogDto,
+						 OshiraseDTO oshiraseDto,
+						 ProcessLogDTO processLogDto,
+						 IchijiHozonDTO ichijiDto);
+	
 
 }

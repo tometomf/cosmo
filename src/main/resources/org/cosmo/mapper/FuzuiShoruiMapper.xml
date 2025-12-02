@@ -6,7 +6,7 @@
 
 <mapper namespace="org.cosmo.mapper.FuzuiShoruiMapper">
 
-	<select id="selectShinseiList" resultType="org.cosmo.domain.SearchCriteriaDTO"> 
+	<select id="selectShinseiList" resultType="org.cosmo.domain.ShinseiDTO"> 
 		SELECT
 			*
 		FROM
@@ -28,6 +28,17 @@
 				SHINSEI_NO = #{shinseiNo}
 		ORDER BY
 			KEIRO_SEQ
+	</select>
+	
+	<select id="selectShainFuzuiShoruiList" resultType="org.cosmo.domain.ShainFuzuiShoruiDTO">
+		SELECT
+			*
+		FROM
+			SHAIN_FUZUI_SHORUI
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHAIN_UID = #{shainUid}
 	</select>
 	
 	<select id="selectKigyoKiteiList" parameterType="org.cosmo.domain.SearchCriteriaDTO" resultType="org.cosmo.domain.KigyoKiteiDTO">
@@ -57,17 +68,17 @@
 			KOMOKU_SYBTSU, DISP_NUM
 	</select>
 	
-	<select id="insertShainFuzuiShoruiList" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
+	<select id="insertShainFuzuiShorui" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
 		INSERT INTO
 			SHAIN_FUZUI_SHORUI (
 				FILE_UID_4, MENKYO_YUKO_KIGEN, MENKYO_NO, FILE_UID_5, SHASHU, TOROKU_NO, HAIKIRYO, SHAKEN_YUKO_KIGEN,
 				FILE_UID_6, FILE_UID_7, HOKEN_MANRYO_YMD, TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOJOSHA_SHOGAI,
-				TOKYU
+				TOKYU, ADD_DATE, UPD_DATE
 			)
 		VALUES (
 				#{fileUid4}, #{menkyoYukoKigen}, #{menkyoNo}, #{fileUid5}, #{shashu}, #{torokuNo}, #{haikiryo},
 				#{shakenYukoKigen}, #{fileUid6}, #{fileUid7}, #{hokenManryoYmd}, #{taijinBaisho}, #{taibutsuBaisho},
-				#{jinshinShogai}, #{tokyu} 
+				#{jinshinShogai}, #{tokyu}, SYSDATE, SYSDATE
 			)
 	</select>
 
@@ -77,7 +88,7 @@
 		SET
 			ETC_COMMENT_1 = #{etcComment1},
 			ETC_COMMENT_2 = #{etcComment2},
-			UPD_DATE = NOW()
+			UPD_DATE = SYSDATE
 		WHERE
 			KIGYO_CD = #{kigyoCd}
 			AND
@@ -107,20 +118,6 @@
 				SHINSEI_NO = #{shinseiNo}
 			AND
 				KEIRO_SEQ = #{keiroSeq}
-	</insert>
-	
-	<insert id="insertShainFuzuiShorui" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
-		INSERT INTO
-			SHAIN_FUZUI_SHORUI (
-				FILE_UID_4, MENKYO_YUKO_KIGEN, MENKYO_NO, FILE_UID_5, SHASHU, TOROKU_NO,
-				HAIKIRYO, SHAKEN_YUKO_KIGEN, FILE_UID_6, FILE_UID_7, HOKEN_MANRYO_YMD,
-				TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOKYU
-			)
-		VALUES (
-				#{fileUid4}, #{menkyoYukoKigen}, #{menkyoNo}, #{fileUid5}, #{shashu}, #{torokuNo},
-				#{haikiryo}, #{shakenYukoKigen}, #{fileUid6}, #{fileUid7}, #{hokenManryoYmd},
-				#{taijinBaisho}, #{taibutsuBaisho}, #{jinshinShogai}, #{tokyu}
-			)
 	</insert>
 	
 	<insert id="updateShainFuzuiShorui" parameterType="org.cosmo.domain.ShainFuzuiShoruiDTO">
@@ -179,5 +176,54 @@
 			#{userTrack}
 		)
 	</insert>
+	
+	<select id="selectCurrentTsukinShudanKbn" resultType="java.lang.String">
+		SELECT
+			TSUKIN_SHUDAN_KBN
+		FROM
+			SHAIN_FUZUI_SHORUI
+		WHERE
+			SHAIN_UID = #{shainUid}
+	</select>
+	
+	<select id="selectCurrentMenkyoKigen" resultType="java.lang.String">
+		SELECT
+			MENKYO_YUKO_KIGEN
+		FROM
+			SHAIN_FUZUI_SHORUI
+		WHERE
+			SHAIN_UID = #{shainUid}
+	</select>
+	
+	<insert id="insertFile" parameterType="org.cosmo.domain.UploadFileDTO">
+		INSERT INTO
+			UPLOAD_FILE (
+				FILE_UID, SEQ, TITLE, NAME, CONTENT_TYPE, DATA, KIGYO_CD,
+				ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+			)
+		VALUES (
+			#{fileUid}, #{seq}, #{title}, #{name},
+			#{contentType}, #{data, jdbcType=BLOB}, #{kigyoCd},
+			#{addUserId}, SYSDATE, #{updUserId}, SYSDATE
+		)
+	
+	</insert>
+	
+	<resultMap id="FileViewResultMap" type="org.cosmo.domain.FileViewDTO">
+		<result column="DATA" property="data" jdbcType="BLOB" />
+		<result column="CONTENT_TYPE" property="contentType" />
+		<result column="NAME" property="name" />
+	</resultMap>
+	
+	<select id="selectFileByFileUid" resultMap="FileViewResultMap">
+		SELECT
+			DATA, CONTENT_TYPE, NAME
+		FROM
+			UPLOAD_FILE
+		WHERE
+			TO_CHAR(FILE_UID) = TO_CHAR(#{fileUid})
+			AND
+				SEQ = 0
+	</select>
 	
 </mapper>

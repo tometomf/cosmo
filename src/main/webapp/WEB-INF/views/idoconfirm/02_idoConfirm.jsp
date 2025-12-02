@@ -3,9 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!DOCTYPE html>
-
-<!-- 조우진  -->
-
 <html>
 <head>
 <meta charset="UTF-8">
@@ -13,6 +10,7 @@
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 </head>
 <style>
+/* [디자인/CSS 원본 유지] */
 #form_Text1 {
 	display: grid;
 	grid-template-columns: 1fr 5fr;
@@ -41,7 +39,6 @@
 .button_Left {
 	margin-top: 30px !important;
 }
-
 </style>
 <body>
 	<div class="layout">
@@ -62,42 +59,38 @@
 				</div>
 
 				<c:if test="${not empty errorMessage}">
-					<div style="color: red; margin-top: 10px; text-align: center;">
-						${errorMessage}
+					<div style="color: red; margin-top: 10px; text-align: center; font-weight: bold;">
+						※ ${errorMessage}
 					</div>
 				</c:if>
 			</div>
 
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text1">
-				
 					<div class="form_Column1" style="padding-top: 10px; padding-bottom: 10px;">現勤務地 </div>
-					<div class="form_Normal"
-						style="padding-top: 10px; padding-bottom: 10px;">
-						東京都中野区本町3-30-4KDX中野坂上ビル8F
+					<div class="form_Normal" style="padding-top: 10px; padding-bottom: 10px; padding-left: 10px;">
+						<c:out value="${view.curKinmuPlace}" default="なし" />
 					</div>
 				</div>
 				
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column1" style="padding-top: 10px; padding-bottom: 10px;">現住所</div>
-					<div class="form_Normal" style="padding-top: 10px; padding-bottom: 10px;">神奈川県川崎市高津区下作延1-2-3 レオパレス溝の口 103 </div>
+					<div class="form_Normal" style="padding-top: 10px; padding-bottom: 10px; padding-left: 10px;">
+						<c:out value="${view.curAddress}" default="なし" />
+					</div>
 				</div>
 			</div>
 
-			<form id="idoConfirmForm" action="<c:url value='/idoconfirm/next'/>"
-				method="post">
+			<form id="idoConfirmForm" action="<c:url value='/idoconfirm/next'/>" method="post">
+
+				<input type="hidden" name="shinseiNo" value="${param.shinseiNo}" />
 
 				<input type="hidden" name="alertType" value="<c:choose>
-                                <c:when test='${not empty param.alertType}'>
-                                    ${param.alertType}
-                                </c:when>
-                                <c:when test='${not empty alertType}'>
-                                    ${alertType}
-                                </c:when>
-                                <c:otherwise>SONOTA</c:otherwise>
-                             </c:choose>" />
-
-				<div class="content_Form1" style="width: 580px; margin-left: 3.1%;">
+						<c:when test='${not empty param.alertType}'>${param.alertType}</c:when>
+						<c:when test='${not empty alertType}'>${alertType}</c:when>
+						<c:otherwise>JISHIN</c:otherwise> 
+					</c:choose>" />
+					<div class="content_Form1" style="width: 580px; margin-left: 3.1%;">
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column"
@@ -116,7 +109,6 @@
 						</div>
 					</div>
 
-					<!-- 住所が -->
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column"
 							style="display: flex; justify-content: center; align-items: center; padding-top: 15px; padding-bottom: 15px;">
@@ -136,17 +128,14 @@
 					</div>
 				</div>
 
-				<!-- 버튼 영역 -->
 				<div class="button_Left">
 					<div class="button_Left_Group">
 
-						<!-- 뒤로가기 -->
 						<button type="button" onclick="history.back()"
 							style="border: none; background: none; padding: 0; cursor: pointer;">
 							<img src="/resources/img/back_btn01.gif" alt="back_btn01">
 						</button>
 
-						<!-- 다음 (submit) -->
 						<button type="submit"
 							style="border: none; background: none; padding: 0; cursor: pointer;">
 							<img src="/resources/img/next_btn01.gif" alt="next_btn01">
@@ -169,10 +158,8 @@
 
 			form.addEventListener('submit', function(e) {
 
-				const kinmu = document
-						.querySelector('input[name="kinmuChange"]:checked');
-				const jusho = document
-						.querySelector('input[name="jushoChange"]:checked');
+				const kinmu = document.querySelector('input[name="kinmuChange"]:checked');
+				const jusho = document.querySelector('input[name="jushoChange"]:checked');
 
 				if (!kinmu || !jusho) {
 					alert("「勤務地が」「住所が」をそれぞれ選択してください.");

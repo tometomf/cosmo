@@ -210,7 +210,7 @@
 								<div style="white-space: nowrap;">変更する</div>
 							</div>
 							<div style="display: flex; gap: 5px; cursor: pointer;">
-								<img src="/resources/img/pencil_icon.gif" alt="삭제">
+								<img src="/resources/img/clear_icon.gif" alt="삭제">
 								<div style="white-space: nowrap;">削除する</div>
 							</div>
 						</div>
@@ -257,7 +257,7 @@
 								<div style="white-space: nowrap;">変更する</div>
 							</div>
 							<div style="display: flex; gap: 5px; cursor: pointer;">
-								<img src="/resources/img/pencil_icon.gif" alt="삭제">
+								<img src="/resources/img/clear_icon.gif" alt="삭제">
 								<div style="white-space: nowrap;">削除する</div>
 							</div>
 						</div>
@@ -304,7 +304,7 @@
 								<div style="white-space: nowrap;">変更する</div>
 							</div>
 							<div style="display: flex; gap: 5px; cursor: pointer;">
-								<img src="/resources/img/pencil_icon.gif" alt="삭제">
+								<img src="/resources/img/clear_icon.gif" alt="삭제">
 								<div style="white-space: nowrap;">削除する</div>
 							</div>
 						</div>

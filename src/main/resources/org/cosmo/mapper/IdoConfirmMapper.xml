@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cosmo.mapper.IdoConfirmMapper">
+
+    <select id="selectShainAddress" resultType="org.cosmo.domain.IdoConfirmViewDto">
+        SELECT 
+            /* 현 근무지 합치기: KINMU_ADDRESS 1 + 2 + 3 -> curKinmuPlace */
+            NVL(KINMU_ADDRESS_1, '') || NVL(KINMU_ADDRESS_2, '') || ' ' || NVL(KINMU_ADDRESS_3, '') AS curKinmuPlace,
+            
+            /* 현 주소 합치기: ADDRESS 1 + 2 + 3 -> curAddress */
+            NVL(ADDRESS_1, '') || NVL(ADDRESS_2, '') || ' ' || NVL(ADDRESS_3, '') AS curAddress
+        FROM SHAIN
+        WHERE KIGYO_CD = #{kigyoCd}   AND SHAIN_UID = #{shainUid} </select>
+
+    <select id="selectShinseiAddress" resultType="org.cosmo.domain.IdoConfirmViewDto">
+        SELECT
+            /* 신청 데이터의 [현] 근무지: GEN_KINMU_ADDRESS ... */
+            NVL(GEN_KINMU_ADDRESS_1, '') || NVL(GEN_KINMU_ADDRESS_2, '') || ' ' || NVL(GEN_KINMU_ADDRESS_3, '') AS curKinmuPlace,
+            
+            /* 신청 데이터의 [현] 주소: GEN_HOME_ADDRESS ... */
+            NVL(GEN_HOME_ADDRESS_1, '') || NVL(GEN_HOME_ADDRESS_2, '') || ' ' || NVL(GEN_HOME_ADDRESS_3, '') AS curAddress
+        FROM
+            SHINSEI
+        WHERE
+            KIGYO_CD = #{kigyoCd}
+        AND SHINSEI_NO = #{shinseiNo}
+    </select>
+
+</mapper>

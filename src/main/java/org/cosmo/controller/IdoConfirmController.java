@@ -1,5 +1,7 @@
 package org.cosmo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -8,17 +10,28 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.IdoCheckForm;
+import org.cosmo.domain.IdoConfirmViewDto;
 import org.cosmo.domain.KinmuForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
+import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.ShozokuVO;
-import org.cosmo.domain.TokureiForm;
+import org.cosmo.domain.UploadFileDTO;
+import org.cosmo.domain.UploadResult;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
 import org.cosmo.service.FuzuiShoruiService;
@@ -28,6 +41,10 @@ import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.OshiraseService;
 import org.cosmo.service.ShozokuService;
 import org.cosmo.service.TokureiService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +53,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
@@ -59,11 +78,34 @@ public class IdoConfirmController {
     private final FuzuiShoruiService fuzuiShoruiService;
 
     
-    @GetMapping("/idoconfirm")	//02조우진
+ // 02조우진
+    
+    @GetMapping("/idoconfirm")
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
-            Model model) {
+            @RequestParam(name = "shinseiNo", required = false) String shinseiNo, // 신청번호 파라미터 추가
+            Model model,
+            HttpSession session) { // 세션 추가
 
+        // ---------------------------------------------------------
+        // 1. 세션 및 파라미터 처리 (로그인 기능 완성 전 하드코딩)
+        // ---------------------------------------------------------
+        String kigyoCd = "100";     // (가정) 세션에서 기업코드
+        String shainUid = "11000001"; // (가정) 세션에서 사원ID
+        
+        // ---------------------------------------------------------
+        // 2. DB 데이터 조회 (Service 호출)
+        // ---------------------------------------------------------
+        // 신청번호(shinseiNo)가 null이면 마스터, 값이 있으면 신청테이블을 조회해옴
+        IdoConfirmViewDto viewDto = idoConfirmService.loadDisplayData(kigyoCd, shainUid, shinseiNo);
+        
+        // 화면(JSP)으로 전달
+        model.addAttribute("view", viewDto); 
+
+
+        // ---------------------------------------------------------
+        // 3. 기존 로직 (AlertType 처리 및 Form 초기화)
+        // ---------------------------------------------------------
         if (alertType == null) {
             alertType = AlertType.JISHIN;
         }
@@ -73,12 +115,14 @@ public class IdoConfirmController {
         if (alertType == AlertType.IDOU_ITEN) {
             form.setKinmuChange("Y");
         }
+        
         model.addAttribute("alertType", alertType);
         model.addAttribute("form", form);
 
         return "idoconfirm/02_idoConfirm";
+        
+        //신청후 링크 http://localhost:8282/idoconfirm/idoconfirm?shinseiNo=1
     }
-    
     @PostMapping("/next") //02조우진
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
@@ -86,7 +130,7 @@ public class IdoConfirmController {
             RedirectAttributes rttr) {
 
         if (alertType == null) {
-            alertType = AlertType.SONOHOKA;
+            alertType = AlertType.JISHIN;
         }
         boolean kinmu = form.isKinmuChanged();
         boolean jusho = form.isJushoChanged();
@@ -132,8 +176,9 @@ public class IdoConfirmController {
     @GetMapping("/addressinput")
     public String addressInputGet(Model model) {
         // [주의] 실제 로그인 연동 시 세션에서 가져와야 함. 
-        // DB 테스트 데이터에 넣은 'user123'을 사용합니다.
-        String shainUid = "user123"; 
+        String shainUid = "user123"; //로그인기능 되면 수정
+     //String shainUid = (String) session.getAttribute("loginUserId");
+        
 
         // 1. 화면 상단(회색 박스)에 보여줄 DB 데이터 로드
         AddressViewDto view = addressInputService.loadViewData(shainUid);
@@ -195,24 +240,51 @@ public class IdoConfirmController {
         }
 
         // ---------------------------------------------------
-        // 4. 다음(Next) 버튼
-        // ---------------------------------------------------
+     // 4. 다음(次へ) 버튼 클릭
+        // ==============================================================
         if ("next".equals(action)) {
-            boolean isValid = addressInputService.validateAndCheckRoute(form);
             
-            if (!isValid) {
-                model.addAttribute("errorMessage", "必須項目を入力してください。(または経路取得エラー)");
+            // 1) 필수 입력값 체크 (빈 값 확인)
+            // (AddressInputServiceImpl에 있는 기본 검증 사용)
+            boolean isBasicValid = addressInputService.validateAndCheckRoute(form);
+            
+            if (!isBasicValid) {
+                model.addAttribute("errorMessage", "必須項目を入力してください。");
+                // 화면 깨짐 방지용 데이터 로드
                 model.addAttribute("view", addressInputService.loadViewData(shainUid));
                 return "idoconfirm/04_addressinput";
             }
-            // 유효성 통과 시 경로 입력 화면으로 이동
+
+            // 2) 주소 문자열 합치기 (도도부현 + 시구정촌 + 건물명)
+            String fullAddress = form.getPref() + form.getAddr1() 
+                               + (form.getAddr2() == null ? "" : form.getAddr2());
+            
+            System.out.println(">> GeoService 호출 전 주소: " + fullAddress);
+
+            // 3) GeoService 호출 (위도/경도 취득)
+            GeoPoint point = geoService.getLatLng(fullAddress);
+
+            // 4) 좌표 취득 실패 시 (에러 메시지 표시 및 화면 유지)
+            if (point == null) {
+                model.addAttribute("errorMessage", "住所の緯度経度が取得できませんでした。");
+                model.addAttribute("view", addressInputService.loadViewData(shainUid));
+                return "idoconfirm/04_addressinput";
+            }
+
+            // 5) 성공 시 로그 출력 (취득 확인)
+            System.out.println("===== [04] 좌표 취득 성공 =====");
+            System.out.println("Lat: " + point.getLat());
+            System.out.println("Lng: " + point.getLng());
+            
+            // (필요하다면 여기서 다음 화면으로 넘길 데이터 처리 가능)
+            
+            // 6) 경로 입력 화면으로 이동
             return "redirect:/idoconfirm/keiroInfo";
         }
 
-        // 그 외의 경우 다시 원래 화면으로
+        // 그 외 -> 원래 화면
         return "redirect:/idoconfirm/addressinput";
     }
-
     // 作成者 : 권예성
     // 근무지 입력
     @GetMapping("/kinmuInput")
@@ -315,7 +387,7 @@ public class IdoConfirmController {
 
         int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
 
-       // oshiraseService.saveTempOshirase(shain);
+        oshiraseService.saveTempOshirase(shain, newUid);
 
         return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
     }
@@ -343,6 +415,7 @@ public class IdoConfirmController {
 		// 0-1. 세션 데이터 시뮬레이션
 		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
 		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		String tsukinShudanKbn = (String) session.getAttribute("tsukinShudanKbn");
 		
 		// kigyoCd 처리 (int)
 		int kigyoCdValue = (kigyoCd == null) ? 0 : kigyoCd.intValue();
@@ -453,7 +526,7 @@ public class IdoConfirmController {
             type = "A";
         }
         if (shinseiNo == null || shinseiNo.trim().isEmpty()) {
-            shinseiNo = "1";
+            shinseiNo = "0";
         }
 
         model.addAttribute("tokureiType", type);
@@ -462,32 +535,164 @@ public class IdoConfirmController {
         return "idoconfirm/k_52_tokureiShinsei";
     }
 
-    // 作成者 : 권예성
-    // 특례 신청 Submit
+ // 作成者 : 권예성
     @PostMapping("/tokureiSubmit")
-    public String tokureiSubmit(@ModelAttribute TokureiForm form,
-                                RedirectAttributes rttr) {
+    public String tokureiSubmit(
+    		@ModelAttribute ShinseiDTO mainDto,
+            @ModelAttribute ShinseiStartKeiroVO startVo,
+            @ModelAttribute ShinseiEndKeiroVO endVo,  
+            @ModelAttribute ShinseiFuzuiShoruiDTO fuzuiDto,
+            @ModelAttribute UploadFileDTO fileDto,
+            @ModelAttribute AlertVO alertVo,
+            @ModelAttribute ShinseiLogDTO shinseiLogDto,
+            @ModelAttribute OshiraseDTO oshiraseDto,
+            @ModelAttribute ProcessLogDTO processLogDto,
+            @ModelAttribute IchijiHozonDTO ichijiDto,
+            RedirectAttributes rttr) {
 
-        System.out.println("===== TokureiForm =====");
-        System.out.println("신청번호   : " + form.getShinseiNo());
-        System.out.println("특례타입   : " + form.getTokureiType());
-        System.out.println("동의 여부  : " + form.getAgree());
-        System.out.println("특례 사유  : " + form.getTokureiReason());
-        System.out.println("======================");
+    	// 1. 로그 확인
+        System.out.println("===== [DEBUG] 데이터 도착 =====");
+        System.out.println("신청번호(JSP) : " + mainDto.getShinseiNo()); 
+        
+        // 시작 경로에는 '출발지'
+        System.out.println("출발지 : " + startVo.getStartPlace()); 
+        
+        // 종료 경로에는 '장소'가 없으니 '금액'이나 '종료일'
+        System.out.println("신청금액 : " + endVo.getShinseiKin()); 
+        
+        System.out.println("=============================");
 
-        if (form.getAgree() == null) {
-            rttr.addFlashAttribute("errorMessage",
-                    "特例について内容を理解した上で申請にチェックしてください。");
+        // 2. 유효성 체크 (이건 꼭 있어야 함)
+        // (특례 사유가 비어있으면 신청 불가)
+        if (mainDto.getTokuShinseiRiyu() == null || mainDto.getTokuShinseiRiyu().trim().isEmpty()) {
+            rttr.addFlashAttribute("errorMessage", "特例申請事由を入力してください");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
+        
+        // 3. 서비스 호출
+        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto, alertVo, shinseiLogDto, oshiraseDto, processLogDto, ichijiDto);
 
-        if (form.getTokureiReason() == null || form.getTokureiReason().trim().isEmpty()) {
-            rttr.addFlashAttribute("errorMessage", "特例申請理由を入力してください。");
-            return "redirect:/idoconfirm/tokureiShinsei";
-        }
-
-        tokureiService.saveTokurei(form);
-        rttr.addFlashAttribute("message", "特例申請を受け付けました。");
+        rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
     }
+    
+	// 윤종운
+	@PostMapping(value = "/api/upload/fuzuiShorui", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<UploadResult> uploadFuzuiShorui(
+			@RequestParam("uploadFile") MultipartFile uploadFile,
+			@RequestParam("fileType") String fileType,
+			HttpSession session) {
+		
+		// 1. 파일 유효성 검사
+		if (uploadFile.isEmpty()) {
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("업로드할 파일을 선택해주세요.")
+				.build();
+			// 400 Bad Request 상태 코드와 함께 응답 본문을 반환
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST); 
+		}
+		
+		// 2. 세션에서 ShainUid 추출 로직
+		Integer shainUid = (Integer) session.getAttribute("shainUid");
+		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
+		
+		// 2-1. ShainUid 검증
+		if (shainUid == null || shainUid.intValue() == 0) {
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("세션에 사용자 정보가 없습니다.")
+				.build();
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED); // 401
+		}
+		// 2-2. KigyoCd 처리
+		// KigyoCd가 세션에 없거나 0인 경우, huzuikanri에서 설정했던 기본값(100)을 사용합니다.
+		if (kigyoCd == null || kigyoCd.intValue() == 0) {
+			kigyoCd = 100;
+		}
+		
+		try {
+			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
+			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+			
+			// 4. 성공 응답 구성 및 반환
+			UploadResult result = UploadResult.builder()
+				.success(true)
+				.fileUid(newFileUid)
+				.message("파일 업로드 완료")
+				.build();
+			
+			return new ResponseEntity<>(result, HttpStatus.OK);
+				
+		} catch (Exception e) {
+			
+			// 5. 실패 응답 구성 및 반환
+			System.err.println("파일 업로드 중 서버 에러가 발생: " + e.getMessage());
+			e.printStackTrace();
+			
+			UploadResult result = UploadResult.builder()
+				.success(false)
+				.message("파일 업로드 처리중에 서버 에러가 발생했습니다.")
+				.build();
+			
+			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/viewDocument")
+	public ResponseEntity<byte[]> viewDocument(@RequestParam("fileUid") String fileUid) {
+		// 1. Service를 통해 파일 데이터 및 메타 정보 조회
+		FileViewDTO fileData = fuzuiShoruiService.getFileForView(fileUid);
+		
+		if (fileData == null) {
+			// 등록된 파일이 없을 경우 404 또는 204 No Content 반환
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		String contentType = fileData.getContentType();
+		
+		System.out.println("DEBUG: 조회된 ContentType (DB 값): [" + contentType + "]");
+		
+		// DB에서 조회한 값이 null이거나 빈 문자열인지 확인
+		if (contentType == null || contentType.trim().isEmpty()) {
+			System.err.println("ERROR: DB에서 조회된 ContentType이 NULL 또는 비어 있습니다. 파일 UID: " + fileUid);
+
+			// **방어 로직**: 기본값 설정
+			// 오류를 막기 위해 알 수 없는 바이너리 파일 타입인 'application/octet-stream'으로 대체
+			contentType = "application/octet-stream";
+			System.out.println("DEBUG: ContentType을 기본값 [application/octet-stream]으로 대체합니다.");
+		}
+		
+		// 2. Content Type 설정 (HTTP Header)
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0L);
+		
+		// 3. 파일 이름 설정 (Content-Disposition을 'inline' 으로 하여 팝업/브라우저에 표시)
+		String fileName = fileData.getName(); 
+		String encodedFileName = "file"; // 파일 이름이 null이거나 비어있을 경우 사용할 기본값
+
+		// 파일 이름이 null이 아닐 때만 인코딩을 시도합니다.
+		if (fileName != null && !fileName.isEmpty()) {
+			try {
+				// 파일명에 포함된 공백, 한글 등을 UTF-8로 인코딩
+				encodedFileName = URLEncoder.encode(fileName, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				System.err.println("UTF-8 인코딩을 지원하지 않아 파일명을 인코딩할 수 없습니다.");
+				// 인코딩 실패 시 (매우 드물지만) 안전한 이름으로 대체
+				encodedFileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_"); 
+			}
+		} else {
+			System.err.println("ERROR: DB에서 조회된 파일 이름(NAME)이 NULL 또는 비어 있습니다. 기본 이름 'file' 사용.");
+		}
+
+		// Content-Disposition을 'inline'으로 설정하여 브라우저에서 바로 표시하도록 합니다.
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + encodedFileName + "\"");
+		
+		// 4. ResponseEntity로 파일 데이터와 HTTP 헤더 반환
+		return new ResponseEntity<>(fileData.getData(), headers, HttpStatus.OK);
+	}
 }

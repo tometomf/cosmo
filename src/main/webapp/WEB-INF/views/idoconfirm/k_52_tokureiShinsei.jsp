@@ -139,9 +139,7 @@
 			
 <form id="tokureiForm" method="post" action="/idoconfirm/tokureiSubmit">
 
-
-<input type="hidden" name="shinseiNo" value="1">
-<input type="hidden" name="tokureiType" value="${tokureiType}">			
+		
 			
 <div class="wrapper">
   <!-- 노란 경고 박스 -->
@@ -209,7 +207,7 @@
 <div class="reason_wrapper" id="reasonBox" style="display:none;">
   <div class="reason_label">特例申請理由</div>
   <div class="reason_field">
-    <textarea class="reason_textarea"  name="tokureiReason" id="reason"></textarea>
+    <textarea class="reason_textarea"  name="tokuShinseiRiyu" id="reason"></textarea>
   </div>
 </div>
 
@@ -242,41 +240,492 @@
 <script>
 window.onload = function() {
 
+    // 1. 화면 요소 가져오기
     const radio = document.getElementById("agreeRadio");
     const reasonBox = document.getElementById("reasonBox");
     const submitBtn = document.getElementById("submitBtn");
-    const form = document.getElementById("tokureiForm");
+    const form = document.getElementById("tokureiForm"); // 이 ID는 안 바꿔도 됨!
     const reason = document.getElementById("reason");
 
-    // 라디오 체크되면 textarea + 신청버튼 활성화
-    radio.addEventListener("change", function() {
-        if (radio.checked) {
-            reasonBox.style.display = "grid";
-            submitBtn.style.display = "inline";
-            submitBtn.style.cursor = "pointer";
-        }
-    });
+    // [2] 엑셀 데이터 (ShinseiDTO에 있는 변수명으로 적어야 함)
+    const shinseiData = {
+    // [1] PK 및 기본 정보
+    "kigyoCd": 1,
+    "shinseiNo": "${shinseiNo}" == "" ? "0" : "${shinseiNo}",
+    
+    "shinseiKbn": "A",             // A:신규 (2자리 이내 OK)
+    "shinseiYmd": "20231201",      // (8자리 숫자)
+    
+    // 사유: 너무 길면 안 되니 적당히
+    "shinseiRiyu": "転居",         // (짧게 수정)
 
-    // 신청 버튼 클릭 시 유효성 체크 후 form submit
-    submitBtn.onclick = function() {
+    "shainUid": 100,
+    "shainNo": "202301",           // (6자리 OK)
+    "dairiShinseishaCd": null,     // (Integer라 null 가능)
+    "shinchokuKbn": "1",           // (1자리 OK)
+    "genTsukinroEndKbn": "0",      // (1자리 OK)
 
-        // 1) 라디오 체크 여부
-        if (!radio.checked) {
-            alert("特例について内容を理解した上で申請にチェックしてください。");
-            return;
-        }
+    // [2] 변경/이동 정보
+    "addressChgKbn": "1",
+    "kinmuAddressChgKbn": "0",
+    "kyushokuHukkiKbn": "0",
 
-        // 2) 특례사유 입력 여부
-        if (reason.value.trim() === "") {
-            alert("特例申請理由を入力してください。");
-            reason.focus();
-            return;
-        }
+    // [3] 현재 주소/소속 (★ 길이 주의 ★)
+    "genShozokuCd": "DEP01",       // (짧게)
+    "genZipCd": "1638001",         // 하이픈 제거 필수 (7자리)
+    "genAddress1": "東京",         // 한자 2글자 (6byte - 8byte 이내)
+    "genAddress2": "新宿",         // (짧게)
+    "genAddress3": "西新宿",       // (짧게)
 
-        // 3) 조건 통과 시 제출
-        form.submit();
-    };
+    // [4] 신규 주소/소속 (★ 길이 주의 ★)
+    "newShozokuCd": "DEP01",
+    "newZipCd": "2200011",         
+    "newAddress1": "千葉",         // '카나가와'는 9byte라 에러남 -> '치바'(6byte)로 수정
+    "newAddress2": "千葉",
+    "newAddress3": "千葉",
+    "addressIdoKeido": "",
+    "addressCorrect": "0",
+
+    // [5] 현재/신규 근무지 주소 (길이 주의)
+    "genKinmuZipCd": "1000001",    
+    "genKinmuAddress1": "東京",    
+    "genKinmuAddress2": "千代田",  
+    "genKinmuAddress3": "千代田",  
+    "genKinmuPrefCd": "13",
+
+    "newKinmuZipCd": "1000001",    
+    "newKinmuAddress1": "東京",
+    "newKinmuAddress2": "千代田",
+    "newKinmuAddress3": "千代田",
+    "kinmuAddressIdoKeido": "",
+    "kinmuAddressCorrect": "0",
+    "newKinmuPrefCd": "13",
+    "jutakuKbn": "1",
+
+    // [6] 부속 정보 (일단 비움)
+    // null이나 빈값은 에러 안 남
+    "etcFileUid1": null, "etcFileUid2": null, "etcFileUid3": null,
+    "etcFileUid4": null, "etcFileUid5": null,
+    "etcComment1": "", "etcComment2": "", "etcComment3": "",
+    "etcComment4": "", "etcComment5": "",
+
+    // [7] 날짜 정보 (하이픈 뺀 8자리 문자열)
+    "riyoStartYmd": "20240401",
+    "riyoEndYmd": "20240930",
+    "shikyTeishiKbn": "0",
+    "kanriId": "admin",            // (짧게)
+    
+    "idoYmd": "20240331",
+    "itenYmd": "20240330",
+    "tennyuYmd": "20240330",
+    "haishinYmd": "",
+    "keiroHenkoYmd": "",
+    
+    "firstShinseiYmd": "20231201",
+    "kigyoShoninYmd": "",
+    "llShoninYmd": "",
+    
+    "tsukinroNo": 1,
+    "sashimodoshiYmd": "",
+    "shinseiKigenYmd": "20231231",
+    
+    "moshiokuriComment": "",
+    "biboComment": "",
+    "alertUmu": "0",
+    
+    "torikeshiYmd": "",
+    "torikeshiRiyu": "",
+    "ichijiHozonId": "",
+    
+    "jitsuKm": 28.5,
+    "navitimeViewCnt": 1,
+    
+    // [8] Audit
+    "addUserId": 100,
+    "updUserId": 100,
+    
+    
+    // [9] 경로 정보 (StartKeiroVO 매핑용)
+    "startPlace": "横浜",          // 출발지
+    "endPlace": "東京",            // 도착지
+    "tsukinShudanKbn": "01",       // 교통수단
+    "shinseiKm": 30.2              // 신청거리
 };
+    
+    // [2] 경로 정보 (ShinseiStartKeiroVO 매핑용) 
+    const startKeiroData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,               // 경로 순번 (필수)
+        // "shinseiNo": 0,           // (자동 채번되므로 생략하거나 0)
+
+        // [신청 공통]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",     // (Integer지만 빈값 보내면 null처리됨)
+
+        // [경로 기본]
+        "tsukinShudanKbn": "01",     // 01:전철
+        "startPlace": "横浜",        // 출발지
+        "endPlace": "東京",          // 도착지
+        "shinseiKm": 30.5,           // 거리
+        
+        // [특례 플래그]
+        "yuryoTokurei": "0",         
+        "kyoriKagenTokurei": "0",
+        "jougenKingakuTokurei": "0",
+        "jougenCut": "0",
+        "fubiUmuKbn": "0",
+
+        // [기간]
+        "kikanStartYmd": "20240401",
+        "kikanEndYmd": "20240930",
+        "jitsuKinmuNissu": 20,       // 근무일수
+
+        // [수단 상세]
+        "busCorpNm": "",             // 버스회사
+        "idoShudanKbn": "",          
+        "idoShudanEtcNm": "",
+
+        // [경유지 (최대 5개)]
+        "viaPlace1": "", "viaPlace2": "", "viaPlace3": "", "viaPlace4": "", "viaPlace5": "",
+        "viaPlaceEkicd1": "", "viaPlaceEkicd2": "", "viaPlaceEkicd3": "", "viaPlaceEkicd4": "", "viaPlaceEkicd5": "",
+        "viaPlaceRiyu": "",
+
+        // [좌표/역코드]
+        "startIdoKeido": "",
+        "startEkicd": "",
+        "endEkicd": "",
+        "kekkaUrl": "",
+
+        // [금액 관련]
+        "shinseiKin": 0,
+        "katamichiKin": 500,         // 편도
+        "tsukiShikyuKin": 15000,     // 월지급액
+        "regularShikyuKin": 15000,   // 정기지급액
+        
+        // [정기권 기간]
+        "firstTeikiTsukiSu": 6,      // 6개월
+        "firstShikyuYmd": "20240325",
+        "firstShikyuKin": 90000,
+        "nextTeikiTsukiSu": 6,
+
+        // [이용 구분]
+        "shinkansenRiyoKbn": "0",
+        "tokkyuRiyoKbn": "0",
+        "yuryoRiyoKbn": "0",
+        "kekkaSelect": "1",
+
+        // [참조 정기권]
+        "sanshoTeikiTsukiSu1": 1, "sanshoTeikiKin1": 15000,
+        "sanshoTeikiTsukiSu2": 3, "sanshoTeikiKin2": 44000,
+        "sanshoTeikiTsukiSu3": 6, "sanshoTeikiKin3": 85000,
+
+        // [유료도로/기타]
+        "yuryoIcS": "",
+        "yuryoIcE": "",
+        "yuryoOfukuKbn": "0",
+        "yuryoKatamichiKin": 0,
+        "betsuRouteRiyu": "",
+        "yuryoRiyoRiyu": "",
+
+        // [차량 연비 계산]
+        "nenpi": 0,
+        "gasorinDaiMae": 0, "yuryoDaiMae": 0, "goukeiMae": 0, "hiwariMae": 0,
+        "gasorinDaiAto": 0, "yuryoDaiAto": 0, "goukeiAto": 0, "hiwariAto": 0,
+
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
+ 
+ 	// [4] 종료 경로 정보 (ShinseiEndKeiroVO 매핑용)
+    const endKeiroData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,              // 순번 1
+        // "shinseiNo": 0,          // (자동 연결되므로 생략)
+
+        // [공통 정보]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",
+        "tsukinShudanKbn": "01",    // 01:전철
+
+        // [종료 경로 전용 컬럼]
+        "fubiUmuKbn": "0",          // 불비유무
+        "genTsukinroNo": 1,         // 기존 통근로 번호
+        "riyoEndYmd": "20240331",   // 이용 종료일
+        
+        "kikanStartYmd": "20231001",// 기간 시작
+        "kikanEndYmd": "20240331",  // 기간 종료
+        "jitsuKinmuNissu": 20,      // 실제 근무일수
+        
+        "shinseiKin": 12000,        // 신청 금액
+        "jrModoshiKbn": "0",        // JR 환불 구분
+        "modoshiKin": 0,            // 환불 금액
+        "modoshiFileUid": "",       // 환불 파일 UID
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
+ 	
+    // [5] 부수 서류 정보 (ShinseiFuzuiShoruiDTO 매핑용)
+    const fuzuiShoruiData = {
+        // [PK]
+        "kigyoCd": 1,
+        "keiroSeq": 1,               // 순번 1
+        // "shinseiNo": 0,          // (자동 연결)
+
+        // [공통 정보]
+        "shinseiKbn": "A",
+        "shinseiYmd": "20231201",
+        "shainUid": 100,
+        "shainNo": "202301",
+        "dairiShinseishaCd": "",     // (빈값 = null)
+        "tsukinShudanKbn": "01",     // 01:전철
+
+        // [파일 UID (일단 비움)]
+        "fileUid1": "", "fileUid2": "", "fileUid3": "", "fileUid4": "", "fileUid5": "",
+
+        // [면허/차량 정보]
+        "menkyoYukoKigen": "",       // 면허유효기간
+        "menkyoNo": "",              // 면허번호
+        "shashu": "",                // 차종
+        "torokuNo": "",              // 등록번호
+        "haikiryo": "",              // 배기량
+        "shakenYukoKigen": "",       // 차검유효기간
+        "nenpi": 0,                  // 연비
+
+        // [보험 정보]
+        "hokenManryoYmd": "",        // 보험만료일
+        "taijinBaisho": "",          // 대인배상
+        "taibutsuBaisho": "",        // 대물배상
+        "jinshinShogai": "",         // 인신상해
+        "tojoshaShogai": "",         // 탑승자상해
+        "tokyu": "",                 // 등급
+
+        // [정기권]
+        "firstTeikiKikan": "",
+        "nextTeikiKikan": "",
+
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
+ 
+ 	// [6] 파일 정보 (UploadFileDTO 매핑용) - 가짜 데이터
+    const fileData = {
+        "title": "定期券コピー",
+        "name": "dummy.pdf",
+        "contentType": "application/pdf",
+        // kigyoCd, addUserId 등은 자바에서 세팅
+    };
+ 	
+	 // [7] 경고 정보 (AlertVO 매핑용)
+    const alertData = {
+        // [PK]
+        "kigyoCd": 1,
+        "shainNo": "202301",
+        
+        // [필수값]
+        "haishinRiyu": "01",      // 배신사유 (2자리 필수)
+        "keyYmd": "20231201",     // 기준일자 (필수)
+
+        // [나머지]
+        "shainUid": 100,
+        "kanriId": "admin",
+        "shainNm": "테스트사원",
+        "mailAddr": "test@test.com",
+        "haishinKbn": "1",
+        "syoruiKigenMenkyo": "0",
+        "syoruiKigenShaken": "0",
+        "syoruiKigenHoken": "0",
+        "haishinHindo": "1",
+        "shinseiYohi": "1",
+        "haishinKaishiYmd": "20231201",
+        "haishinSyuryoYmd": "20231231",
+        "jikaiHaishinYmd": "",
+        "haishinKaisuu": "0",
+        "shinseiTitle": "특례신청알림",
+        "shinseiShosai": "내용입니다.",
+        "shinseiYmd": "20231201",
+        "kigyoShoninYmd": "",
+        "llShoninYmd": "",
+        
+        "addUserId": 100,
+        "updUserId": 100
+    };
+	 
+    // [8] 신청 로그 정보 (ShinseiLogDTO 매핑용)
+    const shinseiLogData = {
+        // [PK]
+        "kigyoCd": 1,
+        // "shinseiNo": (자동),
+        // "logSeq": (자동),
+        
+        // [데이터]
+        "syoriKbn": "1",               // 1:신청
+        "shinseiKbn": "A",             // A:신규
+        "shinseiYmd": "20231201",      // 신청일
+        "shinseiRiyu": "転居",         // 사유
+    //  "tokuShinseiRiyu": "",         // 특례사유 (화면값)
+        "shainUid": 100,               // 사원UID
+        "shainNo": "202301",           // 사원번호
+        "dairiShinseishaCd": "",       // 대리자
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+    };
+    
+    // [9] 통지 정보 (OshiraseDTO)
+    const oshiraseData = {
+        // [PK 및 기본]
+        "kigyoCd": 1,              // 기업코드
+        "shainUid": 100,           // 사원UID
+        
+        // [날짜/시간 - DB에서 SYSDATE로 들어가지만 형식상 적어둠]
+        "tsuchiYmd": "",           // (XML에서 TO_CHAR(SYSDATE)로 처리됨)
+        "tsuchiHm": "",            // (XML에서 처리됨)
+        
+        // [통지 대상 및 내용]
+        "shainNo": "202301",       // 사원번호
+        "tsuchishaKigyoCd": 1,     // 통지자 기업코드
+        "tsuchishaCd": "admin",    // 통지자 코드
+        
+        // "shinseiNo": 0,         // (Service에서 자동 연결되므로 0 또는 생략)
+        
+        "oshiraseNaiyo": "特例申請が正常に登録されました。", // 알림 내용 (CLOB)
+        "kengen": "1",             // 권한
+        
+        // [Audit - 등록자 정보]
+        "addUserId": 100,          // 등록자 ID
+        "updUserId": 100           // 수정자 ID
+        // addDate, updDate는 DB 자동생성
+    };
+    
+    // [10] 프로세스 로그 정보 (ProcessLogDTO 매핑용)
+    const processLogData = {
+        // [PK - TIMESTAMP는 DB에서 넣음]
+        "subsystemId": "T01",       // 서브시스템ID (임의)
+        "processCol": "INSERT",     // 프로세스명
+        
+        // [키 값 - 나중에 Service에서 덮어쓸 수도 있음]
+        "key1": "1",                // 기업코드
+        "key2": "202301",           // 사원번호
+        "key3": "",                 // (신청번호는 Service에서 넣음)
+        "key4": "",
+        "key5": "",
+        
+        // [데이터]
+        "data": "특례신청 등록 프로세스 시작", // 로그 내용
+        "userUid": 100,             // 사용자UID
+        "userTrack": "192.168.0.1"  // 접속IP 등
+        
+        // (주의: DB 테이블에 ADD_USER_ID 컬럼이 없어서 생략함)
+    };
+    
+ 	// [10] 일시 저장 정보 (IchijiHozonDTO)
+    const ichijiHozonData = {
+        // [PK]
+        // hozonUid: (자동 채번), 
+        // userUid: (Service에서 세팅)
+
+        // [데이터]
+        "shinseiKbn": "A",          // 신청구분
+        "shozokuCd": "DEP01",       // 소속코드
+        "actionNm": "INSERT_TEST",  // 액션명
+        
+        // [Audit]
+        "addUserId": 100,
+        "updUserId": 100
+        
+        // (DATA는 BLOB이라서 여기서 안 보내고 자바에서 처리함)
+    };
+
+        // [3] 라디오 버튼 이벤트
+        radio.addEventListener("change", function() {
+            if (radio.checked) {
+                reasonBox.style.display = "grid";
+                submitBtn.style.display = "inline";
+                submitBtn.style.cursor = "pointer";
+            }
+        });
+
+        // [4] 신청 버튼 클릭 이벤트
+        submitBtn.onclick = function() {
+            
+            // (1) 라디오 체크 확인
+            if (!radio.checked) {
+                alert("特例について内容を理解した上で申請にチェックしてください。");
+                return;
+            }
+
+            // (2) 사유 입력 확인
+            if (reason.value.trim() === "") {
+                alert("特例申請理由を入力してください。");
+                reason.focus();
+                return;
+            }
+
+            // 데이터 집어넣는 기계(함수)를 만든다
+            function addHiddenData(dataObj) {
+                for (let key in dataObj) {
+                    // 1. 기존에 있는 태그 삭제 (중복 방지)
+                    let oldInput = form.querySelector('input[name="' + key + '"]');
+                    if (oldInput) {
+                        form.removeChild(oldInput);
+                    }
+
+                    // 2. 새 태그 생성해서 넣기
+                    let input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;           
+                    input.value = dataObj[key];
+                    form.appendChild(input);
+                }
+            }
+
+            
+            // 1. 신청 정보 
+            addHiddenData(shinseiData);
+
+            // 2. 시작 경로
+            addHiddenData(startKeiroData); 
+            
+            // 3. 종료 경로
+            addHiddenData(endKeiroData);
+            
+      	    // 4. 부수 서류 정보
+            addHiddenData(fuzuiShoruiData);
+      	    
+            // 5. 파일 정보
+            addHiddenData(fileData);
+            
+      	    // 6. 경고 정보
+            addHiddenData(alertData);
+      	    
+      	    // 7. 신청 로그 정보
+            addHiddenData(shinseiLogData);
+      	    
+            // 8. 통지 정보
+            addHiddenData(oshiraseData);
+            
+      	    // 9. 프로세스 로그
+            addHiddenData(processLogData);
+      	    
+     	    // 10. 일시 저장 정보
+            addHiddenData(ichijiHozonData);
+
+            form.submit();
+        };
+    };
 </script>
 
 	

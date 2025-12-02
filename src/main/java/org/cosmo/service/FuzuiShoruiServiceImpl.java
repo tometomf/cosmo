@@ -1,12 +1,27 @@
 package org.cosmo.service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 
-import org.cosmo.domain.*; // 필요한 DTO들을 임포트해야 합니다.
+import org.cosmo.domain.FileViewDTO;
+// 필요한 DTO들을 임포트해야 합니다.
+import org.cosmo.domain.FuzuiShoruiFormDTO;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.KigyoKiteiDTO;
+import org.cosmo.domain.ProcessLogDTO;
+import org.cosmo.domain.SearchCriteriaDTO;
+import org.cosmo.domain.ShainFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.mapper.FuzuiShoruiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 트랜잭션을 위해 필요
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Setter;
 
@@ -16,7 +31,7 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	
 	@Setter(onMethod_ = @Autowired)
 	private FuzuiShoruiMapper fuzuiShoruiMapper;
-
+	
 	// 1. 화면 초기 로딩에 필요한 모든 데이터를 조회
 	@Override
 	public FuzuiShoruiFormDTO getInitialData(SearchCriteriaDTO criteria) {
@@ -39,17 +54,59 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		// 1-2. 경로별 부수 서류 목록 (SHINSEI_FUZUI_SHORUI) 조회
 		List<ShinseiFuzuiShoruiDTO> shinseiFuzuiShoruiList = fuzuiShoruiMapper.selectShinseiFuzuiShoruiList(kigyoCd, shinseiNo, keiroSeq);
 		
-		// 1-3. 기업 규정 (KIGYO_KITEI) 조회
+		// 1-3. 사원 부수 서류 목록 (SHAIN_FUZUI_SHORUI) 조회
+		List<ShainFuzuiShoruiDTO> shainFuzuiShoruiList = fuzuiShoruiMapper.selectShainFuzuiShoruiList(kigyoCd, shainUid);
+		
+		// 1-4. 기업 규정 (KIGYO_KITEI) 조회
 		List<KigyoKiteiDTO> kigyoKiteiList = fuzuiShoruiMapper.selectKigyoKiteiList(kigyoCd, komokuSybtsu, code, nengetsu, shinseiYmd);
 		
-		// 1-4. 현재 통근 수단 구분 (Current TSUKIN_SHUDAN_KBN) 별도 조회
-		// (직전 신청 정보 또는 직원 마스터 테이블 조회 필요)
+		// 1-5. 현재 통근 수단 구분 및 서류 정보 조회
 		String currentTsukinKbn = fuzuiShoruiMapper.selectCurrentTsukinShudanKbn(shainUid);
+		String currentMenkyoKigen = fuzuiShoruiMapper.selectCurrentMenkyoKigen(shainUid);
 		
-		// 1-5. 모든 데이터를 래퍼 DTO에 담아 반환
-		FuzuiShoruiFormDTO formData = new FuzuiShoruiFormDTO(shinseiList, shinseiFuzuiShoruiList, kigyoKiteiList);
+		// 1-6. 만료 플래그 계산 로직
+		boolean isExpired = false;
+		boolean isNearExpire = false;
+		
+		if (currentMenkyoKigen != null && !currentMenkyoKigen.isEmpty()) {
+			try {
+				// ① 날짜 파싱 및 현재 날짜 준비
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+				LocalDate today = LocalDate.now();
+				LocalDate expireDate = LocalDate.parse(currentMenkyoKigen, formatter);
+				
+				// ② 만료 여부 (isExpired) 계산
+				if (expireDate.isBefore(today)) {
+					isExpired = true;
+				} else {
+					// ③ 1개월 임박 여부 (isNearExpire) 계산: 만료일이 오늘 + 1개월 이내인지 확인
+					LocalDate oneMonthLater = today.plusMonths(1);
+					
+					// 만료일이 현재 날짜 이후이고, 오늘부터 1개월 후 날짜 이전이면 임박
+					if (expireDate.isBefore(oneMonthLater) || expireDate.isEqual(oneMonthLater)) {
+						isNearExpire = true;
+					}
+				}
+				
+			} catch (Exception e) {
+				// 날짜 파싱 오류 발생 시 (데이터 형식 문제)
+				System.err.println("면허증 기한 파싱 오류: " + currentMenkyoKigen + " - " + e.getMessage());
+				// 플래그를 false로 유지하고 진행
+			}
+		}
+		
+		// 1-7. 모든 데이터를 래퍼 DTO에 담아 반환
+		FuzuiShoruiFormDTO formData = new FuzuiShoruiFormDTO(shinseiList, shinseiFuzuiShoruiList, shainFuzuiShoruiList, kigyoKiteiList);
+		
+		// 조회된 현재 데이터를 DTO에 설정
 		formData.setCurrentTsukinShudan(currentTsukinKbn);
-		return formData; 
+		formData.setCurrentMenkyoKigen(currentMenkyoKigen);
+		
+		// 계산된 플래그 설정
+		formData.setMenkyoExpired(isExpired);
+		formData.setMenkyoNearExpire(isNearExpire);
+		
+		return formData;
 	}
 
 	// 2. 입력된 데이터를 검증하고 최종 저장(트랜잭션)
@@ -124,5 +181,114 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	@Transactional
 	@Override
 	public void tempSave(IchijiHozonDTO hozonData) {
+	}
+	
+	// --------------------------------------------------------------------------
+	// 💡 5. 파일 업로드 구현 (Service Interface 구현) 💡
+	// --------------------------------------------------------------------------
+	/**
+	 * 파일을 저장소에 저장하고, 파일 메타데이터를 DB에 기록 후, 파일 UID를 반환합니다.
+	 */
+	@Transactional // 파일 저장과 DB 저장은 하나의 트랜잭션으로 처리
+	@Override
+	public String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType) {
+
+		// 1. 파일 정보 추출
+		String originalFileName = uploadFile.getOriginalFilename();
+		if (originalFileName == null || originalFileName.isEmpty()) {
+			throw new IllegalArgumentException("파일 이름이 유효하지 않습니다.");
+		}
+		
+		// 파일 UID 랜덤 로직
+		Random rand = new Random();
+		StringBuilder sb = new StringBuilder();
+		
+		// 첫 자리 1~9 (0으로 시작하면 18자리 안됨)
+		sb.append(rand.nextInt(9) + 1);
+		
+		// 나머지 17자리 0~9
+		for (int i = 0; i < 17; i++) {
+			sb.append(rand.nextInt(10));
+		}
+		
+		String fileUidString = sb.toString();
+		Long fileUid = Long.parseLong(fileUidString);
+
+		// 2. DB 저장을 위한 DTO/VO 객체 생성
+		UploadFileDTO fileDTO = new UploadFileDTO();
+		
+		// 2-1. 파일의 바이트 배열을 DTO의 data필드에 설정 (BLOB 저장)
+		try {
+			fileDTO.setData(uploadFile.getBytes());
+		} catch (IOException e) {
+			System.err.println("파일 데이터 읽기 오류 발생: " + e.getMessage());
+			throw new RuntimeException("파일 데이터를 읽는 중 오류가 발생했습니다.", e);
+		}
+		
+		// 2-2. 메타데이터 설정 (컬럼명 NAME 사용)
+		fileDTO.setFileUid(fileUid);
+		fileDTO.setName(originalFileName); // 등록 파일명 그대로(파일업로드DB 설계서)
+		fileDTO.setContentType(uploadFile.getContentType());
+		fileDTO.setTitle(getTitleFromType(fileType));
+		
+		// 2-3. UPLOAD_FILE 테이블의 복합 PK에 포함된 SEQ 설정
+		fileDTO.setSeq(0);
+		
+		// 2-4. 관리 정보 설정 (KIGYO_CD, ADD_USER_ID)
+		fileDTO.setKigyoCd(String.valueOf(kigyoCd));
+		fileDTO.setAddUserId(shainUid);
+		fileDTO.setUpdUserId(shainUid);
+		
+		// 3. Mapper 호출 (DB 저장)
+		fuzuiShoruiMapper.insertFile(fileDTO);
+		
+		// 4. 파일 UID 반환
+		return fileUidString;
+	}
+	
+	private String getTitleFromType(String fileType) {
+		// 1. NPE 방지 및 ETC_FILE_UID 처리
+		if (fileType == null) {
+			return "添付書類(Null)";
+		}
+		
+		// ETC_FILE_UID는 startsWith을 사용해야 하므로 별도 처리
+		if (fileType.startsWith("ETC_FILE_UID")) {
+			return "その他";
+		}
+		
+		
+		
+		// 2. switch 문을 사용하여 고정된 FILE_UID 값 처리
+		switch (fileType) {
+			case "FILE_UID_4":
+				return "免許証コピー"; // 면허증 복사
+			case "FILE_UID_5":
+				return "車検書"; // 차검증
+			case "FILE_UID_6":
+				return "保険証券(期限)"; // 보험증권(기간)
+			case "FILE_UID_7":
+				return "保険証券(賠償内容)"; // 보험증권(배상내용)
+			case "FILE_UID_1":
+				return "定期券"; // 정기권
+			default:
+				// 3. 모든 case 및 startsWith 조건에 해당하지 않을 경우 실행되는 기본값
+				System.err.println("경고: 정의되지 않은 파일 타입이 전달되었습니다: " + fileType);
+				return "添付書類(不明)";
+		}
+	}
+	
+	@Override
+	public FileViewDTO getFileForView(String fileUid) {
+		if (fileUid == null || fileUid.isEmpty()) {
+			return null;
+		}
+		
+		FileViewDTO fileData = fuzuiShoruiMapper.selectFileByFileUid(fileUid);
+		if (fileData != null && fileData.getData() != null) {
+			System.out.println("DEBUG: File Data Size: " + fileData.getData().length);
+		}
+		
+		return fileData;
 	}
 }

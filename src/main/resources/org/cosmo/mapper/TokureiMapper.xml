@@ -5,45 +5,342 @@
 
 <mapper namespace="org.cosmo.mapper.TokureiMapper">
 
-	<insert id="insertShinseiForTokurei" parameterType="org.cosmo.domain.ShinseiDTO">
-INSERT INTO SHINSEI (
-    KIGYO_CD,
-    SHINSEI_NO,
-    SHINSEI_RIYU,
-    TOKU_SHINSEI_RIYU,
-    SHINSEI_KBN,
-    SHAIN_UID,
-    SHINSEI_YMD,
-    SHAIN_NO,
-    SHINCHOKU_KBN,
-    GEN_TSUKINRO_END_KBN,
-    ADDRESS_CHG_KBN,
-    KINMU_ADDRESS_CHG_KBN,
-    KYUSHOKU_HUKKI_KBN
-)
-VALUES (
-    #{kigyoCd},
-    #{shinseiNo},
-    #{shinseiRiyu},
-    #{tokuShinseiRiyu},
-    #{shinseiKbn},
-    #{shainUid},
-    #{shinseiYmd},
-    #{shainNo},
-    #{shinchokuKbn},
-    #{genTsukinroEndKbn},
-    #{addressChgKbn},
-    #{kinmuAddressChgKbn},
-    #{kyushokuHukkiKbn}
-)
+	<insert id="insertShinsei" parameterType="org.cosmo.domain.ShinseiDTO">	
+	
+		<selectKey keyProperty="shinseiNo" resultType="long" order="BEFORE">
+      		 SELECT NVL(MAX(SHINSEI_NO), 1000) + 1 
+       		 FROM SHINSEI
+       		 WHERE KIGYO_CD = #{kigyoCd}
+    	</selectKey>
+	
+        INSERT INTO SHINSEI (
+            KIGYO_CD, SHINSEI_NO, SHAIN_NO, SHAIN_UID,
+            SHINSEI_KBN, SHINSEI_YMD, RIYO_START_YMD, RIYO_END_YMD,
+            GEN_ZIP_CD, GEN_ADDRESS_1, GEN_ADDRESS_2, GEN_ADDRESS_3,
+            NEW_ZIP_CD, NEW_ADDRESS_1, NEW_ADDRESS_2, NEW_ADDRESS_3,
+            ADDRESS_CHG_KBN, KINMU_ADDRESS_CHG_KBN, KYUSHOKU_HUKKI_KBN,
+            GEN_SHOZOKU_CD, NEW_SHOZOKU_CD,
+            GEN_KINMU_ZIP_CD, GEN_KINMU_ADDRESS_1, GEN_KINMU_ADDRESS_2, GEN_KINMU_ADDRESS_3, GEN_KINMU_PREF_CD,
+            NEW_KINMU_ZIP_CD, NEW_KINMU_ADDRESS_1, NEW_KINMU_ADDRESS_2, NEW_KINMU_ADDRESS_3, NEW_KINMU_PREF_CD,
+            TSUKINRO_NO, JITSU_KM, SHINCHOKU_KBN, JUTAKU_KBN, ALERT_UMU,
+            TOKU_SHINSEI_RIYU, SHINSEI_RIYU,
+            ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+        ) VALUES (
+            #{kigyoCd}, #{shinseiNo}, #{shainNo}, #{shainUid},
+            #{shinseiKbn}, #{shinseiYmd}, #{riyoStartYmd}, #{riyoEndYmd},
+            #{genZipCd}, #{genAddress1}, #{genAddress2}, #{genAddress3},
+            #{newZipCd}, #{newAddress1}, #{newAddress2}, #{newAddress3},
+            #{addressChgKbn}, #{kinmuAddressChgKbn}, #{kyushokuHukkiKbn},
+            #{genShozokuCd}, #{newShozokuCd},
+            #{genKinmuZipCd}, #{genKinmuAddress1}, #{genKinmuAddress2}, #{genKinmuAddress3}, #{genKinmuPrefCd},
+            #{newKinmuZipCd}, #{newKinmuAddress1}, #{newKinmuAddress2}, #{newKinmuAddress3}, #{newKinmuPrefCd},
+            #{tsukinroNo}, #{jitsuKm}, #{shinchokuKbn}, #{jutakuKbn}, #{alertUmu},
+            #{tokuShinseiRiyu}, #{shinseiRiyu},
+            #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+        )
+    </insert>
+
+    <update id="updateShinsei" parameterType="org.cosmo.domain.ShinseiDTO">
+        UPDATE SHINSEI
+        SET
+            SHINSEI_KBN = #{shinseiKbn},
+            SHINSEI_YMD = #{shinseiYmd},
+            RIYO_START_YMD = #{riyoStartYmd},
+            RIYO_END_YMD = #{riyoEndYmd},
+            
+            GEN_ZIP_CD = #{genZipCd}, GEN_ADDRESS_1 = #{genAddress1}, GEN_ADDRESS_2 = #{genAddress2},
+            NEW_ZIP_CD = #{newZipCd}, NEW_ADDRESS_1 = #{newAddress1}, NEW_ADDRESS_2 = #{newAddress2},
+            ADDRESS_CHG_KBN = #{addressChgKbn},
+            
+            TSUKINRO_NO = #{tsukinroNo},
+            JITSU_KM = #{jitsuKm},
+            SHINCHOKU_KBN = #{shinchokuKbn},
+            
+            TOKU_SHINSEI_RIYU = #{tokuShinseiRiyu}, -- 특례사유 수정
+            ALERT_UMU = #{alertUmu},
+            
+            UPD_USER_ID = #{updUserId},
+            UPD_DATE = SYSTIMESTAMP
+        WHERE
+            KIGYO_CD = #{kigyoCd}
+            AND SHINSEI_NO = #{shinseiNo}
+    </update>
+    
+    
+    <insert id="insertStartKeiro" parameterType="org.cosmo.domain.ShinseiStartKeiroVO">
+        INSERT INTO SHINSEI_START_KEIRO (
+            KIGYO_CD,
+            SHINSEI_NO,
+            KEIRO_SEQ,
+            
+            TSUKIN_SHUDAN_KBN,
+            START_PLACE,
+            END_PLACE,
+            SHINSEI_KM,
+            
+            -- (필요한 컬럼들 추가)
+            YURYO_TOKUREI,
+            KYORI_KAGEN_TOKUREI,
+            JOUGEN_KINGAKU_TOKUREI,
+            JOUGEN_CUT,
+            FUBI_UMU_KBN,
+            
+            KIKAN_START_YMD,
+            KIKAN_END_YMD,
+            JITSU_KINMU_NISSU,
+            
+            KEKKA_SELECT,
+            
+            FIRST_TEIKI_TSUKI_SU,
+            FIRST_SHIKYU_YMD,
+            FIRST_SHIKYU_KIN,
+            NEXT_TEIKI_TSUKI_SU,
+            REGULAR_SHIKYU_KIN,
+            TSUKI_SHIKYU_KIN,
+            KATAMICHI_KIN,
+            
+            SHINKANSEN_RIYO_KBN,
+            TOKKYU_RIYO_KBN,
+            YURYO_RIYO_KBN,
+            
+            SANSHO_TEIKI_TSUKI_SU_1, SANSHO_TEIKI_KIN_1,
+            SANSHO_TEIKI_TSUKI_SU_2, SANSHO_TEIKI_KIN_2,
+            SANSHO_TEIKI_TSUKI_SU_3, SANSHO_TEIKI_KIN_3,
+            
+            YURYO_OFUKU_KBN,
+            YURYO_KATAMICHI_KIN,
+            
+            NENPI,
+            GASORIN_DAI_MAE, YURYO_DAI_MAE, GOUKEI_MAE, HIWARI_MAE,
+            GASORIN_DAI_ATO, YURYO_DAI_ATO, GOUKEI_ATO, HIWARI_ATO,
+            
+            ADD_USER_ID,
+            ADD_DATE
+        ) VALUES (
+            #{kigyoCd},
+            #{shinseiNo},   -- Service에서 넣어준 번호가 들어감
+            1,              -- 순번 1번 고정
+            
+            #{tsukinShudanKbn},
+            #{startPlace},
+            #{endPlace},
+            #{shinseiKm},
+            
+            #{yuryoTokurei},
+            #{kyoriKagenTokurei},
+            #{jougenKingakuTokurei},
+            #{jougenCut},
+            #{fubiUmuKbn},
+            
+            #{kikanStartYmd},
+            #{kikanEndYmd},
+            #{jitsuKinmuNissu},
+            
+            #{kekkaSelect},
+            
+            #{firstTeikiTsukiSu},
+            #{firstShikyuYmd},
+            #{firstShikyuKin},
+            #{nextTeikiTsukiSu},
+            #{regularShikyuKin},
+            #{tsukiShikyuKin},
+            #{katamichiKin},
+            
+            #{shinkansenRiyoKbn},
+            #{tokkyuRiyoKbn},
+            #{yuryoRiyoKbn},
+            
+            #{sanshoTeikiTsukiSu1}, #{sanshoTeikiKin1},
+            #{sanshoTeikiTsukiSu2}, #{sanshoTeikiKin2},
+            #{sanshoTeikiTsukiSu3}, #{sanshoTeikiKin3},
+            
+            #{yuryoOfukuKbn},
+            #{yuryoKatamichiKin},
+            
+            #{nenpi},
+            #{gasorinDaiMae}, #{yuryoDaiMae}, #{goukeiMae}, #{hiwariMae},
+            #{gasorinDaiAto}, #{yuryoDaiAto}, #{goukeiAto}, #{hiwariAto},
+            
+            #{addUserId},
+            SYSTIMESTAMP
+        )
+    </insert>
+    
+    
+    <insert id="insertEndKeiro" parameterType="org.cosmo.domain.ShinseiEndKeiroVO">
+    INSERT INTO SHINSEI_END_KEIRO (
+        KIGYO_CD, SHINSEI_NO, KEIRO_SEQ,
+        TSUKIN_SHUDAN_KBN, FUBI_UMU_KBN, GEN_TSUKINRO_NO,
+        RIYO_END_YMD, KIKAN_START_YMD, KIKAN_END_YMD,
+        JITSU_KINMU_NISSU, SHINSEI_KIN,
+        JR_MODOSHI_KBN, MODOSHI_KIN, MODOSHI_FILE_UID,
+        ADD_USER_ID, ADD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shinseiNo}, 1,
+        #{tsukinShudanKbn}, #{fubiUmuKbn}, #{genTsukinroNo},
+        #{riyoEndYmd}, #{kikanStartYmd}, #{kikanEndYmd},
+        #{jitsuKinmuNissu}, #{shinseiKin},
+        #{jrModoshiKbn}, #{modoshiKin}, #{modoshiFileUid},
+        #{addUserId}, SYSTIMESTAMP
+    )
 </insert>
 
-	
-	
-    <select id="getNextShinseiNo" resultType="int">
-    SELECT NVL(MAX(SHINSEI_NO),0) + 1
-    FROM SHINSEI
-	</select>
+<insert id="insertFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
+        INSERT INTO SHINSEI_FUZUI_SHORUI (
+            KIGYO_CD, SHINSEI_NO, KEIRO_SEQ,
+            SHINSEI_KBN, SHINSEI_YMD, SHAIN_UID, SHAIN_NO, DAIRI_SHINSEISHA_CD,
+            TSUKIN_SHUDAN_KBN,
+            FILE_UID_1, FILE_UID_2, FILE_UID_3, FILE_UID_4, FILE_UID_5,
+            MENKYO_YUKO_KIGEN, MENKYO_NO, SHASHU, TOROKU_NO, HAIKIRYO, SHAKEN_YUKO_KIGEN, NENPI,
+            HOKEN_MANRYO_YMD, TAIJIN_BAISHO, TAIBUTSU_BAISHO, JINSHIN_SHOGAI, TOJOSHA_SHOGAI, TOKYU,
+            FIRST_TEIKI_KIKAN, NEXT_TEIKI_KIKAN,
+            ADD_USER_ID, ADD_DATE
+        ) VALUES (
+    #{kigyoCd}, #{shinseiNo}, 1,
+    #{shinseiKbn, jdbcType=VARCHAR}, 
+    #{shinseiYmd, jdbcType=VARCHAR}, 
+    #{shainUid}, #{shainNo}, 
+    #{dairiShinseishaCd, jdbcType=INTEGER}, 
+    #{tsukinShudanKbn, jdbcType=VARCHAR},
+    
+    #{fileUid1, jdbcType=INTEGER}, #{fileUid2, jdbcType=INTEGER}, 
+    #{fileUid3, jdbcType=INTEGER}, #{fileUid4, jdbcType=INTEGER}, #{fileUid5, jdbcType=INTEGER},
+    
+    #{menkyoYukoKigen, jdbcType=VARCHAR}, #{menkyoNo, jdbcType=VARCHAR}, 
+    #{shashu, jdbcType=VARCHAR}, #{torokuNo, jdbcType=VARCHAR}, 
+    #{haikiryo, jdbcType=INTEGER}, #{shakenYukoKigen, jdbcType=VARCHAR}, #{nenpi, jdbcType=DECIMAL},
+    
+    #{hokenManryoYmd, jdbcType=VARCHAR}, #{taijinBaisho, jdbcType=VARCHAR}, 
+    #{taibutsuBaisho, jdbcType=VARCHAR}, #{jinshinShogai, jdbcType=VARCHAR}, 
+    #{tojoshaShogai, jdbcType=VARCHAR}, #{tokyu, jdbcType=INTEGER},
+    
+    #{firstTeikiKikan, jdbcType=VARCHAR}, #{nextTeikiKikan, jdbcType=VARCHAR},
+    
+    #{addUserId}, SYSTIMESTAMP
+)
+    </insert>
+    
+    <insert id="insertUploadFile" parameterType="org.cosmo.domain.UploadFileDTO">
+    <selectKey keyProperty="fileUid" resultType="long" order="BEFORE">
+        SELECT UPLOAD_FILE_SEQUENCE.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO UPLOAD_FILE (
+        FILE_UID, SEQ, TITLE, NAME, CONTENT_TYPE, DATA, KIGYO_CD,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{fileUid}, 
+        1,  -- SEQ는 1로 고정
+        #{title}, #{name}, #{contentType}, 
+        EMPTY_BLOB(), -- 더미 데이터니까 내용은 비움
+        #{kigyoCd},
+        #{addUserId}, SYSTIMESTAMP, 
+        #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
+<insert id="insertAlert" parameterType="org.cosmo.domain.AlertVO">
+    <selectKey keyProperty="alertNo" resultType="long" order="BEFORE">
+        SELECT NVL(MAX(ALERT_NO), 0) + 1 
+        FROM ALERT 
+        WHERE KIGYO_CD = #{kigyoCd} AND SHAIN_NO = #{shainNo}
+    </selectKey>
+
+    INSERT INTO ALERT (
+        KIGYO_CD, SHAIN_NO, ALERT_NO, ALERT_SEQ,
+        SHAIN_UID, KANRI_ID, SHAIN_NM, MAIL_ADDR,
+        HAISHIN_KBN, HAISHIN_RIYU, KEY_YMD,
+        SYORUI_KIGEN_MENKYO, SYORUI_KIGEN_SHAKEN, SYORUI_KIGEN_HOKEN,
+        HAISHIN_HINDO, SHINSEI_YOHI,
+        HAISHIN_KAISHI_YMD, HAISHIN_SYURYO_YMD, JIKAI_HAISHIN_YMD, HAISHIN_KAISUU,
+        SHINSEI_TITLE, SHINSEI_SHOSAI,
+        SHINSEI_NO, SHINSEI_YMD, KIGYO_SHONIN_YMD, LL_SHONIN_YMD,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shainNo}, #{alertNo}, 
+        1, -- SEQ는 1로 고정 (필요시 수정)
+        #{shainUid}, #{kanriId}, #{shainNm}, #{mailAddr},
+        #{haishinKbn}, #{haishinRiyu}, #{keyYmd},
+        #{syoruiKigenMenkyo}, #{syoruiKigenShaken}, #{syoruiKigenHoken},
+        #{haishinHindo}, #{shinseiYohi},
+        #{haishinKaishiYmd}, #{haishinSyuryoYmd}, #{jikaiHaishinYmd}, #{haishinKaisuu},
+        #{shinseiTitle}, #{shinseiShosai},
+        #{shinseiNo}, #{shinseiYmd}, #{kigyoShoninYmd}, #{llShoninYmd},
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
+
+<insert id="insertShinseiLog" parameterType="org.cosmo.domain.ShinseiLogDTO">
+    <selectKey keyProperty="logSeq" resultType="int" order="BEFORE">
+        SELECT NVL(MAX(LOG_SEQ), 0) + 1 
+        FROM SHINSEI_LOG 
+        WHERE KIGYO_CD = #{kigyoCd} AND SHINSEI_NO = #{shinseiNo}
+    </selectKey>
+
+    INSERT INTO SHINSEI_LOG (
+        KIGYO_CD, SHINSEI_NO, LOG_SEQ,
+        SYORI_KBN, SHINSEI_KBN, SHINSEI_YMD,
+        SHINSEI_RIYU, TOKU_SHINSEI_RIYU,
+        SHAIN_UID, SHAIN_NO, DAIRI_SHINSEISHA_CD,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shinseiNo}, #{logSeq},
+        '1', -- SYORI_KBN (1:신청 고정)
+        #{shinseiKbn}, #{shinseiYmd},
+        #{shinseiRiyu}, #{tokuShinseiRiyu},
+        #{shainUid}, #{shainNo}, #{dairiShinseishaCd, jdbcType=INTEGER},
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
+<insert id="insertOshirase" parameterType="org.cosmo.domain.OshiraseDTO">
+    INSERT INTO OSHIRASE (
+        KIGYO_CD, SHAIN_UID, SHAIN_NO,
+        TSUCHI_YMD, TSUCHI_HM, -- (오늘 날짜, 현재 시간 자동 입력)
+        TSUCHISHA_KIGYO_CD, TSUCHISHA_CD,
+        SHINSEI_NO, OSHIRASE_NAIYO, KENGEN,
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{kigyoCd}, #{shainUid}, #{shainNo},
+        TO_CHAR(SYSDATE, 'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MI'),
+        #{tsuchishaKigyoCd}, #{tsuchishaCd},
+        #{shinseiNo}, #{oshiraseNaiyo}, #{kengen},
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
+
+<insert id="insertProcessLog" parameterType="org.cosmo.domain.ProcessLogDTO">
+    INSERT INTO PROCESS_LOG (
+        PROCESS_TIMESTAMP, 
+        SUBSYSTEM_ID, PROCESS_COL,
+        KEY1, KEY2, KEY3, KEY4, KEY5,
+        DATA, USER_UID, USER_TRACK
+    ) VALUES (
+        SYSTIMESTAMP,  -- PK: 현재시간
+        #{subsystemId}, #{processCol},
+        #{key1}, #{key2}, #{key3}, #{key4}, #{key5},
+        #{data}, #{userUid}, #{userTrack}
+    )
+</insert>
+
+<insert id="insertIchijiHozon" parameterType="org.cosmo.domain.IchijiHozonDTO">
+    <selectKey keyProperty="hozonUid" resultType="int" order="BEFORE">
+        SELECT NVL(MAX(HOZON_UID), 0) + 1 FROM ICHIJI_HOZON
+    </selectKey>
+
+    INSERT INTO ICHIJI_HOZON (
+        HOZON_UID, USER_UID,
+        SHINSEI_KBN, SHOZOKU_CD, ACTION_NM,
+        DATA, -- BLOB 데이터
+        ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE
+    ) VALUES (
+        #{hozonUid}, #{userUid},
+        #{shinseiKbn}, #{shozokuCd}, #{actionNm},
+        #{data, jdbcType=BLOB}, -- BLOB 처리
+        #{addUserId}, SYSTIMESTAMP, #{updUserId}, SYSTIMESTAMP
+    )
+</insert>
 
 
 </mapper>
