@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!-- 제교 -->
 <!DOCTYPE html>
 <html>
@@ -449,7 +450,14 @@
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">${empty kakuninheader.shinseiYmd ? '' : kakuninheader.shinseiYmd}</div>
+					<div class="form_Normal">
+						<c:choose>
+							<c:when test="${not empty kakuninheader.shinseiYmd}">
+                                ${fn:substring(kakuninheader.shinseiYmd,0,4)}/${fn:substring(kakuninheader.shinseiYmd,4,6)}/${fn:substring(kakuninheader.shinseiYmd,6,8)}
+                            </c:when>
+							<c:otherwise></c:otherwise>
+						</c:choose>
+					</div>
 				</div>
 
 				<!-- ※ 進捗状況区分 が 「一時保存」 以外のとき만 표시 -->
@@ -457,13 +465,25 @@
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column">差戻し日</div>
-						<div class="form_Normal">${empty kakuninheader.ssmdsYmd ? '' : kakuninheader.ssmdsYmd}
+						<div class="form_Normal">
+							<c:choose>
+								<c:when test="${not empty kakuninheader.ssmdsYmd}">
+                                    ${fn:substring(kakuninheader.ssmdsYmd,0,4)}/${fn:substring(kakuninheader.ssmdsYmd,4,6)}/${fn:substring(kakuninheader.ssmdsYmd,6,8)}
+                                </c:when>
+								<c:otherwise></c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column">申請解除日</div>
-						<div class="form_Normal">${empty kakuninheader.torikeshiYmd ? '' : kakuninheader.torikeshiYmd}
+						<div class="form_Normal">
+							<c:choose>
+								<c:when test="${not empty kakuninheader.torikeshiYmd}">
+                                    ${fn:substring(kakuninheader.torikeshiYmd,0,4)}/${fn:substring(kakuninheader.torikeshiYmd,4,6)}/${fn:substring(kakuninheader.torikeshiYmd,6,8)}
+                                </c:when>
+								<c:otherwise></c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 
@@ -645,8 +665,15 @@
 
 							<div class="form_Text1" id="form_Text2">
 								<div class="form_Column">有料道路 IC</div>
-								<div class="form_Normal">${empty keiro.yuryoIcS && empty keiro.yuryoIcE ? '' : 
-                          keiro.yuryoIcS += ' ～ ' += keiro.yuryoIcE}
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${empty keiro.yuryoIcS && empty keiro.yuryoIcE}">
+
+										</c:when>
+										<c:otherwise>
+                                            ${keiro.yuryoIcS} ～ ${keiro.yuryoIcE}
+                                        </c:otherwise>
+									</c:choose>
 								</div>
 							</div>
 
@@ -662,8 +689,8 @@
 								<div class="form_Column">1ヶ月金額</div>
 								<div class="form_Normal">
 									<c:if test="${keiro.tsuki != null && keiro.tsuki > 0}">
-                            ${keiro.tsuki}円
-                        </c:if>
+                                        ${keiro.tsuki}円
+                                    </c:if>
 								</div>
 							</div>
 
@@ -682,8 +709,8 @@
 								<div class="form_Normal">
 									${empty keiro.startPlace ? '' : keiro.startPlace}
 									<c:if test="${not empty keiro.endPlace}">
-                → ${keiro.endPlace}
-            </c:if>
+                                        → ${keiro.endPlace}
+                                    </c:if>
 								</div>
 							</div>
 
@@ -768,7 +795,14 @@
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">免許証有効期限</div>
-								<div class="form_Normal">${empty keiro.menkyoYukoKigen ? '' : keiro.menkyoYukoKigen}</div>
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${not empty keiro.menkyoYukoKigen}">
+                                            ${fn:substring(keiro.menkyoYukoKigen,0,4)}/${fn:substring(keiro.menkyoYukoKigen,4,6)}/${fn:substring(keiro.menkyoYukoKigen,6,8)}
+                                        </c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">免許証番号</div>
@@ -795,20 +829,27 @@
 								<div class="form_Column">排気量</div>
 								<div class="form_Normal">
 									<c:if test="${not empty keiro.haikiryo}">
-                            ${keiro.haikiryo}
-                        </c:if>
+                                        ${keiro.haikiryo}
+                                    </c:if>
 								</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">車検有効期限</div>
-								<div class="form_Normal">${empty keiro.shakenYukoKigen ? '' : keiro.shakenYukoKigen}</div>
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${not empty keiro.shakenYukoKigen}">
+                                            ${fn:substring(keiro.shakenYukoKigen,0,4)}/${fn:substring(keiro.shakenYukoKigen,4,6)}/${fn:substring(keiro.shakenYukoKigen,6,8)}
+                                        </c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">燃費</div>
 								<div class="form_Normal">
 									<c:if test="${not empty keiro.nenpi}">
-                            ${keiro.nenpi}km/L
-                        </c:if>
+                                        ${keiro.nenpi}km/L
+                                    </c:if>
 								</div>
 							</div>
 						</div>
@@ -828,7 +869,14 @@
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">保険満了日</div>
-								<div class="form_Normal">${empty keiro.hokenManryoDate ? '' : keiro.hokenManryoDate}</div>
+								<div class="form_Normal">
+									<c:choose>
+										<c:when test="${not empty keiro.hokenManryoDate}">
+                                            ${fn:substring(keiro.hokenManryoDate,0,4)}/${fn:substring(keiro.hokenManryoDate,4,6)}/${fn:substring(keiro.hokenManryoDate,6,8)}
+                                        </c:when>
+										<c:otherwise></c:otherwise>
+									</c:choose>
+								</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">対人賠償</div>
@@ -870,8 +918,8 @@
 												${keiro.fileUid1} </a>
 										</c:when>
 										<c:otherwise>
-                添付なし
-            </c:otherwise>
+                                            添付なし
+                                        </c:otherwise>
 									</c:choose>
 								</div>
 							</div>
@@ -881,8 +929,8 @@
 								<div class="form_Column">初回定期期間</div>
 								<div class="form_Normal">
 									<c:if test="${not empty keiro.firstTeikiKikan}">
-            ${keiro.firstTeikiKikan}ヶ月
-        </c:if>
+                                        ${keiro.firstTeikiKikan}ヶ月
+                                    </c:if>
 								</div>
 							</div>
 
@@ -890,8 +938,8 @@
 								<div class="form_Column">次回以降定期期間</div>
 								<div class="form_Normal">
 									<c:if test="${not empty keiro.nextTeikiKikan}">
-            ${keiro.nextTeikiKikan}ヶ月
-        </c:if>
+                                        ${keiro.nextTeikiKikan}ヶ月
+                                    </c:if>
 								</div>
 							</div>
 
@@ -904,7 +952,6 @@
 				<c:choose>
 					<c:when test="${keiro.tsukinShudanKbn eq '1'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput">
-							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
 							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
@@ -1030,19 +1077,39 @@
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">離納日／移転日</div>
 					<div class="form_Normal">
-						${empty kakuninheader.idoYmd ? '' : kakuninheader.idoYmd}
-						<c:if test="${not empty kakuninheader.itenYmd}"> / ${kakuninheader.itenYmd}</c:if>
+						<c:choose>
+							<c:when test="${not empty kakuninheader.idoYmd}">
+                                ${fn:substring(kakuninheader.idoYmd,0,4)}/${fn:substring(kakuninheader.idoYmd,4,6)}/${fn:substring(kakuninheader.idoYmd,6,8)}
+                            </c:when>
+							<c:otherwise></c:otherwise>
+						</c:choose>
+						<c:if test="${not empty kakuninheader.itenYmd}">
+                            /
+                            ${fn:substring(kakuninheader.itenYmd,0,4)}/${fn:substring(kakuninheader.itenYmd,4,6)}/${fn:substring(kakuninheader.itenYmd,6,8)}
+                        </c:if>
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty kakuninheader.tennyuYmd ? '' : kakuninheader.tennyuYmd}
+					<div class="form_Normal">
+						<c:choose>
+							<c:when test="${not empty kakuninheader.tennyuYmd}">
+                                ${fn:substring(kakuninheader.tennyuYmd,0,4)}/${fn:substring(kakuninheader.tennyuYmd,4,6)}/${fn:substring(kakuninheader.tennyuYmd,6,8)}
+                            </c:when>
+							<c:otherwise></c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal">${empty kakuninheader.riyoStartYmd ? '' : kakuninheader.riyoStartYmd}
+					<div class="form_Normal">
+						<c:choose>
+							<c:when test="${not empty kakuninheader.riyoStartYmd}">
+                                ${fn:substring(kakuninheader.riyoStartYmd,0,4)}/${fn:substring(kakuninheader.riyoStartYmd,4,6)}/${fn:substring(kakuninheader.riyoStartYmd,6,8)}
+                            </c:when>
+							<c:otherwise></c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
