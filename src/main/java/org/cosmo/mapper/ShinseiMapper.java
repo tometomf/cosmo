@@ -12,6 +12,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 
 @Mapper
 public interface ShinseiMapper {
@@ -23,7 +24,15 @@ public interface ShinseiMapper {
 
 	String getShainUidByShinseiNo(@Param("shinseiNo") String shinseiNo);
 
+	ShinseiViewDTO getShinseiView(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo);
+
+	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo);
+
 	ShainVO getShainByUid(@Param("shainUid") String shainUid);
+
+	Long getKigyoCdByShinseiNo(@Param("shinseiNo") Long shinseiNo);
 
 	ShinseiShoruiVO getShinseiShorui(@Param("shinseiNo") Long shinseiNo);
 
@@ -86,34 +95,64 @@ public interface ShinseiMapper {
 
 	// 제교
 
-	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
 	void updateForResubmit(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("shinseiRiyu") String shinseiRiyu, @Param("updUserId") String updUserId);
-
-	void updateShinseiForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("shinseiRiyu") String shinseiRiyu, @Param("newZipCd") String newZipCd,
-			@Param("newAddress1") String newAddress1, @Param("newAddress2") String newAddress2,
-			@Param("newAddress3") String newAddress3, @Param("addressIdoKeido") String addressIdoKeido,
-			@Param("addressChgKbn") String addressChgKbn, @Param("kinmuAddressIdoKeido") String kinmuAddressIdoKeido,
-			@Param("kinmuAddressChgKbn") String kinmuAddressChgKbn, @Param("updUserId") Integer updUserId);
 
 	void updateStartKeiroForReapply(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
 			@Param("jitsuKinmuNissu") Integer jitsuKinmuNissu, @Param("updUserId") Integer updUserId);
 
-	ShinseiDetailVO selectShinseiDetail(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
-
 	ShinseiKeiroDetailVO getShinseiKeiroDetail(Map<String, Object> param);
-
-	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("updUserId") String updUserId);
-
-	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
-			@Param("loginUserId") String loginUserId);
 
 	void insertOshiraseHikimodosu(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
 			@Param("shinseiNo") String shinseiNo);
 
 	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Map<String, Object> param);
+
+	void insertOshiraseReapply(@Param("loginUser") ShainVO loginUser, @Param("shinseiUser") ShainVO shinseiUser,
+			@Param("shinseiNo") String shinseiNo);
+
+	Long getNextShinseiLogSeq(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void insertReapplyLog(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("logSeq") Long logSeq, @Param("syoriKbn") String syoriKbn, @Param("shainUid") String shainUid);
+
+	void insertSaishinseiProcessLog(@Param("subsystemId") String subsystemId, @Param("process") String process,
+			@Param("key1") String key1, @Param("key2") String key2, @Param("key3") String key3,
+			@Param("key4") String key4, @Param("key5") String key5, @Param("data") String data,
+			@Param("userUid") String userUid, @Param("userTrack") String userTrack);
+
+	List<ShinseiDetailVO> selectShinseiDetail(Map<String, Object> param);
+
+	String getNextShinseiNo(@Param("kigyoCd") Long kigyoCd, @Param("todayYmd") String todayYmd);
+
+	List<ShinseiDetailVO> getKakuninJyohou(Map<String, Object> param);
+
+	void updateShinseiToIchijihozon(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("updUserId") String updUserId);
+
+	void clearHenkoFlags(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void insertHikimodoshiLog(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	Map<String, Object> getShinseiStatusForLog(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo);
+
+	void insertHikimodoshiProcessLog(Map<String, Object> param);
+
+	void updateAlertForHikimodoshi(@Param("kigyoCd") Long kigyoCd, @Param("shinseiNo") Long shinseiNo,
+			@Param("shainNo") String shainNo, @Param("updUserId") Integer updUserId);
+
+	void updateShinseiForReapply(Map<String, Object> param);
+
+	void updateStartKeiroForReapply(Map<String, Object> param);
+
+	void updateEndKeiroForReapply(Map<String, Object> param);
+
+	void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param);
+
+	void insertOshiraseForSaishinsei(Map<String, Object> param);
+
+	void insertShinseiLogForReapply(Map<String, Object> param);
+
+	void insertProcessLogForReapply(Map<String, Object> param);
 
 }

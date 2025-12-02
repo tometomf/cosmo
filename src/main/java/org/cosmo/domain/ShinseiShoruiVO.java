@@ -7,7 +7,7 @@ public class ShinseiShoruiVO {
 
 	private String kigyoCd;
 	private String shinseiNo;
-	private String keiroSeq;
+	private Long keiroSeq;
 	private String manryoYmd;
 	private String taijin;
 	private String taibutsu;
@@ -43,8 +43,6 @@ public class ShinseiShoruiVO {
 	private String jinshinShogai;
 	private String tojoshaShogai;
 
-	private String firstTeikiKikan;
-	private String nextTeikiKikan;
 
 	private Long addUserId;
 	private String addDate;

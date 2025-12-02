@@ -20,16 +20,16 @@ public class OshiraseServiceImpl implements OshiraseService {
     public void saveTempOshirase(ShainVO shain, long setShinseiNo) {
 
         if (shain == null) {
-            return; // 세션에 사원 정보가 없으면 아무 것도 안 함
+            return; 
         }
 
-        // 세션 값 매핑 (필드명은 기존 ShainVO 사용 패턴에 맞게)
+  
         Integer kigyoCd  = null;
         Integer shainUid = null;
         String  shainNo  = null;
 
         try {
-            // 예: shain.getKigyo_Cd(), shain.getShain_Uid(), shain.getShain_No()
+           
             if (shain.getKigyo_Cd() != null) {
                 kigyoCd = Integer.parseInt(shain.getKigyo_Cd());
             }
@@ -38,7 +38,7 @@ public class OshiraseServiceImpl implements OshiraseService {
             }
             shainNo = shain.getShain_No();
         } catch (NumberFormatException e) {
-            // 파싱 오류 시 그냥 리턴 or 로깅만 하고 넘어가도 됨
+          
             return;
         }
 
@@ -55,14 +55,14 @@ public class OshiraseServiceImpl implements OshiraseService {
         dto.setTsuchiYmd(tsuchiYmd);
         dto.setTsuchiHm(tsuchiHm);
 
-        // 통지자 = 자기 자신 (요구사항대로)
+  
         dto.setTsuchishaKigyoCd(kigyoCd);
         dto.setTsuchishaCd(shainNo);
 
-        dto.setShinseiNo(setShinseiNo);                       // 임시저장 시 NULL
-        dto.setOshiraseNaiyo("一時保存しました。");     // 고정메시지
-        dto.setKengen(null);                         // 요구사항상 NULL
-        dto.setHaishinKbn(null);                     // 필요 시 "0" 등 값 설정
+        dto.setShinseiNo(setShinseiNo);                    
+        dto.setOshiraseNaiyo("一時保存しました。");  
+        dto.setKengen(null);                        
+        dto.setHaishinKbn(null);                    
 
         dto.setAddUserId(shainUid);
         dto.setAddDate(nowTs);
@@ -71,4 +71,84 @@ public class OshiraseServiceImpl implements OshiraseService {
 
         oshiraseMapper.insertOshirase(dto);
     }
+        
+        @Override
+        public void addHiwariShinseiOshirase(Integer kigyoCd,
+                                             Long shainUid,
+                                             String shainNo,
+                                             Long shinseiNo) {
+
+            if (kigyoCd == null || shainUid == null || shainNo == null) {
+                return; 
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            String tsuchiYmd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String tsuchiHm  = now.format(DateTimeFormatter.ofPattern("HHmm"));
+            Timestamp nowTs  = Timestamp.valueOf(now);
+
+            OshiraseDTO dto = new OshiraseDTO();
+            dto.setKigyoCd(kigyoCd);
+            dto.setShainUid(shainUid.intValue());   // DTO가 int라서
+            dto.setShainNo(shainNo);
+
+            dto.setTsuchiYmd(tsuchiYmd);
+            dto.setTsuchiHm(tsuchiHm);
+
+            // 통지자 = 본인
+            dto.setTsuchishaKigyoCd(kigyoCd);
+            dto.setTsuchishaCd(shainNo);
+
+            dto.setShinseiNo(shinseiNo);                 
+            dto.setOshiraseNaiyo("日割申請が完了しました。"); 
+            dto.setKengen(null);
+            dto.setHaishinKbn(null);
+
+            dto.setAddUserId(shainUid.intValue());
+            dto.setAddDate(nowTs);
+            dto.setUpdUserId(shainUid.intValue());
+            dto.setUpdDate(nowTs);
+
+            oshiraseMapper.insertOshirase(dto);
+        }
+        
+     // 유지희
+        @Override
+        public void registHiwariTempSave(Integer kigyoCd,
+                                         Long shainUid,
+                                         Long shinseiNo) {
+
+            if (kigyoCd == null || shainUid == null || shinseiNo == null) {
+                return;   
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            String tsuchiYmd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String tsuchiHm  = now.format(DateTimeFormatter.ofPattern("HHmm"));
+            Timestamp nowTs  = Timestamp.valueOf(now);
+
+            OshiraseDTO dto = new OshiraseDTO();
+            dto.setKigyoCd(kigyoCd);
+            dto.setShainUid(shainUid.intValue()); 
+
+         
+            dto.setShainNo(null);
+
+            dto.setTsuchiYmd(tsuchiYmd);
+            dto.setTsuchiHm(tsuchiHm);
+
+            dto.setTsuchishaKigyoCd(kigyoCd);
+            dto.setTsuchishaCd(dto.getShainNo());  
+            dto.setShinseiNo(shinseiNo);
+            dto.setOshiraseNaiyo("通勤経路を一時保存しました。");  
+            dto.setKengen(null);
+            dto.setHaishinKbn(null);
+
+            dto.setAddUserId(shainUid.intValue());
+            dto.setAddDate(nowTs);
+            dto.setUpdUserId(shainUid.intValue());
+            dto.setUpdDate(nowTs);
+
+            oshiraseMapper.insertOshirase(dto);
+        }
 }

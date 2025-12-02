@@ -6,8 +6,6 @@
 <mapper namespace = "org.cosmo.mapper.HuzuiNewInputMapper">
 	
 	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
-   	 	SELECT *
-		FROM (
 		    SELECT *
 		    FROM SHAIN_FUZUI_SHORUI a
 		    INNER JOIN UPLOAD_FILE b
@@ -15,16 +13,12 @@
 		    AND a.FILE_UID_4 = b.FILE_UID
 		    WHERE a.KIGYO_CD = #{kigyo_Cd}
 		    AND a.SHAIN_UID = #{shain_Uid}
-		    ORDER BY b.SEQ DESC
-		)
-		WHERE ROWNUM = 1
 	</select>
 	
-	<select id="getFile">
+	<select id="getFile" resultType="org.cosmo.domain.UploadFileDTO">
 		SELECT * 
 		FROM UPLOAD_FILE
 		WHERE FILE_UID = #{fileUid}
-		
 	</select>
 	
 	<select id="getFiles">
@@ -64,11 +58,35 @@
 	    and a.SHAIN_UID = #{shain_Uid}
 	</select>
 	
+	<select id="findShinseiNo" resultType="Long">
+	SELECT * 
+	FROM (SELECT SHINSEI_NO 
+		  FROM SHINSEI 
+		  WHERE KIGYO_CD = #{shain.kigyo_Cd} AND SHAIN_UID = #{shain.shain_Uid}
+		  ORDER BY SHINSEI_NO DESC) 
+	WHERE ROWNUM = 1
+	</select>
+	
 	<update id="fileUpdate">
 		update SHAIN_FUZUI_SHORUI 
 		set ${fNo} = #{UploadFile.fileUid} 
 		where KIGYO_CD = #{shain.kigyo_Cd} 
 		and SHAIN_UID = #{shain.shain_Uid}
+	</update>
+	
+	<update id="commentUpdate">
+		update SHAIN_FUZUI_SHORUI 
+		set ${fNo} = #{shinsei.etcComment1, jdbcType=NUMERIC} 
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
+	</update>
+	
+	<update id="shinseiFileUpdate">
+		update shinsei 
+		set ${fNo} = #{UploadFile.fileUid} 
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid}
+		and SHINSEI_NO = #{findShinseiNo}
 	</update>
 	
 	<insert id="addFuzuiShorui">
@@ -431,7 +449,7 @@
     VALUES
     (
        #{UploadFile.fileUid},	
-      SEQ_UPLOAD_FILE.NEXTVAL,
+      0,
       #{UploadFile.title},
       #{UploadFile.name},
       #{UploadFile.contentType},

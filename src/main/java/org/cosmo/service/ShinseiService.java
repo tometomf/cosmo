@@ -1,6 +1,7 @@
 package org.cosmo.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDetailVO;
@@ -10,6 +11,7 @@ import org.cosmo.domain.ShinseiJyohouVO;
 import org.cosmo.domain.ShinseiKeiroDetailVO;
 import org.cosmo.domain.ShinseiKeiroVO;
 import org.cosmo.domain.ShinseiShoruiVO;
+import org.cosmo.domain.ShinseiViewDTO;
 import org.springframework.ui.Model;
 
 public interface ShinseiService {
@@ -19,7 +21,13 @@ public interface ShinseiService {
 
 	ShinseiKeiroVO getShinseiKeiro(Long shinseiNo);
 
-	ShinseiDetailVO getShinseiDetail(Long kigyoCd, Long shinseiNo);
+	ShinseiViewDTO getShinseiView(Long kigyoCd, Long shinseiNo);
+
+	Long getKigyoCdByShinseiNo(Long shinseiNo);
+
+	List<ShinseiKeiroVO> getShinseiKeiroList(Long shinseiNo);
+
+	List<ShinseiShoruiVO> getShinseiShoruiList(Long shinseiNo);
 
 	String getShainUidByShinseiNo(String shinseiNo);
 
@@ -63,17 +71,38 @@ public interface ShinseiService {
 
 	void resubmitShinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String updUserId);
 
+	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
+
+	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+
+	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
+
+	void insertOshiraseReapply(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+
+	List<ShinseiDetailVO> getShinseiDetail(Long kigyoCd, Long shinseiNo);
+
+	String getNextShinseiNo(Long kigyoCd, String todayYmd);
+
+	List<ShinseiDetailVO> getKakuninJyohou(Long kigyoCd, Long shinseiNo);
+
+	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp, String shainNo);
+
 	void saishinsei(Long kigyoCd, Long shinseiNo, String shinseiRiyu, String newZipCd, String newAddress1,
 			String newAddress2, String newAddress3, String jitsuKinmuNissu, String addressIdoKeido,
 			String addressChgKbn, String kinmuAddressIdoKeido, String kinmuAddressChgKbn, String loginUserId,
 			String userIp);
 
-	ShinseiKeiroDetailVO getShinseiKeiroDetail(Long kigyoCd, Long shinseiNo, Integer keiroSeq);
+	void updateStartKeiroForReapply(Map<String, Object> param);
 
-	void hikimodosu(Long kigyoCd, Long shinseiNo, String loginUserId, String userIp);
+	void updateEndKeiroForReapply(Map<String, Object> param);
 
-	void insertOshiraseHikimodosu(ShainVO loginUser, ShainVO shinseiUser, String shinseiNo);
+	void updateShinseiFuzuiShoruiForReapply(Map<String, Object> param);
 
-	List<ShinseiKeiroDetailVO> getShinseiKeiroDetailList(Long kigyoCd, Long shinseiNo);
+	void insertOshiraseForSaishinsei(ShainVO loginUser, ShainVO shinseiUser, Long shinseiNo);
+
+	void insertShinseiLogForReapply(Long kigyoCd, Long shinseiNo);
+
+	void insertProcessLogForReapply(String subsystemId, Long kigyoCd, Long shinseiNo, String shinseiKbn,
+			String beforeShinchokuKbn, String afterShinchokuKbn, String userUid, String userTrack);
 
 }

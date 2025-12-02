@@ -1,9 +1,11 @@
 package org.cosmo.domain;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 @Data
-public class ShainFuzuiShoruiVO {
+public class ShainFuzuiShoruiVO implements Serializable{
 
 	private Integer kigyo_Cd;
 	private Integer shain_Uid;
