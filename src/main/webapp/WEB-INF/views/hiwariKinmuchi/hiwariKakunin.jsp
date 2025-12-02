@@ -316,28 +316,64 @@
             enctype="multipart/form-data"
             style="display:inline;">
 
-        <!-- アップロード 영역 -->
-        <div class="content_Form1">
-          <div class="form_Text1 twoCol">
-            <div class="form_Column" style="display:flex; align-items:center;">
-              アップロード
-            </div>
-            <div class="form_Normal">
-              <div class="upload-top">
-                <input type="text" id="uploadName" readonly style="width:180px;">
-                <button type="button"
-                        onclick="document.getElementById('uploadFile').click();">参照</button>
-                <button type="button">アップロード</button>
-                <input type="file" id="uploadFile" name="evidence" style="display:none"
-                       onchange="document.getElementById('uploadName').value=this.files[0].name;">
-              </div>
+     <!-- アップロード 영역 -->
+<div class="content_Form1">
+  <div class="form_Text1 twoCol">
+    <div class="form_Column" style="display:flex; align-items:center;">
+      アップロード
+    </div>
+    <div class="form_Normal">
 
-              <div class="upload-note">
-                ※定期券を購入している場合は、定期券コピーをアップロードしてください。
-              </div>
-            </div>
-          </div>
+      <!-- =========================
+           1) 업로드 파일이 이미 있는 경우
+           ========================= -->
+      <c:if test="${not empty evidenceFileName}">
+        <div class="upload-top">
+          <%-- アップロードファイル名：링크 --%>
+          <a href="<c:url value='/hiwariKinmuchi/evidence/download'/>?uid=${evidenceUid}">
+            <c:out value="${evidenceFileName}"/>
+          </a>
+
+          <%-- アップロード取消：아이콘 버튼 --%>
+          <a href="<c:url value='/hiwariKinmuchi/evidence/delete'/>?uid=${evidenceUid}">
+            <img src="/resources/img/upload_cancel.gif" alt="アップロード取消">
+          </a>
         </div>
+      </c:if>
+
+      <!-- =========================
+           2) 업로드 파일이 없는 경우
+           ========================= -->
+      <c:if test="${empty evidenceFileName}">
+        <div class="upload-top">
+          <%-- 参照ファイル名 텍스트 --%>
+          <input type="text" id="uploadName" readonly style="width:180px;">
+
+          <%-- 参照 버튼: 파일 선택창 열기 --%>
+          <button type="button"
+                  onclick="document.getElementById('uploadFile').click();">
+            参照
+          </button>
+
+          <%-- アップロード 버튼: 지금은 신청과 같이 submit (또는 나중에 /upload 전용으로 변경) --%>
+          <button type="submit">
+            アップロード
+          </button>
+
+          <%-- 실제 파일 선택 필드 --%>
+          <input type="file" id="uploadFile" name="evidence" style="display:none"
+                 onchange="document.getElementById('uploadName').value=this.files[0].name;">
+        </div>
+      </c:if>
+
+      <!-- 固定メッセージ: 항상 표시 -->
+      <div class="upload-note">
+        ※定期券を購入している場合は、定期券コピーをアップロードしてください。
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <br>
 
