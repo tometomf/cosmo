@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 
+import org.cosmo.domain.FileViewDTO;
 // 필요한 DTO들을 임포트해야 합니다.
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -190,7 +191,7 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	 */
 	@Transactional // 파일 저장과 DB 저장은 하나의 트랜잭션으로 처리
 	@Override
-	public Long saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType) {
+	public String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType) {
 
 		// 1. 파일 정보 추출
 		String originalFileName = uploadFile.getOriginalFilename();
@@ -210,9 +211,8 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 			sb.append(rand.nextInt(10));
 		}
 		
-		// 문자열을 long으로 변환
-		Long positiveLong = Long.parseLong(sb.toString());
-		Long fileUid = positiveLong;
+		String fileUidString = sb.toString();
+		Long fileUid = Long.parseLong(fileUidString);
 
 		// 2. DB 저장을 위한 DTO/VO 객체 생성
 		UploadFileDTO fileDTO = new UploadFileDTO();
@@ -243,7 +243,7 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		fuzuiShoruiMapper.insertFile(fileDTO);
 		
 		// 4. 파일 UID 반환
-		return fileDTO.getFileUid();
+		return fileUidString;
 	}
 	
 	private String getTitleFromType(String fileType) {
@@ -276,5 +276,19 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 				System.err.println("경고: 정의되지 않은 파일 타입이 전달되었습니다: " + fileType);
 				return "添付書類(不明)";
 		}
+	}
+	
+	@Override
+	public FileViewDTO getFileForView(String fileUid) {
+		if (fileUid == null || fileUid.isEmpty()) {
+			return null;
+		}
+		
+		FileViewDTO fileData = fuzuiShoruiMapper.selectFileByFileUid(fileUid);
+		if (fileData != null && fileData.getData() != null) {
+			System.out.println("DEBUG: File Data Size: " + fileData.getData().length);
+		}
+		
+		return fileData;
 	}
 }

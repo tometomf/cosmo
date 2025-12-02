@@ -209,4 +209,21 @@
 	
 	</insert>
 	
+	<resultMap id="FileViewResultMap" type="org.cosmo.domain.FileViewDTO">
+		<result column="DATA" property="data" jdbcType="BLOB" />
+		<result column="CONTENT_TYPE" property="contentType" />
+		<result column="NAME" property="name" />
+	</resultMap>
+	
+	<select id="selectFileByFileUid" resultMap="FileViewResultMap">
+		SELECT
+			DATA, CONTENT_TYPE, NAME
+		FROM
+			UPLOAD_FILE
+		WHERE
+			TO_CHAR(FILE_UID) = TO_CHAR(#{fileUid})
+			AND
+				SEQ = 0
+	</select>
+	
 </mapper>

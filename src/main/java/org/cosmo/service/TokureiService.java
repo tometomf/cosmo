@@ -2,11 +2,29 @@
 
 package org.cosmo.service;
 
+import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.IchijiHozonDTO;
+import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.ShinseiDTO;
-import org.cosmo.mapper.TokureiMapper;
+import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
+import org.cosmo.domain.UploadFileDTO;
 
 public interface TokureiService {
 	
-	void registerShinsei(ShinseiDTO dto);
+	void registerShinsei(ShinseiDTO mainDto, 
+						 ShinseiStartKeiroVO startVo, 
+						 ShinseiEndKeiroVO endVo, 
+						 ShinseiFuzuiShoruiDTO fuzuiDto,
+						 UploadFileDTO fileDto,
+						 AlertVO alertVo,
+						 ShinseiLogDTO shinseiLogDto,
+						 OshiraseDTO oshiraseDto,
+						 ProcessLogDTO processLogDto,
+						 IchijiHozonDTO ichijiDto);
+	
 
 }

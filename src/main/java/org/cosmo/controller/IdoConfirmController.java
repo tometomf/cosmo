@@ -1,5 +1,7 @@
 package org.cosmo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -8,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import org.cosmo.domain.AddressInputForm;
 import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.AlertType;
+import org.cosmo.domain.AlertVO;
+import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.GeoPoint;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -16,10 +20,17 @@ import org.cosmo.domain.IdoConfirmViewDto;
 import org.cosmo.domain.KinmuForm;
 import org.cosmo.domain.NextScreen;
 import org.cosmo.domain.NextStep;
+import org.cosmo.domain.OshiraseDTO;
+import org.cosmo.domain.ProcessLogDTO;
 import org.cosmo.domain.SearchCriteriaDTO;
 import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
+import org.cosmo.domain.ShinseiEndKeiroVO;
+import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
+import org.cosmo.domain.ShinseiLogDTO;
+import org.cosmo.domain.ShinseiStartKeiroVO;
 import org.cosmo.domain.ShozokuVO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.domain.UploadResult;
 import org.cosmo.service.AddressInputService;
 import org.cosmo.service.AddressService;
@@ -30,7 +41,9 @@ import org.cosmo.service.IdoConfirmService;
 import org.cosmo.service.OshiraseService;
 import org.cosmo.service.ShozokuService;
 import org.cosmo.service.TokureiService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -521,25 +534,40 @@ public class IdoConfirmController {
 
  // 作成者 : 권예성
     @PostMapping("/tokureiSubmit")
-    public String tokureiSubmit(@ModelAttribute ShinseiDTO dto, // Form 말고 DTO로 받음
-                                RedirectAttributes rttr) {
+    public String tokureiSubmit(
+    		@ModelAttribute ShinseiDTO mainDto,
+            @ModelAttribute ShinseiStartKeiroVO startVo,
+            @ModelAttribute ShinseiEndKeiroVO endVo,  
+            @ModelAttribute ShinseiFuzuiShoruiDTO fuzuiDto,
+            @ModelAttribute UploadFileDTO fileDto,
+            @ModelAttribute AlertVO alertVo,
+            @ModelAttribute ShinseiLogDTO shinseiLogDto,
+            @ModelAttribute OshiraseDTO oshiraseDto,
+            @ModelAttribute ProcessLogDTO processLogDto,
+            @ModelAttribute IchijiHozonDTO ichijiDto,
+            RedirectAttributes rttr) {
 
-        System.out.println("===== [DEBUG] ShinseiDTO データ到着 =====");
-        System.out.println("신청번호 : " + dto.getShinseiNo());
-        System.out.println("기업코드 : " + dto.getKigyoCd());
-        System.out.println("사원번호 : " + dto.getShainNo());
-        System.out.println("주소1   : " + dto.getGenAddress1());
-        System.out.println("특례사유 : " + dto.getTokuShinseiRiyu());
-        System.out.println("========================================");
+    	// 1. 로그 확인
+        System.out.println("===== [DEBUG] 데이터 도착 =====");
+        System.out.println("신청번호(JSP) : " + mainDto.getShinseiNo()); 
+        
+        // 시작 경로에는 '출발지'
+        System.out.println("출발지 : " + startVo.getStartPlace()); 
+        
+        // 종료 경로에는 '장소'가 없으니 '금액'이나 '종료일'
+        System.out.println("신청금액 : " + endVo.getShinseiKin()); 
+        
+        System.out.println("=============================");
 
-        // 유효성 체크        
-        if (dto.getTokuShinseiRiyu() == null || dto.getTokuShinseiRiyu().trim().isEmpty()) {
+        // 2. 유효성 체크 (이건 꼭 있어야 함)
+        // (특례 사유가 비어있으면 신청 불가)
+        if (mainDto.getTokuShinseiRiyu() == null || mainDto.getTokuShinseiRiyu().trim().isEmpty()) {
             rttr.addFlashAttribute("errorMessage", "特例申請事由を入力してください");
             return "redirect:/idoconfirm/tokureiShinsei";
         }
         
-     // DB에 저장 명령 내리기
-        tokureiService.registerShinsei(dto);
+        // 3. 서비스 호출
+        tokureiService.registerShinsei(mainDto, startVo, endVo, fuzuiDto, fileDto, alertVo, shinseiLogDto, oshiraseDto, processLogDto, ichijiDto);
 
         rttr.addFlashAttribute("message", "申し込みが完了しました");
         return "redirect:/idoconfirm/kanryoPage";
@@ -583,7 +611,7 @@ public class IdoConfirmController {
 		
 		try {
 			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
-			Long newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
 			
 			// 4. 성공 응답 구성 및 반환
 			UploadResult result = UploadResult.builder()
@@ -607,5 +635,61 @@ public class IdoConfirmController {
 			
 			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@GetMapping("/viewDocument")
+	public ResponseEntity<byte[]> viewDocument(@RequestParam("fileUid") String fileUid) {
+		// 1. Service를 통해 파일 데이터 및 메타 정보 조회
+		FileViewDTO fileData = fuzuiShoruiService.getFileForView(fileUid);
+		
+		if (fileData == null) {
+			// 등록된 파일이 없을 경우 404 또는 204 No Content 반환
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		String contentType = fileData.getContentType();
+		
+		System.out.println("DEBUG: 조회된 ContentType (DB 값): [" + contentType + "]");
+		
+		// DB에서 조회한 값이 null이거나 빈 문자열인지 확인
+		if (contentType == null || contentType.trim().isEmpty()) {
+			System.err.println("ERROR: DB에서 조회된 ContentType이 NULL 또는 비어 있습니다. 파일 UID: " + fileUid);
+
+			// **방어 로직**: 기본값 설정
+			// 오류를 막기 위해 알 수 없는 바이너리 파일 타입인 'application/octet-stream'으로 대체
+			contentType = "application/octet-stream";
+			System.out.println("DEBUG: ContentType을 기본값 [application/octet-stream]으로 대체합니다.");
+		}
+		
+		// 2. Content Type 설정 (HTTP Header)
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0L);
+		
+		// 3. 파일 이름 설정 (Content-Disposition을 'inline' 으로 하여 팝업/브라우저에 표시)
+		String fileName = fileData.getName(); 
+		String encodedFileName = "file"; // 파일 이름이 null이거나 비어있을 경우 사용할 기본값
+
+		// 파일 이름이 null이 아닐 때만 인코딩을 시도합니다.
+		if (fileName != null && !fileName.isEmpty()) {
+			try {
+				// 파일명에 포함된 공백, 한글 등을 UTF-8로 인코딩
+				encodedFileName = URLEncoder.encode(fileName, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				System.err.println("UTF-8 인코딩을 지원하지 않아 파일명을 인코딩할 수 없습니다.");
+				// 인코딩 실패 시 (매우 드물지만) 안전한 이름으로 대체
+				encodedFileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_"); 
+			}
+		} else {
+			System.err.println("ERROR: DB에서 조회된 파일 이름(NAME)이 NULL 또는 비어 있습니다. 기본 이름 'file' 사용.");
+		}
+
+		// Content-Disposition을 'inline'으로 설정하여 브라우저에서 바로 표시하도록 합니다.
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + encodedFileName + "\"");
+		
+		// 4. ResponseEntity로 파일 데이터와 HTTP 헤더 반환
+		return new ResponseEntity<>(fileData.getData(), headers, HttpStatus.OK);
 	}
 }
