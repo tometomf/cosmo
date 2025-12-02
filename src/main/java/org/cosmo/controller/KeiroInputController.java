@@ -67,70 +67,73 @@ public class KeiroInputController {
 		Long shainUid = Long.parseLong(shain.getShain_Uid());
 		ShainKeiroDTO keiroDto = null;
 
-		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo != "") {
-			keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid, Integer.valueOf(keiroSeq));
-			
-			   if (keiroDto != null && keiroDto.getTsukinShudanKbn() != null) {
-			        shudanType = keiroDto.getTsukinShudanKbn();
-			    }
-		}
+		
+		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo !=
+		"") { keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid,
+		Integer.valueOf(keiroSeq));
+		
+		if (keiroDto != null && keiroDto.getTsukinShudanKbn() != null) { shudanType =
+		keiroDto.getTsukinShudanKbn(); } }
 		
 		
 
 		String ichijiHozonJson = "{}";
-
-		try {
-			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
-			if (hozon != null && hozon.getData() != null) {
-
-				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
-
-				ichijiHozonJson = json;
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode root = mapper.readTree(json);
-				JsonNode keiroNode = root.path("startKeiro");
-
-				if (keiroDto == null) {
-					keiroDto = new ShainKeiroDTO();
-				}
-
-				String startPlace = keiroNode.path("startPlace").asText(null);
-				String endPlace = keiroNode.path("endPlace").asText(null);
-				String viaPlace1 = keiroNode.path("viaPlace1").asText(null);
-				String viaPlace2 = keiroNode.path("viaPlace2").asText(null);
-				String viaPlace3 = keiroNode.path("viaPlace3").asText(null);
-				String viaPlace4 = keiroNode.path("viaPlace4").asText(null);
-				String viaPlace5 = keiroNode.path("viaPlace5").asText(null);
-
-				if (startPlace != null && !startPlace.isEmpty()) {
-					keiroDto.setStartPlace(startPlace);
-				}
-				if (endPlace != null && !endPlace.isEmpty()) {
-					keiroDto.setEndPlace(endPlace);
-				}
-				if (viaPlace1 != null && !viaPlace1.isEmpty()) {
-					keiroDto.setViaPlace1(viaPlace1);
-				}
-				if (viaPlace2 != null && !viaPlace2.isEmpty()) {
-					keiroDto.setViaPlace2(viaPlace2);
-				}
-				if (viaPlace3 != null && !viaPlace3.isEmpty()) {
-					keiroDto.setViaPlace3(viaPlace3);
-				}
-				if (viaPlace4 != null && !viaPlace4.isEmpty()) {
-					keiroDto.setViaPlace4(viaPlace4);
-				}
-				if (viaPlace5 != null && !viaPlace5.isEmpty()) {
-					keiroDto.setViaPlace5(viaPlace5);
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
-
+		if(shinseiNo == null || shinseiNo == "") {
+			try {
+				IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+				if (hozon != null && hozon.getData() != null) {
+					
+					String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+					
+					ichijiHozonJson = json;
+					
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode root = mapper.readTree(json);
+					JsonNode keiroNode = root.path("startKeiro");
+					
+					if (keiroDto == null) {
+						keiroDto = new ShainKeiroDTO();
+					}
+					
+					String startPlace = keiroNode.path("startPlace").asText(null);
+					String endPlace = keiroNode.path("endPlace").asText(null);
+					String viaPlace1 = keiroNode.path("viaPlace1").asText(null);
+					String viaPlace2 = keiroNode.path("viaPlace2").asText(null);
+					String viaPlace3 = keiroNode.path("viaPlace3").asText(null);
+					String viaPlace4 = keiroNode.path("viaPlace4").asText(null);
+					String viaPlace5 = keiroNode.path("viaPlace5").asText(null);
+					
+					if (startPlace != null && !startPlace.isEmpty()) {
+						keiroDto.setStartPlace(startPlace);
+					}
+					if (endPlace != null && !endPlace.isEmpty()) {
+						keiroDto.setEndPlace(endPlace);
+					}
+					if (viaPlace1 != null && !viaPlace1.isEmpty()) {
+						keiroDto.setViaPlace1(viaPlace1);
+					}
+					if (viaPlace2 != null && !viaPlace2.isEmpty()) {
+						keiroDto.setViaPlace2(viaPlace2);
+					}
+					if (viaPlace3 != null && !viaPlace3.isEmpty()) {
+						keiroDto.setViaPlace3(viaPlace3);
+					}
+					if (viaPlace4 != null && !viaPlace4.isEmpty()) {
+						keiroDto.setViaPlace4(viaPlace4);
+					}
+					if (viaPlace5 != null && !viaPlace5.isEmpty()) {
+						keiroDto.setViaPlace5(viaPlace5);
+					}
+					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			//신청 넘버로 신청시작 테이블 값 들고와서 처리
+			
+		}
 		
 		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
 
@@ -168,21 +171,6 @@ public class KeiroInputController {
 			return "redirect:/login";
 		}
 
-		try {
-			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
-			if (hozon != null && hozon.getData() != null) {
-
-				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode root = mapper.readTree(json);
-				System.out.println(root);
-				model.addAttribute("ichijiHozon", root);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo != "") {
 			ShinseiStartKeiroVO shinseiStartKeiro = keiroInputservice.getStartKeiroOne(
 					Integer.valueOf(shain.getKigyo_Cd()), Integer.valueOf(shain.getShain_Uid()),
@@ -209,6 +197,21 @@ public class KeiroInputController {
 				model.addAttribute("SanshoTeikiKin3", SanshoTeikiKin3);
 			}
 
+		} else {			
+			try {
+				IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+				if (hozon != null && hozon.getData() != null) {
+					
+					String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+					
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode root = mapper.readTree(json);
+					System.out.println(root);
+					model.addAttribute("ichijiHozon", root);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);

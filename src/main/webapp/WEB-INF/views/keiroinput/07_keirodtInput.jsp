@@ -621,13 +621,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			const kensaku = document.getElementById("SearchStationBtn");
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
-<<<<<<< HEAD
 			const Kakutei = document.getElementById("keiroKakutei");
 
-=======
-			
-			
->>>>>>> refs/remotes/origin/hiwariKinmuchi
+
 			let searchedRoute = null;
 
 	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
@@ -708,11 +704,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 			
 			returnToTop.addEventListener("click", function(){
-<<<<<<< HEAD
 				location.href = "http://localhost:8282/keiroinput/06_keiroInput";
-
-=======
->>>>>>> refs/remotes/origin/hiwariKinmuchi
 				let redirectPath = "";
 				location.href = "http://localhost:8282/keiroinput/06_keiroInput?shudanType=${shudanType}&hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
 				/* redirectPath = "<c:url value='/keiroinput/06_keiroInput'/>";
@@ -720,11 +712,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
 	            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
 	            redirectUrlInput.value = redirectPath;
-<<<<<<< HEAD
 	            form.submit(); */
-=======
 	            form.submit(); */
->>>>>>> refs/remotes/origin/hiwariKinmuchi
 			});
 			
 			kensaku.addEventListener("click", function(){
