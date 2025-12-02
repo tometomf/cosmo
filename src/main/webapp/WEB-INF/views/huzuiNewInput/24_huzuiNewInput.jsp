@@ -114,7 +114,7 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">免許証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_4}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_4}">表示</a></c:if></div>
+					<div class = "form_Normal"><c:if test="${not empty file.fileName1}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_4}">表示</a></c:if></div>
 					<div class = "form_Normal henkou1"><input type="text" id="file-name-display1" name="file_Uid_4" readonly>　<input type="file" name="uploadedFiles" id="file1" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file1">　<input type="button" value="アップロード" class="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -144,7 +144,7 @@ input[type="file"] {
 				</div>
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">車検証コピー</div>
-					<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_5}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_5}">表示</a></c:if></div>
+					<div class = "form_Normal"><c:if test="${not empty file.fileName2}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_5}">表示</a></c:if></div>
 					<div class = "form_Normal henkou2"><input type="text"  id="file-name-display2" name="file_Uid_5" readonly>　<input  name="uploadedFiles" type="file" id="file2" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file2">　<input type="button" value="アップロード" class="upload-btn"></div>
 				</div>
 				<div class="form_Text1" id="form_Text1">
@@ -194,12 +194,12 @@ input[type="file"] {
 					</div>
 					<div class="form_Text1" id="form_Text1" style="border:solid 1px #a0a0a0; border-bottom:none;">
 						<div class="form_Column">保険証券コピー（期間）</div>
-						<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_6}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_6}">表示</a></c:if></div>
+						<div class = "form_Normal"><c:if test="${not empty file.fileName3}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_6}">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text" id="file-name-display3" name="file_Uid_6" readonly>　<input name="uploadedFiles"  type="file" id="file3" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file3">　<input type="button" value="アップロード" class="upload-btn"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
 						<div class = "form_Column">保険証券コピー（賠償内容）</div>
-						<div class = "form_Normal"><c:if test="${not empty shainHuzuiShorui.file_Uid_7}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_7}">表示</a></c:if></div>
+						<div class = "form_Normal"><c:if test="${not empty file.fileName4}"><a href="/huzuiNewInput/downloadFile?fileUid=${shainHuzuiShorui.file_Uid_7}">表示</a></c:if></div>
 						<div class = "form_Normal henkou3"><input type="text" id="file-name-display4" name="file_Uid_7" readonly>　<input name="uploadedFiles"  type="file" id="file4" class="custom-file-upload">　<input type="button" value="参照"  class="file-select-button" data-target="file4">　<input type="button" value="アップロード" class="upload-btn"></div>
 					</div>
 					<div class="form_Text1" id="form_Text1">
@@ -245,7 +245,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_1}" name="etc_File_Uid_1"  id="file-name-display5" readonly><input name="uploadedFiles" type="file" id="file5" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file5"> <input type="button" value="アップロード" class="upload-btn">
+				<input type="text" value="${file.etcFileName1}" name="etc_File_Uid_1"  id="file-name-display5" readonly><input name="uploadedFiles" type="file" id="file5" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file5"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" name="etc_Comment_1" value="${shainHuzuiShorui.etc_Comment_1}">
@@ -256,7 +256,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_2}" name="etc_File_Uid_2"  id="file-name-display6" readonly><input name="uploadedFiles" type="file" id="file6" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file6"> <input type="button" value="アップロード" class="upload-btn">
+				<input type="text" value="${file.etcFileName2}" name="etc_File_Uid_2"  id="file-name-display6" readonly><input name="uploadedFiles" type="file" id="file6" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file6"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" name="etc_Comment_2" value="${shainHuzuiShorui.etc_Comment_2}">
@@ -267,7 +267,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_3}" name="etc_File_Uid_3"  id="file-name-display7" readonly><input name="uploadedFiles" type="file" id="file7" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file7"> <input type="button" value="アップロード" class="upload-btn">
+				<input type="text" value="${file.etcFileName3}" name="etc_File_Uid_3"  id="file-name-display7" readonly><input name="uploadedFiles" type="file" id="file7" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file7"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" name="etc_Comment_3" value="${shainHuzuiShorui.etc_Comment_3}">
@@ -277,7 +277,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_4}" name="etc_File_Uid_4"  id="file-name-display8" readonly><input name="uploadedFiles" type="file" id="file8" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file8"> <input type="button" value="アップロード" class="upload-btn">
+				<input type="text" value="${file.etcFileName4}" name="etc_File_Uid_4"  id="file-name-display8" readonly><input name="uploadedFiles" type="file" id="file8" class="custom-file-upload"> <input type="button" value="参照" class="file-select-button" data-target="file8"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" name="etc_Comment_4" value="${shainHuzuiShorui.etc_Comment_4}">
@@ -287,7 +287,7 @@ input[type="file"] {
 		<div class="input_form">
 			<div class="item_head">その他</div>
 			<div style="margin-right:50px;">
-				<input type="text" value="${shainHuzuiShorui.etc_File_Uid_5}" name="etc_File_Uid_5"  id="file-name-display9" readonly> <input name="uploadedFiles" type="file" id="file9" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file9"> <input type="button" value="アップロード" class="upload-btn">
+				<input type="text" value="${file.etcFileName5}" name="etc_File_Uid_5"  id="file-name-display9" readonly> <input name="uploadedFiles" type="file" id="file9" class="custom-file-upload"><input type="button" value="参照" class="file-select-button" data-target="file9"> <input type="button" value="アップロード" class="upload-btn">
 			</div>
 			<div>
 				<input type="text" name="etc_Comment_5" value="${shainHuzuiShorui.etc_Comment_5}">

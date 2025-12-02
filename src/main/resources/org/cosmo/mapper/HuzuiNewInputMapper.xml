@@ -16,11 +16,16 @@
 	</select>
 	
 	<select id="getFileList" resultType="org.cosmo.domain.UploadFileDTO">
-		    SELECT *
+		    SELECT (select name from upload_file where a.file_uid_4 = file_uid) as fileName1 ,
+        (select name from upload_file where a.file_uid_5 = file_uid) as fileName2,
+          (select name from upload_file where a.file_uid_6 = file_uid) as fileName3,
+            (select name from upload_file where a.file_uid_7 = file_uid) as fileName4,
+              (select name from upload_file where a.etc_file_uid_1 = file_uid) as etcFileName1,
+                (select name from upload_file where a.etc_file_uid_2 = file_uid) as etcFileName2,
+                  (select name from upload_file where a.etc_file_uid_3 = file_uid) as etcFileName3,
+                    (select name from upload_file where a.etc_file_uid_4 = file_uid) as etcFileName4,
+                      (select name from upload_file where a.etc_file_uid_5 = file_uid) as etcFileName5
 		    FROM SHAIN_FUZUI_SHORUI a
-		    INNER JOIN UPLOAD_FILE b
-		    ON a.KIGYO_CD = b.KIGYO_CD
-		    AND a.FILE_UID_4 = b.FILE_UID
 		    WHERE a.KIGYO_CD = #{kigyo_Cd}
 		    AND a.SHAIN_UID = #{shain_Uid}
 	</select>

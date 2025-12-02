@@ -19,4 +19,16 @@ public class UploadFileDTO {
 	private Timestamp addDate;         // ADD_DATE
 	private Integer updUserId;         // UPD_USER_ID (nullable NUMBER이므로 Integer)
 	private Timestamp updDate; 
+	
+	private String fileName1;
+	private String fileName2;
+	private String fileName3;
+	private String fileName4;
+	private String etcFileName1;
+	private String etcFileName2;
+	private String etcFileName3;
+	private String etcFileName4;
+	private String etcFileName5;
+	
+	
 }
