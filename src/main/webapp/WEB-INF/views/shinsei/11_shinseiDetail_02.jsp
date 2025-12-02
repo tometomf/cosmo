@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!-- 하나 -->
 <!DOCTYPE html>
@@ -158,10 +158,11 @@
 				</div>
 			</div>
 
+
 			<c:choose>
 				<c:when test="${mode eq 'view'}">
-					<div class="content_Form2">
-						<c:forEach var="keiro" items="${view.keiroList}">
+					<c:forEach var="keiro" items="${view.keiroList}">
+						<div class="content_Form2">
 							<div class="form_Title2">
 								<div>経路${keiro.circleNumber}</div>
 							</div>
@@ -188,12 +189,16 @@
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">金額</div>
-									<div class="form_Normal">${keiro.tsuki}</div>
+									<div class="form_Normal">
+										<fmt:formatNumber value="${keiro.tsuki}" type="number" />
+									</div>
 								</div>
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">片道料金</div>
-									<div class="form_Normal">${keiro.katamichi}</div>
+									<div class="form_Normal">
+										<fmt:formatNumber value="${keiro.katamichi}" type="number" />
+									</div>
 								</div>
 
 								<c:forEach var="shorui" items="${view.shoruiList}">
@@ -206,7 +211,15 @@
 								</c:forEach>
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">初回定期期間</div>
-									<div class="form_Normal">${keiro.firstTeikiTsukiSu}</div>
+									<div class="form_Normal">
+										<c:if test="${not empty keiro.firstTeikiTsukiSu}">
+											<c:set var="ymd" value="${keiro.firstTeikiTsukiSu}" />
+											<c:set var="yyyy" value="${fn:substring(ymd, 0, 4)}" />
+											<c:set var="mm" value="${fn:substring(ymd, 4, 6)}" />
+											<c:set var="dd" value="${fn:substring(ymd, 6, 8)}" />
+            ${yyyy}/${mm}/${dd}
+        </c:if>
+									</div>
 								</div>
 
 								<div class="form_Text1" id="form_Text2">
@@ -226,8 +239,6 @@
         </c:if>
 									</div>
 								</div>
-
-
 							</c:if>
 
 							<c:if
@@ -258,12 +269,17 @@
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">片道料金</div>
-									<div class="form_Normal">${keiro.katamichi}</div>
+									<div class="form_Normal">
+										<fmt:formatNumber value="${keiro.katamichi}" type="number" />
+									</div>
 								</div>
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">1ヶ月</div>
-									<div class="form_Normal">${keiro.sanshoTeikiKin1}</div>
+									<div class="form_Normal">
+										<fmt:formatNumber value="${keiro.sanshoTeikiKin1}"
+											type="number" />
+									</div>
 								</div>
 
 								<c:forEach var="shorui" items="${view.shoruiList}">
@@ -282,12 +298,16 @@
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">初回定期期間</div>
-									<div class="form_Normal">${keiro.firstTeikiTsukiSu}</div>
+									<div class="form_Normal">
+										<c:if test="${not empty keiro.firstTeikiTsukiSu}">
+        ${keiro.firstTeikiTsukiSu}ヶ月
+    </c:if>
+									</div>
 								</div>
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">定期期間</div>
-									<div class="form_Normal">${keiro.nextTeikiTsukiSu}</div>
+									<div class="form_Normal">${keiro.nextTeikiTsukiSu}ヶ月</div>
 								</div>
 
 								<div class="form_Text1" id="form_Text2">
@@ -302,8 +322,6 @@
         </c:if>
 									</div>
 								</div>
-
-
 							</c:if>
 
 							<c:if
@@ -338,7 +356,15 @@
 
 										<div class="form_Text1" id="form_Text2">
 											<div class="form_Column">保険満了日</div>
-											<div class="form_Normal">${shorui.manryoYmd}</div>
+											<div class="form_Normal">
+												<c:if test="${not empty shorui.manryoYmd}">
+													<c:set var="ymd" value="${shorui.manryoYmd}" />
+													<c:set var="yyyy" value="${fn:substring(ymd, 0, 4)}" />
+													<c:set var="mm" value="${fn:substring(ymd, 4, 6)}" />
+													<c:set var="dd" value="${fn:substring(ymd, 6, 8)}" />
+            ${yyyy}/${mm}/${dd}
+        </c:if>
+											</div>
 										</div>
 
 										<div class="form_Text1" id="form_Text2">
@@ -380,10 +406,10 @@
         </c:if>
 									</div>
 								</div>
-
 							</c:if>
 
-							<c:if test="${keiro.tsukinShudan eq '6'}">
+							<c:if
+								test="${keiro.tsukinShudan eq '5' or keiro.tsukinShudan eq '6'}">
 
 								<div class="form_Text1" id="form_Text2">
 									<div class="form_Column">通勤手段</div>
@@ -426,8 +452,8 @@
 									</div>
 								</div>
 							</c:if>
-						</c:forEach>
-					</div>
+						</div>
+					</c:forEach>
 
 					<div class="content_Form1">
 
@@ -476,7 +502,6 @@
 							</div>
 						</div>
 
-
 						<div class="form_Text1" id="form_Text2">
 							<div class="form_Column">開始日</div>
 							<div class="form_Normal">
@@ -489,22 +514,24 @@
         </c:if>
 							</div>
 						</div>
-
 					</div>
 				</c:when>
 
 				<c:otherwise>
-					<div class="content_Form2">
-						<div class="form_Title2">
-							<div>経路&#${9311 + 1};</div>
+					<c:if
+						test="${not empty ichiji.keiro and not empty ichiji.keiro.tsukinShudan}">
+						<div class="content_Form2">
+							<div class="form_Title2">
+								<div>経路&#${9311 + 1};</div>
+							</div>
+							<div class="form_Text1" id="form_Text2">
+								<div class="form_Column">通勤手段</div>
+								<c:if test="${not empty ichiji.keiro.tsukinShudan}">
+									<div class="form_Normal">${ichiji.keiro.shudanName}</div>
+								</c:if>
+							</div>
 						</div>
-						<div class="form_Text1" id="form_Text2">
-							<div class="form_Column">通勤手段</div>
-							<c:if test="${not empty ichiji.keiro.tsukinShudan}">
-								<div class="form_Normal">${ichiji.keiro.shudanName}</div>
-							</c:if>
-						</div>
-					</div>
+					</c:if>
 
 
 					<div class="content_Form1">
