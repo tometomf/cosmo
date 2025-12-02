@@ -200,8 +200,10 @@ public class KeiroInputController {
 				model.addAttribute("SanshoTeikiKin2", SanshoTeikiKin2);
 				model.addAttribute("SanshoTeikiKin3", SanshoTeikiKin3);
 			}
+			model.addAttribute("shinseiNo", shinseiNo);
+			model.addAttribute("keiroSeq", keiroSeq);
 
-		} else {			
+		} else if(hozonUid != null && hozonUid != "") {			
 			try {
 				IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
 				if (hozon != null && hozon.getData() != null) {
@@ -216,17 +218,19 @@ public class KeiroInputController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			model.addAttribute("hozonUid", hozonUid);
+		} else {
+			
 		}
 		
-		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
-		
+		if(shudanType != null && shudanType != "") {	
+			CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
+			model.addAttribute("shudanType", shudanType);
+			model.addAttribute("shudanNm", shudanCode.getCodeNm());
+		}		
 		
 		model.addAttribute("serverTime", formattedDate);
-		model.addAttribute("shudanType", shudanType);
-		model.addAttribute("shudanNm", shudanCode.getCodeNm());
-		model.addAttribute("shinseiNo", shinseiNo);
-		model.addAttribute("hozonUid", hozonUid);
-		model.addAttribute("keiroSeq", keiroSeq);
 
 		return "keiroinput/07_keirodtInput_02";
 	}
@@ -253,37 +257,44 @@ public class KeiroInputController {
 		if (shain == null || shain.getKigyo_Cd() == null || shain.getShain_Uid() == null) {
 			return "redirect:/login";
 		}
+		
 
-		try {
-			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
-			if (hozon != null && hozon.getData() != null) {
-
-				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode root = mapper.readTree(json);
-				System.out.println(root);
-				model.addAttribute("ichijiHozon", root);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo != "") {
+			model.addAttribute("shinseiNo", shinseiNo);
+			model.addAttribute("keiroSeq", keiroSeq);
+			
+		} else if(hozonUid != null && hozonUid != "") {
+			try {
+				IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+				if (hozon != null && hozon.getData() != null) {
+					
+					String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+					
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode root = mapper.readTree(json);
+					System.out.println(root);
+					model.addAttribute("ichijiHozon", root);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+			model.addAttribute("hozonUid", hozonUid);
+			
+		} else {
+			
 		}
-		
-		
-		CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
-		
+
+		if(shudanType != null && shudanType != "") {	
+			CodeVO shudanCode = keiroInputservice.getCodeName("103", shudanType);
+			model.addAttribute("shudanType", shudanType);
+			model.addAttribute("shudanNm", shudanCode.getCodeNm());
+		}		
 		
 		model.addAttribute("startAddr", startAddr);
 		model.addAttribute("endAddr", endAddr);
 		model.addAttribute("startPos", startPos);
 		model.addAttribute("endPos", endPos);
-		
 		model.addAttribute("serverTime", formattedDate);
-		model.addAttribute("shudanType", shudanType);
-		model.addAttribute("shudanNm", shudanCode.getCodeNm());
-		model.addAttribute("shinseiNo", shinseiNo);
-		model.addAttribute("hozonUid", hozonUid);
-		model.addAttribute("keiroSeq", keiroSeq);
 
 		return "keiroinput/07_keirodtInput_04";
 	}
@@ -305,49 +316,51 @@ public class KeiroInputController {
 		}
 
 		System.out.println("hozonUid" + hozonUid);
-		try {
-			IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
-			if (hozon != null && hozon.getData() != null) {
-
-				String json = new String(hozon.getData(), StandardCharsets.UTF_8);
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode root = mapper.readTree(json);
-				System.out.println(root);
-				model.addAttribute("ichijiHozon", root);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
-		model.addAttribute("startAddr", startAddr);
-		model.addAttribute("endAddr", endAddr);
-		model.addAttribute("startPos", startPos);
-		model.addAttribute("endPos", endPos);
-
 		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo != "") {
 			ShainKeiroDTO dto = keiroInputservice.getShainKeiro(Integer.valueOf(shain.getShain_Uid()),
 					Long.valueOf(shain.getShain_Uid()), Integer.valueOf(keiroSeq));
 			model.addAttribute("keiro", dto);
 			model.addAttribute("shinseiNo", shinseiNo);
 			model.addAttribute("keiroSeq", keiroSeq);
+			
+		} else if(hozonUid != null && hozonUid != "") {
+			try {
+				IchijiHozonDTO hozon = ichijiHozonService.getTemp(Integer.valueOf(hozonUid));
+				if (hozon != null && hozon.getData() != null) {
+					
+					String json = new String(hozon.getData(), StandardCharsets.UTF_8);
+					
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode root = mapper.readTree(json);
+					System.out.println(root);
+					model.addAttribute("ichijiHozon", root);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			model.addAttribute("hozonUid", hozonUid);
+			
+		} else {
+			
 		}
-		
+
+		model.addAttribute("startAddr", startAddr);
+		model.addAttribute("endAddr", endAddr);
+		model.addAttribute("startPos", startPos);
+		model.addAttribute("endPos", endPos);
 		
 		List<CodeVO> shudanCodeList = keiroInputservice.getCodeList("103");
-		
 
 	    ObjectMapper mapper = new ObjectMapper();
 	    String shudanJson = "";
 
 	    try {
 	        shudanJson = mapper.writeValueAsString(shudanCodeList);
+	        model.addAttribute("shudanJson", shudanJson);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-		
-		model.addAttribute("shudanJson", shudanJson);
-		model.addAttribute("hozonUid", hozonUid);
 
 		return "keiroinput/06_keiroInput";
 	}
