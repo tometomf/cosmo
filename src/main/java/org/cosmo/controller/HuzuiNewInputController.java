@@ -59,8 +59,10 @@ public class HuzuiNewInputController {
 			String shain_Uid = shain.getShain_Uid();
 			
 			ShainFuzuiShoruiVO data = huzuiNewInputService.getList(kigyo_Cd, shain_Uid);
+			UploadFileDTO fileData = huzuiNewInputService.getFileList(kigyo_Cd, shain_Uid);
 			
 			model.addAttribute("shainHuzuiShorui", data);
+			model.addAttribute("file", fileData);
 		}
 		return "/huzuiNewInput/24_huzuiNewInput";
 	}
@@ -84,7 +86,7 @@ public class HuzuiNewInputController {
 	                
 	               
 	                
-	                return ResponseEntity.ok(Collections.singletonMap("uid", dto.getFileUid()));
+	                return ResponseEntity.ok(Collections.singletonMap("uid", dto.getName()));
 	            } else {
 	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사원 정보가 없습니다.");
 	            }

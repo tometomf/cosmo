@@ -588,23 +588,26 @@ input[type="file"] {
 		    
 		    // FormData 전체를 반복하며 기본 필드와 숫자 필드를 분리 처리
 		    formData.forEach((rawValue, key) => {
-		        const value = rawValue.trim();
 
+		    	 if (typeof rawValue === "string") {
+		    	        value = rawValue.trim();
+		    	    }
+		    	
 		        // 2. 숫자가 필요한 필드 (UID, 등급, 배기량 등) 처리
-		        if (fileUidKeys.includes(key) || integerKeys.includes(key)) {
-		            // 값이 존재하고, 숫자로 변환 가능한지 확인 (핵심!)
-		            if (value && !isNaN(value)) {
-		                // 숫자로 변환하여 할당 (서버의 Long/Integer와 매치)
-		                dtoData[key] = parseInt(value); 
-		            } else {
-		                // 값이 비어있거나 ('df.txt' 같은) 유효하지 않은 문자열일 경우
-		                // 서버의 Long/Integer 필드에 안전하게 null을 할당합니다.
-		                dtoData[key] = null;
-		            }
-		        } else {
-		            // 3. 나머지 문자열 필드 (이름, 날짜 등)는 그대로 할당
-		            dtoData[key] = value;
-		        }
+		         if (fileUidKeys.includes(key) || integerKeys.includes(key)) {
+
+	            const num = Number(value);
+	
+	            if (value !== "" && !isNaN(num)) {
+	                dtoData[key] = num;
+	            } else {
+	                dtoData[key] = null;
+	            }
+	
+	       		} else {
+	         	   // ⭐ 문자열 또는 파일 객체 그대로 저장
+	            dtoData[key] = value;
+	      		}
 		    });
 		    
 		    

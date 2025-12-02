@@ -15,6 +15,16 @@
 		    AND a.SHAIN_UID = #{shain_Uid}
 	</select>
 	
+	<select id="getFileList" resultType="org.cosmo.domain.UploadFileDTO">
+		    SELECT *
+		    FROM SHAIN_FUZUI_SHORUI a
+		    INNER JOIN UPLOAD_FILE b
+		    ON a.KIGYO_CD = b.KIGYO_CD
+		    AND a.FILE_UID_4 = b.FILE_UID
+		    WHERE a.KIGYO_CD = #{kigyo_Cd}
+		    AND a.SHAIN_UID = #{shain_Uid}
+	</select>
+	
 	<select id="getFile" resultType="org.cosmo.domain.UploadFileDTO">
 		SELECT * 
 		FROM UPLOAD_FILE
@@ -122,7 +132,7 @@
 		UPD_DATE) VALUES (
 		#{shain.kigyo_Cd},
 		#{shinseiFuzuiShorui.shinseiNo} || TO_CHAR(SHINSEI_NO_SEQ.NEXTVAL, 'FM0000'),
-		SHINSEI_FUZUI_SHORUI_SEQ.NEXTVAL,
+		1,
 		6,
 		#{shinseiFuzuiShorui.shinseiYmd},
 		#{shain.shain_Uid},

@@ -22,6 +22,7 @@ public interface HuzuiNewInputService {
 	
 	ShainFuzuiShoruiVO getList(String kigyo_Cd,String shain_Uid);
 	
+	UploadFileDTO getFileList(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid);
 	
     @Transactional
     public void saveAll(ShinseiDTO shinsei,ShainVO shain,ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,OshiraseDTO oshirase,ProcessLogDTO processLog); 

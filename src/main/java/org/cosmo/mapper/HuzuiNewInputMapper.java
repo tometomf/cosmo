@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Mapper
 public interface HuzuiNewInputMapper {
 
+
 	ShainFuzuiShoruiVO getList(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid);
+	
+	UploadFileDTO getFileList(@Param ("kigyo_Cd") String kigyo_Cd,@Param ("shain_Uid") String shain_Uid);
 	
 	
 	void addFuzuiShorui(@Param ("shinseiFuzuiShorui")ShinseiFuzuiShoruiDTO shinseiFuzuiShorui,@Param ("shain")ShainVO shain);

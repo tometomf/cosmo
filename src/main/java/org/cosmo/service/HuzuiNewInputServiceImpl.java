@@ -40,6 +40,17 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		
 		return huzuiNewInputMapper.getList(kigyo_Cd, shain_Uid);
 	}
+	
+	
+
+
+	@Override
+	public UploadFileDTO getFileList(String kigyo_Cd, String shain_Uid) {
+		// TODO Auto-generated method stub
+		return huzuiNewInputMapper.getFileList(kigyo_Cd, shain_Uid);
+	}
+
+
 
 
 	@Override
