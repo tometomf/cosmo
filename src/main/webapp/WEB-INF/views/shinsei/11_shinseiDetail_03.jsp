@@ -952,36 +952,27 @@
 				<c:choose>
 					<c:when test="${keiro.tsukinShudanKbn eq '1'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput">
-							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
-							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+							<c:param name="shudanType" value="${keiro.tsukinShudanKbn}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '2'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_02">
-							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
-							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
-							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+							<c:param name="shudanType" value="${keiro.tsukinShudanKbn}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '3'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_03">
-							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
-							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
-							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+							<c:param name="shudanType" value="${keiro.tsukinShudanKbn}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '6'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_04">
-							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
-							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
-							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+							<c:param name="shudanType" value="${keiro.tsukinShudanKbn}" />
 						</c:url>
 					</c:when>
 					<c:otherwise>
 						<c:url var="keiroEditUrl" value="/keiroinput/06_keirodtInput">
-							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
-							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
-							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
+							<c:param name="shudanType" value="${keiro.tsukinShudanKbn}" />
 						</c:url>
 					</c:otherwise>
 				</c:choose>
