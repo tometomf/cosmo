@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -416,7 +417,11 @@ public class HiwariKinmuchiController {
  // import 추가 필요 없음 (기존 그대로)
 
     @PostMapping("/submit")
-    public String submitFromKakunin(HttpSession session, RedirectAttributes rttr) {
+    public String submitFromKakunin(
+            @RequestParam(value = "evidence", required = false) MultipartFile evidence,
+            HttpSession session,
+            RedirectAttributes rttr) {
+
 
         System.out.println(">>> [SUBMIT] START");
 
