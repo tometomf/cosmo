@@ -120,6 +120,8 @@ public class IdoConfirmController {
         model.addAttribute("form", form);
 
         return "idoconfirm/02_idoConfirm";
+        
+        //신청후 링크 http://localhost:8282/idoconfirm/idoconfirm?shinseiNo=1
     }
     @PostMapping("/next") //02조우진
     public String next(
