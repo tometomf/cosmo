@@ -1038,7 +1038,7 @@
 				</div>
 			</div>
 
-			<c:url var="huzuiUrl" value="/idoconfirm/huzuikanri">
+			<c:url var="huzuiUrl" value="/huzuiNewInput/main">
 				<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
 				<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 			</c:url>
