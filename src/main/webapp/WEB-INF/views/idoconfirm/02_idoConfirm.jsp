@@ -69,14 +69,14 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column1" style="padding-top: 10px; padding-bottom: 10px;">現勤務地 </div>
 					<div class="form_Normal" style="padding-top: 10px; padding-bottom: 10px; padding-left: 10px;">
-						<c:out value="${view.curKinmuPlace}" default="データなし" />
+						<c:out value="${view.curKinmuPlace}" default="なし" />
 					</div>
 				</div>
 				
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column1" style="padding-top: 10px; padding-bottom: 10px;">現住所</div>
 					<div class="form_Normal" style="padding-top: 10px; padding-bottom: 10px; padding-left: 10px;">
-						<c:out value="${view.curAddress}" default="データなし" />
+						<c:out value="${view.curAddress}" default="なし" />
 					</div>
 				</div>
 			</div>
