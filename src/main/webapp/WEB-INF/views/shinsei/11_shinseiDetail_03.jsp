@@ -71,10 +71,10 @@
 	function openKinmuAddressCheck() {
 		console.log('=== openKinmuAddressCheck 함수 시작 ===');
 
-		var zip = "${empty jyohou.newKinmuZipCd ? '' : jyohou.newKinmuZipCd}";
-		var pref = "${empty jyohou.newKinmuAddress1 ? '' : jyohou.newKinmuAddress1}";
-		var addr1 = "${empty jyohou.newKinmuAddress2 ? '' : jyohou.newKinmuAddress2}";
-		var addr2 = "${empty jyohou.newKinmuAddress3 ? '' : jyohou.newKinmuAddress3}";
+		var zip = "${empty kakuninheader.newKinmuZipCd ? '' : kakuninheader.newKinmuZipCd}";
+		var pref = "${empty kakuninheader.newKinmuAddress1 ? '' : kakuninheader.newKinmuAddress1}";
+		var addr1 = "${empty kakuninheader.newKinmuAddress2 ? '' : kakuninheader.newKinmuAddress2}";
+		var addr2 = "${empty kakuninheader.newKinmuAddress3 ? '' : kakuninheader.newKinmuAddress3}";
 
 		console.log("근무지 주소:", zip, pref, addr1, addr2);
 
@@ -287,9 +287,7 @@
 		var addr2 = document.getElementById("address2Input").value.trim();
 
 		document.getElementById("newAddress1Hidden").value = pref;
-
 		document.getElementById("newAddress2Hidden").value = addr1;
-
 		document.getElementById("newAddress3Hidden").value = addr2;
 
 		var jitsuInput = document.getElementById("jitsuKinmuInput");
@@ -301,6 +299,10 @@
 		var addressChgKbn = document.getElementById("addressChgKbnHidden").value;
 		var addressIdoKeido = document.getElementById("addressIdoKeidoHidden").value;
 
+		// ★ 추가: 勤務地 変更フラグ도 같이 읽기
+		var kinmuAddressChgKbn = document
+				.getElementById("kinmuAddressChgKbnHidden").value;
+
 		console.log('=== 送信データ確認 ===');
 		console.log('NEW_ZIP_CD:', zip1 + zip2);
 		console.log('NEW_ADDRESS_1 (都道府県):', pref);
@@ -308,6 +310,14 @@
 		console.log('NEW_ADDRESS_3 (住所2):', addr2);
 		console.log('ADDRESS_CHG_KBN:', addressChgKbn);
 		console.log('ADDRESS_IDO_KEIDO:', addressIdoKeido);
+		console.log('KINMU_ADDRESS_CHG_KBN:', kinmuAddressChgKbn);
+
+		// ★ 요구사항: 플래그가 서 있으면 경고 메시지 표시
+		if (addressChgKbn === "1" || kinmuAddressChgKbn === "1") {
+			alert("住所または勤務地が変更されていますので通勤経路情報を修正してください。");
+			// 재신청 자체를 막으려면 여기서 return; 추가하면 됨
+			// return;
+		}
 
 		if (pref.length > 8) {
 			alert('都道府県が長すぎます。(最大8文字)');
@@ -343,7 +353,7 @@
 	}
 
 	function goToCancelPage() {
-		var shinseiNo = "${jyohou.shinseiNo}";
+		var shinseiNo = "${kakuninheader.shinseiNo}";
 		var hozonUid = "${hozonUid}";
 
 		if (!shinseiNo) {
@@ -405,7 +415,7 @@
 			</div>
 
 			<!-- ===== 경고 영역 ===== -->
-			<c:if test="${jyohou.shinchokuKbn eq '3'}">
+			<c:if test="${kakuninheader.shinchokuKbn eq '3'}">
 				<div
 					style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; width: 1010px; margin-left: auto; margin-right: auto;">
 
@@ -429,37 +439,37 @@
 			<div class="content_Form1" style="margin-top: 25px;">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">状況</div>
-					<div class="form_Normal">${empty jyohou.codeNm ? '' : jyohou.codeNm}</div>
+					<div class="form_Normal">${empty kakuninheader.codeNm ? '' : kakuninheader.codeNm}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請番号</div>
-					<div class="form_Normal">${empty jyohou.shinseiNo ? '' : jyohou.shinseiNo}</div>
+					<div class="form_Normal">${empty kakuninheader.shinseiNo ? '' : kakuninheader.shinseiNo}</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請日</div>
-					<div class="form_Normal">${empty jyohou.shinseiYmd ? '' : jyohou.shinseiYmd}</div>
+					<div class="form_Normal">${empty kakuninheader.shinseiYmd ? '' : kakuninheader.shinseiYmd}</div>
 				</div>
 
 				<!-- ※ 進捗状況区分 が 「一時保存」 以外のとき만 표시 -->
-				<c:if test="${jyohou.shinchokuKbn ne '1'}">
+				<c:if test="${kakuninheader.shinchokuKbn ne '1'}">
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column">差戻し日</div>
-						<div class="form_Normal">${empty jyohou.ssmdsYmd ? '' : jyohou.ssmdsYmd}
+						<div class="form_Normal">${empty kakuninheader.ssmdsYmd ? '' : kakuninheader.ssmdsYmd}
 						</div>
 					</div>
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column">申請解除日</div>
-						<div class="form_Normal">${empty jyohou.torikeshiYmd ? '' : jyohou.torikeshiYmd}
+						<div class="form_Normal">${empty kakuninheader.torikeshiYmd ? '' : kakuninheader.torikeshiYmd}
 						</div>
 					</div>
 
 					<div class="form_Text1" id="form_Text2">
 						<div class="form_Column">不備内容</div>
-						<div class="form_Normal">${empty jyohou.moComment ? '' : jyohou.moComment}
+						<div class="form_Normal">${empty kakuninheader.moComment ? '' : kakuninheader.moComment}
 						</div>
 					</div>
 
@@ -479,7 +489,7 @@
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">住所</div>
 					<!-- 申請前 -->
-					<div class="form_Normal">${empty jyohou.genAddress ? '' : jyohou.genAddress}</div>
+					<div class="form_Normal">${empty kakuninheader.genAddress ? '' : kakuninheader.genAddress}</div>
 
 					<!-- 申請後 -->
 					<div class="form_Normal"
@@ -550,7 +560,7 @@
 						<!-- 주소1 -->
 						<div>
 							<input type="text" id="address1Input" name="address1"
-								value="${empty jyohou.newAddress ? '' : jyohou.newAddress}"
+								value="${empty kakuninheader.newAddress ? '' : kakuninheader.newAddress}"
 								style="width: 385px;">
 						</div>
 						<!-- 주소2 -->
@@ -572,10 +582,10 @@
 				<!-- 勤務先 -->
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務先</div>
-					<div class="form_Normal">${empty jyohou.genShozoku ? '' : jyohou.genShozoku}</div>
+					<div class="form_Normal">${empty kakuninheader.genShozoku ? '' : kakuninheader.genShozoku}</div>
 					<div class="form_Normal"
 						style="display: flex; align-items: center; gap: 5px;">
-						<span>${empty jyohou.newShozoku ? '' : jyohou.newShozoku}</span>
+						<span>${empty kakuninheader.newShozoku ? '' : kakuninheader.newShozoku}</span>
 					</div>
 				</div>
 
@@ -583,8 +593,8 @@
 
 				<div class="form_Text1" id="form_Text1">
 					<div class="form_Column">勤務地</div>
-					<div class="form_Normal">${empty jyohou.genKinmuchi ? '' : jyohou.genKinmuchi}</div>
-					<div class="form_Normal">${empty jyohou.newKinmuchi ? '' : jyohou.newKinmuchi}
+					<div class="form_Normal">${empty kakuninheader.genKinmuchi ? '' : kakuninheader.genKinmuchi}</div>
+					<div class="form_Normal">${empty kakuninheader.newKinmuchi ? '' : kakuninheader.newKinmuchi}
 						<button type="button"
 							style="border: none; background: none; cursor: pointer; padding: 5px;"
 							onclick="openKinmuAddressCheck()">
@@ -758,11 +768,11 @@
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">免許証有効期限</div>
-								<div class="form_Normal">${empty shorui.menkyoYukoKigen ? '' : shorui.menkyoYukoKigen}</div>
+								<div class="form_Normal">${empty keiro.menkyoYukoKigen ? '' : keiro.menkyoYukoKigen}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">免許証番号</div>
-								<div class="form_Normal">${empty shorui.menkyoNo ? '' : shorui.menkyoNo}</div>
+								<div class="form_Normal">${empty keiro.menkyoNo ? '' : keiro.menkyoNo}</div>
 							</div>
 						</div>
 
@@ -775,29 +785,29 @@
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">車種</div>
-								<div class="form_Normal">${empty shorui.shashu ? '' : shorui.shashu}</div>
+								<div class="form_Normal">${empty keiro.shashu ? '' : keiro.shashu}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">ナンバー</div>
-								<div class="form_Normal">${empty shorui.torokuNo ? '' : shorui.torokuNo}</div>
+								<div class="form_Normal">${empty keiro.torokuNo ? '' : keiro.torokuNo}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">排気量</div>
 								<div class="form_Normal">
-									<c:if test="${not empty shorui.haikiryo}">
-                            ${shorui.haikiryo}
+									<c:if test="${not empty keiro.haikiryo}">
+                            ${keiro.haikiryo}
                         </c:if>
 								</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">車検有効期限</div>
-								<div class="form_Normal">${empty shorui.shakenYukoKigen ? '' : shorui.shakenYukoKigen}</div>
+								<div class="form_Normal">${empty keiro.shakenYukoKigen ? '' : keiro.shakenYukoKigen}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">燃費</div>
 								<div class="form_Normal">
-									<c:if test="${not empty shorui.nenpi}">
-                            ${shorui.nenpi}km/L
+									<c:if test="${not empty keiro.nenpi}">
+                            ${keiro.nenpi}km/L
                         </c:if>
 								</div>
 							</div>
@@ -818,27 +828,27 @@
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">保険満了日</div>
-								<div class="form_Normal">${empty shorui.hokenManryoYmd ? '' : shorui.hokenManryoYmd}</div>
+								<div class="form_Normal">${empty keiro.hokenManryoDate ? '' : keiro.hokenManryoDate}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">対人賠償</div>
-								<div class="form_Normal">${empty shorui.taijinBaisho ? '' : shorui.taijinBaisho}</div>
+								<div class="form_Normal">${empty keiro.taijinBaisho ? '' : keiro.taijinBaisho}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">対物賠償</div>
-								<div class="form_Normal">${empty shorui.taibutsuBaisho ? '' : shorui.taibutsuBaisho}</div>
+								<div class="form_Normal">${empty keiro.taibutsuBaisho ? '' : keiro.taibutsuBaisho}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">人身障害</div>
-								<div class="form_Normal">${empty shorui.jinshinShogai ? '' : shorui.jinshinShogai}</div>
+								<div class="form_Normal">${empty keiro.jinshinShogai ? '' : keiro.jinshinShogai}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">搭乗者障害</div>
-								<div class="form_Normal">${empty shorui.tojoshaShogai ? '' : shorui.tojoshaShogai}</div>
+								<div class="form_Normal">${empty keiro.tojoshaShogai ? '' : keiro.tojoshaShogai}</div>
 							</div>
 							<div class="form_Text1" id="form_Text3">
 								<div class="form_Column">等級</div>
-								<div class="form_Normal">${empty shorui.tokyu ? '' : shorui.tokyu}</div>
+								<div class="form_Normal">${empty keiro.tokyu ? '' : keiro.tokyu}</div>
 							</div>
 						</div>
 					</div>
@@ -855,9 +865,9 @@
 								<div class="form_Column">付随書類</div>
 								<div class="form_Normal">
 									<c:choose>
-										<c:when test="${not empty shorui.fileUid1}">
-											<a href="/idoconfirm/download?fileUid=${shorui.fileUid1}">
-												${shorui.fileUid1} </a>
+										<c:when test="${not empty keiro.fileUid1}">
+											<a href="/idoconfirm/download?fileUid=${keiro.fileUid1}">
+												${keiro.fileUid1} </a>
 										</c:when>
 										<c:otherwise>
                 添付なし
@@ -894,36 +904,36 @@
 				<c:choose>
 					<c:when test="${keiro.tsukinShudanKbn eq '1'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput">
-							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
-							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '2'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_02">
-							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
-							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '3'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_03">
-							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
-							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
 					</c:when>
 					<c:when test="${keiro.tsukinShudanKbn eq '6'}">
 						<c:url var="keiroEditUrl" value="/keiroinput/07_keirodtInput_04">
-							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
-							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
 					</c:when>
 					<c:otherwise>
 						<c:url var="keiroEditUrl" value="/keiroinput/06_keirodtInput">
-							<c:param name="kigyoCd" value="${jyohou.kigyoCd}" />
-							<c:param name="shinseiNo" value="${jyohou.shinseiNo}" />
+							<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+							<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 							<c:param name="keiroNo" value="${keiro.keiroSeq}" />
 						</c:url>
 					</c:otherwise>
@@ -944,9 +954,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid1 ? '' : jyohou.etcFileUid1}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty kakuninheader.etcFileUid1 ? '' : kakuninheader.etcFileUid1}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment1 ? '' : jyohou.etcComment1}</div>
+					<div class="form_Normal" style="width: 460px;">${empty kakuninheader.etcComment1 ? '' : kakuninheader.etcComment1}</div>
 				</div>
 			</div>
 
@@ -954,9 +964,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid2 ? '' : jyohou.etcFileUid2}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty kakuninheader.etcFileUid2 ? '' : kakuninheader.etcFileUid2}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment2 ? '' : jyohou.etcComment2}</div>
+					<div class="form_Normal" style="width: 460px;">${empty kakuninheader.etcComment2 ? '' : kakuninheader.etcComment2}</div>
 				</div>
 			</div>
 
@@ -964,9 +974,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid3 ? '' : jyohou.etcFileUid3}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty kakuninheader.etcFileUid3 ? '' : kakuninheader.etcFileUid3}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment3 ? '' : jyohou.etcComment3}</div>
+					<div class="form_Normal" style="width: 460px;">${empty kakuninheader.etcComment3 ? '' : kakuninheader.etcComment3}</div>
 				</div>
 			</div>
 
@@ -974,9 +984,9 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid4 ? '' : jyohou.etcFileUid4}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty kakuninheader.etcFileUid4 ? '' : kakuninheader.etcFileUid4}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment4 ? '' : jyohou.etcComment4}</div>
+					<div class="form_Normal" style="width: 460px;">${empty kakuninheader.etcComment4 ? '' : kakuninheader.etcComment4}</div>
 				</div>
 			</div>
 
@@ -984,15 +994,15 @@
 				<div class="form_Text1" style="display: flex;">
 					<div class="form_Column" style="width: 100px;">その他</div>
 					<div class="form_Normal" style="width: 450px;">
-						<a href="#" style="color: blue; text-decoration: underline;">${empty jyohou.etcFileUid5 ? '' : jyohou.etcFileUid5}</a>
+						<a href="#" style="color: blue; text-decoration: underline;">${empty kakuninheader.etcFileUid5 ? '' : kakuninheader.etcFileUid5}</a>
 					</div>
-					<div class="form_Normal" style="width: 460px;">${empty jyohou.etcComment5 ? '' : jyohou.etcComment5}</div>
+					<div class="form_Normal" style="width: 460px;">${empty kakuninheader.etcComment5 ? '' : kakuninheader.etcComment5}</div>
 				</div>
 			</div>
 
 			<c:url var="huzuiUrl" value="/idoconfirm/huzuikanri">
-				<c:param name="kigyoCd" value="${shinseiJyohou.kigyoCd}" />
-				<c:param name="shinseiNo" value="${shinseiJyohou.shinseiNo}" />
+				<c:param name="kigyoCd" value="${kakuninheader.kigyoCd}" />
+				<c:param name="shinseiNo" value="${kakuninheader.shinseiNo}" />
 			</c:url>
 
 
@@ -1007,32 +1017,32 @@
 			<div class="content_Form1">
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請区分</div>
-					<div class="form_Normal">${empty jyohou.shinseiKbn ? '' : jyohou.shinseiKbn}</div>
+					<div class="form_Normal">${empty kakuninheader.shinseiKbn ? '' : kakuninheader.shinseiKbn}</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">申請理由</div>
 					<div class="form_Normal">
 
 						<textarea id="shinseiRiyuInput" name="shinseiRiyu"
-							style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;">${empty jyohou.riyu ? '' : jyohou.riyu}</textarea>
+							style="width: 100%; min-height: 60px; border: 1px solid #ccc; padding: 5px;">${empty kakuninheader.shinseiRiyu ? '' : kakuninheader.shinseiRiyu}</textarea>
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">離納日／移転日</div>
 					<div class="form_Normal">
-						${empty jyohou.idoYmd ? '' : jyohou.idoYmd}
-						<c:if test="${not empty jyohou.itenYmd}"> / ${jyohou.itenYmd}</c:if>
+						${empty kakuninheader.idoYmd ? '' : kakuninheader.idoYmd}
+						<c:if test="${not empty kakuninheader.itenYmd}"> / ${kakuninheader.itenYmd}</c:if>
 					</div>
 				</div>
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">転入日</div>
-					<div class="form_Normal">${empty jyohou.tennyuYmd ? '' : jyohou.tennyuYmd}
+					<div class="form_Normal">${empty kakuninheader.tennyuYmd ? '' : kakuninheader.tennyuYmd}
 					</div>
 				</div>
 
 				<div class="form_Text1" id="form_Text2">
 					<div class="form_Column">開始日</div>
-					<div class="form_Normal">${empty jyohou.riyoStartYmd ? '' : jyohou.riyoStartYmd}
+					<div class="form_Normal">${empty kakuninheader.riyoStartYmd ? '' : kakuninheader.riyoStartYmd}
 					</div>
 				</div>
 			</div>
@@ -1044,7 +1054,7 @@
 						onclick="submitBackForm()"> <img
 						src="/resources/img/shinsei_btn01.gif" alt="nyuryoku_btn01"
 						onclick="submitReapplyForm()">
-					<c:if test="${jyohou.shinchokuKbn ne '4'}">
+					<c:if test="${kakuninheader.shinchokuKbn ne '4'}">
 						<img src="/resources/img/shinsei_btn02.gif" alt="この申請を取消する"
 							onclick="goToCancelPage()">
 					</c:if>
@@ -1058,13 +1068,15 @@
 
 
 	<form id="backForm" action="/shinsei/backFromConfirm" method="post">
-		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
-		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+		<input type="hidden" name="kigyoCd" value="${kakuninheader.kigyoCd}">
+		<input type="hidden" name="shinseiNo"
+			value="${kakuninheader.shinseiNo}">
 	</form>
 
 	<form id="reapplyForm" action="/shinsei/saishinsei" method="post">
-		<input type="hidden" name="kigyoCd" value="${jyohou.kigyoCd}">
-		<input type="hidden" name="shinseiNo" value="${jyohou.shinseiNo}">
+		<input type="hidden" name="kigyoCd" value="${kakuninheader.kigyoCd}">
+		<input type="hidden" name="shinseiNo"
+			value="${kakuninheader.shinseiNo}">
 
 
 
@@ -1103,7 +1115,7 @@
 
 		<!-- ★ 修正前 緯度経度 (比較用, DBに送信しない) -->
 		<input type="hidden" id="oldAddressIdoKeido"
-			value="${jyohou.addressIdoKeido}">
+			value="${kakuninheader.addressIdoKeido}">
 
 		<!-- ★ 勤務地 緯度経度 (DB: KINMU_ADDRESS_IDO_KEIDO VARCHAR2(19)) -->
 		<input type="hidden" name="kinmuAddressIdoKeido"
@@ -1115,7 +1127,7 @@
 
 		<!-- ★ 修正前 勤務地 緯度経度 (비교용, DB에는 안 보냄) -->
 		<input type="hidden" id="oldKinmuAddressIdoKeido"
-			value="${jyohou.kinmuAddressIdoKeido}">
+			value="${kakuninheader.kinmuAddressIdoKeido}">
 
 	</form>
 
