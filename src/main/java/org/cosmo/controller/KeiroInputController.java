@@ -68,8 +68,8 @@ public class KeiroInputController {
 		ShainKeiroDTO keiroDto = null;
 
 		
-		if (shinseiNo != null && shinseiNo != "" && keiroSeq != null && shinseiNo !=
-		"") { keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid,
+		if (shinseiNo != null && shinseiNo.isEmpty() && keiroSeq != null && keiroSeq.isEmpty())
+		{ keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid,
 		Integer.valueOf(keiroSeq));
 		
 		if (keiroDto != null && keiroDto.getTsukinShudanKbn() != null) { shudanType =
