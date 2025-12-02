@@ -20,11 +20,11 @@ public class ShinseiFuzuiShoruiDTO {
 	private String tsukinShudanKbn; // TSUKIN_SHUDAN_KBN (통근 수단 구분)
 
 	// 첨부 파일 관련 정보
-	private Integer fileUid1;       // FILE_UID_1 (파일 UID 1 - nullable)
-	private Integer fileUid2;       // FILE_UID_2
-	private Integer fileUid3;       // FILE_UID_3
-	private Integer fileUid4;       // FILE_UID_4
-	private Integer fileUid5;       // FILE_UID_5
+	private Long fileUid1;       // FILE_UID_1 (파일 UID 1 - nullable)
+	private Long fileUid2;       // FILE_UID_2
+	private Long fileUid3;       // FILE_UID_3
+	private Long fileUid4;       // FILE_UID_4
+	private Long fileUid5;       // FILE_UID_5
 
 	// 운전 면허 및 차량 정보
 	private String menkyoYukoKigen; // MENKYO_YUKO_KIGEN (면허 유효 기한)

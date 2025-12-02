@@ -10,6 +10,7 @@ import org.cosmo.domain.ShainVO;
 import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.UploadFileDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 //김민수
 @Mapper
@@ -42,4 +43,11 @@ public interface HuzuiNewInputMapper {
 	
 	void fileUpdate(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
 	
+	void shinseiFileUpdate(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain, Long findShinseiNo);
+	
+	Long findShinseiNo(@Param ("shain")ShainVO shain);
+	
+	UploadFileDTO getFile(@RequestParam("fileUid") Long fileUid);
+	
+	void commentUpdate(@Param ("shinsei")ShinseiDTO shinsei,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
 }

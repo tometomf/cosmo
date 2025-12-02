@@ -1,5 +1,9 @@
 package org.cosmo.service;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.ibatis.annotations.Param;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.OshiraseDTO;
@@ -10,6 +14,8 @@ import org.cosmo.domain.ShinseiDTO;
 import org.cosmo.domain.ShinseiFuzuiShoruiDTO;
 import org.cosmo.domain.UploadFileDTO;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 //김민수
 public interface HuzuiNewInputService {
@@ -24,7 +30,14 @@ public interface HuzuiNewInputService {
     public void saveHozon(ShainVO shain,OshiraseDTO oshirase,ProcessLogDTO processLog,IchijiHozonDTO ichiji); 
     
     @Transactional
-    public void addFile(UploadFileDTO UploadFile,String fNo,ShainVO shain);
+    public void addFile(UploadFileDTO UploadFile,String fNo,ShainVO shain,ShinseiDTO shinsei, Long findShinseiNo);
+    
+    public UploadFileDTO saveTempFile(MultipartFile file,String fileNo,String fNo,HttpSession session) throws IOException;
+    
+    public Long findShinseiNo(@Param ("shain")ShainVO shain);
+    
+    public UploadFileDTO getFile(@RequestParam("fileUid") Long fileUid);
+    
     
 }  
 
