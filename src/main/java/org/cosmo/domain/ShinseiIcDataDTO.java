@@ -38,7 +38,8 @@ public class ShinseiIcDataDTO {
 	private String codeNm;
 	private String shinseiName;
     private ShinseiKeiroVO keiro; 
- 
+    
+    private ShinseiStartKeiroVO startKeiro;
     
     public String getGenAddress() {
 		StringBuilder sb = new StringBuilder();

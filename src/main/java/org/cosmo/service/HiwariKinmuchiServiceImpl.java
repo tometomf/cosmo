@@ -2,12 +2,12 @@ package org.cosmo.service;
 
 import java.util.List;
 
-import org.cosmo.domain.AddressViewDto;
 import org.cosmo.domain.HiwariAddressVO;
 import org.cosmo.domain.HiwariKakuninRouteVO;
 import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
+import org.cosmo.domain.HiwariRiyuVO;
 import org.cosmo.mapper.HiwariKinmuchiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,10 +45,19 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
     public HiwariAddressVO getAddressPageDataBefore(Integer kigyoCd, Long shainUid) {
         return mapper.getAddressPageDataBefore(kigyoCd, shainUid);
     }
+    
+    @Override
+    public HiwariRiyuVO getRiyuPageAfter(Integer kigyoCd, Long shainUid, Long shinseiNo) {
+        return mapper.shinseiRiyuPage(kigyoCd, shainUid, shinseiNo);
+    }
+    
     //서혜원 끝
  
     
   //유지희
+    @Autowired
+    private OshiraseService oshiraseService; 
+    
     /**
      * 確認画面 ヘッダー情報取得
      *  - 社員番号・社員名
@@ -73,19 +82,7 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         return mapper.selectKakuninRoutes(kigyoCd, shinseiNo);
     }
 
-    /**
-     * 申請を承認する
-     *  - 進捗区分を '2' (承認) に更新
-     *  - TODO: お知らせ/メール送信処理
-     */
-    @Override
-    public void submitApplication(Integer kigyoCd, Long shinseiNo) {
-        // 承認状態('2')で更新
-        mapper.updateShinseiApproval(kigyoCd, shinseiNo, "2");
-        
-        // TODO: お知らせ/メール送信処理が必要な場合ここに追加
-    }
-
+   
     @Override
     public List<HiwariKeiroVO> getKeiroList(Integer kigyoCd, Long shainUid) {
         if (kigyoCd == null) {
@@ -118,6 +115,9 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         // 새 경로 등록
         int seq = 1;
         for (HiwariKeiroVO vo : keiroList) {
+        	
+        	 calcAmounts(vo);
+        	
             vo.setKigyoCd(kigyoCd);
             vo.setShainUid(shainUid);  
             vo.setKeiroSeq(seq++);
@@ -143,12 +143,20 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         
         int seq = 1;
         for (HiwariKeiroVO vo : keiroList) {
+        	
+        	 calcAmounts(vo);
+        	
             vo.setKigyoCd(kigyoCd);
             vo.setShainUid(shainUid);  
             vo.setKeiroSeq(seq++);
             mapper.insertKeiro(vo);
         }
-    }
+    
+    Long latestShinseiNo = mapper.findLatestShinseiNo(kigyoCd, shainUid);  
+    oshiraseService.registHiwariTempSave(kigyoCd, shainUid, latestShinseiNo);
+    // ↑ 이 한 줄이 “임시저장 알림 등록”
+
+}
 
     @Override
     @Transactional
@@ -166,6 +174,62 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         
         mapper.deleteOne(kigyoCd, shainUid, keiroSeq);
     }
+    // ====== 여기부터 경로 금액 계산용 유틸 ======
+
+    // null 방지용 NVL
+    private int nvl(Integer v) {
+        return (v == null) ? 0 : v.intValue();
+    }
+
+    /**
+     * 1경로 분의 금액 계산
+     *  - shinseiKin   : 申請金額        = 片道料金 × 2 × 出勤日数
+     *  - hiwariAto    : 日割額          = 申請金額 ÷ 出勤日数
+     *  - tsukiShikyuKin : 1ヶ月参考値  = 日割額 × 21(日)
+     */
+    private void calcAmounts(HiwariKeiroVO vo) {
+
+        int kata = nvl(vo.getKataMichiKin());   // 片道料金
+        int days = nvl(vo.getShukkinNissuu());  // 出勤日数
+
+        // 요금이나 일수가 0이면 모두 0 처리
+        if (kata <= 0 || days <= 0) {
+            vo.setShinseiKin(0);
+            vo.setHiwariAto(0);
+            vo.setTsukiShikyuKin(0);
+            return;
+        }
+
+        // 申請金額 = 片道料金 × 2 × 出勤日数
+        int shinsei = kata * 2 * days;
+        vo.setShinseiKin(shinsei);
+
+        // 日割額 = 申請金額 ÷ 出勤日数  (결과적으로 kata×2)
+        int hiwari = shinsei / days;
+        vo.setHiwariAto(hiwari);
+
+        // 1ヶ月参考値 = 日割額 × 21日  (※ 21은 나중에 마스터에서 취득 가능)
+        int tsuki = hiwari * 21;
+        vo.setTsukiShikyuKin(tsuki);
+    }
+    
+    @Override
+    public String getShainMailAddr(Integer kigyoCd, Long shainUid) {
+        return mapper.findMailAddr(kigyoCd, shainUid);
+    }
+    @Override
+    @Transactional
+    public void submitApplication(Integer kigyoCd, Long shinseiNo) {
+
+        mapper.updateShinseiSubmit(kigyoCd, shinseiNo);   // 신청일/구분/주소/기간 등 반영
+        mapper.updateShinseiDetails(kigyoCd, shinseiNo); // 금액, 사유, 기타 반영
+        mapper.updateShinseiStatus(kigyoCd, shinseiNo);  // 진행구분 변경
+    }
+    @Override
+    public Long getLatestShinseiNo(Integer kigyoCd, Long shainUid) {
+        return mapper.findLatestShinseiNo(kigyoCd, shainUid);
+    }
+
 
     //유지희 끝
 }

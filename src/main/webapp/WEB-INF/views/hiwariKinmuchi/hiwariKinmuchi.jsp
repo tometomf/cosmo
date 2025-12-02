@@ -81,12 +81,14 @@ p {
                         <div class="form_Column">勤務先</div>
                         <div class="form_Normal">${initData.genKinmusakiNm}</div>
                         <div class="form_Normal">
-                            <select style="width: 120px;" name="newShozokuNm">
-                                <option>${initData.hiwariKinmusakiNm}</option>
-                                <c:forEach var="nm" items="${shoList}">
-                                    <option>${nm}</option>
-                                </c:forEach>
-                            </select>
+                            <select name="newShozokuNm" style="width: 120px;">
+    						<c:forEach var="nm" items="${shoList}">
+       					 	<option value="${nm}"
+           				 	<c:if test="${nm == initData.hiwariKinmusakiNm}">selected</c:if>>
+            							${nm}
+       						 </option>
+    						</c:forEach>
+							</select>
                         </div>
                     </div>
 
@@ -159,7 +161,7 @@ p {
 
                         <img src="/resources/img/next_btn01.gif" alt="次へ"
                             style="cursor: pointer;"
-                            onclick="validateAddress()">
+                            >
 
                         <img src="/resources/img/hozon_btn01.gif" alt="一時保存"
                             style="cursor: pointer;">
@@ -167,29 +169,27 @@ p {
                 </div>
             </div>
         </div>
+        
+        
+        <!-- 임시저장용 폼 -->
+	    <form id="tsukinTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
+	    <input type="hidden" name="commuteJson" value="">
+	    
+	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
+	    <input type="hidden" name="actionUrl" value="/hiwariKinmuchi/hiwariKinmuchi">
+	    
+	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
+	    <input type="hidden" name="redirectUrl" value="">
+	    
+	     <input type="hidden" name="hozonUid" value="${hozonUid}">
+	     
+	     <input type="hidden" name="shinseiNo" value="${shinseiNo}">
+	     
+	     <input type="hidden" name="keiroSeq" value="${keiroSeq}">
+		</form>
 
         <%@ include file="/WEB-INF/views/common/footer.jsp"%>
     </div>
-
-  <!-- ▼ 日割 勤務地入力 전용 임시저장 폼 -->
-<form id="kinmuTempForm" method="post" action="<c:url value='/keiroinput/tempSave'/>">
-    
-    <!-- JSON 데이터 -->
-    <input type="hidden" name="commuteJson" value="">
-
-    <!-- 이 화면의 action 이름: 반드시 근무지용으로 설정 -->
-    <input type="hidden" name="actionUrl" value="KINMU_TEMP_SAVE">
-
-    <!-- 이동 URL: 임시저장 버튼은 비우고, 필요 시 JS에서 채움 -->
-    <input type="hidden" name="redirectUrl" value="">
-
-    <!-- 임시저장 ID (없으면 빈값) -->
-    <input type="hidden" name="hozonUid" value="${hozonUid}">
-
-    <!-- 신청번호 (없으면 빈 값) -->
-    <input type="hidden" name="shinseiNo" value="${shinseiNo}">
-
-</form>
 
 
 
@@ -208,87 +208,248 @@ function validateAddress() {
         alert("必須項目に入力漏れがあります。すべて入力してください。");
         return false;
     }
+    
+    return true; 
 
-    window.location.href = "/hiwariKinmuchi/address";
 }
 
 
 
-// =============================
-// 임시저장 JSON 생성
-// =============================
-function buildKinmuTempJson() {
-
-    const newShozokuCd = document.querySelector("input[name='newShozokuCd']").value.trim();
-    const newShozokuNm = document.querySelector("select[name='newShozokuNm']").value.trim();
-    const zip1 = document.querySelector("input[name='zip1']").value.trim();
-    const zip2 = document.querySelector("input[name='zip2']").value.trim();
-    const prefecture = document.querySelector("input[name='prefecture']").value.trim();
-    const city = document.querySelector("input[name='city']").value.trim();
-    const address2 = document.querySelector("input[name='address2']").value.trim();
-
-    let fullZip = "";
-    if (zip1 !== "" && zip2 !== "") {
-        fullZip = zip1 + zip2;
-    }
-
-    // JSP에 ichijiHozon 없으면 빈 객체
-    let data = {};
-    try {
-        data = ${ichijiHozon != null ? ichijiHozon : "{}"};
-    } catch (e) {
-        data = {};
-    }
-
-    // 새 근무지 정보 저장
-    data.newKinmusakiCd = newShozokuCd || null;
-    data.newKinmusakiNm = newShozokuNm || null;
-
-    // 새 주소 설정
-    data.newKinmuZip = fullZip;
-    data.newKinmuAddress = (prefecture && city)
-        ? (prefecture + " " + city + " " + address2)
-        : null;
-
-    return JSON.stringify(data);
-}
+document.addEventListener("DOMContentLoaded", function() {
+	
 
 
+  const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
+  const tsugiBtn = document.querySelector('img[src="/resources/img/next_btn01.gif"]');
+	
+  let ichijiHozonRaw = '${ichijiHozon}';
+  
+  console.log(ichijiHozonRaw);
+  let ichijiHozon =
+      ichijiHozonRaw && ichijiHozonRaw.trim() !== "" && ichijiHozonRaw !== "null"
+          ? JSON.parse(ichijiHozonRaw)
+          : "";
+	console.log("임시저장 데이터:", ichijiHozon);
+  
+ 	const hozonUid = '${hozonUid}';
+	const shinseiNo = '${shinseiNo}';
+	console.log(hozonUid);
+  // 폼 / hidden input
+  const form             = document.getElementById("tsukinTempForm");
+  const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
+  const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
 
-// =============================
-// 임시저장 버튼 이벤트
-// =============================
-document.addEventListener("DOMContentLoaded", function () {
+  /**
+   * 현재 선택된 라디오값을 기반으로
+   * 서버에 보낼 통근정보 JSON 문자열을 생성
+   */
+  function buildCommuteJson() {
 
-    const hozonBtn = document.querySelector('img[src="/resources/img/hozon_btn01.gif"]');
-    const form = document.getElementById("kinmuTempForm");
+      
+      if(ichijiHozon == null || ichijiHozon == ""){
+      	console.log("ichijiHozon null")
+      	ichijiHozon = {
+      			  "kigyoCd": null,
+      			  "shinseiNo": null,
+      			  "shinseiYmd": null,
+      			  "shinseiKbn": null,
+      			  "shainUid": null,
+      			  "shinchokuKbn": null,
 
-    const commuteJsonInput = form.querySelector('input[name="commuteJson"]');
-    const redirectUrlInput = form.querySelector('input[name="redirectUrl"]');
+      			  "genAddress1": null,
+      			  "genAddress2": null,
+      			  "genAddress3": null,
 
-    if (hozonBtn) {
-        hozonBtn.addEventListener("click", function () {
+      			  "newAddress1": null,
+      			  "newAddress2": null,
+      			  "newAddress3": null,
 
-            const jsonString = buildKinmuTempJson();
-            commuteJsonInput.value = jsonString;
+      			  "genShozoku": null,
+      			  "newShozoku": null,
 
-            // hozonUid / shinseiNo 비어있으면 삭제
-            const hozonHidden = form.querySelector('input[name="hozonUid"]');
-            if (!hozonHidden.value || hozonHidden.value.trim() === "") {
-                hozonHidden.remove();
-            }
+      			  "genKinmuchi1": null,
+      			  "genKinmuchi2": null,
+      			  "genKinmuchi3": null,
 
-            const shinseiHidden = form.querySelector('input[name="shinseiNo"]');
-            if (!shinseiHidden.value || shinseiHidden.value.trim() === "") {
-                shinseiHidden.remove();
-            }
+      			  "newKinmuchi1": null,
+      			  "newKinmuchi2": null,
+      			  "newKinmuchi3": null,
 
-            // ★★★ 반드시 redirectUrl 추가 (컨트롤러가 빈값 처리 못함)
-            redirectUrlInput.value = "/shinsei/ichiji";
+      			  "riyu": null,
+      			  "idoYmd": null,
+      			  "itenYmd": null,
+      			  "tennyuYmd": null,
+      			  "riyoStartYmd": null,
+      			  "ssmdsYmd": null,
+      			  "moComment": null,
 
-            form.submit();
-        });
-    }
+      			  "codeNm": null,
+      			  "shinseiName": null,
+
+      			  "keiro": {
+      			    "kigyoCd": null,
+      			    "shinseiNo": null,
+      			    "keiroSeq": null,
+      			    "tsukinShudan": null,
+      			    "katamichi": null,
+      			    "jitsu": null,
+      			    "tsuki": null,
+      			    "shinseiKm": null,
+
+      			    "startPlace": null,
+      			    "endPlace": null,
+
+      			    "shudanName": null
+      			  },
+
+      			  "startKeiro": {
+      			    "kigyoCd": null,
+      			    "shinseiNo": null,
+      			    "keiroSeq": null,
+
+      			    "shinseiKbn": null,
+      			    "shinseiYmd": null,
+      			    "shainUid": null,
+      			    "shainNo": null,
+      			    "dairiShinseishaCd": null,
+
+      			    "tsukinShudanKbn": null,
+      			    "yuryoTokurei": null,
+      			    "kyoriKagenTokurei": null,
+      			    "jougenKingakuTokurei": null,
+      			    "jougenCut": null,
+      			    "fubiUmuKbn": null,
+
+      			    "kikanStartYmd": null,
+      			    "kikanEndYmd": null,
+      			    "jitsuKinmuNissu": null,
+
+      			    "busCorpNm": null,
+      			    "idoShudanKbn": null,
+      			    "idoShudanEtcNm": null,
+
+      			    "startPlace": null,
+      			    "endPlace": null,
+      			    "viaPlace1": null,
+      			    "viaPlace2": null,
+      			    "viaPlace3": null,
+      			    "viaPlace4": null,
+      			    "viaPlace5": null,
+
+      			    "startIdoKeido": null,
+      			    "startEkicd": null,
+      			    "endEkicd": null,
+      			    "viaPlaceEkicd1": null,
+      			    "viaPlaceEkicd2": null,
+      			    "viaPlaceEkicd3": null,
+      			    "viaPlaceEkicd4": null,
+      			    "viaPlaceEkicd5": null,
+
+      			    "kekkaUrl": null,
+
+      			    "shinseiKin": null,
+      			    "firstTeikiTsukiSu": null,
+      			    "firstShikyuYmd": null,
+      			    "firstShikyuKin": null,
+      			    "nextTeikiTsukiSu": null,
+      			    "regularShikyuKin": null,
+      			    "tsukiShikyuKin": null,
+      			    "katamichiKin": null,
+
+      			    "shinkansenRiyoKbn": null,
+      			    "tokkyuRiyoKbn": null,
+      			    "yuryoRiyoKbn": null,
+      			    "kekkaSelect": null,
+
+      			    "sanshoTeikiTsukiSu1": null,
+      			    "sanshoTeikiKin1": null,
+      			    "sanshoTeikiTsukiSu2": null,
+      			    "sanshoTeikiKin2": null,
+      			    "sanshoTeikiTsukiSu3": null,
+      			    "sanshoTeikiKin3": null,
+
+      			    "shinseiKm": null,
+
+      			    "yuryoIcS": null,
+      			    "yuryoIcE": null,
+      			    "yuryoOfukuKbn": null,
+      			    "yuryoKatamichiKin": null,
+
+      			    "betsuRouteRiyu": null,
+      			    "yuryoRiyoRiyu": null,
+      			    "viaPlaceRiyu": null,
+
+      			    "nenpi": null,
+      			    "gasorinDaiMae": null,
+      			    "yuryoDaiMae": null,
+      			    "goukeiMae": null,
+      			    "hiwariMae": null,
+      			    "gasorinDaiAto": null,
+      			    "yuryoDaiAto": null,
+      			    "goukeiAto": null,
+      			    "hiwariAto": null,
+
+      			    "addUserId": null,
+      			    "addDate": null,
+      			    "updUserId": null,
+      			    "updDate": null
+      			  }
+      			}
+      }
+      
+    
+      ichijiHozon.genShozoku = "${initData.genKinmusakiCd}";
+      ichijiHozon.newShozoku = "${initData.hiwariKinmusakiCd}";
+      ichijiHozon.genKinmuchi1 = "${initData.genKinmuAddress1}";
+      ichijiHozon.genKinmuchi2 = "${initData.genKinmuAddress2}";
+      ichijiHozon.genKinmuchi3 = "${initData.genKinmuAddress3}";
+      ichijiHozon.newKinmuchi1 = "${initData.hiwariKinmuAddress1}";
+      ichijiHozon.newKinmuchi2 = "${initData.hiwariKinmuAddress2}";
+      ichijiHozon.newKinmuchi3 = "${initData.hiwariKinmuAddress3}";
+      return JSON.stringify(ichijiHozon);
+  }
+
+  //  hozonBtn: 임시저장 → 컨트롤러가 기본 redirect(/shinsei/ichiji) 사용
+  if (hozonBtn) {
+      hozonBtn.addEventListener('click', function () {
+          const jsonString = buildCommuteJson();
+          if (!jsonString) return;
+
+          commuteJsonInput.value = jsonString;
+          
+          console.log( commuteJsonInput.value);
+
+          redirectUrlInput.value = "";
+
+          form.submit();
+      });
+  }
+  
+  if (tsugiBtn) {
+	    tsugiBtn.addEventListener('click', function (e) {
+
+	        if (!validateAddress()) {
+	            e.preventDefault();   
+	            return false;
+	        }
+
+	        const jsonString = buildCommuteJson();
+	        if (!jsonString) return;
+
+	        commuteJsonInput.value = jsonString;
+
+	        console.log(commuteJsonInput.value);
+			
+	        if(hozonUid == null || hozonUid == ""){
+		        redirectUrlInput.value = "/hiwariKinmuchi/address";
+	        }else {        	
+	            redirectUrlInput.value = "/hiwariKinmuchi/address?hozonUid=" + hozonUid;
+	        }
+	        
+
+	        form.submit();
+	    });
+	}
 });
 </script>
 
