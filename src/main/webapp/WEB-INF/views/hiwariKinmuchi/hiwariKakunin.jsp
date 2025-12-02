@@ -11,12 +11,17 @@
 <title>通勤マネージャー｜確認</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 <style>
-/* 오른쪽 칸 전체를 세로정렬 박스로 강제 */
+/* ===== kakunin 화면 전용 커스텀 ===== */
+
+/* 오른쪽 칸 세로 정렬 */
 .form_Text1.twoCol .form_Normal {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;
 }
+
+/* 업로드 영역 */
 .upload-top {
   display: flex;
   align-items: left;
@@ -27,88 +32,83 @@
   white-space: normal;
 }
 
-  /* 화면 폭 고정 (가운데 정렬) */
-  .page-width {
-    width: 950px;
-    margin: 0 auto;
-  }
-
-  /* ===== 確認画面: 테이블 왼쪽 정렬 ===== */
-  .content_Form1,
-  .content_Form2 {
-    margin: 0 !important;           /* 모든 여백 제거 */
-    margin-left: 0 !important;      /* 왼쪽 붙이기 */
-    width: 100% !important;         /* 전체 너비 사용 */
-  }
-
-  /* 바로 이어지는 섹션들끼리만 여백 크게 */
-  .content_Form1 + .content_Form1,
-  .content_Form1 + .content_Form2,
-  .content_Form2 + .content_Form1,
-  .content_Form2 + .content_Form2 {
-    margin-top: 24px !important;
-  }
-
-  /* 각 행을 2컬럼 그리드로 */
-  .twoCol {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-  }
-
-  /* 표 형태로 보이도록 셀 스타일 */
-  .form_Column {
-    background: #e5e5e5;
-    padding: 4px 8px;
-    border: 1px solid #d5d5d5;
-    font-weight: normal;
-    box-sizing: border-box;
-  }
-
-  .form_Normal {
-    border: 1px solid #d5d5d5;
-    padding: 4px 8px;
-    box-sizing: border-box;
-  }
-
-  /* 경로 제목 바 */
-  .form_Title2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 8px;
-    background: #4c4c4c;
-    color: #fff;
-    border: 1px solid #4c4c4c;
-    font-weight: bold;
-  }
-
-  .form_Title2 > div:first-child {
-    font-weight: bold;
-  }
-
-  .edit-btn {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-  }
-
-  .note-sm {
-    font-size: .92rem;
-    color: #666;
-    margin-top: 4px;
-  }
-
-  .button_Left {
-    margin-top: 20px;
-  }
-  .form_Text1.twoCol .form_Normal {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;  
+/* 화면 폭 고정 */
+.page-width {
+  width: 950px;
+  margin: 0 auto;
 }
-  
+
+/* 테이블 왼쪽 정렬 */
+.content_Form1,
+.content_Form2 {
+  margin: 0 !important;
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+.content_Form1 + .content_Form1,
+.content_Form1 + .content_Form2,
+.content_Form2 + .content_Form1,
+.content_Form2 + .content_Form2 {
+  margin-top: 24px !important;
+}
+
+/* 2컬럼 그리드 */
+.twoCol {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+
+/* 표 셀 스타일 */
+.form_Column {
+  background: #e5e5e5;
+  padding: 4px 8px;
+  border: 1px solid #d5d5d5;
+  font-weight: normal;
+  box-sizing: border-box;
+}
+.form_Normal {
+  border: 1px solid #d5d5d5;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+
+/* 경로 제목 바 */
+.form_Title2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: #4c4c4c;
+  color: #fff;
+  border: 1px solid #4c4c4c;
+  font-weight: bold;
+}
+.form_Title2 > div:first-child {
+  font-weight: bold;
+}
+
+/* 버튼 영역 */
+.button_Left {
+  margin-top: 20px;
+}
+
+/* 버튼 3개 한 줄로 */
+.button_Left_Group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* footer 고정 해제 + 가운데 정렬 */
+#footer {
+  position: static !important;   /* fixed 풀기 */
+  width: 950px;
+  margin: 20px auto 0;
+  text-align: center;
+  float: none !important;
+}
 </style>
+
 </head>
 <body>
 <c:if test="${not empty tempSaveMsg}">
@@ -297,7 +297,6 @@
           </div>
         </div>
       </div>
-
       <!-- 合計金額 -->
       <div class="content_Form1">
         <div class="form_Text1 twoCol">
@@ -308,64 +307,77 @@
         </div>
       </div>
 
-      <!-- アップロード 영역 -->
-<div class="content_Form1">
-
-  <div class="form_Text1 twoCol">
-    <!-- 왼쪽: 라벨 -->
-    <div class="form_Column" style="display:flex; align-items:center;">
-      アップロード
-    </div>
-
-    <!-- 오른쪽: 업로드 + 안내문 한 박스 안에 -->
-    <div class="form_Normal">
-      <!-- 위: 업로드줄 -->
-      <div class="upload-top">
-        <input type="text" id="uploadName" readonly style="width:180px;">
-        <button type="button"
-                onclick="document.getElementById('uploadFile').click();">参照</button>
-        <button type="button">アップロード</button>
-        <input type="file" id="uploadFile" name="evidence" style="display:none"
-               onchange="document.getElementById('uploadName').value=this.files[0].name;">
-      </div>
-
-      <!-- 아래: 안내문 -->
-      <div class="upload-note">
-        ※定期券を購入している場合は、定期券コピーをアップロードしてください。
-      </div>
-    </div>
-  </div>
-
-</div>
-
       <br>
-      <!-- 버튼 영역 -->
-      <div class="button_Left">
-        <div class="button_Left_Group">
-          <a href="<c:url value='/hiwariKinmuchi/keiro'/>">
-			 <img src="/resources/img/back_btn01.gif" alt="戻る">
-			 </a>
-       
-    <form id="submitForm" method="post" action="<c:url value='/hiwariKinmuchi/submit'/>" style="display:inline;">
-      <a href="javascript:void(0);" onclick="document.getElementById('submitForm').submit();">
-        <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
-      </a>
-    </form>
 
-           <!-- 一時保存：tempSave로 POST -->
-          <form id="tempForm" method="post"
-                action="<c:url value='/hiwariKinmuchi/tempSave'/>"
-                style="display:inline;">
-            <a href="javascript:void(0);" onclick="document.getElementById('tempForm').submit();">
-              <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
-              </a>
-              </form>>
+      <!-- アップロード + 申請 を 하나의 form 으로 묶기 -->
+      <form id="submitForm"
+            method="post"
+            action="<c:url value='/hiwariKinmuchi/submit'/>"
+            enctype="multipart/form-data"
+            style="display:inline;">
+
+        <!-- アップロード 영역 -->
+        <div class="content_Form1">
+          <div class="form_Text1 twoCol">
+            <div class="form_Column" style="display:flex; align-items:center;">
+              アップロード
+            </div>
+            <div class="form_Normal">
+              <div class="upload-top">
+                <input type="text" id="uploadName" readonly style="width:180px;">
+                <button type="button"
+                        onclick="document.getElementById('uploadFile').click();">参照</button>
+                <button type="button">アップロード</button>
+                <input type="file" id="uploadFile" name="evidence" style="display:none"
+                       onchange="document.getElementById('uploadName').value=this.files[0].name;">
+              </div>
+
+              <div class="upload-note">
+                ※定期券を購入している場合は、定期券コピーをアップロードしてください。
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <br><br><br>
- 
-      <%@ include file="/WEB-INF/views/common/footer.jsp"%>
-    </div>
-  </div>
-</div>
+        <br>
+
+        <!-- 3개 버튼을 한 줄에 배치 -->
+        <div class="button_Left">
+          <div class="button_Left_Group">
+
+            <!-- 戻る: 그냥 링크 -->
+            <a href="<c:url value='/hiwariKinmuchi/keiro'/>">
+              <img src="/resources/img/back_btn01.gif" alt="戻る">
+            </a>
+
+            <!-- 申請: submitForm submit -->
+            <a href="javascript:void(0);"
+               onclick="document.getElementById('submitForm').submit();">
+              <img src="/resources/img/shinsei_btn01.gif" alt="申請へ">
+            </a>
+
+            <!-- 一時保存: 별도 form 이지만 같은 줄에 표시 -->
+            <form id="tempForm"
+                  method="post"
+                  action="<c:url value='/hiwariKinmuchi/tempSave'/>"
+                  style="display:inline;">
+              <a href="javascript:void(0);"
+                 onclick="document.getElementById('tempForm').submit();">
+                <img src="/resources/img/hozon_btn01.gif" alt="一時保存">
+              </a>
+            </form>
+
+          </div>
+        </div>
+
+      </form>   <!-- submitForm 끝 -->
+
+    </div>  <!-- .page-width -->
+  </div>    <!-- .main -->
+
+  <%@ include file="/WEB-INF/views/common/footer.jsp"%>
+
+</div>      <!-- .layout -->
+</body>
+</html>
+      
