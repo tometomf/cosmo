@@ -68,13 +68,13 @@ public class KeiroInputController {
 		ShainKeiroDTO keiroDto = null;
 
 		
-		if (shinseiNo != null && shinseiNo.isEmpty() && keiroSeq != null && keiroSeq.isEmpty())
+		if (shinseiNo != null && !shinseiNo.isEmpty() && keiroSeq != null && !keiroSeq.isEmpty())
 		{ keiroDto = keiroInputservice.getShainKeiro(kigyoCd, shainUid,
 		Integer.valueOf(keiroSeq));
 		
 		if (keiroDto != null && keiroDto.getTsukinShudanKbn() != null) { shudanType =
 		keiroDto.getTsukinShudanKbn(); } 
-		}else if(hozonUid != null && hozonUid != "") {
+		}else if(hozonUid != null && !hozonUid.isEmpty()) {
 			String ichijiHozonJson = "{}";
 			
 			if(shinseiNo == null || shinseiNo == "") {
