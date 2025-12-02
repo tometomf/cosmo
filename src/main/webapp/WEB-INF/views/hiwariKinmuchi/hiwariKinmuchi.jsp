@@ -161,7 +161,7 @@ p {
 
                         <img src="/resources/img/next_btn01.gif" alt="次へ"
                             style="cursor: pointer;"
-                            onclick="validateAddress()">
+                            >
 
                         <img src="/resources/img/hozon_btn01.gif" alt="一時保存"
                             style="cursor: pointer;">
@@ -208,8 +208,9 @@ function validateAddress() {
         alert("必須項目に入力漏れがあります。すべて入力してください。");
         return false;
     }
+    
+    return true; 
 
-    window.location.href = "/hiwariKinmuchi/address";
 }
 
 
@@ -230,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
           : "";
 	console.log("임시저장 데이터:", ichijiHozon);
   
-	const hozonUid = '${hozonUid}';
+ 	const hozonUid = '${hozonUid}';
 	const shinseiNo = '${shinseiNo}';
 	console.log(hozonUid);
   // 폼 / hidden input
@@ -425,19 +426,30 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   
   if (tsugiBtn) {
-	  tsugiBtn.addEventListener('click', function () {
-          const jsonString = buildCommuteJson();
-          if (!jsonString) return;
+	    tsugiBtn.addEventListener('click', function (e) {
 
-          commuteJsonInput.value = jsonString;
-          
-          console.log( commuteJsonInput.value);
+	        if (!validateAddress()) {
+	            e.preventDefault();   
+	            return false;
+	        }
 
-          redirectUrlInput.value = "/hiwariKinmuchi/address";
+	        const jsonString = buildCommuteJson();
+	        if (!jsonString) return;
 
-          form.submit();
-      });
-  }
+	        commuteJsonInput.value = jsonString;
+
+	        console.log(commuteJsonInput.value);
+			
+	        if(hozonUid == null || hozonUid == ""){
+		        redirectUrlInput.value = "/hiwariKinmuchi/address";
+	        }else {        	
+	            redirectUrlInput.value = "/hiwariKinmuchi/address?hozonUid=" + hozonUid;
+	        }
+	        
+
+	        form.submit();
+	    });
+	}
 });
 </script>
 
