@@ -19,10 +19,7 @@ public class ShainVO {
 	private String shinsei_No;
 	private String shinsei_Ymd;
 	private String shinchoku_kbn;
-<<<<<<< HEAD
-}
-=======
-	
+
 	private String address1;
 	private String address2;
 	private String address3;
@@ -30,4 +27,3 @@ public class ShainVO {
 	private String kinmuAddress2;
 	private String kinmuAddress3;
 }
->>>>>>> refs/remotes/origin/shinseiDetail
