@@ -97,7 +97,7 @@ public class TokureiServiceImpl implements TokureiService {
 
             // 파일 ID 연결
             if (newFileId != null) {
-                fuzuiDto.setFileUid1(newFileId.intValue());
+                fuzuiDto.setFileUid1(newFileId);
             }
             
             // BLOB 데이터 더미로 생성 (문자열 -> byte[])
