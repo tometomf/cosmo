@@ -79,6 +79,7 @@ public class IdoConfirmController {
 
     
  // 02조우진
+    
     @GetMapping("/idoconfirm")
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
