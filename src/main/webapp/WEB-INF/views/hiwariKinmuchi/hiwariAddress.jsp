@@ -190,9 +190,9 @@ button {
 				<div class="button_Left" style="margin-top: 25px;">
 					<div class="button_Left_Group">
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
-							style="cursor: pointer;" onclick="location.href='hiwariKinmuchi'">
+							style="cursor: pointer;" onclick="location.href='/hiwariKinmuchi/hiwariKinmuchi?hozonUid=${hozonUid}'">
 						<img src="/resources/img/next_btn01.gif" alt="次へ"
-							style="cursor: pointer;" onclick="validateRiyu()"> <img
+							style="cursor: pointer;"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存"
 							style="cursor: pointer;">
 					</div>
@@ -237,7 +237,7 @@ button {
             return false;
         }
 
-        window.location.href = "/hiwariKinmuchi/riyu";
+        return true; 
     }
 
 
@@ -448,22 +448,30 @@ button {
     	          form.submit();
     	      });
     	  }
+    	  
+    	  if (tsugiBtn) {
+    	  	  tsugiBtn.addEventListener('click', function () {
+    	            const jsonString = buildCommuteJson();
+    	            if (!jsonString) return;
+    	            
+    	            if (!validateRiyu()) {
+    	                e.preventDefault();   
+    	                return false;
+    	            }
+
+    	            commuteJsonInput.value = jsonString;
+    	            
+    	            console.log( commuteJsonInput.value);
+
+    	            redirectUrlInput.value = "/hiwariKinmuchi/riyu?hozonUid=" + hozonUid;
+
+    	            form.submit();
+    	        });
+    	    }
+    	  
     	});
     
-    if (tsugiBtn) {
-  	  tsugiBtn.addEventListener('click', function () {
-            const jsonString = buildCommuteJson();
-            if (!jsonString) return;
-
-            commuteJsonInput.value = jsonString;
-            
-            console.log( commuteJsonInput.value);
-
-            redirectUrlInput.value = "/hiwariKinmuchi/riyu";
-
-            form.submit();
-        });
-    }
+    
 
    
     

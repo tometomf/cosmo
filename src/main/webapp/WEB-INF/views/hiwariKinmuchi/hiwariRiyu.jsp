@@ -197,7 +197,7 @@ button {
 				<div class="button_Left" style="margin-top: 25px;">
 					<div class="button_Left_Group">
 						<img src="/resources/img/back_btn01.gif" alt="戻る"
-							style="cursor: pointer;" onclick="location.href='address'">
+							style="cursor: pointer;" onclick="location.href='/hiwariKinmuchi/address?hozonUid=${hozonUid}'">
 						<img src="/resources/img/next_btn01.gif" alt="次へ"
 							onclick="validateReason()"> <img
 							src="/resources/img/hozon_btn01.gif" alt="一時保存">
@@ -211,7 +211,7 @@ button {
 	    <input type="hidden" name="commuteJson" value="">
 	    
 	    <!-- 이 화면에서의 action 이름(= DTO.actionNm) -->
-	    <input type="hidden" name="actionUrl" value="/hiwariKinmuchi/riyu">
+	    <input type="hidden" name="actionUrl" value="/hiwariKinmuchi/address">
 	    
 	    <!-- 이동용 URL, hozonBtn은 비워서 보내고 keiroBtn은 채워서 보냄 -->
 	    <input type="hidden" name="redirectUrl" value="">
@@ -226,8 +226,7 @@ button {
 		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
 	</div>
 
-		<%@ include file="/WEB-INF/views/common/footer.jsp"%>
-	</div>
+		
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -523,7 +522,7 @@ button {
 	    	      			}
 	    	      }
 	    	      
-	    	     
+	    	      ichijiHozon.riyu = "${initData.shinseiriyu}";
 	    	      return JSON.stringify(ichijiHozon);
 	    	  }
 
@@ -542,68 +541,26 @@ button {
 	    	          form.submit();
 	    	      });
 	    	  }
+	    	  
+	    	  if (tsugiBtn) {
+	    		  tsugiBtn.addEventListener('click', function () {
+	    	          const jsonString = buildCommuteJson();
+	    	          if (!jsonString) return;
+
+	    	          commuteJsonInput.value = jsonString;
+	    	          
+	    	          console.log( commuteJsonInput.value);
+
+	    	          redirectUrlInput.value = "/hiwariKinmuchi/keiro?hozonUid=" + hozonUid;
+
+	    	          form.submit();
+	    	      });
+	    	  }
+	    	  
 	    	});
 
 	   
 	    
-	    document.addEventListener("DOMContentLoaded", function () {
-	        const reflectBtn = document.querySelector('img[alt="この住所を反映"]');
-
-	        if (!reflectBtn) {
-	            console.log("反映ボタンが見つからない");
-	            return;
-	        }
-
-	        reflectBtn.addEventListener("click", function () {
-
-	            const dbZip   = "${initData.dbZip}";
-	            const dbAddr1 = "${initData.dbAddress1}";
-	            const dbAddr2 = "${initData.dbAddress2}";
-
-	            if (!dbAddr1 || dbAddr1 === "null") {
-	                alert("反映する住所（中間DB）が存在しません。");
-	                return;
-	            }
-
-	            // 도도부현 분리
-	            const keywords = ["都", "道", "府", "県"];
-	            let pref = "";
-	            let addr1 = "";
-
-	            let cutIndex = -1;
-	            for (let k of keywords) {
-	                const idx = dbAddr1.indexOf(k);
-	                if (idx !== -1) {
-	                    cutIndex = idx;
-	                    break;
-	                }
-	            }
-
-	            if (cutIndex !== -1) {
-	                pref = dbAddr1.substring(0, cutIndex + 1);
-	                addr1 = dbAddr1.substring(cutIndex + 1);
-	            } else {
-	                addr1 = dbAddr1;
-	            }
-
-	            // UI 반영
-	            if (dbZip && dbZip !== "null") {
-	                document.querySelector("input[name='zip1']").value = dbZip.substring(0, 3);
-	                document.querySelector("input[name='zip2']").value = dbZip.substring(3);
-	            }
-
-	            document.querySelector("input[name='prefecture']").value = pref;
-	            document.querySelector("input[name='city']").value = addr1;
-
-	            const buildingInput = document.querySelector("input[name='building']");
-	            if (buildingInput) {
-	                buildingInput.value = dbAddr2 || "";
-	            }
-
-	            console.log("住所反映 完了");
-	        });
-	    });
-
 		
 	</script>
 </body>
