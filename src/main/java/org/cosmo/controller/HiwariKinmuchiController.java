@@ -185,7 +185,7 @@ public class HiwariKinmuchiController {
 	}
 	
 
-	//유지희
+	// 유지희
 	@GetMapping("/kakunin")
 	public String showKakuninPage(HttpSession session, Model model) {
 
@@ -195,7 +195,7 @@ public class HiwariKinmuchiController {
 	    }
 
 	    Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-	    Long shainUid   = Long.valueOf(shain.getShain_Uid());   // ★ 추가: 사원 UID
+	    Long shainUid   = Long.valueOf(shain.getShain_Uid());
 	    Long shinseiNo  = null;
 
 	    if (shain.getShinsei_No() != null && !shain.getShinsei_No().isEmpty()) {
@@ -212,23 +212,39 @@ public class HiwariKinmuchiController {
 	    // ② 확인용 경로(집계 VO)
 	    List<HiwariKakuninRouteVO> routes = service.getRoutes(kigyoCd, shinseiNo);
 	    if (routes == null) {
-	        routes = new ArrayList();
+	        routes = new ArrayList<>();
 	    }
 
-	    // ③ ★★ SHINSEI_START_KEIRO 원본 값(HiwariKeiroVO) 추가 ★★
+	    // ③ SHINSEI_START_KEIRO 원본 리스트
 	    List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
-	    
-	    System.out.println("[DEBUG] /kakunin keiroList size = "
-	    	    + (keiroList == null ? "null" : keiroList.size()));
-	    
 	    if (keiroList == null) {
-	        keiroList = new ArrayList();
+	        keiroList = new ArrayList<>();
 	    }
-	    model.addAttribute("keiroList", keiroList);   // ← 이걸 JSP에서 바로 쓸 수 있음
+	    model.addAttribute("keiroList", keiroList);
 
-	    // -------------------------------
-	    // 아래는 기존 emp / route1 / route2 / apply 만드는 부분 그대로 유지
-	    // -------------------------------
+
+	    /* ============================================
+	       ★ 업로드 파일 여부 판단 후 JSP에 값 전달
+	       ============================================ */
+	    if (header != null && Boolean.TRUE.equals(header.getUploadExists())) {
+
+	        // 파일 "있음" 상태
+	        model.addAttribute("evidenceFileName", header.getUploadFileName());
+	        model.addAttribute("evidenceUid", header.getShinseiNo());  
+	        // ※ evidenceUid는 삭제/다운로드 시 필요 → 설계에 따라 변경 가능
+
+	    } else {
+
+	        // 파일 "없음" 상태
+	        model.addAttribute("evidenceFileName", null);
+	        model.addAttribute("evidenceUid", null);
+	    }
+
+
+	    /* ============================================
+	       아래는 기존 emp / route1 / route2 / apply 그대로 유지
+	       ============================================ */
+
 	    Map<String, Object> emp = new HashMap<String, Object>();
 	    if (header != null) {
 	        emp.put("no", header.getEmpNo());
@@ -274,7 +290,6 @@ public class HiwariKinmuchiController {
 
 	    return "hiwariKinmuchi/hiwariKakunin";
 	}
-
 
 	private String formatAmount(Integer amount) {
 		if (amount == null || amount == 0) {
