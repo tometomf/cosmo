@@ -12,26 +12,22 @@
 
 <style>
 .transport-wrapper {
+	width: 1010px;
+	margin: auto;
 	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	min-width: 500px;
-	align-items: center;
 }
 
 .transport {
-	padding: 0.3rem;
+	width: 1010px;
+	padding: 0.5rem;
 	padding-left: 10px;
-	margin: 1rem;
 	text-align: left;
 	font-weight: bold;
-	border-left: 4px solid #666;
-	border-bottom: 1px dotted #999;
-	padding-bottom: 4px;
+	border-left: 5px solid #666;
+	border-bottom: 2px dotted #999;
 	color: #333;
-	width: 90%;
 }
+
 
 .grid {
 	display: grid;
@@ -288,7 +284,7 @@
 			</div>
 			<div class="subtitle">申請内容選択</div>
 			<div class="transport-wrapper">
-				<div class="transport">手段：電車</div>
+				<div class="transport">手段：${shudanNm}</div>
 			</div>
 			<!-- ここまで上位タイトル -->
 
@@ -306,7 +302,7 @@
 									value="${keiro.startPlace}">
 							</div>
 							<div class="swapbutton">
-								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton">
+								<img src="/resources/img/tn/change_btn.gif" id="ekiSwapButton"style="cursor: pointer;">
 							</div>
 							<div class="background">到着地</div>
 							<div>
@@ -370,10 +366,10 @@
 
 						<div class="button_layout">
 							<img src="/resources/img/keiyu_mini_btn01.gif" id="addStationBtn"
-								class="add_btn">
+								class="add_btn"style="cursor: pointer;">
 							<!-- 경유지 추가버튼 -->
 							<img src="/resources/img/tn/search_btn01.gif"
-								id="SearchStationBtn" class="add_btn">
+								id="SearchStationBtn" class="add_btn"style="cursor: pointer;">
 						</div>
 					</div>
 				</div>
@@ -436,8 +432,8 @@
 			</div>
 
 			<div class="menu_button">
-				<img src="/resources/img/back_btn01.gif" id="returnToTop"> <img
-					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"> <img
+				<img src="/resources/img/back_btn01.gif" id="returnToTop"style="cursor: pointer;"> <img
+					src="/resources/img/keiro_btn02.gif" id="keiroKakutei"style="cursor: pointer;"> <img
 					src="/resources/img/hozon_btn01.gif" id="denshaHozonBtn"
 					style="cursor: pointer;">
 			</div>
@@ -512,7 +508,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
-
             const keiro = {
                 tsukinShudan : "1",
                 shudanName :   "電車",
@@ -522,16 +517,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             
             const startKeiro = {
-            startPlace :   fromStation, 
-            endPlace :     toStation,
-            viaPlace1: middleStation01,
+            startPlace:fromStation, 
+            endPlace:toStation,
+            viaPlace1:middleStation01,
             viaPlace2:middleStation02,
             viaPlace3:middleStation03,
             viaPlace4:middleStation04,
             viaPlace5:middleStation05
             }
         
-
+		
+            
+            
         ichijiHozon.keiro = keiro;
         ichijiHozon.startKeiro = startKeiro;
         
@@ -566,11 +563,35 @@ document.addEventListener("DOMContentLoaded", function () {
 			
 			const ekiSwap = document.getElementById("ekiSwapButton");
 			
+<<<<<<< HEAD
 			const Kakutei = document.getElementById("keiroKakutei");
+=======
+
+>>>>>>> refs/remotes/origin/keiroInput
 			let searchedRoute = null;
 
 	    	const baseInput = container.querySelector('input[name="middle_station_01"]');
 
+	    	
+	    	
+	    	
+	    	
+	    	const shinseiCheck = "${shinseiNo}";
+	    	
+	    	if(shinseiCheck.trim().length > 0){
+	    		const currentText = "[再]経路入力"
+	    		
+	    		document.querySelector('.flow_current').innerText = currentText;
+	    	}else{
+	    		const currentText = "経路入力"
+	    		
+	    		document.querySelector('.flow_current').innerText = currentText;
+	    	}
+	    		
+	    	
+	    	
+	    	
+	    	
 	    	
 	    	
 	    	function addMiddleRow(initialValue) {
@@ -627,33 +648,67 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 			
 			returnToTop.addEventListener("click", function(){
+<<<<<<< HEAD
 				location.href = "http://localhost:8282/keiroinput/06_keiroInput";
+=======
+				let redirectPath = "";
+				location.href = "http://localhost:8282/keiroinput/06_keiroInput?shudanType=${shudanType}&hozonUid=${hozonUid}&shinseiNo=${shinseiNo}&keiroSeq=${keiroSeq}";
+				/* redirectPath = "<c:url value='/keiroinput/06_keiroInput'/>";
+	            redirectPath += "&hozonUid=" + encodeURIComponent(hozonUid);
+	            redirectPath += "&shinseiNo=" + encodeURIComponent(shinseiNo);
+	            redirectPath += "&keiroSeq=" + encodeURIComponent(keiroSeq);
+	            redirectUrlInput.value = redirectPath;
+	            form.submit(); */
+>>>>>>> refs/remotes/origin/keiroInput
 			});
 			
 			kensaku.addEventListener("click", function(){
 				
+				let fullPath = null;
+
 				const formStation = document.querySelector('input[name="From_station"]').value;
-/* 				const middleStation01 = document.querySelector('input[name="middle_station_01"]')?.value|| "";
+ 				const middleStation01 = document.querySelector('input[name="middle_station_01"]')?.value|| "";
 				const middleStation02 = document.querySelector('input[name="middle_station_02"]')?.value|| "";
 				const middleStation03 = document.querySelector('input[name="middle_station_03"]')?.value|| "";
 				const middleStation04 = document.querySelector('input[name="middle_station_04"]')?.value|| "";
-				const middleStation05 = document.querySelector('input[name="middle_station_05"]')?.value|| ""; */
-				const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]');
+				const middleStation05 = document.querySelector('input[name="middle_station_05"]')?.value|| ""; 
+				/* const middleInputs = document.querySelectorAll('#stationContainer input[type="text"]'); */
 				const middles = [];
-				middleInputs.forEach(input => {
+				/*middleInputs.forEach(input => {
 					const v = input.value.trim();
 					if(v !== ""){
 						middles.push(v);
 					}
-				});
+				}); */
+				
+				if(middleStation01.trim().length>0) {
+					middles.push(middleStation01);
+				}
+				if(middleStation02) {
+					middles.push(middleStation02);
+				}
+				if(middleStation03) {
+					middles.push(middleStation03);
+				}
+				if(middleStation04) {
+					middles.push(middleStation04);
+				}
+				if(middleStation05) {
+					middles.push(middleStation05);
+				}
+				
 				
 				
 				
 				const ToStation = document.querySelector('input[name="To_station"]').value;
 				
-				const keiroResult = [formStation, ...middles, ToStation].join(" -> ");
-				
+				// 모든 역을 순서대로 담은 '배열'
+				fullPath = [formStation, ...middles, ToStation]; 
+				// 화면에 표시할 '문자열'
+				const keiroResult = fullPath.join(" -> "); 
+
 				keiro.innerText = keiroResult;
+				
 				
 				
 				document.getElementById("kensakuTime").innerText = getCurrentTime();
@@ -686,12 +741,29 @@ document.addEventListener("DOMContentLoaded", function () {
 					}
 				];
 				
+				teikiken = [];
+				for (let i = 0; i < fullPath.length - 1; i++) {
+			        const from = fullPath[i];
+			        const to = fullPath[i + 1];
+
+			        
+			        teikiken.push({
+			        	name: "東武東上線",
+			            from: from,
+			            to: to,
+			            onemonth: 8000, 
+			            threemonth: 13000, 
+			            sixmonth: 24000 
+			        });
+			    }
 				
+			
+				/* 
 				teikiken = [
 					{
 					name : "東武東上線",
-					from: "渋谷",
-					to: "新宿",
+					from: formStation,
+					to: ToStation,
 					onemonth: 8500,     // 분
 					threemonth: 13170,      // 회
 					sixmonth: 24950        // 엔
@@ -707,12 +779,12 @@ document.addEventListener("DOMContentLoaded", function () {
 					{
 					name : "東京メトロ丸ノ内線",
 					from: "渋谷",
-					to: "新宿",
+					to: ToStation,
 					onemonth: "↓",     // 분
 					threemonth: "↓",      // 회
 					sixmonth: "↓"        // 엔
 					}
-				];
+				]; */
 				
 				routes.sort(function(a,b) {
 					return a.fare - b.fare;

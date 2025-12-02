@@ -22,12 +22,12 @@
 
 	#form_Ttile1 {
 		display: grid;
-		grid-template-columns: 36px 110px 1fr 120px 120px 120px 170px 50px 1fr;
+		grid-template-columns: 36px 125px 1fr 120px 120px 120px 170px 50px 1fr;
 	}
 	
 	#form_Text1 {
 		display: grid;
-		grid-template-columns: 36px 110px 1fr 120px 120px 120px 170px 50px 1fr;
+		grid-template-columns: 36px 125px 1fr 120px 120px 120px 170px 50px 1fr;
 	}
 	
 	.link_text {
