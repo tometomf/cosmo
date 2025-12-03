@@ -1,11 +1,13 @@
 package org.cosmo.controller;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.HiwariAddressVO;
@@ -16,6 +18,7 @@ import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.HiwariRiyuVO;
 import org.cosmo.domain.IchijiHozonDTO;
 import org.cosmo.domain.ShainVO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.service.HiwariKinmuchiService;
 import org.cosmo.service.IchijiHozonService;
 import org.cosmo.service.MailService;
@@ -429,14 +432,11 @@ public class HiwariKinmuchiController {
   
         return keiroList.size();
     }
- // import 추가 필요 없음 (기존 그대로)
-
     @PostMapping("/submit")
     public String submitFromKakunin(
             @RequestParam(value = "evidence", required = false) MultipartFile evidence,
             HttpSession session,
             RedirectAttributes rttr) {
-
 
         System.out.println(">>> [SUBMIT] START");
 
@@ -458,9 +458,9 @@ public class HiwariKinmuchiController {
             }
         }
 
-        // 2) 세션에 없으면 DB에서 최신 신청번호 조회 (임시저장 때와 동일한 개념)
+        // 2) 세션에 없으면 DB에서 최신 신청번호 조회
         if (shinseiNo == null) {
-            Long latest = service.getLatestShinseiNo(kigyoCd, shainUid); // ★ 서비스에 메서드 하나 추가해서 mapper.findLatestShinseiNo() 호출
+            Long latest = service.getLatestShinseiNo(kigyoCd, shainUid);
             System.out.println(">>> [SUBMIT] fallback latest shinseiNo = " + latest);
             shinseiNo = latest;
         }
@@ -473,6 +473,21 @@ public class HiwariKinmuchiController {
         }
 
         try {
+            // ===== 증빙 파일 업로드 처리 =====
+            if (evidence != null && !evidence.isEmpty()) {
+                System.out.println(">>> [SUBMIT] evidence file received: " + evidence.getOriginalFilename());
+                try {
+                    service.saveEvidence(kigyoCd, shainUid, shinseiNo, evidence);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    rttr.addFlashAttribute("error", "証拠ファイルの保存に失敗しました: " + ioe.getMessage());
+                    return "redirect:/hiwariKinmuchi/kakunin";
+                }
+            } else {
+                System.out.println(">>> [SUBMIT] no evidence file attached");
+            }
+            // ===== 증빙 파일 업로드 끝 =====
+
             System.out.println(">>> [SUBMIT] before submitApplication");
             service.submitApplication(kigyoCd, shinseiNo);
             System.out.println(">>> [SUBMIT] after submitApplication");
@@ -515,15 +530,43 @@ public class HiwariKinmuchiController {
             return "redirect:/hiwariKinmuchi/kakunin";
         }
     }
+    // ① 증빙 파일 다운로드
+    @GetMapping("/evidence/download")
+    public void downloadEvidence(
+            @RequestParam("uid") Long uid,
+            HttpSession session,
+            HttpServletResponse response) throws IOException {
 
-    // 유지희 
-    @PostMapping("/tempSave")
-    public String tempSaveFromKakunin(
-            @RequestParam(value = "commuteJson", required = false) String commuteJson, // Kakunin에서 보낸 JSON (지금은 사용하지 않음)
+        ShainVO shain = (ShainVO) session.getAttribute("shain");
+        if (shain == null) {
+            response.sendRedirect("/");
+            return;
+        }
+
+        Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
+
+        UploadFileDTO file = service.getEvidenceFile(kigyoCd, uid);
+        if (file == null || file.getData() == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // 헤더 설정
+        response.setContentType(file.getContentType());
+        String filename = java.net.URLEncoder.encode(file.getName(), "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+        // 바이트 쓰기
+        response.getOutputStream().write(file.getData());
+        response.getOutputStream().flush();
+    }
+
+    // ② 증빙 파일 삭제
+    @GetMapping("/evidence/delete")
+    public String deleteEvidence(
+            @RequestParam("uid") Long uid,
             HttpSession session,
             RedirectAttributes rttr) {
-
-        System.out.println("=== DEBUG /hiwariKinmuchi/tempSave START ===");
 
         ShainVO shain = (ShainVO) session.getAttribute("shain");
         if (shain == null) {
@@ -531,20 +574,13 @@ public class HiwariKinmuchiController {
         }
 
         Integer kigyoCd = Integer.valueOf(shain.getKigyo_Cd());
-        Long shainUid  = Long.valueOf(shain.getShain_Uid());
 
-        List<HiwariKeiroVO> keiroList = service.getKeiroList(kigyoCd, shainUid);
-        if (keiroList == null) {
-            keiroList = new ArrayList<>();
-        }
+        service.deleteEvidenceFile(kigyoCd, uid);
 
-        service.saveTemp(kigyoCd, shainUid, keiroList);
-
-        rttr.addFlashAttribute("tempSaveMsg", "一時保存しました。");
-
+        rttr.addFlashAttribute("tempSaveMsg", "アップロードファイルを削除しました。");
         return "redirect:/hiwariKinmuchi/kakunin";
     }
 
-	// 유지희 끝
+} 
 
-}
+//유지희

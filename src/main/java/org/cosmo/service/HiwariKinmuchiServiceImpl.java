@@ -1,5 +1,6 @@
 package org.cosmo.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.cosmo.domain.HiwariAddressVO;
@@ -8,10 +9,12 @@ import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.HiwariRiyuVO;
+import org.cosmo.domain.UploadFileDTO;
 import org.cosmo.mapper.HiwariKinmuchiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
@@ -230,6 +233,45 @@ public class HiwariKinmuchiServiceImpl implements HiwariKinmuchiService {
         return mapper.findLatestShinseiNo(kigyoCd, shainUid);
     }
 
+    @Override
+    public UploadFileDTO getEvidenceByShinsei(int kigyoCd, long shinseiNo) {
+        return mapper.selectEvidenceByShinsei(kigyoCd, shinseiNo);
+    }
+
+    @Override
+    @Transactional
+    public void saveEvidence(int kigyoCd, long shainUid, long shinseiNo, MultipartFile file)
+            throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            return;
+        }
+
+        UploadFileDTO dto = new UploadFileDTO();
+        dto.setFileUid(shinseiNo);                 // FILE_UID = SHINSEI_NO
+        dto.setSeq(1);                             // 일단 1 고정
+        dto.setTitle("通勤日割証拠ファイル");
+        dto.setName(file.getOriginalFilename());
+        dto.setContentType(file.getContentType());
+        dto.setData(file.getBytes());
+
+        dto.setKigyoCd(String.valueOf(kigyoCd));
+        dto.setAddUserId((int) shainUid);
+        dto.setUpdUserId((int) shainUid);
+
+        mapper.insertEvidence(dto);
+    }
+
+    @Override
+    public UploadFileDTO getEvidenceFile(int kigyoCd, long fileUid) {
+        return mapper.selectEvidenceByUid(kigyoCd, fileUid);
+    }
+
+    @Override
+    @Transactional
+    public void deleteEvidenceFile(int kigyoCd, long fileUid) {
+        mapper.deleteEvidenceByUid(kigyoCd, fileUid);
+    }
 
     //유지희 끝
 }

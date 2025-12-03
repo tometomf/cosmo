@@ -10,6 +10,7 @@ import org.cosmo.domain.HiwariKakuninVO;
 import org.cosmo.domain.HiwariKeiroVO;
 import org.cosmo.domain.HiwariKinmuchiVO;
 import org.cosmo.domain.HiwariRiyuVO;
+import org.cosmo.domain.UploadFileDTO;
 
 @Mapper
 public interface HiwariKinmuchiMapper {
@@ -95,5 +96,27 @@ int updateShinseiStatus(
 Long findLatestShinseiNo(
 	     @Param("kigyoCd") Integer kigyoCd,
 	     @Param("shainUid") Long shainUid);
-}
 
+
+// =========================
+// 업로드 파일(UPLOAD_FILE) 관련
+// =========================
+
+// ① 신청번호 기준 증빙 파일 1건 조회 (카쿠닌 화면 표시용)
+UploadFileDTO selectEvidenceByShinsei(
+        @Param("kigyoCd") Integer kigyoCd,
+        @Param("shinseiNo") Long shinseiNo);
+
+// ② 증빙 파일 INSERT (업로드 버튼 눌렀을 때)
+int insertEvidence(UploadFileDTO dto);
+
+// ③ FILE_UID 기준으로 파일 조회 (다운로드용)
+UploadFileDTO selectEvidenceByUid(
+        @Param("kigyoCd") Integer kigyoCd,
+        @Param("fileUid") Long fileUid);
+
+// ④ FILE_UID 기준 파일 삭제 (업로드取消 버튼)
+int deleteEvidenceByUid(
+        @Param("kigyoCd") Integer kigyoCd,
+        @Param("fileUid") Long fileUid);
+}
