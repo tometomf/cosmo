@@ -542,5 +542,107 @@ LEFT JOIN CODE C103
       AND SHINSEI_NO = #{shinseiNo}
 </update>
 
+    <!-- ===== 업로드 파일 매핑 (UPLOAD_FILE) ===== -->
+    <resultMap id="UploadFileMap" type="org.cosmo.domain.UploadFileDTO">
+        <id     column="FILE_UID"    property="fileUid" />
+        <id     column="SEQ"         property="seq" />
+
+        <result column="TITLE"       property="title" />
+        <result column="NAME"        property="name" />
+        <result column="CONTENT_TYPE" property="contentType" />
+        <result column="DATA"        property="data" />
+
+        <result column="KIGYO_CD"    property="kigyoCd" />
+        <result column="ADD_USER_ID" property="addUserId" />
+        <result column="ADD_DATE"    property="addDate" />
+        <result column="UPD_USER_ID" property="updUserId" />
+        <result column="UPD_DATE"    property="updDate" />
+    </resultMap>
+    <!-- ① 신청번호 기준 증빙 파일 1건 조회 (kakunin 화면용)
+         가정: FILE_UID = SHINSEI_NO, SEQ = 1 -->
+    <select id="selectEvidenceByShinsei"
+            resultMap="UploadFileMap">
+        SELECT
+            FILE_UID,
+            SEQ,
+            TITLE,
+            NAME,
+            CONTENT_TYPE,
+            DATA,
+            KIGYO_CD,
+            ADD_USER_ID,
+            ADD_DATE,
+            UPD_USER_ID,
+            UPD_DATE
+        FROM UPLOAD_FILE
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND FILE_UID = #{shinseiNo}
+          AND SEQ = 1
+    </select>
+
+    <!-- ② 증빙 파일 INSERT (업로드 버튼 눌렀을 때) -->
+    <insert id="insertEvidence"
+            parameterType="org.cosmo.domain.UploadFileDTO">
+        INSERT INTO UPLOAD_FILE (
+            FILE_UID,
+            SEQ,
+            TITLE,
+            NAME,
+            CONTENT_TYPE,
+            DATA,
+            KIGYO_CD,
+            ADD_USER_ID,
+            ADD_DATE,
+            UPD_USER_ID,
+            UPD_DATE
+        )
+        VALUES (
+            #{fileUid},
+            #{seq},
+            #{title},
+            #{name},
+            #{contentType},
+            #{data, jdbcType=BLOB},
+            #{kigyoCd},
+            #{addUserId},
+            SYSTIMESTAMP,
+            #{updUserId},
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <!-- ③ FILE_UID 기준으로 파일 조회 (다운로드용) -->
+    <select id="selectEvidenceByUid"
+            resultMap="UploadFileMap">
+        SELECT
+            FILE_UID,
+            SEQ,
+            TITLE,
+            NAME,
+            CONTENT_TYPE,
+            DATA,
+            KIGYO_CD,
+            ADD_USER_ID,
+            ADD_DATE,
+            UPD_USER_ID,
+            UPD_DATE
+        FROM UPLOAD_FILE
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND FILE_UID = #{fileUid}
+          AND SEQ = (
+              SELECT MIN(SEQ)
+              FROM UPLOAD_FILE
+              WHERE KIGYO_CD = #{kigyoCd}
+                AND FILE_UID = #{fileUid}
+          )
+    </select>
+
+    <!-- ④ FILE_UID 기준 파일 삭제 (업로드取消 버튼) -->
+    <delete id="deleteEvidenceByUid">
+        DELETE FROM UPLOAD_FILE
+        WHERE KIGYO_CD = #{kigyoCd}
+          AND FILE_UID = #{fileUid}
+    </delete>
+
 	<!-- 유지희 끝 -->
 </mapper>
