@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.cosmo.domain.AddressInputForm;
@@ -576,123 +577,219 @@ public class IdoConfirmController {
         return "redirect:/idoconfirm/kanryoPage";
     }
     
-	// 윤종운
-	@PostMapping(value = "/api/upload/fuzuiShorui", produces = "application/json")
-	@ResponseBody
-	public ResponseEntity<UploadResult> uploadFuzuiShorui(
-			@RequestParam("uploadFile") MultipartFile uploadFile,
-			@RequestParam("fileType") String fileType,
-			HttpSession session) {
-		
-		// 1. 파일 유효성 검사
-		if (uploadFile.isEmpty()) {
-			UploadResult result = UploadResult.builder()
-				.success(false)
-				.message("업로드할 파일을 선택해주세요.")
-				.build();
-			// 400 Bad Request 상태 코드와 함께 응답 본문을 반환
-			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST); 
-		}
-		
-		// 2. 세션에서 ShainUid 추출 로직
-		Integer shainUid = (Integer) session.getAttribute("shainUid");
-		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
-		
-		// 2-1. ShainUid 검증
-		if (shainUid == null || shainUid.intValue() == 0) {
-			UploadResult result = UploadResult.builder()
-				.success(false)
-				.message("세션에 사용자 정보가 없습니다.")
-				.build();
-			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED); // 401
-		}
-		// 2-2. KigyoCd 처리
-		// KigyoCd가 세션에 없거나 0인 경우, huzuikanri에서 설정했던 기본값(100)을 사용합니다.
-		if (kigyoCd == null || kigyoCd.intValue() == 0) {
-			kigyoCd = 100;
-		}
-		
-		try {
-			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
-			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
-			
-			// 4. 성공 응답 구성 및 반환
-			UploadResult result = UploadResult.builder()
-				.success(true)
-				.fileUid(newFileUid)
-				.message("파일 업로드 완료")
-				.build();
-			
-			return new ResponseEntity<>(result, HttpStatus.OK);
-				
-		} catch (Exception e) {
-			
-			// 5. 실패 응답 구성 및 반환
-			System.err.println("파일 업로드 중 서버 에러가 발생: " + e.getMessage());
-			e.printStackTrace();
-			
-			UploadResult result = UploadResult.builder()
-				.success(false)
-				.message("파일 업로드 처리중에 서버 에러가 발생했습니다.")
-				.build();
-			
-			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	@GetMapping("/viewDocument")
-	public ResponseEntity<byte[]> viewDocument(@RequestParam("fileUid") String fileUid) {
-		// 1. Service를 통해 파일 데이터 및 메타 정보 조회
-		FileViewDTO fileData = fuzuiShoruiService.getFileForView(fileUid);
-		
-		if (fileData == null) {
-			// 등록된 파일이 없을 경우 404 또는 204 No Content 반환
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		
-		String contentType = fileData.getContentType();
-		
-		System.out.println("DEBUG: 조회된 ContentType (DB 값): [" + contentType + "]");
-		
-		// DB에서 조회한 값이 null이거나 빈 문자열인지 확인
-		if (contentType == null || contentType.trim().isEmpty()) {
-			System.err.println("ERROR: DB에서 조회된 ContentType이 NULL 또는 비어 있습니다. 파일 UID: " + fileUid);
+ // 윤종운
+ 	@PostMapping(value = "/api/upload/fuzuiShorui", produces = "application/json")
+ 	@ResponseBody
+ 	public ResponseEntity<UploadResult> uploadFuzuiShorui(
+ 			@RequestParam("uploadFile") MultipartFile uploadFile,
+ 			@RequestParam("fileType") String fileType,
+ 			HttpSession session) {
+ 		
+ 		// 1. 파일 유효성 검사
+ 		if (uploadFile.isEmpty()) {
+ 			UploadResult result = UploadResult.builder()
+ 				.success(false)
+ 				.message("업로드할 파일을 선택해주세요.")
+ 				.build();
+ 			// 400 Bad Request 상태 코드와 함께 응답 본문을 반환
+ 			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST); 
+ 		}
+ 		
+ 		// 2. 세션에서 ShainUid 추출 로직
+ 		Integer shainUid = (Integer) session.getAttribute("shainUid");
+ 		Integer kigyoCd = (Integer) session.getAttribute("kigyoCd");
+ 		
+ 		// 2-1. ShainUid 검증
+ 		if (shainUid == null || shainUid.intValue() == 0) {
+ 			UploadResult result = UploadResult.builder()
+ 				.success(false)
+ 				.message("세션에 사용자 정보가 없습니다.")
+ 				.build();
+ 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED); // 401
+ 		}
+ 		// 2-2. KigyoCd 처리
+ 		// KigyoCd가 세션에 없거나 0인 경우, huzuikanri에서 설정했던 기본값(100)을 사용합니다.
+ 		if (kigyoCd == null || kigyoCd.intValue() == 0) {
+ 			kigyoCd = 100;
+ 		}
+ 		
+ 		try {
+ 			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
+ 			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+ 			
+ 			// String -> Long 변환
+ 			Long longFileUid = Long.parseLong(newFileUid);
+ 			
+ 			// 4. 메인 테이블(SHAIN_FUZUI_SHORUI)의 FILE_UID_4 필드 업데이트
+ 			fuzuiShoruiService.updateFuzuiShoruiFileUid(kigyoCd, shainUid, fileType, longFileUid);
+ 			
+ 			// 5. 성공 응답 구성 및 반환
+ 			UploadResult result = UploadResult.builder()
+ 				.success(true)
+ 				.fileUid(newFileUid)
+ 				.message("파일 업로드 완료")
+ 				.build();
+ 			
+ 			return new ResponseEntity<>(result, HttpStatus.OK);
+ 				
+ 		} catch (Exception e) {
+ 			
+ 			// 5. 실패 응답 구성 및 반환
+ 			System.err.println("파일 업로드 중 서버 에러가 발생: " + e.getMessage());
+ 			e.printStackTrace();
+ 			
+ 			UploadResult result = UploadResult.builder()
+ 				.success(false)
+ 				.message("파일 업로드 처리중에 서버 에러가 발생했습니다.")
+ 				.build();
+ 			
+ 			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+ 		}
+ 	}
+ 	
+ 	@GetMapping("/viewDocument")
+ 	public ResponseEntity<byte[]> viewDocument(@RequestParam("fileUid") String fileUid) {
+ 		// 1. Service를 통해 파일 데이터 및 메타 정보 조회
+ 		FileViewDTO fileData = fuzuiShoruiService.getFileForView(fileUid);
+ 		
+ 		if (fileData == null) {
+ 			// 등록된 파일이 없을 경우 404 또는 204 No Content 반환
+ 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+ 		}
+ 		
+ 		String contentType = fileData.getContentType();
+ 		
+ 		System.out.println("DEBUG: 조회된 ContentType (DB 값): [" + contentType + "]");
+ 		
+ 		// DB에서 조회한 값이 null이거나 빈 문자열인지 확인
+ 		if (contentType == null || contentType.trim().isEmpty()) {
+ 			System.err.println("ERROR: DB에서 조회된 ContentType이 NULL 또는 비어 있습니다. 파일 UID: " + fileUid);
 
-			// **방어 로직**: 기본값 설정
-			// 오류를 막기 위해 알 수 없는 바이너리 파일 타입인 'application/octet-stream'으로 대체
-			contentType = "application/octet-stream";
-			System.out.println("DEBUG: ContentType을 기본값 [application/octet-stream]으로 대체합니다.");
-		}
-		
-		// 2. Content Type 설정 (HTTP Header)
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType(contentType));
-		headers.setCacheControl("no-cache, no-store, must-revalidate");
-		headers.setPragma("no-cache");
-		headers.setExpires(0L);
-		
-		// 3. 파일 이름 설정 (Content-Disposition을 'inline' 으로 하여 팝업/브라우저에 표시)
-		String fileName = fileData.getName(); 
-		String encodedFileName = "file"; // 파일 이름이 null이거나 비어있을 경우 사용할 기본값
+ 			// **방어 로직**: 기본값 설정
+ 			// 오류를 막기 위해 알 수 없는 바이너리 파일 타입인 'application/octet-stream'으로 대체
+ 			contentType = "application/octet-stream";
+ 			System.out.println("DEBUG: ContentType을 기본값 [application/octet-stream]으로 대체합니다.");
+ 		}
+ 		
+ 		// 2. Content Type 설정 (HTTP Header)
+ 		HttpHeaders headers = new HttpHeaders();
+ 		headers.setContentType(MediaType.parseMediaType(contentType));
+ 		headers.setCacheControl("no-cache, no-store, must-revalidate");
+ 		headers.setPragma("no-cache");
+ 		headers.setExpires(0L);
+ 		
+ 		// 3. 파일 이름 설정 (Content-Disposition을 'inline' 으로 하여 팝업/브라우저에 표시)
+ 		String fileName = fileData.getName(); 
+ 		String encodedFileName = "file"; // 파일 이름이 null이거나 비어있을 경우 사용할 기본값
 
-		// 파일 이름이 null이 아닐 때만 인코딩을 시도합니다.
-		if (fileName != null && !fileName.isEmpty()) {
-			try {
-				// 파일명에 포함된 공백, 한글 등을 UTF-8로 인코딩
-				encodedFileName = URLEncoder.encode(fileName, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				System.err.println("UTF-8 인코딩을 지원하지 않아 파일명을 인코딩할 수 없습니다.");
-				// 인코딩 실패 시 (매우 드물지만) 안전한 이름으로 대체
-				encodedFileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_"); 
-			}
-		} else {
-			System.err.println("ERROR: DB에서 조회된 파일 이름(NAME)이 NULL 또는 비어 있습니다. 기본 이름 'file' 사용.");
-		}
+ 		// 파일 이름이 null이 아닐 때만 인코딩을 시도합니다.
+ 		if (fileName != null && !fileName.isEmpty()) {
+ 			try {
+ 				// 파일명에 포함된 공백, 한글 등을 UTF-8로 인코딩
+ 				encodedFileName = URLEncoder.encode(fileName, "UTF-8");
+ 			} catch (UnsupportedEncodingException e) {
+ 				System.err.println("UTF-8 인코딩을 지원하지 않아 파일명을 인코딩할 수 없습니다.");
+ 				// 인코딩 실패 시 (매우 드물지만) 안전한 이름으로 대체
+ 				encodedFileName = fileName.replaceAll("[^a-zA-Z0-9.-]", "_"); 
+ 			}
+ 		} else {
+ 			System.err.println("ERROR: DB에서 조회된 파일 이름(NAME)이 NULL 또는 비어 있습니다. 기본 이름 'file' 사용.");
+ 		}
 
-		// Content-Disposition을 'inline'으로 설정하여 브라우저에서 바로 표시하도록 합니다.
-		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + encodedFileName + "\"");
-		
-		// 4. ResponseEntity로 파일 데이터와 HTTP 헤더 반환
-		return new ResponseEntity<>(fileData.getData(), headers, HttpStatus.OK);
-	}
+ 		// Content-Disposition을 'inline'으로 설정하여 브라우저에서 바로 표시하도록 합니다.
+ 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + encodedFileName + "\"");
+ 		
+ 		// 4. ResponseEntity로 파일 데이터와 HTTP 헤더 반환
+ 		return new ResponseEntity<>(fileData.getData(), headers, HttpStatus.OK);
+ 	}
+ 	
+ 	// 임시저장 엔드포인트
+ 	@PostMapping("/tempSaveFuzui")
+ 	public String tempSaveCommute(@RequestParam(name = "hozonUid", required = false) String hozonUid,
+ 			@RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+ 			@RequestParam("commuteJson") String commuteJson, @RequestParam("actionUrl") String actionUrl,
+ 			@RequestParam(value = "redirectUrl", required = false) String redirectUrl, 
+ 			HttpSession session,
+ 			HttpServletRequest request) {
+
+ 		ShainVO shain = (ShainVO) session.getAttribute("shain");
+
+ 		System.out.println(">>> hozonUid = " + hozonUid);
+ 		System.out.println(">>> shinseiNo = " + shinseiNo);
+
+ 		Integer userUid = Integer.parseInt(shain.getShain_Uid());
+ 		String shozokuCd = shain.getShozoku_Cd();
+ 		String shinseiKbn = shain.getShinchoku_kbn();
+
+ 		if (shinseiKbn == null || shinseiKbn.isEmpty()) {
+ 			shinseiKbn = "01";
+ 		}
+
+ 		if (hozonUid == null || hozonUid == "") {
+ 			hozonUid = "0";
+ 		}
+ 		
+ 		byte[] dataBytes = commuteJson.getBytes(StandardCharsets.UTF_8);
+
+ 		IchijiHozonDTO dto = new IchijiHozonDTO();
+ 		dto.setHozonUid(Integer.valueOf(hozonUid));
+ 		dto.setUserUid(userUid);
+ 		dto.setShinseiKbn(shinseiKbn);
+ 		dto.setShozokuCd(shozokuCd);
+ 		dto.setActionNm(actionUrl);
+ 		dto.setData(dataBytes);
+
+ 		dto.setAddUserId(userUid);
+ 		dto.setUpdUserId(userUid);
+
+ 		if (shinseiNo == null || shinseiNo == "") {
+ 			shinseiNo = "0";
+ 		}
+
+ 		int newUid = ichijiHozonService.saveOrUpdateCommuteTemp(dto);
+ 		oshiraseService.saveTempOshirase(shain, Long.valueOf(shinseiNo));
+ 		String clientIp = getClientIp(request);
+
+ 		fuzuiShoruiService.writeProcessLog("COS", "TEMP", shinseiNo, "", "", "", "", "", userUid, clientIp);
+
+ 		if (redirectUrl == "") {
+ 			return "redirect:/shinsei/ichiji?hozonUid=" + newUid;
+ 		}
+ 		
+ 		if (hozonUid == "0") {
+ 			return "redirect:" + redirectUrl + "?hozonUid=" + newUid;
+ 		} else {		
+ 			return "redirect:" + redirectUrl;
+ 		}
+ 		
+ 	}
+ 	
+ 	private boolean isBlank(String str) {
+ 		return (str == null || str.trim().isEmpty());
+ 	}
+ 	
+ 	public String getClientIp(HttpServletRequest request) {
+
+ 		String ip = request.getHeader("X-Forwarded-For");
+
+ 		if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+ 			ip = request.getHeader("Proxy-Client-IP");
+ 		}
+ 		if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+ 			ip = request.getHeader("WL-Proxy-Client-IP");
+ 		}
+ 		if (isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+ 			ip = request.getRemoteAddr();
+ 		}
+
+ 		if (ip != null && ip.contains(",")) {
+ 			ip = ip.split(",")[0].trim();
+ 		}
+
+ 		if ("0:0:0:0:0:0:0:1".equals(ip)) {
+ 			ip = "127.0.0.1";
+ 		}
+
+ 		return ip;
+ 	}
 }

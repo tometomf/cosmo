@@ -157,26 +157,6 @@
 			)
 	</insert>
 	
-	<insert id="insertProcessLog" parameterType="org.cosmo.domain.ProcessLogDTO">
-		INSERT INTO
-			PROCESS_LOG (
-				PROCESS_TIMESTAMP,  SUBSYSTEM_ID,
-				PROCESS_COL,
-				KEY1, KEY2, KEY3, KEY4, KEY5,
-				DATA,
-				USER_UID,
-				USER_TRACK
-			)
-		VALUES (
-			SYSDATE, #{subsystemId},
-			#{processCol},
-			#{key1}, #{key2}, #{key3}, #{key4}, #{key5},
-			#{data, jdbcType=CLOB},
-			#{userUid},
-			#{userTrack}
-		)
-	</insert>
-	
 	<select id="selectCurrentTsukinShudanKbn" resultType="java.lang.String">
 		SELECT
 			TSUKIN_SHUDAN_KBN
@@ -225,5 +205,49 @@
 			AND
 				SEQ = 0
 	</select>
+	
+	<update id="updateShainFuzuiFileUid">
+		UPDATE
+			SHAIN_FUZUI_SHORUI
+		SET 
+			${fileType} = #{fileUid}, 
+			UPD_DATE = SYSDATE,
+			UPD_USER_ID = #{shainUid}
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHAIN_UID = #{shainUid}
+	</update>
+	
+	<insert id="insertProcessLog"
+		parameterType="org.cosmo.domain.ProcessLogDTO">
+		INSERT INTO PROCESS_LOG (
+		PROCESS_TIMESTAMP,
+		SUBSYSTEM_ID,
+		PROCESS_COL,
+		KEY1,
+		KEY2,
+		KEY3,
+		KEY4,
+		KEY5,
+		DATA,
+		USER_UID,
+		USER_TRACK
+		) VALUES (
+		#{processTimestamp, jdbcType=TIMESTAMP},
+		#{subsystemId, jdbcType=VARCHAR},
+		#{processCol, jdbcType=VARCHAR},
+		#{key1, jdbcType=VARCHAR},
+		#{key2, jdbcType=VARCHAR},
+		#{key3,
+		jdbcType=VARCHAR},
+		#{key4, jdbcType=VARCHAR},
+		#{key5, jdbcType=VARCHAR},
+		#{data, jdbcType=CLOB},
+		#{userUid, jdbcType=NUMERIC},
+		#{userTrack,
+		jdbcType=VARCHAR}
+		)
+	</insert>
 	
 </mapper>

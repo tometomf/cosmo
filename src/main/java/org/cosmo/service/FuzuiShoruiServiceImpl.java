@@ -1,6 +1,7 @@
 package org.cosmo.service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,6 +36,7 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	// 1. 화면 초기 로딩에 필요한 모든 데이터를 조회
 	@Override
 	public FuzuiShoruiFormDTO getInitialData(SearchCriteriaDTO criteria) {
+		
 		int kigyoCd = criteria.getKigyoCd() != 0 ? criteria.getKigyoCd() : 0; // Null 체크
 		long shinseiNo = criteria.getShinseiNo() != 0 ? criteria.getShinseiNo() : 0;
 		int keiroSeq = criteria.getKeiroSeq() != 0 ? criteria.getKeiroSeq() : 0;
@@ -47,6 +49,10 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		if (kigyoCd == 0 || shinseiNo == 0 || keiroSeq == 0 || shainUid == 0) {
 			throw new IllegalArgumentException("필수 키 값이 누락되었습니다.");
 		}
+		
+		System.out.println("kigyoCd: " + kigyoCd);
+		System.out.println("shinseiNo: " + shinseiNo);
+		System.out.println("shainUid: " + shainUid);
 		
 		// 1-1. 신청 기본 정보 (SHINSEI 조회)
 		List<ShinseiDTO> shinseiList = fuzuiShoruiMapper.selectShinseiList(kigyoCd, shinseiNo);
@@ -242,7 +248,17 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		// 3. Mapper 호출 (DB 저장)
 		fuzuiShoruiMapper.insertFile(fileDTO);
 		
-		// 4. 파일 UID 반환
+		// 4. SHAIN_FUZUI_SHORUI 테이블 업데이트 로직
+		if (kigyoCd != null && kigyoCd.intValue() > 0 && shainUid != null && shainUid.intValue() > 0) {
+			// SHAIN_FUZUI_SHORUI 테이블의 해당 fileType 컬럼에 fileUid 값 업데이트
+			updateFuzuiShoruiFileUid(kigyoCd, shainUid, fileType, fileUid);
+		} else {
+			// 오류 처리
+			System.err.println("에러: SHAIN_FUZUI_SHORUI 테이블 업데이트를 위한 복합 PK(kigyoCd 또는 shainUid)가 유효하지 않습니다.");
+			
+			throw new RuntimeException("사용자 식별 정보가 유효하지 않아 파일 링크 업데이트에 실패했습니다.");		}
+		
+		// 5. 파일 UID 반환
 		return fileUidString;
 	}
 	
@@ -290,5 +306,51 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		}
 		
 		return fileData;
+	}
+	
+	@Transactional
+	@Override
+	public void updateFuzuiShoruiFileUid(Integer kigyoCd, Integer shainUid, String fileType, Long fileUid) {
+		// 💡 SHAIN_FUZUI_SHORUI 테이블을 업데이트하는 Mapper 메서드 호출
+		int updatedRows = fuzuiShoruiMapper.updateShainFuzuiFileUid(kigyoCd, shainUid, fileType, fileUid);
+
+		if (updatedRows == 0) {
+			// 오류 처리 : 업데이트 할 레코드가 없는 경우
+			System.err.println("경고: SHAIN_FUZUI_SHORUI 테이블 업데이트 실패. KIGYO_CD: " + kigyoCd
+					+ ", SHAIN_UID: " + shainUid + "에 해당하는 레코드를 찾을 수 없습니다.");
+		}
+	}
+	
+	@Override
+	public void writeProcessLog(
+		String subsystemId,
+		String processCol,
+		String key1,
+		String key2,
+		String key3,
+		String key4,
+		String key5,
+		String data,
+		Integer userUid,
+		String userTrack
+	) {
+		ProcessLogDTO log = new ProcessLogDTO();
+		
+		// PK
+		log.setProcessTimestamp(new Timestamp(System.currentTimeMillis()));
+		log.setSubsystemId(subsystemId);
+		log.setProcessCol(processCol);
+		
+		log.setKey1(key1);
+		log.setKey2(key2);
+		log.setKey3(key3);
+		log.setKey4(key4);
+		log.setKey5(key5);
+		
+		log.setData(data);
+		log.setUserUid(userUid);
+		log.setUserTrack(userTrack);
+		
+		fuzuiShoruiMapper.insertProcessLog(log);
 	}
 }
