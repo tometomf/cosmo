@@ -17,4 +17,10 @@ public class HiwariKakuninRouteVO {
     private Integer kataMichiRyokin;   // 片道料金 (편도요금)
     private Integer kingaku;           // 金額 (금액)
     private Integer kingakuMonthly;    // 金額（1ヶ月参考値）(월금액)
+    
+    private String shinkansenRiyoKbn;
+    private String tokkyuRiyoKbn;
+    private String yuryoRiyoKbn;
+    private String kekkaSelect;
+
 }

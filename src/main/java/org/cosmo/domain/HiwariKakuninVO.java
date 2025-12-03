@@ -32,4 +32,19 @@ public class HiwariKakuninVO {
     // 업로드
     private String uploadFileName;
     private Boolean uploadExists;
+    
+    private Integer shinseiKin;
+    private Integer firstTeikiTsukiSu;
+    private String firstShikyuYmd;
+    private Integer firstShikyuKin;
+    private Integer nextTeikiTsukiSu;
+    private Integer regularShikyuKin;
+    private Integer tsukiShikyuKin;
+
+    private Integer katamichiKin;
+    private String shinkansenRiyoKbn;
+    private String tokkuyuRiyoKbn;
+    private String yuryoRiyoKbn;
+    private String kekkaSelect;
+
 }
