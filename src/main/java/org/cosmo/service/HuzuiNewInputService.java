@@ -39,7 +39,9 @@ public interface HuzuiNewInputService {
     
     public UploadFileDTO getFile(@RequestParam("fileUid") Long fileUid);
     
+    void removeShainFuzuiFile(@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
     
+    boolean confirmFileUid(@Param("fileUid") Long fileUid);
 }  
 
 

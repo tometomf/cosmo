@@ -7,12 +7,9 @@
 	
 	<select id="getList" resultType="org.cosmo.domain.ShainFuzuiShoruiVO">
 		    SELECT *
-		    FROM SHAIN_FUZUI_SHORUI a
-		    INNER JOIN UPLOAD_FILE b
-		    ON a.KIGYO_CD = b.KIGYO_CD
-		    AND a.FILE_UID_4 = b.FILE_UID
-		    WHERE a.KIGYO_CD = #{kigyo_Cd}
-		    AND a.SHAIN_UID = #{shain_Uid}
+		    FROM SHAIN_FUZUI_SHORUI 
+		    WHERE KIGYO_CD = #{kigyo_Cd}
+		    AND SHAIN_UID = #{shain_Uid}
 	</select>
 	
 	<select id="getFileList" resultType="org.cosmo.domain.UploadFileDTO">
@@ -102,6 +99,29 @@
 		where KIGYO_CD = #{shain.kigyo_Cd} 
 		and SHAIN_UID = #{shain.shain_Uid}
 		and SHINSEI_NO = #{findShinseiNo}
+	</update>
+	
+	<update id="shainFuzuiUpdate">
+		update shain_fuzui_shorui
+		set etc_comment_1 = #{shinsei.etcComment1}
+		, etc_comment_2 = #{shinsei.etcComment2}
+		, etc_comment_3 = #{shinsei.etcComment3}
+		, etc_comment_4 = #{shinsei.etcComment4}
+		, etc_comment_5 = #{shinsei.etcComment5}
+		,MENKYO_YUKO_KIGEN = #{shinseiFuzuiShorui.menkyoYukoKigen}
+		,MENKYO_NO = #{shinseiFuzuiShorui.menkyoNo}
+		,SHASHU = #{shinseiFuzuiShorui.shashu}
+		,TOROKU_NO = #{shinseiFuzuiShorui.torokuNo}
+		,HAIKIRYO = #{shinseiFuzuiShorui.haikiryo, jdbcType=NUMERIC}
+		,SHAKEN_YUKO_KIGEN = #{shinseiFuzuiShorui.shakenYukoKigen}
+		,HOKEN_MANRYO_YMD = #{shinseiFuzuiShorui.hokenManryoYmd}
+		,TAIJIN_BAISHO = #{shinseiFuzuiShorui.taijinBaisho}
+		,TAIBUTSU_BAISHO = #{shinseiFuzuiShorui.taibutsuBaisho}
+		,JINSHIN_SHOGAI = #{shinseiFuzuiShorui.jinshinShogai}
+		,TOJOSHA_SHOGAI = #{shinseiFuzuiShorui.tojoshaShogai}
+		,TOKYU = #{shinseiFuzuiShorui.tokyu, jdbcType=NUMERIC}
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid} 
 	</update>
 	
 	<insert id="addFuzuiShorui">
@@ -222,6 +242,13 @@
 		#{shinsei.updUserId, jdbcType=VARCHAR},
 		#{shinsei.updDate, jdbcType=TIMESTAMP})
 	</insert>
+	
+	<update id="removeShainFuzuiFile">
+		update shain_fuzui_shorui 
+		set ${fNo} = null
+		where KIGYO_CD = #{shain.kigyo_Cd} 
+		and SHAIN_UID = #{shain.shain_Uid} 
+	</update>
 	
 	<update id="updateAlert">
 		update alert set 
@@ -376,6 +403,12 @@
 		#{shinseiFuzuiShorui.updUserId, jdbcType=VARCHAR},
 		#{shinseiFuzuiShorui.updDate, jdbcType=TIMESTAMP})
 	</insert>
+	
+	<select id="confirmFileUid" resultType="boolean">
+    select 
+        case when exists (select 1 from upload_file where file_uid = #{fileUid}) then 1 else 0 end 
+    from dual
+	</select>
 	
 	<insert id="addOshirase">
 		insert into OSHIRASE(

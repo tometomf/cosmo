@@ -64,6 +64,7 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		huzuiNewInputMapper.addFuzuiShoruiLog(shinseiFuzuiShorui, shain);
         huzuiNewInputMapper.addOshirase(oshirase, shain);
         huzuiNewInputMapper.addProcessLog(processLog, shain);
+        huzuiNewInputMapper.shainFuzuiUpdate(shain, shinsei, shinseiFuzuiShorui);
 	}
 
 	@Override
@@ -78,8 +79,13 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 	@Override
 	public void addFile(UploadFileDTO UploadFile, String fNo, ShainVO shain,ShinseiDTO shinsei, Long findShinseiNo) {
 		// TODO Auto-generated method stub
+		Long checkUid = UploadFile.getFileUid();
+		
+		if(confirmFileUid(checkUid)){
+			System.out.println("파일uid 중복");
+			UploadFile.setFileUid(generateNewFileUid()); 
+		};
 		huzuiNewInputMapper.addFile(UploadFile, shain);
-		huzuiNewInputMapper.fileUpdate(UploadFile, fNo, shain);
 
 		    if (fNo.startsWith("ETC_FILE_UID_")) {
 		        // ETC_FILE_UID_로 시작하면 shinseiFileUpdate 실행
@@ -93,6 +99,8 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		        
 		        return;   // 종료
 		    }
+		    
+		 huzuiNewInputMapper.fileUpdate(UploadFile, fNo, shain);
 	}
 
 
@@ -132,6 +140,11 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 
          Long positiveLong = Long.parseLong(sb.toString());
          Long fileUid = positiveLong;
+         
+         
+         if(confirmFileUid(fileUid)) {
+        	 fileUid = generateNewFileUid();
+         }
          
          UploadFile.setTitle(fileNo);
          UploadFile.setName(file.getOriginalFilename());
@@ -179,6 +192,34 @@ public class HuzuiNewInputServiceImpl implements HuzuiNewInputService {
 		return huzuiNewInputMapper.getFile(fileUid);
 	}
 
+
+
+
+	@Override
+	public void removeShainFuzuiFile(String fNo, ShainVO shain) {
+		// TODO Auto-generated method stub
+		huzuiNewInputMapper.removeShainFuzuiFile(fNo, shain);
+	}
+
+
+
+
+	@Override
+	public boolean confirmFileUid(Long fileUid) {
+		// TODO Auto-generated method stub
+		return huzuiNewInputMapper.confirmFileUid(fileUid);
+	}
+	
+	
+	private Long generateNewFileUid() {
+	    Random rand = new Random();
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(rand.nextInt(9) + 1); // 첫 자리는 1~9
+	    for (int i = 0; i < 17; i++) {
+	        sb.append(rand.nextInt(10)); // 나머지 자리는 0~9
+	    }
+	    return Long.parseLong(sb.toString());
+	}
 
 	
 	

@@ -84,8 +84,6 @@ public class HuzuiNewInputController {
 	                tempFiles.add(dto);
 	                session.setAttribute("tempFiles", tempFiles);
 	                
-	               
-	                
 	                return ResponseEntity.ok(Collections.singletonMap("uid", dto.getName()));
 	            } else {
 	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사원 정보가 없습니다.");
@@ -247,7 +245,17 @@ public class HuzuiNewInputController {
           if(uploadedFiles != null && tempFiles != null) {
         	  Map.Entry<String, Path>[] entries =
           	        uploadedFiles.entrySet().toArray(new Map.Entry[0]);
+        
+        	  if(tempFiles.size() != entries.length) {
+        		  System.out.println("길이 불일치 리턴");
+        		  return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리 중 오류가 발생했습니다.");
+        	  }
+        	  
+        	  
+        	  
           for(int i=0; i < tempFiles.size(); i++) {
+        	  
+        	          	  
         	  UploadFileDTO fileDTO = tempFiles.get(i);
         	  Map.Entry<String, Path> entry = entries[i];
         	  
@@ -257,10 +265,13 @@ public class HuzuiNewInputController {
         	  byte[] data = Files.readAllBytes(value);
         	  fileDTO.setData(data);
         	  
+        	  
+        	  
         	  huzuiNewInputService.addFile(fileDTO, fNo, shain,shinseiDTO,findShinseiNo);
           }
           }
-          
+            session.removeAttribute("tempFiles");
+           	session.removeAttribute("uploadedFiles");
             return ResponseEntity.ok().body("데이터가 성공적으로 처리되었습니다.");
         } catch (Exception e) {
         	e.printStackTrace();
@@ -349,5 +360,21 @@ public class HuzuiNewInputController {
 	    } catch (IOException e) {
 	        throw new RuntimeException("객체 직렬화 오류", e);
 	    }
+	}
+	
+	//김민수
+		@RequestMapping(value="/removeFile", method= RequestMethod.POST)
+		public ResponseEntity<?> removeShainFuzuiFile(@RequestParam("fileName") String fNo, HttpSession session){
+			try {
+				ShainVO shain = (ShainVO) session.getAttribute("shain");
+				
+				huzuiNewInputService.removeShainFuzuiFile(fNo, shain);
+				  return ResponseEntity.ok("데이터가 성공적으로 처리되었습니다.");
+			}
+			catch (Exception e) {
+	        	e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리 중 오류가 발생했습니다.");
+		}
+		
 	}
 }

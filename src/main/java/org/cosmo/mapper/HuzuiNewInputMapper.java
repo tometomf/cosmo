@@ -46,6 +46,8 @@ public interface HuzuiNewInputMapper {
 	
 	void fileUpdate(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
 	
+	void removeShainFuzuiFile(@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
+	
 	void shinseiFileUpdate(@Param ("UploadFile")UploadFileDTO UploadFile,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain, Long findShinseiNo);
 	
 	Long findShinseiNo(@Param ("shain")ShainVO shain);
@@ -53,4 +55,8 @@ public interface HuzuiNewInputMapper {
 	UploadFileDTO getFile(@RequestParam("fileUid") Long fileUid);
 	
 	void commentUpdate(@Param ("shinsei")ShinseiDTO shinsei,@Param ("fNo")String fNo,@Param ("shain")ShainVO shain);
+	
+	boolean confirmFileUid(@Param("fileUid") Long fileUid);
+	
+	void shainFuzuiUpdate(@Param ("shain")ShainVO shain,@Param ("shinsei")ShinseiDTO shinsei,@Param ("shinseiFuzuiShorui")ShinseiFuzuiShoruiDTO shinseiFuzuiShorui );
 }
