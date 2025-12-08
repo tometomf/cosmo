@@ -174,115 +174,86 @@ public class IdoConfirmController {
     // ==========================================
 
     @GetMapping("/addressinput")
-    public String addressInputGet(Model model) {
-        // [주의] 실제 로그인 연동 시 세션에서 가져와야 함. 
-        String shainUid = "user123"; //로그인기능 되면 수정
-     //String shainUid = (String) session.getAttribute("loginUserId");
+    public String addressInputGet(
+            @RequestParam(name = "shinseiNo", required = false) String shinseiNo,
+            Model model, HttpSession session) {
         
 
-        // 1. 화면 상단(회색 박스)에 보여줄 DB 데이터 로드
-        AddressViewDto view = addressInputService.loadViewData(shainUid);
+        // shinseiNo도 같이 서비스로 전달
+    	ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
+        String shainUid = "";
 
-        // 2. 폼 객체 초기화 (없을 경우만)
+        if (sessionShain != null) {
+            // HomeController에서 설정한 '30000001'을 가져옴
+            shainUid = sessionShain.getShain_Uid(); 
+            System.out.println("DEBUG: Session에서 가져온 ShainUID: " + shainUid);
+        } else {
+            // 세션이 없을 경우, 로그인 로직이 없으니 임시로 '30000001'을 다시 사용
+            shainUid = "30000001"; 
+            System.out.println("WARN: 세션 정보 없음, 임시 ShainUID: " + shainUid);
+        }
+        // -----------------------------------------------------------------
+
+        // shinseiNo도 같이 서비스로 전달
+        AddressViewDto view = addressInputService.loadViewData(shainUid, shinseiNo);
+
         if (!model.containsAttribute("addressInputForm")) {
             model.addAttribute("addressInputForm", addressInputService.initForm());
         }
-        
-        // 3. 뷰 데이터 전달
         model.addAttribute("view", view);
 
         return "idoconfirm/04_addressinput";
     }
-
     @PostMapping("/addressinput")
     public String addressInputPost(
             @ModelAttribute("addressInputForm") AddressInputForm form,
             BindingResult result,
             Model model,
-            RedirectAttributes rttr) {
+            RedirectAttributes rttr,
+            HttpSession session) { // 1. 세션 파라미터 추가
 
-        String shainUid = "user123"; // 테스트용 ID
-        String action = form.getAction(); 
-
-        // ---------------------------------------------------
-        // 1. 반영 버튼 (DB의 중간주소를 입력폼에 자동 채움)
-        // ---------------------------------------------------
-        if ("reflect".equals(action)) {
-            // 서비스에서 DB 값을 조회하여 form에 set 해줌
-            addressInputService.reflectMiddleAddress(form, shainUid);
-            
-            // 화면 상단 데이터 다시 로드
-            model.addAttribute("view", addressInputService.loadViewData(shainUid));
-            
-            // 값이 채워진 form을 다시 화면으로 전달
-            model.addAttribute("addressInputForm", form);
-            
-            return "idoconfirm/04_addressinput";
+        String action = form.getAction();
+        
+        // -----------------------------------------------------------
+        // 2. [수정] 세션에서 shainUid 가져오기 (이 부분이 없어서 에러가 났습니다)
+        // -----------------------------------------------------------
+        ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
+        String shainUid = "";
+        
+        if (sessionShain != null) {
+            shainUid = sessionShain.getShain_Uid(); // 세션값 사용
+        } else {
+            shainUid = "30000001"; // 세션 없을 때 비상용 (테스트용)
         }
+        // -----------------------------------------------------------
 
-        // ---------------------------------------------------
-        // 2. 우편번호 검색 버튼
-        // ---------------------------------------------------
-        if ("search".equals(action)) {
-            addressInputService.searchZipCode(form);
-            model.addAttribute("view", addressInputService.loadViewData(shainUid));
-            return "idoconfirm/04_addressinput";
-        }
-
-        // ---------------------------------------------------
-        // 3. 일시보존 버튼
-        // ---------------------------------------------------
+        // 3. 일시저장
         if ("tempsave".equals(action)) {
-            addressInputService.tempSave(form, shainUid);
-            rttr.addFlashAttribute("message", "一時保存しました。");
-            rttr.addFlashAttribute("addressInputForm", form); // 입력했던 값 유지
+            try {
+                // 이제 shainUid 변수가 있으므로 에러가 나지 않습니다.
+                addressInputService.tempSave(form, shainUid); 
+                rttr.addFlashAttribute("message", "一時保存しました。");
+            } catch (Exception e) {
+                e.printStackTrace();
+                rttr.addFlashAttribute("errorMessage", "保存失敗");
+            }
+            rttr.addFlashAttribute("addressInputForm", form);
             return "redirect:/idoconfirm/addressinput";
         }
 
-        // ---------------------------------------------------
-     // 4. 다음(次へ) 버튼 클릭
-        // ==============================================================
+        // 4. 다음 버튼 (GeoService 체크)
         if ("next".equals(action)) {
+            boolean isValid = addressInputService.validateAndCheckRoute(form);
             
-            // 1) 필수 입력값 체크 (빈 값 확인)
-            // (AddressInputServiceImpl에 있는 기본 검증 사용)
-            boolean isBasicValid = addressInputService.validateAndCheckRoute(form);
-            
-            if (!isBasicValid) {
-                model.addAttribute("errorMessage", "必須項目を入力してください。");
-                // 화면 깨짐 방지용 데이터 로드
-                model.addAttribute("view", addressInputService.loadViewData(shainUid));
+            if (!isValid) {
+                model.addAttribute("errorMessage", "住所エラー (座標取得不可)");
+                // 에러 시 화면 복구를 위해 데이터 다시 로드
+                model.addAttribute("view", addressInputService.loadViewData(shainUid, null));
                 return "idoconfirm/04_addressinput";
             }
-
-            // 2) 주소 문자열 합치기 (도도부현 + 시구정촌 + 건물명)
-            String fullAddress = form.getPref() + form.getAddr1() 
-                               + (form.getAddr2() == null ? "" : form.getAddr2());
-            
-            System.out.println(">> GeoService 호출 전 주소: " + fullAddress);
-
-            // 3) GeoService 호출 (위도/경도 취득)
-            GeoPoint point = geoService.getLatLng(fullAddress);
-
-            // 4) 좌표 취득 실패 시 (에러 메시지 표시 및 화면 유지)
-            if (point == null) {
-                model.addAttribute("errorMessage", "住所の緯度経度が取得できませんでした。");
-                model.addAttribute("view", addressInputService.loadViewData(shainUid));
-                return "idoconfirm/04_addressinput";
-            }
-
-            // 5) 성공 시 로그 출력 (취득 확인)
-            System.out.println("===== [04] 좌표 취득 성공 =====");
-            System.out.println("Lat: " + point.getLat());
-            System.out.println("Lng: " + point.getLng());
-            
-            // (필요하다면 여기서 다음 화면으로 넘길 데이터 처리 가능)
-            
-            // 6) 경로 입력 화면으로 이동
             return "redirect:/idoconfirm/keiroInfo";
         }
 
-        // 그 외 -> 원래 화면
         return "redirect:/idoconfirm/addressinput";
     }
     // 作成者 : 권예성
