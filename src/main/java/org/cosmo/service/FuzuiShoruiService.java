@@ -2,6 +2,7 @@ package org.cosmo.service;
 
 import java.util.List;
 
+import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -28,4 +29,21 @@ public interface FuzuiShoruiService {
 	
 	// 5. 파일 뷰어용 데이터 조회
 	FileViewDTO getFileForView(String fileUid);
+	
+	// 6. 메인필드 파일UID 업데이트
+	void updateFuzuiShoruiFileUid(Integer kigyoCd, Integer shainUid, String fileType, Long fileUid);
+	
+	// 7. 프로세스 로그
+	void writeProcessLog(
+		String subsystemId,
+		String processCol,
+		String key1,
+		String key2,
+		String key3,
+		String key4,
+		String key5,
+		String data,
+		Integer userUid,
+		String userTrack
+	);
 }
