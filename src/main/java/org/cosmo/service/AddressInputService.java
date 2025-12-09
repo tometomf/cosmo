@@ -6,7 +6,7 @@ import org.cosmo.domain.AddressViewDto;
 
 public interface AddressInputService {
     AddressInputForm initForm();
-    AddressViewDto loadViewData(String shainUid);
+    AddressViewDto loadViewData(String shainUid, String shinseiNo);
     
     void reflectMiddleAddress(AddressInputForm form, String shainUid);
     

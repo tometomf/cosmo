@@ -24,30 +24,29 @@ public class AddressInputServiceImpl implements AddressInputService {
     }
 
     @Override
-    public AddressViewDto loadViewData(String shainUid) {
-        // 1. ★수정됨★ ShainMapper 대신 기존 mapper를 사용해 DTO를 바로 조회합니다.
-        // (AddressInputMapper.xml에 selectShainAddress 쿼리를 추가했어야 합니다)
-        AddressViewDto dto = mapper.selectShainAddress(shainUid);
+public AddressViewDto loadViewData(String shainUid, String shinseiNo) {
+        
+        AddressViewDto dto = null;
 
+        // [분기 로직]
+        if (shinseiNo != null && !shinseiNo.isEmpty()) {
+            // 신청 후 (번호 있음)
+            dto = mapper.selectShinseiData(shinseiNo);
+        } else {
+            // 신청 전 (번호 없음)
+            dto = mapper.selectShainAddress(shainUid);
+        }
+
+        // (나머지 로직은 그대로...)
         if (dto != null) {
-            // 2. [화면 상단] 중간 DB 주소 텍스트 만들기
-            // (이미 Mapper에서 컬럼 매핑을 다 해서 가져왔으므로, 합치기만 하면 됩니다)
             String fullMiddleAddr = 
                 (dto.getMiddlePref() == null ? "" : dto.getMiddlePref()) + " " +
                 (dto.getMiddleAddr1() == null ? "" : dto.getMiddleAddr1()) + " " +
                 (dto.getMiddleAddr2() == null ? "" : dto.getMiddleAddr2());
             
-            // 화면에 보여줄 텍스트 세팅
             dto.setMiddleDbAddress(fullMiddleAddr.trim());
-            
-            // 참고: 나머지 필드(currentZip, middleZip 등)는 
-            // XML 쿼리에서 이미 DTO 필드명과 매칭시켜 가져왔으므로 별도 세팅 불필요
-            
         } else {
-            // 데이터가 없을 경우 빈 객체 리턴하여 NullPointerException 방지
             dto = new AddressViewDto();
-            dto.setCurrentZip("");
-            dto.setMiddleZip("");
         }
 
         return dto;
