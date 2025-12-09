@@ -258,7 +258,7 @@
               </div>
             </div>
 
-            <!-- 日割額 -->
+                        <!-- 日割額 -->
             <div class="form_Text1 twoCol">
               <div class="form_Column">日割額</div>
               <div class="form_Normal">
@@ -266,6 +266,32 @@
               </div>
             </div>
 
+            <!-- 距離 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">距離</div>
+              <div class="form_Normal">
+                <c:out value="${r.shinseiKm}" default="0"/>km
+              </div>
+            </div>
+
+            <!-- 有料道路IC（乗り口～降り口） -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">有料道路IC（乗り口～降り口）</div>
+              <div class="form_Normal">
+               <c:out value="${r.yuryoIcStart}" default=""/> ～ 
+				<c:out value="${r.yuryoIcEnd}" default=""/>
+              </div>
+            </div>
+
+            <!-- 有料道路片道料金 -->
+            <div class="form_Text1 twoCol">
+              <div class="form_Column">有料道路片道料金</div>
+              <div class="form_Normal">
+                <c:out value="${r.yuryoKataMichiRyokin}" default="0"/>円
+
+              </div>
+            </div>
+            
           </div>
         </c:forEach>
       </c:if>
