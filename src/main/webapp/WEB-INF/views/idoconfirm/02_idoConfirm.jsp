@@ -49,7 +49,7 @@
 				<div class="subtitle">異動有無確認</div>
 
 				<div style="display: flex; flex-direction: column; width: 1010px; margin: auto; padding-top: 40px; padding-bottom: 20px;">
-					<div>
+					<div> 
 						勤務地および住所に変更がありますか？<br> それぞれ選択して、「次へ」をクリックしてください。<br>
 					</div>
 					
