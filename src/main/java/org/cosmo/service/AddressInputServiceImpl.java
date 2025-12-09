@@ -29,17 +29,19 @@ public class AddressInputServiceImpl implements AddressInputService {
         AddressViewDto dto = null;
 
         // =========================================================
-        // ★ [핵심] 신청 전/후 분기 로직
+        // ★ [핵심] 신청 번호 유무에 따른 분기 (설계서 로직)
         // =========================================================
         if (shinseiNo != null && !shinseiNo.isEmpty() && !"0".equals(shinseiNo)) {
-            // 1. [신청 후] 번호가 있음 -> 신청 테이블(SHINSEI) 조회
+            // 1. [신청 후]: 신청 번호가 있음 -> SHINSEI 테이블 조회
+            System.out.println(">>> [Service] 상태: 신청 후 (번호: " + shinseiNo + ")");
             dto = mapper.selectShinseiData(shinseiNo);
         } else {
-            // 2. [신청 전] 번호가 없음 -> 사원 마스터(SHAIN) 조회
+            // 2. [신청 전]: 신청 번호가 없음 -> SHAIN 테이블 조회
+            System.out.println(">>> [Service] 상태: 신청 전 (신규)");
             dto = mapper.selectShainAddress(shainUid);
         }
 
-        // 3. (공통) 중간 DB 주소 텍스트 생성 (화면 표시용)
+        // 3. (공통) 중간 DB 주소 텍스트 생성
         if (dto != null) {
             String fullMiddleAddr = 
                 (dto.getMiddlePref() == null ? "" : dto.getMiddlePref()) + " " +
@@ -48,12 +50,11 @@ public class AddressInputServiceImpl implements AddressInputService {
             
             dto.setMiddleDbAddress(fullMiddleAddr.trim());
         } else {
-            dto = new AddressViewDto(); // Null 방지
+            dto = new AddressViewDto();
         }
         
         return dto;
     }
-
     // ... (나머지 메서드는 기존과 동일) ...
     @Override public void reflectMiddleAddress(AddressInputForm form, String shainUid) {}
     @Override public void searchZipCode(AddressInputForm form) {}

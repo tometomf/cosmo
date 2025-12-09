@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="org.cosmo.mapper.AddressInputMapper">
 
     <select id="selectShainAddress" resultType="org.cosmo.domain.AddressViewDto">
         SELECT 
-            /* 현주소: 사원 정보 */
+            /* 현주소: 사원 정보 (SHAIN) */
             ZIP_CD      AS currentZip,
             ADDRESS_1   AS currentPref,
             ADDRESS_2   AS currentAddr1,
             ADDRESS_3   AS currentAddr2,
             
-            /* 중간주소: 사원 정보 */
+            /* 중간주소: 사원 정보 (항상 SHAIN에서) */
             DB_ZIP_CD     AS middleZip,
             DB_ADDRESS_1  AS middlePref,
             DB_ADDRESS_2  AS middleAddr1,
-            NULL          AS middleAddr2 
+            NULL          AS middleAddr2
         FROM SHAIN
         WHERE SHAIN_UID = #{shainUid}
     </select>
 
     <select id="selectShinseiData" resultType="org.cosmo.domain.AddressViewDto">
         SELECT 
-            /* 현주소: 신청 당시에 저장된 값 (SHINSEI) */
+            /* 현주소: 신청 당시 저장된 값 (SHINSEI) */
             A.GEN_ZIP_CD          AS currentZip,
             A.GEN_HOME_ADDRESS_1  AS currentPref,
             A.GEN_HOME_ADDRESS_2  AS currentAddr1,
             A.GEN_HOME_ADDRESS_3  AS currentAddr2,
             
-            /* 중간주소: 항상 최신 인사 정보 (SHAIN) */
+            /* 중간주소: 여전히 최신 인사 정보 (SHAIN) */
             B.DB_ZIP_CD     AS middleZip,
             B.DB_ADDRESS_1  AS middlePref,
             B.DB_ADDRESS_2  AS middleAddr1,
@@ -36,23 +38,5 @@
         LEFT JOIN SHAIN B ON A.SHAIN_UID = B.SHAIN_UID
         WHERE A.SHINSEI_NO = #{shinseiNo}
     </select>
-
-    <insert id="saveIchijiHozon">
-        INSERT INTO ICHIJI_HOZON (HOZON_UID, USER_UID, SHINSEI_KBN, SHOZOKU_CD, ACTION_NM, DATA, ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE)
-        VALUES (ICHIJI_HOZON_SEQ.NEXTVAL, #{userUid}, #{shinseiKbn, jdbcType=VARCHAR}, #{shozokuCd, jdbcType=VARCHAR}, #{actionNm, jdbcType=VARCHAR}, #{data, jdbcType=CLOB}, #{addUserId, jdbcType=VARCHAR}, SYSDATE, #{addUserId, jdbcType=VARCHAR}, SYSDATE)
-    </insert>
     
-    <insert id="insertOshirase">
-        INSERT INTO OSHIRASE (KIGYO_CD, SHAIN_UID, SHAIN_NO, TSUCHI_YMD, TSUCHI_HM, TSUCHISHA_KIGYO_CD, TSUCHISHA_CD, SHINSEI_NO, OSHIRASE_NAIYO, KENGEN, ADD_USER_ID, ADD_DATE, UPD_USER_ID, UPD_DATE) 
-        VALUES (#{kigyoCd}, #{shainUid}, #{shainNo}, TO_CHAR(SYSDATE, 'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MI'), #{kigyoCd}, #{shainNo}, NULL, #{message}, NULL, #{shainUid}, SYSDATE, #{shainUid}, SYSDATE)
-    </insert>
-
-    <insert id="insertProcessLog">
-        INSERT INTO PROCESS_LOG (PROCESS_TIMESTAMP, SUBSYSTEM_ID, PROCESS, KEY1, KEY2, KEY3, KEY4, KEY5, DATA, USER_UID, USER_TRACK) 
-        VALUES (SYSDATE, '05', '0400', '0', #{shinseiKbn}, NULL, NULL, #{kigyoCd}, NULL, #{userUid}, #{userIp})
-    </insert>
-
-    <select id="selectZipCode" resultType="java.util.HashMap">
-        SELECT ZIP_TODO || ZIP_SHIK || ZIP_ADRS AS "PREF_NAME", ZIP_ADRS2 AS "ADDR_NAME" FROM LEO_ZIP WHERE ZIP_CODE = #{zipCode} 
-    </select>
-</mapper>
+    </mapper>
