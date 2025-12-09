@@ -170,26 +170,41 @@ public class IdoConfirmController {
             @RequestParam(name = "shinseiNo", required = false) String shinseiNo,
             Model model, HttpSession session) {
         
-
-        // shinseiNo도 같이 서비스로 전달
-    	ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
-        String shainUid = "";
+        // -------------------------------------------------------------
+        // 1. 변수 선언 및 초기화 (★여기가 중요합니다!)
+        // -------------------------------------------------------------
+        String shainUid = "30000001"; // 기본값 (테스트용)
+        
+        // -------------------------------------------------------------
+        // 2. 세션 정보 확인
+        // -------------------------------------------------------------
+        ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
 
         if (sessionShain != null) {
-            // HomeController에서 설정한 '30000001'을 가져옴
-            shainUid = sessionShain.getShain_Uid(); 
+            // 세션에 값이 있으면 덮어씁니다.
+            shainUid = sessionShain.getShain_Uid();
+            
+            // 파라미터가 없으면 세션의 신청번호 사용
+            if (shinseiNo == null || shinseiNo.isEmpty()) {
+                String sessionShinseiNo = sessionShain.getShinsei_No();
+                if (sessionShinseiNo != null && !sessionShinseiNo.isEmpty()) {
+                    shinseiNo = sessionShinseiNo;
+                }
+            }
         } else {
-  
-            System.out.println("WARN");
+            System.out.println("⚠️ 세션 정보가 없습니다. (테스트용 ID 사용)");
         }
-        // -----------------------------------------------------------------
 
-        // shinseiNo도 같이 서비스로 전달
+        // -------------------------------------------------------------
+        // 3. 서비스 호출 (위에서 결정된 shainUid 사용)
+        // -------------------------------------------------------------
+        // 이제 shainUid 변수가 확실히 존재하고 값도 있으므로 에러가 나지 않습니다.
         AddressViewDto view = addressInputService.loadViewData(shainUid, shinseiNo);
 
         if (!model.containsAttribute("addressInputForm")) {
             model.addAttribute("addressInputForm", addressInputService.initForm());
         }
+        
         model.addAttribute("view", view);
 
         return "idoconfirm/04_addressinput";
@@ -200,31 +215,40 @@ public class IdoConfirmController {
             BindingResult result,
             Model model,
             RedirectAttributes rttr,
-            HttpSession session) { // 1. 세션 파라미터 추가
+            HttpSession session) {
 
         String action = form.getAction();
         
-        // -----------------------------------------------------------
-        // 2. [수정] 세션에서 shainUid 가져오기 (이 부분이 없어서 에러가 났습니다)
-        // -----------------------------------------------------------
+        // =============================================================
+        // [1] 변수 선언 (★중요: 여기서 만들어야 아래에서 다 쓸 수 있음)
+        // =============================================================
+        String shainUid = "30000001"; // 기본값
+        String kigyoCd = "100";
+        String shainNo = "000001";
+        String shozokuCd = "10";
+        
+        // =============================================================
+        // [2] 세션 값 덮어쓰기 (로그인 정보가 있으면 그걸로 교체)
+        // =============================================================
         ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
         
-        String shainUid = null;
-        String kigyoCd = null;
-        String shainNo = null;
-        String shozokuCd = null;
-        
-        // 세션 정보가 있으면 진짜 데이터로 덮어쓰기 (덮어쓰기가 핵심!)
         if (sessionShain != null) {
+            // (주의: Lombok getter 이름이 대소문자 구분에 따라 다를 수 있음)
+            // 에러 나면 .getShain_Uid() 처럼 언더바(_)를 확인하세요.
             shainUid = sessionShain.getShain_Uid();
             kigyoCd = sessionShain.getKigyo_Cd();
             shainNo = sessionShain.getShain_No();
             shozokuCd = sessionShain.getShozoku_Cd();
         }
         
-        // 3. 일시저장
+        // =============================================================
+        // [3] 기능 실행
+        // =============================================================
+        
+        // A. 일시저장 (tempsave)
         if ("tempsave".equals(action)) {
             try {
+                // 위 [1]번에서 만든 변수들을 여기서 사용합니다. (이제 에러 안 남!)
                 addressInputService.tempSave(form, shainUid, kigyoCd, shainNo, shozokuCd);
                 
                 rttr.addFlashAttribute("message", "一時保存しました。");
@@ -236,14 +260,17 @@ public class IdoConfirmController {
             return "redirect:/idoconfirm/addressinput";
         }
 
-        // 4. 다음 버튼 (GeoService 체크)
+        // B. 다음 (next)
         if ("next".equals(action)) {
             boolean isValid = addressInputService.validateAndCheckRoute(form);
             
             if (!isValid) {
-                model.addAttribute("errorMessage", "住所エラー (座標取得不可)");
-                // 에러 시 화면 복구를 위해 데이터 다시 로드
-                model.addAttribute("view", addressInputService.loadViewData(shainUid, null));
+                model.addAttribute("errorMessage", "住所エラー (座標取得不可 または 必須入力漏れ)");
+                
+                // 화면 복구용 데이터 로드
+                String currentShinseiNo = (sessionShain != null) ? sessionShain.getShinsei_No() : null;
+                model.addAttribute("view", addressInputService.loadViewData(shainUid, currentShinseiNo));
+                
                 return "idoconfirm/04_addressinput";
             }
             return "redirect:/idoconfirm/keiroInfo";
