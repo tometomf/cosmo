@@ -198,6 +198,16 @@
 
 		<result property="kingaku" column="KINGAKU" />
 		<result property="kingakuMonthly" column="KINGAKU_MONTHLY" />
+	<!-- ★ 28. 距離 -->
+    <result property="shinseiKm" column="SHINSEI_KM"/>
+
+    <!-- ★ 29. 有料道路 IC（乗り口～降り口） -->
+    <result property="yuryoIcS" column="YURYO_IC_S"/>
+    <result property="yuryoIcE" column="YURYO_IC_E"/>
+
+    <!-- ★ 30. 有料道路 片道料金 -->
+    <result property="yuryoKatamichiKin" column="YURYO_KATAMICHI_KIN"/>
+		
 	</resultMap>
 
 	<!-- 유지희 -->
