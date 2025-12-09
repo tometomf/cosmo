@@ -84,35 +84,35 @@ public class IdoConfirmController {
     @GetMapping("/idoconfirm")
     public String idoconfirm(
             @RequestParam(name = "alertType", required = false) AlertType alertType,
-            @RequestParam(name = "shinseiNo", required = false) String shinseiNo, // 신청번호 파라미터 추가
+            @RequestParam(name = "shinseiNo", required = false) String shinseiNo,
             Model model,
-            HttpSession session) { // 세션 추가
+            HttpSession session) {
 
-        // ---------------------------------------------------------
-        // 1. 세션 및 파라미터 처리 (로그인 기능 완성 전 하드코딩)
-        // ---------------------------------------------------------
-        String kigyoCd = "100";     // (가정) 세션에서 기업코드
-        String shainUid = "11000001"; // (가정) 세션에서 사원ID
+        // 1. 세션 체크 (로그인 여부 확인)
+        ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
+        if (sessionShain == null) {
+            System.out.println("⚠️ [0200] 세션 없음 -> 메인으로 이동");
+            return "redirect:/"; 
+        }
+
+        // 2. 세션 정보 추출
+        String kigyoCd = sessionShain.getKigyo_Cd();
+        String shainUid = sessionShain.getShain_Uid();
         
-        // ---------------------------------------------------------
-        // 2. DB 데이터 조회 (Service 호출)
-        // ---------------------------------------------------------
-        // 신청번호(shinseiNo)가 null이면 마스터, 값이 있으면 신청테이블을 조회해옴
+        System.out.println(">>> [0200 진입] 사용자: " + shainUid + ", 신청번호: " + shinseiNo);
+
+        // 3. DB 데이터 조회 (Service 호출)
         IdoConfirmViewDto viewDto = idoConfirmService.loadDisplayData(kigyoCd, shainUid, shinseiNo);
         
-        // 화면(JSP)으로 전달
-        model.addAttribute("view", viewDto); 
+        // 4. 화면 전달
+        model.addAttribute("view", viewDto);
+        model.addAttribute("shinseiNo", shinseiNo); // Hidden 필드용
 
-
-        // ---------------------------------------------------------
-        // 3. 기존 로직 (AlertType 처리 및 Form 초기화)
-        // ---------------------------------------------------------
+        // 5. AlertType 및 Form 초기화
         if (alertType == null) {
             alertType = AlertType.JISHIN;
         }
-      
         IdoCheckForm form = new IdoCheckForm();
-
         if (alertType == AlertType.IDOU_ITEN) {
             form.setKinmuChange("Y");
         }
@@ -121,18 +121,16 @@ public class IdoConfirmController {
         model.addAttribute("form", form);
 
         return "idoconfirm/02_idoConfirm";
-        
-        //신청후 링크 http://localhost:8282/idoconfirm/idoconfirm?shinseiNo=1
     }
-    @PostMapping("/next") //02조우진
+    
+    @PostMapping("/next")
     public String next(
             @ModelAttribute("form") IdoCheckForm form,
             @RequestParam(name = "alertType", required = false) AlertType alertType,
             RedirectAttributes rttr) {
 
-        if (alertType == null) {
-            alertType = AlertType.JISHIN;
-        }
+        if (alertType == null) alertType = AlertType.JISHIN;
+        
         boolean kinmu = form.isKinmuChanged();
         boolean jusho = form.isJushoChanged();
 
@@ -145,21 +143,16 @@ public class IdoConfirmController {
         switch (nextScreen) {
             case WORK_INPUT:
                 return "redirect:/idoconfirm/kinmuInput";
-
             case ADDRESS_INPUT:
                 return "redirect:/idoconfirm/addressinput";
-
             case COMMUTE_INFO:
                 rttr.addFlashAttribute("mustChangeRoute", step.isMustChangeRoute());
                 return "redirect:/idoconfirm/keiroInfo";
-
             case APPLICATION_ERROR:
             default:
                 String errorMsg = "";
                 if (alertType == AlertType.IDOU_ITEN) {
                     errorMsg = "異動・移転の場合は「勤務地：変わる」を選択してください。";
-                } else if (alertType == AlertType.JISHIN) {
-                	throw new RuntimeException();
                 } else {
                     errorMsg = "選択された組み合わせは無効です。";
                 }
@@ -189,9 +182,8 @@ public class IdoConfirmController {
             shainUid = sessionShain.getShain_Uid(); 
             System.out.println("DEBUG: Session에서 가져온 ShainUID: " + shainUid);
         } else {
-            // 세션이 없을 경우, 로그인 로직이 없으니 임시로 '30000001'을 다시 사용
-            shainUid = "30000001"; 
-            System.out.println("WARN: 세션 정보 없음, 임시 ShainUID: " + shainUid);
+  
+            System.out.println("WARN");
         }
         // -----------------------------------------------------------------
 
