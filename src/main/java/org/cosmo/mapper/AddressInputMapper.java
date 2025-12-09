@@ -18,6 +18,8 @@ public interface AddressInputMapper {
     // 저장 관련
     void saveIchijiHozon(IchijiHozonVO vo);
     void insertOshirase(@Param("kigyoCd") String kigyoCd, @Param("shainUid") String shainUid, @Param("shainNo") String shainNo, @Param("message") String message);
-    void insertProcessLog(@Param("kigyoCd") String kigyoCd, @Param("userUid") String userUid, @Param("shinseiKbn") String shinseiKbn, @Param("userIp") String userIp);
-    Map<String, String> selectZipCode(@Param("zipCode") String zipCode);
+    void insertProcessLog(@Param("kigyoCd") String kigyoCd,
+            @Param("userUid") String userUid,
+            @Param("shinseiKbn") String shinseiKbn,
+            @Param("userIp") String userIp);
 }

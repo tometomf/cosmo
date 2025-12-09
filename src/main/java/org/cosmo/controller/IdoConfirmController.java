@@ -208,11 +208,19 @@ public class IdoConfirmController {
         // 2. [수정] 세션에서 shainUid 가져오기 (이 부분이 없어서 에러가 났습니다)
         // -----------------------------------------------------------
         ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
-        String shainUid = "";
         
+        String shainUid = null;
+        String kigyoCd = null;
+        String shainNo = null;
+        String shozokuCd = null;
+        
+        // 세션 정보가 있으면 진짜 데이터로 덮어쓰기 (덮어쓰기가 핵심!)
         if (sessionShain != null) {
-            shainUid = sessionShain.getShain_Uid(); // 세션값 사용
-        } 
+            shainUid = sessionShain.getShain_Uid();
+            kigyoCd = sessionShain.getKigyo_Cd();
+            shainNo = sessionShain.getShain_No();
+            shozokuCd = sessionShain.getShozoku_Cd();
+        }
         
         // 3. 일시저장
         if ("tempsave".equals(action)) {
