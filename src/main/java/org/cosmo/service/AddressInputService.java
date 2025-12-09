@@ -14,5 +14,5 @@ public interface AddressInputService {
     
     boolean validateAndCheckRoute(AddressInputForm form);
     
-    void tempSave(AddressInputForm form, String shainUid);
+    void tempSave(AddressInputForm form, String shainUid, String kigyoCd, String shainNo, String shozokuCd);
 }

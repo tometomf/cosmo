@@ -9,20 +9,15 @@ import org.cosmo.domain.IchijiHozonVO;
 @Mapper
 public interface AddressInputMapper {
     
-    // 1. 신청 전 조회
+    // [신청 전] 사원 정보 조회
     AddressViewDto selectShainAddress(@Param("shainUid") String shainUid);
 
-    // 2. 신청 후 조회 (추가됨)
+    // [신청 후] 신청 정보 조회
     AddressViewDto selectShinseiData(@Param("shinseiNo") String shinseiNo);
 
-    // 3. 저장 및 알림
+    // 저장 관련
     void saveIchijiHozon(IchijiHozonVO vo);
-    
-    void insertOshirase(@Param("kigyoCd") String kigyoCd, 
-                        @Param("shainUid") String shainUid, 
-                        @Param("shainNo") String shainNo, 
-                        @Param("message") String message);
-
-    // 4. 로그 등 (필요시)
-    // void insertProcessLog(...);
+    void insertOshirase(@Param("kigyoCd") String kigyoCd, @Param("shainUid") String shainUid, @Param("shainNo") String shainNo, @Param("message") String message);
+    void insertProcessLog(@Param("kigyoCd") String kigyoCd, @Param("userUid") String userUid, @Param("shinseiKbn") String shinseiKbn, @Param("userIp") String userIp);
+    Map<String, String> selectZipCode(@Param("zipCode") String zipCode);
 }
