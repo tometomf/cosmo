@@ -91,7 +91,7 @@ public class IdoConfirmController {
         // 1. 세션 체크 (로그인 여부 확인)
         ShainVO sessionShain = (ShainVO) session.getAttribute("shain");
         if (sessionShain == null) {
-            System.out.println("⚠️ [0200] 세션 없음 -> 메인으로 이동");
+           
             return "redirect:/"; 
         }
 
@@ -99,8 +99,6 @@ public class IdoConfirmController {
         String kigyoCd = sessionShain.getKigyo_Cd();
         String shainUid = sessionShain.getShain_Uid();
         
-        System.out.println(">>> [0200 진입] 사용자: " + shainUid + ", 신청번호: " + shinseiNo);
-
         // 3. DB 데이터 조회 (Service 호출)
         IdoConfirmViewDto viewDto = idoConfirmService.loadDisplayData(kigyoCd, shainUid, shinseiNo);
         
@@ -180,7 +178,6 @@ public class IdoConfirmController {
         if (sessionShain != null) {
             // HomeController에서 설정한 '30000001'을 가져옴
             shainUid = sessionShain.getShain_Uid(); 
-            System.out.println("DEBUG: Session에서 가져온 ShainUID: " + shainUid);
         } else {
   
             System.out.println("WARN");
@@ -215,16 +212,13 @@ public class IdoConfirmController {
         
         if (sessionShain != null) {
             shainUid = sessionShain.getShain_Uid(); // 세션값 사용
-        } else {
-            shainUid = "30000001"; // 세션 없을 때 비상용 (테스트용)
-        }
-        // -----------------------------------------------------------
-
+        } 
+        
         // 3. 일시저장
         if ("tempsave".equals(action)) {
             try {
-                // 이제 shainUid 변수가 있으므로 에러가 나지 않습니다.
-                addressInputService.tempSave(form, shainUid); 
+                addressInputService.tempSave(form, shainUid, kigyoCd, shainNo, shozokuCd);
+                
                 rttr.addFlashAttribute("message", "一時保存しました。");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -249,6 +243,7 @@ public class IdoConfirmController {
 
         return "redirect:/idoconfirm/addressinput";
     }
+    
     // 作成者 : 권예성
     // 근무지 입력
     @GetMapping("/kinmuInput")
