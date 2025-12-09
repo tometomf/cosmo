@@ -70,6 +70,7 @@ public class AddressInputServiceImpl implements AddressInputService {
 
     @Override
     @Transactional
+    // ★ [수정 포인트] 괄호 안에 변수 5개를 모두 적어줘야 합니다!
     public void tempSave(AddressInputForm form, String shainUid, String kigyoCd, String shainNo, String shozokuCd) {
         try {
             ObjectMapper om = new ObjectMapper();
@@ -77,20 +78,31 @@ public class AddressInputServiceImpl implements AddressInputService {
             
             IchijiHozonVO vo = new IchijiHozonVO();
             vo.setUserUid(shainUid);
-            vo.setShozokuCd(shozokuCd); // 세션 소속코드
             vo.setActionNm("0400");
             vo.setData(json);
             
-            // 신청구분 (3:이사O, 4:이사X)
+            // ★ 받아온 소속코드 사용 (이제 에러 안 남)
+            vo.setShozokuCd(shozokuCd); 
+            
+            // 신청구분 로직
             if (form.getZip1() != null && !form.getZip1().isEmpty()) {
                 vo.setShinseiKbn("3");
             } else {
                 vo.setShinseiKbn("4");
             }
             
+            // 1. 일시저장
             mapper.saveIchijiHozon(vo);
+
+            // 2. 알림 등록
+            // ★ 받아온 기업코드, 사원번호 사용 (이제 에러 안 남)
             mapper.insertOshirase(kigyoCd, shainUid, shainNo, "一時保存しました。");
+            
+            // 3. 로그 등록
+            // ★ 받아온 기업코드 사용 (이제 에러 안 남)
             mapper.insertProcessLog(kigyoCd, shainUid, vo.getShinseiKbn(), "127.0.0.1");
+            
+            System.out.println(">> 일시저장 완료");
 
         } catch (Exception e) {
             throw new RuntimeException("Temp Save Failed", e);
