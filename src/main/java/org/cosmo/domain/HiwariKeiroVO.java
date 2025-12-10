@@ -30,4 +30,5 @@ public class HiwariKeiroVO {
     private Integer firstTeikiTsukiSu; // FIRST_TEIKI_TSUKI_SU (支給単位: 1/3/6)
     private Integer tsukiShikyuKin;   // TSUKI_SHIKYU_KIN (월액)
     private Integer hiwariAto;        // HIWARI_ATO (일할 금액 총액)
-}
+    private Integer shinseiKm;        // 申請距離(km)
+   }
