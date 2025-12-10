@@ -31,4 +31,7 @@ public class HiwariKeiroVO {
     private Integer tsukiShikyuKin;   // TSUKI_SHIKYU_KIN (월액)
     private Integer hiwariAto;        // HIWARI_ATO (일할 금액 총액)
     private Integer shinseiKm;        // 申請距離(km)
+    private String yuryoIcStart; // 有料道路IC 乗り口
+    private String yuryoIcEnd;   // 有料道路IC 降り口
+    private Integer yuryoKataMichiRyokin;
    }
