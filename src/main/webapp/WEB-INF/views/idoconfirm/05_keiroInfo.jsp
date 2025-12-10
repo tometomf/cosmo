@@ -9,6 +9,8 @@
 <title>通勤経路情報画面</title>
 <link rel="stylesheet" href="/resources/css/main.css" type="text/css">
 
+
+
 <style>
 .keiro {
 	display: flex;
@@ -131,60 +133,22 @@
 <body>
 	<div class="layout">
 	
-		<meta charset="UTF-8">
-		<title>title</title>
-		<link rel="stylesheet" href="/resources/css/main.css" type="text/css">
-
-
-		<div class="header">
-			<img src="/resources/img/logo.gif" alt="logo" style="display: block;">
-			<div class="userName">
-				<div>ログイン名:</div>
-				<div style="font-weight: bold;">000001</div>
-			</div>
-			<div class="header_Btn">
-				<img src="/resources/img/top_btn.gif" alt="top_btn"> <img
-					src="/resources/img/logout_btn.gif" alt="logout_btn">
-			</div>
-			<div class="userInfo">
-				<div>
-					<div class="userInfo_Title">法人名</div>
-					<div class="userInfo_Text">ABCDEFG</div>
-				</div>
-				<div>
-					<div class="userInfo_Title">所属名</div>
-					<div class="userInfo_Text">씝雅ф쎑窈욁궩 꺍 궭 꺖</div>
-				</div>
-				<div>
-					<div class="userInfo_Title">現役職</div>
-					<div class="userInfo_Text"></div>
-				</div>
-				<div>
-					<div class="userInfo_Title">社員番号</div>
-					<div class="userInfo_Text">30000001</div>
-				</div>
-				<div>
-					<div class="userInfo_Title">社員名</div>
-					<div class="userInfo_Text">掠긺뵲 訝 깕様</div>
-				</div>
-			</div>
-		</div>
-
-
+		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 
 		<div class="main">
-			<div class="main_Title">
+
+			<div class="main_title">
 				<div class="flow">
 					<div class="flow_others">勤務地入力</div>
-					<div class="flow_others">住所入力</div>
-					<div class="flow_current">経路入力</div>
+					<div class="flow_current">住所入力</div>
+					<div class="flow_others">経路入力</div>
 					<div class="flow_others">付随書類入力</div>
 					<div class="flow_others">確認</div>
 					<div class="flow_others">完了</div>
 				</div>
-				<div class="subtitle">通勤経路情報</div>
+				<div class="subtitle">住所 入力</div>
 			</div>
-
+	
 			<div class="main_Content">
 				<div
 					style="display: flex; justify-content: space-between; margin-bottom: 10px;">
@@ -194,7 +158,10 @@
 						複数手段を利用する場合、手段ごとに経路を分割して登録してください。
 					</div>
 					<div>
-						<img src="/resources/img/map_mini_btn01.gif" alt="map_mini_btn01">
+						<button type="button" onclick="reflectAddress()"
+								style="border: none; background: none; cursor: pointer;">
+								<img src="/resources/img/map_mini_btn01.gif" alt="kakunin">
+							</button>
 					</div>
 				</div>
 
