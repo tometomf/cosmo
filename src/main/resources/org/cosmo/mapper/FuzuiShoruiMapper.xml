@@ -83,16 +83,20 @@
 	</select>
 
 	<update id="updateShinsei" parameterType="org.cosmo.domain.ShinseiDTO">
-		UPDATE
-			SHINSEI
-		SET
-			ETC_COMMENT_1 = #{etcComment1},
-			ETC_COMMENT_2 = #{etcComment2},
-			UPD_DATE = SYSDATE
+		UPDATE SHINSEI
+		<set>
+			<if test="etcComment1 != null">ETC_COMMENT_1 = #{etcComment1},</if>
+			<if test="etcComment2 != null">ETC_COMMENT_2 = #{etcComment2},</if>
+			<if test="etcComment3 != null">ETC_COMMENT_3 = #{etcComment3},</if>
+			<if test="etcComment4 != null">ETC_COMMENT_4 = #{etcComment4},</if>
+			<if test="etcComment5 != null">ETC_COMMENT_5 = #{etcComment5},</if>
+			
+			UPD_DATE = SYSDATE,
+			<if test="updUserId != null">UPD_USER_ID = #{updUserId}</if>
+		</set>
 		WHERE
 			KIGYO_CD = #{kigyoCd}
-			AND
-				SHINSEI_NO = #{shinseiNo}
+			AND SHINSEI_NO = #{shinseiNo}
 	</update>
 
 	<insert id="insertShinseiFuzuiShorui" parameterType="org.cosmo.domain.ShinseiFuzuiShoruiDTO">
@@ -217,6 +221,34 @@
 			KIGYO_CD = #{kigyoCd}
 			AND
 				SHAIN_UID = #{shainUid}
+	</update>
+	
+	<update id="updateShinseiFuzuiFileUid">
+		UPDATE
+			SHINSEI_FUZUI_SHORUI
+		SET 
+			${fileType} = #{fileUid}, 
+			UPD_DATE = SYSDATE,
+			UPD_USER_ID = #{shainUid}
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
+			AND
+				KEIRO_SEQ = 0
+	</update>
+	
+	<update id="updateShinseiEtcFileUid">
+		UPDATE
+			SHINSEI
+		SET
+			${fileType} = #{fileUid},
+			UPD_DATE = SYSDATE,
+			UPD_USER_ID = #{shainUid}
+		WHERE
+			KIGYO_CD = #{kigyoCd}
+			AND
+				SHINSEI_NO = #{shinseiNo}
 	</update>
 	
 	<insert id="insertProcessLog"

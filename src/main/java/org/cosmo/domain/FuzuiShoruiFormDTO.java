@@ -30,9 +30,21 @@ public class FuzuiShoruiFormDTO {
 	
 	// 6. (옵션) 기타 화면에서 필요한 정보
 	private String currentTsukinShudan; // 현재 통근수단 구분 (JSP: currentCommute)
+	
+	// 6-1. 면허유효기간
 	private String currentMenkyoKigen; // 현재 면허증 만료일 (JSP: currentMenkyoKigen)
 	private boolean isMenkyoExpired; // 만료 여부 플래그 (Service에서 계산)
 	private boolean isMenkyoNearExpire;
+	
+	// 6-2. 차검유효기간
+	private String currentShakenKigen;
+	private boolean isShakenExpired;
+	private boolean isShakenNearExpire;
+	
+	// 6-3. 보험만료일
+	private String currentHokenManryo;
+	private boolean isHokenExpired;
+	private boolean isHokenNearExpire;
 
 	// 생성자 (필요한 데이터를 쉽게 담기 위함)
 	public FuzuiShoruiFormDTO(

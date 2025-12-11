@@ -78,9 +78,24 @@ public interface FuzuiShoruiMapper {
 	// 12. [조회] 파일 데이터 조회
 	FileViewDTO selectFileByFileUid(String fileUid);
 	
-	// 13. [저장] 사원부수 파일uid 업데이트
+	// 13. [저장] 부수 파일uid 업데이트
 	int updateShainFuzuiFileUid(
 		@Param("kigyoCd") Integer kigyoCd,
+		@Param("shainUid") Integer shainUid,
+		@Param("fileType") String fileType,
+		@Param("fileUid") Long fileUid
+	);
+	
+	int updateShinseiFuzuiFileUid(
+		@Param("kigyoCd") Integer kigyoCd,
+		@Param("shinseiNo") Long shinseiNo,
+		@Param("shainUid") Integer shainUid,
+		@Param("fileType") String fileType,
+		@Param("fileUid") Long fileUid
+	);
+	int updateShinseiEtcFileUid(
+		@Param("kigyoCd") Integer kigyoCd,
+		@Param("shinseiNo") Long shinseiNo,
 		@Param("shainUid") Integer shainUid,
 		@Param("fileType") String fileType,
 		@Param("fileUid") Long fileUid

@@ -1,8 +1,9 @@
 package org.cosmo.service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
-import org.cosmo.domain.CodeVO;
 import org.cosmo.domain.FileViewDTO;
 import org.cosmo.domain.FuzuiShoruiFormDTO;
 import org.cosmo.domain.IchijiHozonDTO;
@@ -25,13 +26,13 @@ public interface FuzuiShoruiService {
 	void tempSave(IchijiHozonDTO hozonData);
 
 	// 4. 파일 업로드
-	String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType);
+	String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType, Long shinseiNo);
 	
 	// 5. 파일 뷰어용 데이터 조회
 	FileViewDTO getFileForView(String fileUid);
 	
 	// 6. 메인필드 파일UID 업데이트
-	void updateFuzuiShoruiFileUid(Integer kigyoCd, Integer shainUid, String fileType, Long fileUid);
+	void updateFuzuiShoruiFileUid(Integer kigyoCd, Long shinseiNo, Integer shainUid, String fileType, Long fileUid);
 	
 	// 7. 프로세스 로그
 	void writeProcessLog(

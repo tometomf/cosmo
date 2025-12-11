@@ -487,10 +487,10 @@ public class IdoConfirmController {
 	}
 	
 	// 윤종운
-    @GetMapping("/kakuninpage")
-    public String kakuninpage() {
-        return "idoconfirm/09_kakuninPage";
-    }
+	@GetMapping("/kakuninpage")
+	public String kakuninpage() {
+		return "idoconfirm/09_kakuninPage";
+	}
 
     // 作成者 : 권예성
     @GetMapping("/kanryoPage")
@@ -576,6 +576,7 @@ public class IdoConfirmController {
  	public ResponseEntity<UploadResult> uploadFuzuiShorui(
  			@RequestParam("uploadFile") MultipartFile uploadFile,
  			@RequestParam("fileType") String fileType,
+ 			@RequestParam("shinseiNo") Long shinseiNo,
  			HttpSession session) {
  		
  		// 1. 파일 유효성 검사
@@ -606,15 +607,24 @@ public class IdoConfirmController {
  			kigyoCd = 100;
  		}
  		
+ 		// 2-3 shinseiNo 검증
+ 		if (shinseiNo == null || shinseiNo.longValue() == 0) {
+ 			UploadResult result = UploadResult.builder()
+ 				.success(false)
+ 				.message("신청 번호(shinseiNo)가 누락되었습니다.")
+ 				.build();
+ 			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+ 		}
+ 		
  		try {
  			// 3. 파일 저장 처리 로직 호출 (shainUid와 kigyoCd 파라미터 추가)
- 			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType);
+ 			String newFileUid = fuzuiShoruiService.saveUploadedFile(uploadFile, shainUid, kigyoCd, fileType, shinseiNo);
  			
  			// String -> Long 변환
  			Long longFileUid = Long.parseLong(newFileUid);
  			
  			// 4. 메인 테이블(SHAIN_FUZUI_SHORUI)의 FILE_UID_4 필드 업데이트
- 			fuzuiShoruiService.updateFuzuiShoruiFileUid(kigyoCd, shainUid, fileType, longFileUid);
+ 			fuzuiShoruiService.updateFuzuiShoruiFileUid(kigyoCd, shinseiNo, shainUid, fileType, longFileUid);
  			
  			// 5. 성공 응답 구성 및 반환
  			UploadResult result = UploadResult.builder()
@@ -624,7 +634,7 @@ public class IdoConfirmController {
  				.build();
  			
  			return new ResponseEntity<>(result, HttpStatus.OK);
- 				
+ 			
  		} catch (Exception e) {
  			
  			// 5. 실패 응답 구성 및 반환

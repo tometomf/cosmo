@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.cosmo.domain.FileViewDTO;
@@ -68,49 +70,46 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		
 		// 1-5. 현재 통근 수단 구분 및 서류 정보 조회
 		String currentTsukinKbn = fuzuiShoruiMapper.selectCurrentTsukinShudanKbn(shainUid);
-		String currentMenkyoKigen = fuzuiShoruiMapper.selectCurrentMenkyoKigen(shainUid);
 		
+		// 면허증, 차검증, 보험 만료일 값을 SHAIN_FUZUI_SHORUI DTO에서 가져옵니다.
+		String currentMenkyoKigen = (shainFuzuiShoruiList != null && !shainFuzuiShoruiList.isEmpty()) 
+									? shainFuzuiShoruiList.get(0).getMenkyoYukoKigen() : null;
+		String currentShakenKigen = (shainFuzuiShoruiList != null && !shainFuzuiShoruiList.isEmpty()) 
+									? shainFuzuiShoruiList.get(0).getShakenYukoKigen() : null;
+		String currentHokenManryo = (shainFuzuiShoruiList != null && !shainFuzuiShoruiList.isEmpty()) 
+									? shainFuzuiShoruiList.get(0).getHokenManryoYmd() : null;
+
 		// 1-6. 만료 플래그 계산 로직
-		boolean isExpired = false;
-		boolean isNearExpire = false;
-		
-		if (currentMenkyoKigen != null && !currentMenkyoKigen.isEmpty()) {
-			try {
-				// ① 날짜 파싱 및 현재 날짜 준비
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-				LocalDate today = LocalDate.now();
-				LocalDate expireDate = LocalDate.parse(currentMenkyoKigen, formatter);
-				
-				// ② 만료 여부 (isExpired) 계산
-				if (expireDate.isBefore(today)) {
-					isExpired = true;
-				} else {
-					// ③ 1개월 임박 여부 (isNearExpire) 계산: 만료일이 오늘 + 1개월 이내인지 확인
-					LocalDate oneMonthLater = today.plusMonths(1);
-					
-					// 만료일이 현재 날짜 이후이고, 오늘부터 1개월 후 날짜 이전이면 임박
-					if (expireDate.isBefore(oneMonthLater) || expireDate.isEqual(oneMonthLater)) {
-						isNearExpire = true;
-					}
-				}
-				
-			} catch (Exception e) {
-				// 날짜 파싱 오류 발생 시 (데이터 형식 문제)
-				System.err.println("면허증 기한 파싱 오류: " + currentMenkyoKigen + " - " + e.getMessage());
-				// 플래그를 false로 유지하고 진행
-			}
-		}
+
+		// 1. 면허증 기한 계산
+		Map<String, Boolean> menkyoFlags = calculateExpiration(currentMenkyoKigen);
+
+		// 2. 차검증 기한 계산
+		Map<String, Boolean> shakenFlags = calculateExpiration(currentShakenKigen);
+
+		// 3. 보험 만료일 계산
+		Map<String, Boolean> hokenFlags = calculateExpiration(currentHokenManryo);
 		
 		// 1-7. 모든 데이터를 래퍼 DTO에 담아 반환
 		FuzuiShoruiFormDTO formData = new FuzuiShoruiFormDTO(shinseiList, shinseiFuzuiShoruiList, shainFuzuiShoruiList, kigyoKiteiList);
 		
 		// 조회된 현재 데이터를 DTO에 설정
 		formData.setCurrentTsukinShudan(currentTsukinKbn);
-		formData.setCurrentMenkyoKigen(currentMenkyoKigen);
 		
-		// 계산된 플래그 설정
-		formData.setMenkyoExpired(isExpired);
-		formData.setMenkyoNearExpire(isNearExpire);
+		// 면허증 만료 플래그 설정
+		formData.setCurrentMenkyoKigen(currentMenkyoKigen);
+		formData.setMenkyoExpired(menkyoFlags.get("isExpired"));
+		formData.setMenkyoNearExpire(menkyoFlags.get("isNearExpire"));
+		
+		// 차검증 만료 플래그 설정
+		formData.setCurrentShakenKigen(currentShakenKigen);
+		formData.setShakenExpired(shakenFlags.get("isExpired"));
+		formData.setShakenNearExpire(shakenFlags.get("isNearExpire"));
+		
+		// 보험 만료 플래그 설정
+		formData.setCurrentHokenManryo(currentHokenManryo);
+		formData.setHokenExpired(hokenFlags.get("isExpired"));
+		formData.setHokenNearExpire(hokenFlags.get("isNearExpire"));
 		
 		return formData;
 	}
@@ -197,7 +196,7 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	 */
 	@Transactional // 파일 저장과 DB 저장은 하나의 트랜잭션으로 처리
 	@Override
-	public String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType) {
+	public String saveUploadedFile(MultipartFile uploadFile, Integer shainUid, Integer kigyoCd, String fileType, Long shinseiNo) {
 
 		// 1. 파일 정보 추출
 		String originalFileName = uploadFile.getOriginalFilename();
@@ -248,15 +247,15 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		// 3. Mapper 호출 (DB 저장)
 		fuzuiShoruiMapper.insertFile(fileDTO);
 		
-		// 4. SHAIN_FUZUI_SHORUI 테이블 업데이트 로직
-		if (kigyoCd != null && kigyoCd.intValue() > 0 && shainUid != null && shainUid.intValue() > 0) {
+		// 4. SHAIN_FUZUI_SHORUI & SHINSEI_FUZUI_SHORUI 테이블 업데이트 로직
+		if (kigyoCd != null && kigyoCd.intValue() > 0 && shainUid != null && shainUid.intValue() > 0 && shinseiNo != null) {
 			// SHAIN_FUZUI_SHORUI 테이블의 해당 fileType 컬럼에 fileUid 값 업데이트
-			updateFuzuiShoruiFileUid(kigyoCd, shainUid, fileType, fileUid);
+			updateFuzuiShoruiFileUid(kigyoCd, shinseiNo, shainUid, fileType, fileUid);
 		} else {
 			// 오류 처리
-			System.err.println("에러: SHAIN_FUZUI_SHORUI 테이블 업데이트를 위한 복합 PK(kigyoCd 또는 shainUid)가 유효하지 않습니다.");
+			System.err.println("에러: 업데이트를 위한 복합 PK(kigyoCd, shainUid, shinseiNo 중 하나)가 유효하지 않습니다.");
 			
-			throw new RuntimeException("사용자 식별 정보가 유효하지 않아 파일 링크 업데이트에 실패했습니다.");		}
+			throw new RuntimeException("사용자/신청 식별 정보가 유효하지 않아 파일 링크 업데이트에 실패했습니다.");		}
 		
 		// 5. 파일 UID 반환
 		return fileUidString;
@@ -310,14 +309,31 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 	
 	@Transactional
 	@Override
-	public void updateFuzuiShoruiFileUid(Integer kigyoCd, Integer shainUid, String fileType, Long fileUid) {
-		// 💡 SHAIN_FUZUI_SHORUI 테이블을 업데이트하는 Mapper 메서드 호출
-		int updatedRows = fuzuiShoruiMapper.updateShainFuzuiFileUid(kigyoCd, shainUid, fileType, fileUid);
-
-		if (updatedRows == 0) {
-			// 오류 처리 : 업데이트 할 레코드가 없는 경우
-			System.err.println("경고: SHAIN_FUZUI_SHORUI 테이블 업데이트 실패. KIGYO_CD: " + kigyoCd
-					+ ", SHAIN_UID: " + shainUid + "에 해당하는 레코드를 찾을 수 없습니다.");
+	public void updateFuzuiShoruiFileUid(Integer kigyoCd, Long shinseiNo, Integer shainUid, String fileType, Long fileUid) {
+		
+		// 분기 처리: ETC로 시작하는 파일 타입인 경우
+		if (fileType != null && fileType.startsWith("ETC_FILE_UID")) {
+			
+			// 1. SHINSEI 테이블 업데이트
+			int updatedEtcRows = fuzuiShoruiMapper.updateShinseiEtcFileUid(kigyoCd, shinseiNo, shainUid, fileType, fileUid);
+			
+			if (updatedEtcRows == 0) {
+				System.err.println("경고: SHINSEI 테이블(ETC) 업데이트 실패. KIGYO_CD: " + kigyoCd + ", SHINSEI_NO: " + shinseiNo + "에 해당하는 레코드를 찾을 수 없습니다.");
+			}
+		} else {
+			
+			// 2. SHAIN_FUZUI_SHORUI 테이블 업데이트
+			int updatedShainRows = fuzuiShoruiMapper.updateShainFuzuiFileUid(kigyoCd, shainUid, fileType, fileUid);
+			
+			if (updatedShainRows == 0) {
+				System.err.println("경고: SHAIN_FUZUI_SHORUI 업데이트 실패. KIGYO_CD: " + kigyoCd + ", SHAIN_UID: " + shainUid + "에 해당하는 레코드를 찾을 수 없습니다.");
+			}
+			
+			int updatedShinseiRows = fuzuiShoruiMapper.updateShinseiFuzuiFileUid(kigyoCd, shinseiNo, shainUid, fileType, fileUid);
+			
+			if (updatedShinseiRows == 0) {
+				System.err.println("경고: SHINSEI_FUZUI_SHORUI 업데이트 실패. KIGYO_CD: " + kigyoCd + ", SHINSEI_NO: " + shinseiNo + "에 해당하는 레코드를 찾을 수 없습니다.");
+			}
 		}
 	}
 	
@@ -352,5 +368,47 @@ public class FuzuiShoruiServiceImpl implements FuzuiShoruiService {
 		log.setUserTrack(userTrack);
 		
 		fuzuiShoruiMapper.insertProcessLog(log);
+	}
+	
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+	
+	/**
+	 * 날짜 문자열(YYYYMMDD)을 받아 만료 여부 및 1개월 임박 여부를 계산합니다.
+	 * @param kigenYmd 만료일 (YYYYMMDD)
+	 * @return isExpired, isNearExpire 플래그를 담은 Map
+	 */
+	private Map<String, Boolean> calculateExpiration(String kigenYmd) {
+		Map<String, Boolean> flags = new HashMap<>(); // java.util.HashMap import 필요
+		flags.put("isExpired", false);
+		flags.put("isNearExpire", false);
+
+		if (kigenYmd == null || kigenYmd.isEmpty()) {
+			return flags;
+		}
+
+		try {
+			LocalDate today = LocalDate.now();
+			LocalDate expireDate = LocalDate.parse(kigenYmd, FORMATTER);
+
+			// ① 만료 여부 (isExpired) 계산
+			if (expireDate.isBefore(today)) {
+				flags.put("isExpired", true);
+				return flags; // 만료 시 임박 여부는 체크할 필요 없음
+			}
+
+			// ② 1개월 임박 여부 (isNearExpire) 계산
+			// 요구사항: 1개월 미만을 30일로 계산합니다.
+			LocalDate thirtyDaysLater = today.plusDays(30); 
+
+			// 만료일이 현재 날짜 이후이고, 오늘부터 30일 후 날짜 이전이면 임박
+			if (expireDate.isBefore(thirtyDaysLater) || expireDate.isEqual(thirtyDaysLater)) {
+				flags.put("isNearExpire", true);
+			}
+
+		} catch (Exception e) {
+			System.err.println("기한 파싱 오류: " + kigenYmd + " - " + e.getMessage());
+		}
+
+		return flags;
 	}
 }
